@@ -22,19 +22,37 @@ public class X
 
 public class App
 {
+
+     public static TrObject time()
+    {
+        return MK.Int(System.DateTime.Now.Ticks);
+    }
     public static void Main(string[] argv)
     {
         InitSetup.ApplyInitialization();
         var o = System.IO.File.ReadAllText("c.json");
         var x = JsonParse<TrFuncPointer>(o);
         var d = RTS.baredict_create();
-        d[MK.Str("print")] = TrSharpFunc.FromFunc(x => {
-            Console.WriteLine(x.__str__());
+        d[MK.Str("print")] = TrSharpFunc.FromFunc((BList<TrObject> xs, Dictionary<TrObject, TrObject> kwargs) => {
+            var itr = xs.GetEnumerator();
+            if (itr.MoveNext())
+            {
+                Console.Write(itr.Current.__str__());
+                while (itr.MoveNext())
+                {
+                    Console.Write(" ");
+                    Console.Write(itr.Current.__str__());
+                }
+            }
+            Console.WriteLine();
             return MK.None();
         });
 
         d[MK.Str("next")] = TrSharpFunc.FromFunc(x => x.__next__());
         d[MK.Str("dict")] = TrClass.DictClass;
+        d[MK.Str("time")] = TrSharpFunc.FromFunc(time);
+        d[MK.Str("list")] = TrClass.ListClass;
+        d[MK.Str("len")] = TrSharpFunc.FromFunc(x => x.__len__());
         x.Exec(d);
         // Console.WriteLine(x);
 

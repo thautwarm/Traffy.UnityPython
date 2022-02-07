@@ -79,6 +79,11 @@ namespace Traffy
         {
             return new TrSharpMethod { func = func.__call__, self = self };
         }
+
+        public static TrObject BindOrUnwrap(TrObject func, TrObject self)
+        {
+            return new TrSharpMethod { func = func.__call__, self = self };
+        }
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             RTS.arg_check_positional_only(args, 3);

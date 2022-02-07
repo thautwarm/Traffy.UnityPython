@@ -179,20 +179,23 @@ namespace Traffy
             Dictionary<TrObject, TrObject> MAGIC_METHODS = this.Class.MAGIC_METHOD_GETTERS;
             if (MAGIC_METHODS.TryGetValue(s, out var getter))
             {
-                return TrSharpMethod.Bind(getter, this);
+                return TrSharpMethod.BindOrUnwrap(getter, this);
             }
-            throw new AttributeError($"attribute {s.__repr__()} not found.");
+            if (this.Class.__base.Length != 0)
+            {
+                var bases = this.Class.__base;
+                for(int i = 0; i < bases.Length; i++)
+                {
+                    var get = bases[i].__getattr__(s);
+                    if (get != null)
+                        return TrSharpMethod.BindOrUnwrap(get, this);
+                }
+            }
+            return null;
         }
 
         public void __setattr__(TrObject s, TrObject value)
         {
-
-            var MAGIC_METHODS = this.Class.MAGIC_METHOD_SETTERS;
-            if (MAGIC_METHODS.TryGetValue(s, out var setter))
-            {
-                setter(value);
-                return;
-            }
             if (this.__dict__ != null)
             {
                 RTS.baredict_set(__dict__, s, value);
@@ -285,15 +288,6 @@ namespace Traffy
         // Object protocol
 
         public int __hash__() => Class.__hash(this);
-        public TrObject Call(params TrObject[] objs)
-        {
-            var xs = new BList<TrObject>();
-            foreach (var e in objs)
-            {
-                xs.Add(e);
-            }
-            return __call__(xs, null);
-        }
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) =>
             Class.__call(this, args, kwargs);
@@ -514,9 +508,48 @@ namespace Traffy
 
         public TrClass Class { set; get; }
 
-        static TrClass _FromPrototype<T>() where T : TrObject
+        public string __repr__() => Name;
+
+        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) =>
+            Class.__call(this, args, kwargs);
+
+        public TrObject __getattr__(TrObject s)
+        {
+            if (this.__dict__ != null)
+            {
+                TrObject o = RTS.baredict_get_noerror(__dict__, s);
+                if (o != null)
+                    return o;
+            }
+            Dictionary<TrObject, TrObject> MAGIC_METHODS = MAGIC_METHOD_GETTERS;
+            if (MAGIC_METHODS.TryGetValue(s, out var getter))
+            {
+                return getter;
+            }
+            return null;
+            // throw new AttributeError($"attribute {s.__repr__()} not found.");
+        }
+
+        public void __setattr__(TrObject s, TrObject value)
         {
 
+            var MAGIC_METHODS = MAGIC_METHOD_SETTERS;
+            if (MAGIC_METHODS.TryGetValue(s, out var setter))
+            {
+                setter(value);
+                return;
+            }
+            if (this.__dict__ != null)
+            {
+                RTS.baredict_set(__dict__, s, value);
+                return;
+            }
+            throw new AttributeError($"cannot set attribute {s.__repr__()}.");
+        }
+
+        static TrClass _FromPrototype<T>() where T : TrObject
+        {
+            // XXX: builtin types cannot be inherited, or methods report incompatible errors
             var cls = new TrClass
             {
                 Name = typeof(T).Name,

@@ -34,6 +34,30 @@ def uq(a, b, *, y = 1):
 
 print(uq(1, 2))
 print(uq(1, 2, y=3))
+print(dict([(1, 2)]))
+
+z = 1
+z += 1
+print(z)
+def test1():
+    x = 0
+    while x < 10000000:
+        x += 1
+        yield x
+def test2():
+    x = 0
+    while x < 10000000:
+        x += 1
+    return x
+a = time()
+xs = test2()
+print("value", xs)
+print("time1", time() - a)
+
+a = time()
+xs = list(test1())
+print("len", len(xs))
+print("time2", time() - a)
 """, "a.py")
 
 

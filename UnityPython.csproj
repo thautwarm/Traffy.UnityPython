@@ -4,13 +4,14 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+     <Optimize>true</Optimize>
      <DefineConstants>NUNITY</DefineConstants>
     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>./UnityEngine.JSONSerializeModule.dll</HintPath>
+    <Reference Include="UnityEngine">
+      <HintPath>./UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
 

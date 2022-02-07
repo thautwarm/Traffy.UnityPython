@@ -25,7 +25,7 @@ namespace Traffy
                 return MK.Int(0L);
             if (narg == 2 && kwargs == null)
             {
-                var arg = args[0];
+                var arg = args[1];
                 switch(arg)
                 {
                     case TrInt _: return arg;
@@ -58,7 +58,7 @@ namespace Traffy
                 return MK.Float(0.0f);
             if (narg == 2 && kwargs == null)
             {
-                var arg = args[0];
+                var arg = args[1];
                 switch(arg)
                 {
                     case TrFloat _: return arg;
@@ -112,7 +112,7 @@ namespace Traffy
                 return MK.Str("");
             if (narg == 2 && kwargs == null)
             {
-                var arg = args[0];
+                var arg = args[1];
                 if (arg is TrStr)
                     return arg;
                 return MK.Str(arg.__str__());
@@ -181,7 +181,7 @@ namespace Traffy
                 return MK.Bool(false);
             if (narg == 2 && kwargs == null)
             {
-                var arg = args[0];
+                var arg = args[1];
                 switch(arg)
                 {
                     case TrFloat _: return arg;
@@ -213,7 +213,7 @@ namespace Traffy
                 return MK.Tuple();
             if (narg == 2 && kwargs == null)
             {
-                return MK.Tuple(RTS.object_as_array(args[0]));
+                return MK.Tuple(RTS.object_as_array(args[1]));
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
@@ -238,10 +238,17 @@ namespace Traffy
                 return MK.List();
             if (narg == 2 && kwargs == null)
             {
-                return MK.List(RTS.object_to_list(args[0]));
+                return MK.List(RTS.object_to_list(args[1]));
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
+
+        public IEnumerator<TrObject> __iter__()
+        {
+            return container.GetEnumerator();
+        }
+
+        public TrObject __len__() => MK.Int(container.Count);
     }
 
     public partial class TrSet: TrObject
@@ -261,7 +268,7 @@ namespace Traffy
             if (narg == 2 && kwargs == null)
             {
                 HashSet<TrObject> res = RTS.bareset_create();
-                RTS.bareset_extend(res, args[0]);
+                RTS.bareset_extend(res, args[1]);
                 return MK.Set(res);
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
@@ -298,7 +305,7 @@ namespace Traffy
             if (narg == 2 && kwargs == null)
             {
                 Dictionary<TrObject, TrObject> res = RTS.baredict_create();
-                RTS.baredict_extend(res, args[0]);
+                RTS.baredict_extend(res, args[1]);
                 return MK.Dict(res);
             }
             else if (kwargs != null)
@@ -310,6 +317,9 @@ namespace Traffy
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
+
+        public string __repr__() =>
+            "{" + String.Join(", ", container.Select(kv => $"{kv.Key.__repr__()}: {kv.Value.__repr__()}")) + "}";
     }
 
 }

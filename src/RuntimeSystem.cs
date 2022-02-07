@@ -312,7 +312,10 @@ namespace Traffy
 
         internal static TrObject object_getattr(TrObject tos, string attr)
         {
-            return tos.__getattr__(MK.Str(attr));
+            var o = tos.__getattr__(MK.Str(attr));
+            if (o == null)
+                throw new AttributeError($" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr}'.");
+            return o;
         }
 
         internal static void object_setattr(TrObject tos, string attr, TrObject value)
