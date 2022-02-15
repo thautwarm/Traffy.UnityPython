@@ -1,11 +1,59 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Traffy.Objects;
 
-namespace Traffy.IR
+namespace Traffy.Asm
 {
 
     using binary_func = Func<TrObject, TrObject, TrObject>;
+
+    public class MultiAssign : TraffyLHS
+    {
+        public bool hasCont { set; get; }
+        public TraffyLHS[] targets;
+
+        public TraffyCoroutine cont(Frame frame, TrObject o)
+        {
+            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            {
+                foreach (var lhs in targets)
+                {
+                    if (lhs.hasCont)
+                    {
+                        var cont = lhs.cont(frame, o);
+                        while (cont.MoveNext(coro.Sent))
+                            yield return cont.Current;
+                    }
+                    else
+                    {
+                        lhs.exec(frame, o);
+                    }
+                }
+            }
+            var coro = new TraffyCoroutine();
+            coro.generator = mkCont(frame, coro);
+            return coro;
+        }
+
+        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm asm)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void exec(Frame frame, TrObject o)
+        {
+            foreach (var lhs in targets)
+            {
+                lhs.exec(frame, o);
+            }
+        }
+
+        public void execOp(Frame frame, binary_func op, TraffyAsm asm)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     [Serializable]
     public class StoreListEx : TraffyLHS

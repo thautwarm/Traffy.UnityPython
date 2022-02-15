@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using int_t = System.Int64;
 using uint_t = System.UInt64;
 
-namespace Traffy
+namespace Traffy.Objects
 {
 
 #if NUNITY
@@ -29,7 +29,7 @@ using static UnityEngine.Mathf;
         public static Exception unsupported_ops(TrObject lhs, string op, TrObject rhs) =>
             new InvalidOperationException($"'unsupported operation: '{lhs.Class.Name}' {op} '{rhs.Class.Name}'.");
 
-        [MethodImpl(MethodImplOptionsCompat.AggressiveOptimization | MethodImplOptionsCompat.AggressiveInlining)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static TrObject int_t_add(TrInt self, TrObject other)
         {
             switch (other)
@@ -52,7 +52,7 @@ using static UnityEngine.Mathf;
             }
         }
 
-        [MethodImpl(MethodImplOptionsCompat.AggressiveOptimization | MethodImplOptionsCompat.AggressiveInlining)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static TrObject int_t_sub(TrInt self, TrObject other)
         {
             switch (other)

@@ -2,7 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using Traffy;
+using Traffy.Objects;
+
+public static partial class JsonExt
+{
+    public static T JsonParse<T>(string s)
+    {
+        return SimpleJSON.JSON.Deserialize<T>(s);
+    }
+}
+
 public class InitSetup : Attribute
 {
     public int Order;

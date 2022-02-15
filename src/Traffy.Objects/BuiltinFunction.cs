@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Traffy
+namespace Traffy.Objects
 {
     public class TrSharpFunc : TrObject
     {
@@ -12,7 +12,18 @@ namespace Traffy
 
         public Dictionary<TrObject, TrObject> __dict__ => null;
 
-        public TrClass Class => TrClass.BuiltinFuncClass;
+        public static TrClass CLASS;
+        public TrClass Class => CLASS;
+
+        [InitSetup(InitOrder.InitClassObjects)]
+        static void _InitializeClasses()
+        {
+            CLASS = TrClass.FromPrototype<TrSharpFunc>();
+            CLASS.Name = "builtin_function";
+            CLASS.__new = TrSharpFunc.datanew;
+            CLASS.SetupClass();
+            ModuleInit.Prelude(CLASS);
+        }
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
@@ -165,5 +176,6 @@ namespace Traffy
             }
             return new TrSharpFunc(name, call);
         }
+
     }
 }

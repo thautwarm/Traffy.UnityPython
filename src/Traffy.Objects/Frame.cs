@@ -1,34 +1,28 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
-namespace Traffy
+using System.Runtime.Serialization;
+
+namespace Traffy.Objects
 {
     using static JsonExt;
-    public static partial class JsonExt
-    {
-        public static T JsonParse<T>(string s)
-        {
-            return SimpleJSON.JSON.Deserialize<T>(s);
-        }
-    }
     public static class ListExt
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static void Push(this List<TrObject> self, TrObject o)
         {
             self.Add(o);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
 
         public static TrObject Peek(this List<TrObject> self)
         {
             return self[self.Count - 1];
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static TrObject Pop(this List<TrObject> self)
         {
             var i = self.Count - 1;
@@ -37,7 +31,7 @@ namespace Traffy
             return a;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static (TrObject, TrObject) Pop2(this List<TrObject> self)
         {
             var i = self.Count - 1;
@@ -49,7 +43,7 @@ namespace Traffy
         }
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static void PopN(this List<TrObject> self, List<TrObject> other, int n)
         {
             int c = self.Count;
@@ -61,7 +55,7 @@ namespace Traffy
             return;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static void PopN(this List<TrObject> self, TrObject[] other, int n)
         {
             int c = self.Count;
@@ -70,7 +64,7 @@ namespace Traffy
             return;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public static void PopN(this List<TrObject> self, Dictionary<TrObject, TrObject> other, int n)
         {
             int c = self.Count;
@@ -94,27 +88,32 @@ namespace Traffy
     }
 
     [Serializable]
-    public struct Postion
+    public class Postion
     {
         public int line;
         public int col;
+        public string filename;
     }
 
-    [Serializable]
-    public class PosRecord
-    {
-        public int offset;
-        public Postion pos;
-    }
 
     [Serializable]
     public class Metadata
     {
-        public PosRecord[] positions;
+        public Postion[] positions;
         public string[] localnames;
         public string[] freenames;
         public string codename;
         public string filename;
+
+        [OnDeserialized]
+        internal Metadata OnDeserializedMethod()
+        {
+            for(int i = 0; i < positions.Length; i++)
+            {
+                positions[i].filename = filename;
+            }
+            return this;
+        }
     }
 
     // |arg|vararg|kwonlys|kwarg|
@@ -126,9 +125,8 @@ namespace Traffy
         public int posargcount;
         public int allargcount;
         public Dictionary<int, TrObject> kwindices;
-        public TraffyAsm code;
+        public Traffy.Asm.TraffyAsm code;
         public Metadata metadata;
-
         static Variable[] empty_freevars = new Variable[0];
         static (int, TrObject)[] empty_default_args = new (int, TrObject)[0];
         public void Exec(Dictionary<TrObject, TrObject> globals)
@@ -152,7 +150,18 @@ namespace Traffy
     {
         public Dictionary<TrObject, TrObject> __dict__ => null;
 
-        public TrClass Class => TrClass.FuncClass;
+        public static TrClass CLASS;
+
+        public TrClass Class => CLASS;
+
+        [InitSetup(InitOrder.InitClassObjects)]
+        static void _InitializeClasses()
+        {
+            CLASS = TrClass.FromPrototype<TrFunc>();
+            CLASS.Name = "function";
+            CLASS.__new = TrDict.datanew;
+            CLASS.SetupClass();
+        }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

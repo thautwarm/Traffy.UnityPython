@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Traffy
+namespace Traffy.Objects
 {
     public class TrSharpMethod : TrObject
     {
@@ -11,7 +11,17 @@ namespace Traffy
 
         public Dictionary<TrObject, TrObject> __dict__ => null;
 
-        public TrClass Class => TrClass.BuiltinFuncClass;
+        public static TrClass CLASS;
+        public TrClass Class => CLASS;
+        [InitSetup(InitOrder.InitClassObjects)]
+        static void _InitializeClasses()
+        {
+            CLASS = TrClass.FromPrototype<TrSharpMethod>();
+            CLASS.Name = "method";
+            CLASS.__new = TrSharpMethod.datanew;
+            CLASS.SetupClass();
+            ModuleInit.Prelude(CLASS);
+        }
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

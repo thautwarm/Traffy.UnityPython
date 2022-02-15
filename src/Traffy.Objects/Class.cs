@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+using Traffy.Objects;
 
-namespace Traffy
+namespace Traffy.Objects
 {
 
     using call_func = Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject>;
@@ -17,314 +16,9 @@ namespace Traffy
     using bool_conv = Func<TrObject, bool>;
     using iter_conv = Func<TrObject, IEnumerator<TrObject>>;
 
-
-    public interface TrObject : IEquatable<TrObject>
-    {
-        bool IEquatable<TrObject>.Equals(TrObject other)
-        {
-            return __eq__(other);
-        }
-
-        public TrClass AsClass => (TrClass)this;
-        public string AsString => ((TrStr)this).value;
-        public int AsInt => unchecked((int)((TrInt)this).value);
-        public Dictionary<TrObject, TrObject> __dict__ { get; }
-        public object Native => this;
-        public TrClass Class { get; }
-        public string __str__() => __repr__();
-        public string __repr__() => Native.ToString();
-        public TrObject __next__() => throw unsupported_op(this, "__next__");
-        static Exception unsupported_op(TrObject a, string op) =>
-            new TypeError($"{a.Class.Name} does not support '{op}'");
-
-        // Arithmetic ops
-        public TrObject __add__(TrObject a)
-        {
-            throw unsupported_op(this, "+");
-        }
-        public TrObject __sub__(TrObject a)
-        {
-            throw unsupported_op(this, "-");
-        }
-
-        public TrObject __mul__(TrObject a)
-        {
-            throw unsupported_op(this, "*");
-        }
-
-        public TrObject __matmul__(TrObject a)
-        {
-            throw unsupported_op(this, "@");
-        }
-
-        public TrObject __floordiv__(TrObject a)
-        {
-            throw unsupported_op(this, "//");
-        }
-
-        public TrObject __truediv__(TrObject a)
-        {
-            throw unsupported_op(this, "/");
-        }
-
-        public TrObject __mod__(TrObject a)
-        {
-            throw unsupported_op(this, "%");
-        }
-
-        public TrObject __pow__(TrObject a)
-        {
-            throw unsupported_op(this, "**");
-        }
-
-        // Bitwise logic operations
-
-        public TrObject __bitand__(TrObject a)
-        {
-            throw unsupported_op(this, "&");
-        }
-
-        public TrObject __bitor__(TrObject a)
-        {
-            throw unsupported_op(this, "|");
-        }
-
-        public TrObject __bitxor__(TrObject a)
-        {
-            throw unsupported_op(this, "^");
-        }
-
-        // bit shift
-        public TrObject __lshift__(TrObject a)
-        {
-            throw unsupported_op(this, "<<");
-        }
-
-        public TrObject __rshift__(TrObject a)
-        {
-            throw unsupported_op(this, ">>");
-        }
-
-        // Object protocol
-        public int __hash__() => Native.GetHashCode();
-        public TrObject Call(params TrObject[] objs)
-        {
-            var xs = new BList<TrObject>();
-            foreach (var e in objs)
-            {
-                xs.Add(e);
-            }
-            return __call__(xs, null);
-        }
-
-        public TrObject Call()
-        {
-            var xs = new BList<TrObject>();
-            return __call__(xs, null);
-        }
-
-        public TrObject Call(TrObject a1)
-        {
-            var xs = new BList<TrObject> { a1 };
-            return __call__(xs, null);
-        }
-
-        public TrObject Call(TrObject a1, TrObject a2)
-        {
-            var xs = new BList<TrObject> { a1, a2 };
-            return __call__(xs, null);
-        }
-
-        public TrObject Call(TrObject a1, TrObject a2, TrObject a3)
-        {
-            var xs = new BList<TrObject> { a1, a2, a3 };
-            return __call__(xs, null);
-        }
-
-        public TrObject Call(TrObject a1, TrObject a2, TrObject a3, TrObject a4)
-        {
-            var xs = new BList<TrObject> { a1, a2, a3, a4 };
-            return __call__(xs, null);
-        }
-
-
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            throw unsupported_op(this, "__call__");
-        }
-
-        public bool __contains__(TrObject a)
-        {
-            throw unsupported_op(this, "__contains__");
-        }
-
-        public TrObject __getitem__(TrObject item)
-        {
-            throw unsupported_op(this, "__getitem__");
-        }
-
-        public void __setitem__(TrObject item, TrObject value)
-        {
-            throw unsupported_op(this, "__getitem__");
-        }
-
-        public TrObject __getattr__(TrObject s)
-        {
-            if (this.__dict__ != null)
-            {
-                TrObject o = RTS.baredict_get_noerror(__dict__, s);
-                if (o != null)
-                    return o;
-            }
-            Dictionary<TrObject, TrObject> MAGIC_METHODS = this.Class.MAGIC_METHOD_GETTERS;
-            if (MAGIC_METHODS.TryGetValue(s, out var getter))
-            {
-                return TrSharpMethod.BindOrUnwrap(getter, this);
-            }
-            if (this.Class.__base.Length != 0)
-            {
-                var bases = this.Class.__base;
-                for(int i = 0; i < bases.Length; i++)
-                {
-                    var get = bases[i].__getattr__(s);
-                    if (get != null)
-                        return TrSharpMethod.BindOrUnwrap(get, this);
-                }
-            }
-            return null;
-        }
-
-        public void __setattr__(TrObject s, TrObject value)
-        {
-            if (this.__dict__ != null)
-            {
-                RTS.baredict_set(__dict__, s, value);
-                return;
-            }
-            throw new AttributeError($"cannot set attribute {s.__repr__()}.");
-        }
-
-        public IEnumerator<TrObject> __iter__()
-        {
-            throw unsupported_op(this, "__iter__");
-        }
-
-        public TrObject __len__()
-        {
-            throw unsupported_op(this, "__len__");
-        }
-
-        // Comparators
-        public bool __eq__(TrObject o)
-        {
-            return Object.ReferenceEquals(o.Native, this.Native);
-        }
-
-        public bool __lt__(TrObject o)
-        {
-            throw unsupported_op(this, "<");
-        }
-
-        public bool __le__(TrObject o)
-        {
-            return __lt__(o) || __eq__(o);
-        }
-
-        // Unary ops
-        public TrObject __neg__()
-        {
-            throw unsupported_op(this, "__neg__");
-        }
-
-        public TrObject __inv__()
-        {
-            throw unsupported_op(this, "__inv__");
-        }
-
-        public TrObject __pos__()
-        {
-            throw unsupported_op(this, "__pos__");
-        }
-
-        public bool __bool__() => true;
-    }
-
-    public class TrUserObject : TrObject
-    {
-        public Dictionary<TrObject, TrObject> innerDict = RTS.baredict_create();
-        public object Native => this;
-        public TrClass Class { get; }
-        public Dictionary<TrObject, TrObject> __dict__ => innerDict;
-        public string __str__() => Class.__str(this);
-        public string __repr__() => Class.__repr(this);
-        public TrObject __next__() => Class.__next(this);
-        // Arithmetic ops
-        public TrObject __add__(TrObject a) => Class.__add(this, a);
-        public TrObject __sub__(TrObject a) => Class.__sub(this, a);
-
-        public TrObject __mul__(TrObject a) => Class.__mul(this, a);
-        public TrObject __floordiv__(TrObject a) => Class.__floordiv(this, a);
-        public TrObject __truediv__(TrObject a) => Class.__truediv(this, a);
-
-        public TrObject __mod__(TrObject a) => Class.__mod(this, a);
-
-        public TrObject __pow__(TrObject a) => Class.__pow(this, a);
-        // Bitwise logic operations
-
-        public TrObject __bitand__(TrObject a) => Class.__bitand(this, a);
-
-        public TrObject __bitor__(TrObject a) => Class.__bitor(this, a);
-
-
-        public TrObject __bitxor__(TrObject a) => Class.__bitxor(this, a);
-
-
-        // bit shift
-        public TrObject __lshift__(TrObject a) => Class.__lshift(this, a);
-
-        public TrObject __rshift__(TrObject a) => Class.__rshift(this, a);
-
-
-        // Object protocol
-
-        public int __hash__() => Class.__hash(this);
-
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) =>
-            Class.__call(this, args, kwargs);
-
-        public bool __contains__(TrObject a) => Class.__contains(this, a);
-
-        public IEnumerator<TrObject> __iter__() => Class.__iter(this);
-        public TrObject __len__() => Class.__len(this);
-        // Comparators
-        public bool __eq__(TrObject o) => Class.__eq(this, o);
-
-        public bool __lt__(TrObject o) => Class.__lt(this, o);
-        // Unary ops
-        public TrObject __neg__() => Class.__neg(this);
-
-        public TrObject __inv__() => Class.__inv(this);
-        public TrObject __pos__() => Class.__pos(this);
-        public bool __bool__() => Class.__bool(this);
-    }
     public class TrClass : TrObject
     {
         public static TrClass MetaClass = null;
-        public static TrClass IntClass = null;
-        public static TrClass FloatClass = null;
-        public static TrClass StrClass = null;
-        public static TrClass BoolClass = null;
-        public static TrClass TupleClass = null;
-        public static TrClass NoneClass = null;
-        public static TrClass ListClass = null;
-        public static TrClass SetClass = null;
-        public static TrClass DictClass = null;
-        public static TrClass FuncClass = null;
-        public static TrClass BuiltinFuncClass = null;
-        public static TrClass BuiltinMethodClass = null;
-        public static TrClass SliceClass = null;
-
-        public static TrClass GeneratorClass = null;
         public bool Fixed = false;
 
         internal Dictionary<TrObject, TrObject> MAGIC_METHOD_GETTERS = RTS.baredict_create();
@@ -342,76 +36,11 @@ namespace Traffy
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            MetaClass = _FromPrototype<TrClass>();
+            MetaClass = FromPrototype<TrClass>();
             MetaClass.Class = MetaClass;
             MetaClass.__call = typecall;
             MetaClass.Name = "type";
             MetaClass.SetupClass();
-
-            GeneratorClass = _FromPrototype<TraffyCoroutine>();
-            GeneratorClass.Name = "generator";
-            GeneratorClass.__new = TraffyCoroutine.datanew;
-            GeneratorClass.SetupClass();
-
-            SliceClass = _FromPrototype<TrSlice>();
-            SliceClass.Name = "slice";
-            SliceClass.__new = TrSlice.datanew;
-            SliceClass.SetupClass();
-
-            IntClass = _FromPrototype<TrInt>();
-            IntClass.Name = "int";
-            IntClass.__new = TrInt.datanew;
-            IntClass.SetupClass();
-
-            FloatClass = _FromPrototype<TrFloat>();
-            FloatClass.Name = "float";
-            FloatClass.__new = TrFloat.datanew;
-            FloatClass.SetupClass();
-
-            BoolClass = _FromPrototype<TrBool>();
-            BoolClass.Name = "bool";
-            BoolClass.__new = TrBool.datanew;
-            BoolClass.SetupClass();
-
-            StrClass = _FromPrototype<TrStr>();
-            StrClass.Name = "str";
-            StrClass.__new = TrStr.datanew;
-            StrClass.SetupClass();
-
-            NoneClass = _FromPrototype<TrNone>();
-            NoneClass.Name = "NoneType";
-            NoneClass.__new = TrNone.datanew;
-            NoneClass.SetupClass();
-
-            TupleClass = _FromPrototype<TrTuple>();
-            TupleClass.Name = "tuple";
-            TupleClass.__new = TrTuple.datanew;
-            TupleClass.SetupClass();
-
-            ListClass = _FromPrototype<TrList>();
-            ListClass.Name = "list";
-            ListClass.__new = TrList.datanew;
-            ListClass.SetupClass();
-
-            SetClass = _FromPrototype<TrSet>();
-            SetClass.Name = "set";
-            SetClass.__new = TrSet.datanew;
-            SetClass.SetupClass();
-
-            DictClass = _FromPrototype<TrDict>();
-            DictClass.Name = "dict";
-            DictClass.__new = TrDict.datanew;
-            DictClass.SetupClass();
-
-            BuiltinFuncClass = _FromPrototype<TrSharpFunc>();
-            BuiltinFuncClass.Name = "builtin_function";
-            BuiltinFuncClass.__new = TrSharpFunc.datanew;
-            BuiltinFuncClass.SetupClass();
-
-            BuiltinMethodClass = _FromPrototype<TrSharpMethod>();
-            BuiltinMethodClass.Name = "method";
-            BuiltinMethodClass.__new = TrSharpMethod.datanew;
-            BuiltinMethodClass.SetupClass();
         }
 
         Dictionary<TrObject, TrObject> innerDict = RTS.baredict_create();
@@ -452,7 +81,7 @@ namespace Traffy
                 var name = (TrStr)args[1];
                 var bases = (TrTuple)args[2];
                 var ns = (TrDict)args[3];
-                var newCls = _FromPrototype<TrObject>();
+                var newCls = FromPrototype<TrObject>();
                 RTS.init_class(cls, newCls, name, bases, ns);
                 return newCls;
             }
@@ -547,7 +176,7 @@ namespace Traffy
             throw new AttributeError($"cannot set attribute {s.__repr__()}.");
         }
 
-        static TrClass _FromPrototype<T>() where T : TrObject
+        internal static TrClass FromPrototype<T>() where T : TrObject
         {
             // XXX: builtin types cannot be inherited, or methods report incompatible errors
             var cls = new TrClass

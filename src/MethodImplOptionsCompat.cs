@@ -4,8 +4,8 @@ public static class MethodImplOptionsCompat
 {
     public const MethodImplOptions AggressiveInlining = MethodImplOptions.AggressiveInlining;
 #if NUNITY
-    public const MethodImplOptions AggressiveOptimization = MethodImplOptions.AggressiveOptimization;
+    public const MethodImplOptions Best = MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining;
 #else
-    public const  MethodImplOptions AggressiveOptimization = MethodImplOptions.AggressiveInlining;
+    public const  MethodImplOptions Best = MethodImplOptions.AggressiveInlining;
 #endif
 }

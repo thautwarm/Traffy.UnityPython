@@ -102,7 +102,7 @@ class Transpiler:
         self.stmt_transpiler = TranspileStmt(self)
 
         self.flag = 0
-        self.positions: list[ir.PosRecord] = []
+        self.positions: list[ir.Position] = []
 
         self.posargcount = 0 # count of non-variadic positional args
         self.allargcount = 0

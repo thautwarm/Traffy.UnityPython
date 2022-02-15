@@ -114,6 +114,10 @@ namespace SimpleJSON
             {
                 return ret;
             }
+            if (typeobject.GetCustomAttribute<SerializableAttribute>() == null)
+            {
+                throw new InvalidCastException($"cannot deserialize {typeobject}: not marked as [Serializable].");
+            }
             ret = ScanSetters_impl(typeobject);
             deserializationActions[typeobject] = ret;
             return ret;

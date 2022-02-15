@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Traffy.Objects;
 
-namespace Traffy.IR
+namespace Traffy.Asm
 {
     using binary_func = Func<TrObject, TrObject, TrObject>;
     using unary_func = Func<TrObject, TrObject>;
@@ -778,66 +779,66 @@ namespace Traffy.IR
         }
     }
 
-    [Serializable]
-    public class Call : TraffyAsm
-    {
-        public bool hasCont { get; set; }
-        public TraffyAsm func;
-        public TraffyAsm[] args;
+    // [Serializable]
+    // public class Call : TraffyAsm
+    // {
+    //     public bool hasCont { get; set; }
+    //     public TraffyAsm func;
+    //     public TraffyAsm[] args;
 
-        public TrObject exec(Frame frame)
-        {
-            var rt_func = func.exec(frame);
-            var rt_args = new BList<TrObject>();
-            for (int i = 0; i < args.Length; i++)
-            {
-                rt_args.Add(args[i].exec(frame));
-            }
-            return RTS.object_call(rt_func, rt_args);
-        }
+    //     public TrObject exec(Frame frame)
+    //     {
+    //         var rt_func = func.exec(frame);
+    //         var rt_args = new BList<TrObject>();
+    //         for (int i = 0; i < args.Length; i++)
+    //         {
+    //             rt_args.Add(args[i].exec(frame));
+    //         }
+    //         return RTS.object_call(rt_func, rt_args);
+    //     }
 
-        public TraffyCoroutine cont(Frame frame)
-        {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                TrObject rt_func;
-                if (func.hasCont)
-                {
-                    var cont = func.cont(frame);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                    rt_func = cont.Result;
-                }
-                else
-                {
-                    rt_func = func.exec(frame);
-                }
+    //     public TraffyCoroutine cont(Frame frame)
+    //     {
+    //         IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+    //         {
+    //             TrObject rt_func;
+    //             if (func.hasCont)
+    //             {
+    //                 var cont = func.cont(frame);
+    //                 while (cont.MoveNext(coro.Sent))
+    //                     yield return cont.Current;
+    //                 rt_func = cont.Result;
+    //             }
+    //             else
+    //             {
+    //                 rt_func = func.exec(frame);
+    //             }
 
-                var rt_args = new BList<TrObject>();
-                for (int i = 0; i < args.Length; i++)
-                {
-                    TrObject rt_arg;
-                    var arg = args[i];
-                    if (arg.hasCont)
-                    {
-                        var cont = arg.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_arg = cont.Result;
-                    }
-                    else
-                    {
-                        rt_arg = arg.exec(frame);
-                    }
-                    rt_args.Add(rt_arg);
-                }
-                coro.Result = RTS.object_call(rt_func, rt_args);
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
-        }
-    }
+    //             var rt_args = new BList<TrObject>();
+    //             for (int i = 0; i < args.Length; i++)
+    //             {
+    //                 TrObject rt_arg;
+    //                 var arg = args[i];
+    //                 if (arg.hasCont)
+    //                 {
+    //                     var cont = arg.cont(frame);
+    //                     while (cont.MoveNext(coro.Sent))
+    //                         yield return cont.Current;
+    //                     rt_arg = cont.Result;
+    //                 }
+    //                 else
+    //                 {
+    //                     rt_arg = arg.exec(frame);
+    //                 }
+    //                 rt_args.Add(rt_arg);
+    //             }
+    //             coro.Result = RTS.object_call(rt_func, rt_args);
+    //         }
+    //         var coro = new TraffyCoroutine();
+    //         coro.generator = mkCont(frame, coro);
+    //         return coro;
+    //     }
+    // }
 
     [Serializable]
     public class LocalVar : TraffyAsm

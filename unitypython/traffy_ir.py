@@ -358,13 +358,8 @@ class Position(TypedDict):
     col: int
 
 
-class PosRecord(TypedDict):
-    offset: int
-    pos: Position
-
-
 class Metadata(TypedDict):
-    positions: list[PosRecord]
+    positions: list[Position]
     localnames: list[str]
     freenames: list[str]
     codename: str

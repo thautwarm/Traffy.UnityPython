@@ -1,5 +1,5 @@
 using System;
-namespace Traffy
+namespace Traffy.Objects
 {
     public class NameError: Exception
     {

@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using Traffy.Objects;
 
-namespace Traffy.IR
+namespace Traffy.Asm
 {
     using binary_func = Func<TrObject, TrObject, TrObject>;
-    using unary_func = Func<TrObject, TrObject>;
-    using cmp_func = Func<TrObject, TrObject, TrObject>;
 
     [Serializable]
     public class Expr: TraffyAsm

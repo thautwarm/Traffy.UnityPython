@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Traffy.Objects;
+
 namespace Traffy
 {
 
@@ -358,7 +360,6 @@ namespace Traffy
         internal static TrObject object_from_int(Int64 v) => MK.Int(v);
 
         internal static TrObject object_from_float(float v) => MK.Float(v);
-
         internal static TrObject object_none => TrNone.Unique;
 
         internal static TrObject object_from_string(string result) => MK.Str(result);
