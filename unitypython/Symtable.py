@@ -1,8 +1,5 @@
 from __future__ import annotations
 from dataclasses import dataclass
-
-from pyparsing import Or
-
 from .Collections import OrderedDict, OrderedSet
 
 class ConflictNonlocal(Exception):

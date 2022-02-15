@@ -3,10 +3,7 @@ from ast import *
 from asyncio import constants
 from operator import le
 from re import A
-from tkinter.messagebox import YESNOCANCEL
 import typing
-
-from numpy import var
 from unitypython.Collections import OrderedSet, OrderedDict
 from . import Structures as S
 from .Symtable import Symtable, ConciseSymtable
