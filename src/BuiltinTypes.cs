@@ -9,7 +9,7 @@ namespace Traffy
         public TrObject low;
         public TrObject high;
         public TrObject step;
-        public TrClass Class => TrClass.NotImplementedClass;
+        public TrClass Class => TrClass.SliceClass;
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             RTS.arg_check_positional_range(args, 1, 4);
@@ -31,27 +31,6 @@ namespace Traffy
                 return new TrSlice { low = args[1], high = args[2], step = args[3] };
             }
             throw new TypeError($"invalid invocation of {args[0].AsClass.Name}");
-        }
-    }
-    public class TrNotImplemented : TrObject
-    {
-        public Dictionary<TrObject, TrObject> __dict__ => null;
-
-        public static TrNotImplemented Unique = new TrNotImplemented();
-        public static bool unique_set = false;
-        private TrNotImplemented()
-        {
-            if (unique_set)
-                throw new InvalidOperationException("recreate singleton");
-            unique_set = true;
-        }
-
-        public TrClass Class => TrClass.NotImplementedClass;
-
-        public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            TrObject clsobj = args[0];
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
     }
 
@@ -90,9 +69,13 @@ namespace Traffy
             return Bind(args[1], args[2]);
         }
     }
+
     public class TrSharpFunc: TrObject
     {
+        public string __repr__() => $"<function {name}>";
         public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
+
+        public string name;
 
         public Dictionary<TrObject, TrObject> __dict__ => null;
 
@@ -111,67 +94,68 @@ namespace Traffy
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
 
-        private TrSharpFunc(Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
+        private TrSharpFunc(string name, Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
             this.func = func;
+            this.name = name;
         }
 
-        public static TrSharpFunc FromFunc(Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
-            return new TrSharpFunc(func);
+            return new TrSharpFunc(name, func);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 0);
                 return func();
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
                 return func(args[0]);
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, TrObject, TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 2);
                 return func(args[0], args[1]);
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, TrObject, TrObject, TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject, TrObject> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 3);
                 return func(args[0], args[1], args[2]);
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, TrObject, TrObject, TrObject, TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject, TrObject, TrObject> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 4);
                 return func(args[0], args[1], args[2], args[3]);
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
              TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -181,9 +165,9 @@ namespace Traffy
                 args.AddLeft(self);
                 return o;
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
-        public static TrSharpFunc FromFunc(Func<TrObject, string> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, string> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -191,10 +175,10 @@ namespace Traffy
                 return MK.Str(func(args[0]));
 
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, int> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, int> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -202,10 +186,10 @@ namespace Traffy
                 return MK.Int(func(args[0]));
 
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, bool> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, bool> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -213,10 +197,10 @@ namespace Traffy
                 return MK.Bool(func(args[0]));
 
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, IEnumerator<TrObject>> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, IEnumerator<TrObject>> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -224,9 +208,9 @@ namespace Traffy
                 return RTS.coroutine_of_iter(func(args[0]));
 
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
-        public static TrSharpFunc FromFunc(Action<TrObject, TrObject, TrObject> func)
+        public static TrSharpFunc FromFunc(string name, Action<TrObject, TrObject, TrObject> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -235,10 +219,10 @@ namespace Traffy
                 return RTS.object_none;
 
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
 
-        public static TrSharpFunc FromFunc(Func<TrObject, TrObject, bool> func)
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, bool> func)
         {
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -246,7 +230,7 @@ namespace Traffy
                 return MK.Bool(func(args[0], args[1]));
 
             }
-            return new TrSharpFunc(call);
+            return new TrSharpFunc(name, call);
         }
     }
 }
