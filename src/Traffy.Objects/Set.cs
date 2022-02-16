@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Traffy.Objects
 {
-    public partial class TrSet: TrObject
+    public partial class TrSet : TrObject
     {
         public HashSet<TrObject> container;
 
@@ -13,9 +13,15 @@ namespace Traffy.Objects
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrSet>();
+            CLASS = TrClass.FromPrototype("set");
             CLASS.Name = "set";
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
             CLASS.__new = TrSet.datanew;
+        }
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

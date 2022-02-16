@@ -1,0 +1,541 @@
+class DefaultArgEntry:
+    slot: int
+    value: asm
+
+class SequenceElement:
+    unpack: bool
+    value: asm
+
+class DictEntry:
+    key: asm | None
+    value: asm
+
+class IfClause:
+    cond: asm
+    body: asm
+
+class Handler:
+    exc_type: Optional[asm]
+    exc_bind: Optional[asm]
+    body: asm
+
+
+class BoolAnd2(asm):
+    left: asm
+    right: asm
+
+    def eval():
+        l = eval(left)
+        if not RTS.object_bool(l):
+            return l
+        return eval(right)
+
+class BoolOr2(asm):
+    left: asm
+    right: asm
+
+    def eval():
+        l = eval(left)
+        if RTS.object_bool(l):
+            return l
+        return eval(right)
+
+class BoolAnd(asm):
+    left: asm
+    comparators: array[asm]
+
+    def eval():
+        l = eval(left)
+        if not RTS.object_bool(l):
+            return l
+        for right in comparators:
+            l = eval(right)
+            if not RTS.object_bool(l):
+                break
+        return l
+
+class BoolOr(asm):
+
+    left: asm
+    comparators: array[asm]
+
+    def eval():
+        l = eval(left)
+        if RTS.object_bool(l):
+            return l
+        for right in comparators:
+            l = eval(right)
+            if RTS.object_bool(l):
+                break
+        return l
+
+class NamedExpr(asm):
+    lhs: lhs
+    expr: asm
+    def eval():
+        e = eval(expr)
+        exec(lhs, e)
+        return e
+
+@partial
+class CmpOp(asm):
+    op: int
+    left: asm
+    comparators: array[asm]
+    def eval():
+        l = eval(left)
+        res = RTS.object_none
+        for operand in comparators:
+            r = eval(operand)
+            res = opfunc(l, r)
+            if RTS.object_bool(res):
+                l = r
+                continue
+            break
+        return res
+
+@partial
+class BinOp(asm):
+    op: int
+    left: asm
+    right: asm
+
+    def eval():
+        l = eval(left)
+        r = eval(right)
+        return opfunc(l, r)
+
+
+@partial
+class UnaryOp(asm):
+    op: int
+    operand: asm
+    def eval():
+        o = eval(operand)
+        return opfunc(o)
+
+@partial
+class Lambda(asm):
+    fptr: TrFuncPointer
+    default_args: array[DefaultArgEntry]
+    freeslots: array[int]
+
+    def eval():
+        freevars : array[Variable]
+        if freeslots.Length != 0:
+            freevars = new(array[Variable][freeslots.Length])
+            for i in range(freevars.Length):
+                freevars[i] = frame.load_reference(freeslots[i])
+        else:
+            freeslots = empty_freevars
+        rt_default_args: array[tuple[int, TrObject]]
+        if default_args.Length != 0:
+            rt_default_args = new(array[tuple[int, TrObject]][default_args.Length])
+            for i in range(rt_default_args.Length):
+                rt_default_args[i] = (default_args[i].slot, eval(default_args[i].value))
+        else:
+            rt_default_args = empty_default_args
+        return new(TrFunc,
+            freevars=freevars,
+            globals=frame.func.globals,
+            default_args=rt_default_args,
+            fptr=fptr)
+
+class CallEx(asm):
+    func: asm
+    args: array[SequenceElement]
+    kwargs: array[tuple[TrObject, asm]]
+    def eval():
+        rt_func = eval(func)
+        rt_args = new(BList[TrObject], [])
+        for i in range(args.Length):
+            (unpack, elt) = args[i]
+            rt_elt = eval(elt)
+            if unpack:
+                itr = RTS.object_getiter(rt_elt)
+                while itr.MoveNext():
+                    rt_arg.Add(itr.Current)
+            else:
+                rt_arg.Add(rt_elt)
+        rt_kwargs: Dictionary[TrObject, TrObject] = null
+        if kwargs != 0:
+            rt_kwargs = RTS.baredict_create()
+            for (key, value) in kwargs:
+                rt_value = eval(value)
+                if key == null:
+                    RTS.baredict_extend(rt_kwargs, rt_value)
+                else:
+                    RTS.baredict_add(rt_kwargs, rt_value)
+        return RTS.object_call_ex(rt_func, rt_arg, rt_kwargs)
+
+@nocont
+class LocalVar(asm):
+    slot: int
+
+    def eval():
+        return frame.load_local(slot)
+
+@nocont
+class GlobalVar(asm):
+    name: TrObject
+
+    def eval():
+        return frame.load_global(name)
+
+
+@nocont
+@nodebug
+class Constant(asm):
+    o: TrObject
+    def eval():
+        return o
+
+
+class Dict(asm):
+    entries: array[DictEntry]
+    def eval():
+        dict = RTS.baredict_create()
+        for i in range(entries.Length):
+            entry = entries[i]
+            if entry.key == null:
+                map = eval(entry.value)
+                RTS.baredict_extend(dict, map)
+            else:
+                rt_key = eval(entry.key)
+                rt_value = eval(entry.value)
+                RTS.baredict_add(dict, rt_key, rt_value);
+        return RTS.object_from_baredict(dict);
+
+class List(asm):
+    elements: array[SequenceElement]
+
+    def eval():
+        lst = RTS.barelist_create()
+        for i in range(elements.Length):
+            elt = elements[i]
+            rt_each = eval(elt.value)
+            if (elt.unpack):
+                RTS.barelist_extend(lst, rt_each)
+            else:
+                RTS.barelist_add(lst, rt_each)
+        return RTS.object_from_barelist(lst)
+
+class Tuple(asm):
+    elements: array[SequenceElement]
+
+    def eval():
+        lst = RTS.barelist_create()
+        for i in range(elements.Length):
+            elt = elements[i]
+            rt_each = eval(elt.value)
+            if (elt.unpack):
+                RTS.barelist_extend(lst, rt_each)
+            else:
+                RTS.barelist_add(lst, rt_each)
+        return RTS.object_from_barearray(lst.ToArray())
+
+class Set(asm):
+    elements: array[SequenceElement]
+
+    def eval():
+        lst = RTS.bareset_create()
+        for i in range(elements.Length):
+            elt = elements[i]
+            rt_each = eval(elt.value)
+            if (elt.unpack):
+                RTS.bareset_extend(lst, rt_each)
+            else:
+                RTS.bareset_add(lst, rt_each)
+        return RTS.object_from_barearray(lst.ToArray())
+
+
+class Attribute(asm):
+    value: asm
+    attr: TrObject
+
+    def eval():
+        rt_value = eval(value)
+        return RTS.object_getattr(rt_value, attr)
+
+class Subscript(asm):
+    value: asm
+    item: asm
+
+    def eval():
+        rt_value = eval(value)
+        rt_item = eval(item)
+        return RTS.object_getitem(rt_value, rt_item)
+
+@cont
+class Yield(asm):
+    value: asm
+
+    def eval():
+        rt_value = eval(value)
+        yield rt_value
+        coro.Result = coro.Sent
+
+@cont
+class YieldFrom:
+    value: asm
+
+    def eval():
+        rt_value = eval(value)
+        co = RTS.coroutine_of_object(rt_value)
+        while co.MoveNext(coro.Sent):
+            yield co.Current
+        return co.Result
+
+class MultiAssign(lhs):
+    targets: array[lhs]
+
+    def exec(o: TrObject):
+        for lhs in targets:
+            exec(lhs, o)
+        return
+
+
+class StoreListEx(lhs):
+
+    before: array[lhs]
+    unpack: lhs
+    after: array[lhs]
+
+    def exec(o: TrObject):
+        itr: list[TrObject] = RTS.object_as_list(o);
+        left = itr.Count - before.Length - after.Length
+        if itr.Count < 0:
+            raise RTS.exc_unpack_notenough(itr.Count, before.Length + after.Length)
+        for i in range(before.Length):
+            exec(before[i], itr[i])
+
+        i = itr.Count - after.Length
+        for j in range(after.Length):
+            exec(after[j], itr[i])
+            i += 1
+
+        itr = itr.GetRange(before.Length, left)
+        o = RTS.object_from_list(itr)
+        exec(unpack, o)
+        return
+
+class StoreList(lhs):
+    elts: array[lhs]
+
+    def exec(o: TrObject):
+        itr = RTS.object_getiter(o)
+        for i in range(elts.Length):
+            elt = elts[i]
+            if not itr.MoveNext():
+                raise RTS.exc_unpack_notenough(i, elts.Length)
+            exec(elt, itr.Current);
+        if itr.MoveNext():
+            raise RTS.exc_unpack_toomuch(elts.Length)
+        return
+
+@nocont
+class StoreLocal(lhs):
+    slot: int
+    def exec(o: TrObject):
+        frame.store_local(slot, o)
+        return
+
+    def execOp(op: binary_func, asm: asm):
+        o = eval(asm)
+        local = frame.load_local(slot)
+        local = op(local, o)
+        frame.store_local(slot, local)
+        return
+
+@nocont
+def StoreGlobal(lhs):
+    name: TrObject
+    def exec(o: TrObject):
+        frame.store_global(name, o)
+        return
+
+    def execOp(op: binary_func, asm: asm):
+        o = eval(asm)
+        global_ = frame.load_global(name)
+        global_ = op(global_, o)
+        frame.store_global(name, global_)
+        return
+
+class StoreItem(lhs):
+    value: asm
+    item: asm
+
+    def exec(o: TrObject):
+        rt_value = eval(value)
+        rt_item = eval(item)
+        RTS.object_setitem(rt_value, rt_item, o)
+        return
+
+    def execOp(op: binary_func, asm: asm):
+        rt_value = eval(value)
+        rt_item = eval(item)
+        res = RTS.object_getitem(rt_value, rt_item)
+        rt_operand = eval(asm)
+        res = op(res, rt_operand)
+        RTS.object_setitem(rt_value, rt_item, res)
+        return
+
+class StoreAttr(lhs):
+    value: asm
+    attr: TrObject
+
+    def exec(o: TrObject):
+        rt_value = eval(value)
+        RTS.object_getattr(rt_value, attr, o)
+        return
+
+    def execOp(op: binary_func, asm: asm):
+        rt_value = eval(value)
+        rt_item = eval(item)
+        res = RTS.object_getattr(rt_value, rt_item)
+        rt_operand = eval(asm)
+        res = op(res, rt_operand)
+        RTS.object_setattr(rt_value, attr, res)
+        return
+
+class Block(asm):
+    suite: array[asm]
+
+    def eval():
+        for i in range(suite):
+            eval(suite[i])
+            if frame.CONT != STATUS.NORMAL:
+                break
+        return RTS.object_none
+
+
+@partial
+class AugAssign(asm):
+    op: int
+    lhs: lhs
+    rhs: asm
+
+    def eval():
+        execOp(lhs, binary_func, eval(rhs))
+        return RTS.object_none
+
+@partial
+class Assign(asm):
+    lhs: lhs
+    rhs: asm
+
+    def eval():
+        exec(lhs, eval(rhs))
+        return RTS.object_none
+
+class Return(asm):
+    value: asm
+
+    def eval():
+        rt_value = eval(value)
+        frame.CONT = STATUS.RETURN
+        frame.retval = rt_value
+        return RTS.object_none
+
+class While(asm):
+    test: asm
+    body: asm
+    orelse: Optional[asm]
+
+    def eval():
+        while True:
+            rt_test = eval(test)
+            if not RTS.object_bool(rt_test):
+                break
+            rt_body = eval(body)
+
+            if frame.CONT == STATUS.NORMAL:
+                continue
+            elif frame.CONT == STATUS.CONTINUE:
+                frame.CONT = STATUS.NORMAL
+                continue
+            break
+        if orelse != null and frame.CONT == STATUS.NORMAL:
+            eval(orelse)
+        elif frame.CONT == STATUS.BREAK:
+            frame.CONT = STATUS.NORMAL
+        return RTS.object_none;
+
+
+class ForIn(asm):
+    target: lhs
+    itr: asm
+    body: asm
+    orelse: Optional[asm]
+
+    def eval():
+        rt_itr = eval(itr)
+        enumerator = RTS.object_getiter(rt_itr)
+        while enumerator.MoveNext():
+            each = enumerator.Current
+            exec(target, each)
+            rt_body = eval(body)
+            if frame.CONT == STATUS.NORMAL:
+                continue
+            elif frame.CONT == STATUS.CONTINUE:
+                frame.CONT = STATUS.NORMAL
+                continue
+            break
+        if orelse != null and frame.CONT == STATUS.NORMAL:
+            eval(orelse)
+        elif frame.CONT == STATUS.BREAK:
+            frame.CONT = STATUS.NORMAL
+        return RTS.object_none;
+
+
+
+class IfThenElse(asm):
+    clauses: array[IfClause]
+    orelse: Optional[asm]
+
+    def eval():
+        for i in range(clauses.Length):
+            rt_cond = eval(clauses[i].cond)
+            if RTS.object_bool(rt_cond):
+                body = eval(clauses[i].body)
+                return RTS.object_none
+
+        if orelse != null:
+            eval(orelse)
+        return RTS.object_none
+
+@nocont
+class Continue(asm):
+    def eval():
+        frame.CONT = STATUS.CONTINUE
+        return RTS.object_none
+
+@nocont
+class Break(asm):
+    def eval():
+        frame.CONT = STATUS.BREAK
+        return RTS.object_none
+
+@partial
+class Try(asm):
+    body: asm
+    handlers: array[Handler]
+
+    orelse: Optional[asm]
+    final: Optional[asm]
+    # implement manually
+
+
+class Raise(asm):
+    exc: Optional[asm]
+
+    def eval():
+        e: Exception
+        if exc != null:
+            rt_exc = eval(exc)
+            e = RTS.exc_tobare(rt_exc)
+            raise e
+        e = frame.get_exception()
+        if e == null:
+            raise frame.exc_notset()
+        raise e

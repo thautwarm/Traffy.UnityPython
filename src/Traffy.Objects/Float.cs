@@ -33,15 +33,21 @@ namespace Traffy.Objects
                         throw new InvalidCastException($"cannot cast {arg.Class.Name} objects to {clsobj.AsClass.Name}");
                 }
             }
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
+            throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrFloat>();
+            CLASS = TrClass.FromPrototype("float");
             CLASS.Name = "float";
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
             CLASS.__new = TrFloat.datanew;
+        }
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

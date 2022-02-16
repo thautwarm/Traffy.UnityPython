@@ -160,13 +160,9 @@ namespace Traffy
             return MK.Bool(object.ReferenceEquals(arg1, arg2));
         }
 
-        internal static TrObject baredict_get_noerror(Dictionary<TrObject, TrObject> dict__, TrObject s)
+        internal static bool baredict_get_noerror(Dictionary<TrObject, TrObject> dict__, TrObject s, out TrObject found)
         {
-            if (dict__.TryGetValue(s, out var value))
-            {
-                return value;
-            }
-            return null;
+            return dict__.TryGetValue(s, out found);
         }
 
         internal static void baredict_set(Dictionary<TrObject, TrObject> dict__, TrObject s, TrObject value)
@@ -299,7 +295,9 @@ namespace Traffy
 
         internal static TrObject object_getitem(TrObject tos, TrObject item)
         {
-            return tos.__getitem__(item);
+            if (tos.__getitem__(item, out var found))
+                return found;
+            throw new KeyError(item);
         }
 
         internal static void object_setitem(TrObject tos, TrObject item, TrObject value)
@@ -314,10 +312,15 @@ namespace Traffy
 
         internal static TrObject object_getattr(TrObject tos, string attr)
         {
-            var o = tos.__getattr__(MK.Str(attr));
-            if (o == null)
-                throw new AttributeError($" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr}'.");
-            return o;
+            return object_getattr(tos, MK.Str(attr));
+        }
+
+        internal static TrObject object_getattr(TrObject tos, TrObject attr)
+        {
+            var o = tos.__getattr__(attr, out var found);
+            if (!o)
+                throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr}'.");
+            return found;
         }
 
         internal static void object_setattr(TrObject tos, string attr, TrObject value)
@@ -573,6 +576,16 @@ namespace Traffy
             return TrNone.Unique;
         }
 
+        internal static TrRef Ref()
+        {
+            return new TrRef { value = null };
+        }
+
+        internal static TrRef Ref(TrObject v)
+        {
+            return new TrRef { value = v };
+        }
+
         internal static TrSet Set()
         {
             return new TrSet { container = RTS.bareset_create() };
@@ -662,6 +675,11 @@ namespace Traffy
         internal static TrObject object_iadd(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
+        }
+
+        internal static TrRawObject RawObject()
+        {
+            return new TrRawObject {};
         }
     }
 }

@@ -16,9 +16,16 @@ namespace Traffy.Objects
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrSharpMethod>();
+            CLASS = TrClass.FromPrototype("method");
             CLASS.Name = "method";
             CLASS.__new = TrSharpMethod.datanew;
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
+        }
+
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

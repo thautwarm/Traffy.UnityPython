@@ -17,9 +17,16 @@ namespace Traffy.Objects
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrNone>();
+            CLASS = TrClass.FromPrototype("NoneType");
             CLASS.Name = "NoneType";
             CLASS.__new = TrNone.datanew;
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
+        }
+
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

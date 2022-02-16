@@ -1,12 +1,15 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Traffy.Objects
 {
-    public partial class TrList: TrObject
+    public partial class TrRef : TrObject
     {
-        public List<TrObject> container;
-
         public Dictionary<TrObject, TrObject> __dict__ => null;
+        public TrObject value;
+
+        public object Native => this;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
@@ -14,14 +17,14 @@ namespace Traffy.Objects
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype("list");
-            CLASS.Name = "list";
+            CLASS = TrClass.FromPrototype("ref");
+            CLASS.Name = "ref";
             CLASS.Fixed = true;
             CLASS.IsSealed = true;
-            CLASS.__new = TrList.datanew;
+            CLASS.__new = TrRef.datanew;
         }
 
-        [InitSetup(InitOrder.SetupClassObjects)]
+                [InitSetup(InitOrder.SetupClassObjects)]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -33,20 +36,11 @@ namespace Traffy.Objects
             TrObject clsobj = args[0];
             var narg = args.Count;
             if (narg == 1)
-                return MK.List();
-            if (narg == 2 && kwargs == null)
-            {
-                return MK.List(RTS.object_to_list(args[1]));
-            }
-            throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
+                return MK.Ref();
+            if (narg == 2)
+                return MK.Ref(args[1]);
+            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
-
-        public IEnumerator<TrObject> __iter__()
-        {
-            return container.GetEnumerator();
-        }
-
-        public TrObject __len__() => MK.Int(container.Count);
     }
 
 }

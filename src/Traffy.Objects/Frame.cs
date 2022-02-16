@@ -157,9 +157,16 @@ namespace Traffy.Objects
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrFunc>();
+            CLASS = TrClass.FromPrototype("function");
             CLASS.Name = "function";
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
             CLASS.__new = TrDict.datanew;
+        }
+
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
         }
 
@@ -292,8 +299,9 @@ namespace Traffy.Objects
         public Variable[] localvars;
         public STATUS CONT;
         public TrObject retval;
+        public Stack<(Postion, string)> callstack;
 
-        public static Frame Make(TrFunc func, Variable[] localvars) => new Frame { func = func, err = null, localvars = localvars, retval = null };
+        public static Frame Make(TrFunc func, Variable[] localvars) => new Frame { func = func, err = null, localvars = localvars, retval = null, callstack = new Stack<(Postion, string)>() };
 
         internal Variable load_reference(int operand)
         {

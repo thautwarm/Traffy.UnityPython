@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using Traffy.Objects;
-
+using Traffy;
 public static partial class JsonExt
 {
     public static T JsonParse<T>(string s)
@@ -214,7 +214,10 @@ public static class Utils
             {
                 return false;
             }
-            else if (seq1[i].__le__(seq2[i]))
+            else if (RTS.object_le(seq1[i], seq2[i]).__bool__())
+            {
+                return true;
+            }
             {
                 return true;
             }
@@ -232,7 +235,7 @@ public static class Utils
             {
                 return false;
             }
-            else if (seq1[i].__le__(seq2[i]))
+            else if (RTS.object_le(seq1[i], seq2[i]).__bool__())
             {
                 return true;
             }

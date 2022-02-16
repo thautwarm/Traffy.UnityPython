@@ -3,6 +3,14 @@ using System.Collections.Generic;
 
 namespace Traffy.Objects
 {
+    public static class TrObjectFromInt
+    {
+        public static TrObject ToTr(this int self) => MK.Int(self);
+
+        public static int AsInt(this TrObject self) => (int)((TrInt)self).value;
+
+        public static int AsIntUnchecked(this TrObject self) => unchecked((int)((TrInt)self).value);
+    }
     [Serializable]
     public partial class TrInt : TrObject
     {
@@ -32,15 +40,22 @@ namespace Traffy.Objects
                         throw new InvalidCastException($"cannot cast {arg.Class.Name} objects to {clsobj.AsClass.Name}");
                 }
             }
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
+            throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrInt>();
+            CLASS = TrClass.FromPrototype("int");
             CLASS.Name = "int";
             CLASS.__new = TrInt.datanew;
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
+        }
+
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

@@ -35,12 +35,19 @@ namespace Traffy.Objects
             throw new TypeError($"invalid invocation of {args[0].AsClass.Name}");
         }
 
-        [InitSetup(InitOrder.InitClassObjects)]
+        [InitSetup(InitOrder.SetupClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrSlice>();
+            CLASS = TrClass.FromPrototype("slice");
             CLASS.Name = "slice";
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
             CLASS.__new = TrSlice.datanew;
+        }
+
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

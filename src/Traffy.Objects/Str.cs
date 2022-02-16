@@ -3,8 +3,17 @@ using System.Collections.Generic;
 
 namespace Traffy.Objects
 {
+    public static class TrObjectFromString
+    {
+        public static TrStr ToTr(this string self) => MK.Str(self);
+
+        public static string AsString(this TrObject self) => ((TrStr)self).value;
+
+        public static bool IsStr(this TrObject self) => self is TrStr;
+    }
+
     [Serializable]
-    public partial class TrStr: TrObject
+    public partial class TrStr : TrObject
     {
         public string value;
 
@@ -13,12 +22,18 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
+        [InitSetup(InitOrder.SetupClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrStr>();
+            CLASS = TrClass.FromPrototype("str");
             CLASS.Name = "str";
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
             CLASS.__new = TrStr.datanew;
+        }
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

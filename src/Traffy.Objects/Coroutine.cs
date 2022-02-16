@@ -67,9 +67,15 @@ namespace Traffy.Objects
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TraffyCoroutine>();
+            CLASS = TrClass.FromPrototype("generator");
             CLASS.Name = "generator";
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
             CLASS.__new = TraffyCoroutine.datanew;
+        }
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }

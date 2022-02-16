@@ -8,6 +8,8 @@ namespace Traffy.Objects
         public string __repr__() => $"<function {name}>";
         public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
 
+        public bool __bool__() => true;
+
         public string name;
 
         public Dictionary<TrObject, TrObject> __dict__ => null;
@@ -18,17 +20,21 @@ namespace Traffy.Objects
         [InitSetup(InitOrder.InitClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrSharpFunc>();
+            CLASS = TrClass.FromPrototype("builtin_function");
             CLASS.Name = "builtin_function";
+            CLASS.Fixed = true;
             CLASS.__new = TrSharpFunc.datanew;
+        }
+
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _InitializeClasses2()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
-            if (func == null)
-                return TrNone.Unique;
             return func(args, kwargs);
         }
 
@@ -46,11 +52,14 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
+
             return new TrSharpFunc(name, func);
         }
 
+
         public static TrSharpFunc FromFunc(string name, Func<TrObject> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 0);
@@ -61,6 +70,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -71,6 +81,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 2);
@@ -81,6 +92,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject, TrObject> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 3);
@@ -89,8 +101,20 @@ namespace Traffy.Objects
             return new TrSharpFunc(name, call);
         }
 
+        public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrRef, bool> func)
+        {
+
+            TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+            {
+                RTS.arg_check_positional_only(args, 3);
+                return func(args[0], args[1], (TrRef)args[2]).ToTr();
+            }
+            return new TrSharpFunc(name, call);
+        }
+
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject, TrObject, TrObject> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 4);
@@ -101,6 +125,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_atleast(args, 1);
@@ -113,6 +138,7 @@ namespace Traffy.Objects
         }
         public static TrSharpFunc FromFunc(string name, Func<TrObject, string> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -124,6 +150,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, int> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -135,6 +162,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, bool> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -146,6 +174,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, IEnumerator<TrObject>> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -156,6 +185,7 @@ namespace Traffy.Objects
         }
         public static TrSharpFunc FromFunc(string name, Action<TrObject, TrObject, TrObject> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 3);
@@ -168,6 +198,7 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, bool> func)
         {
+
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 2);

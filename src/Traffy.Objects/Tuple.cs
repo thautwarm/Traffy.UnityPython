@@ -4,6 +4,14 @@ using System.Linq;
 
 namespace Traffy.Objects
 {
+
+    public static class ConverterTuple
+    {
+        public static TrObject ToTr(this TrObject[] arr) => RTS.tuple_construct(arr);
+
+        public static TrTuple AsTuple(this TrObject tuple) => (TrTuple)tuple;
+    }
+
     [Serializable]
     public partial class TrTuple : TrObject
     {
@@ -13,12 +21,18 @@ namespace Traffy.Objects
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-        [InitSetup(InitOrder.InitClassObjects)]
+        [InitSetup(InitOrder.SetupClassObjects)]
         static void _InitializeClasses()
         {
-            CLASS = TrClass.FromPrototype<TrTuple>();
+            CLASS = TrClass.FromPrototype("tuple");
             CLASS.Name = "tuple";
+            CLASS.Fixed = true;
+            CLASS.IsSealed = true;
             CLASS.__new = TrTuple.datanew;
+        }
+        [InitSetup(InitOrder.SetupClassObjects)]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
