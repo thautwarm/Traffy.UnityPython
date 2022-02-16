@@ -20,6 +20,7 @@ namespace Traffy.Objects
         public Dictionary<TrObject, TrObject> __dict__ => null;
         public string __repr__() => value.Escape();
         public string __str__() => value;
+        public bool __bool__() => value.Length != 0;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;

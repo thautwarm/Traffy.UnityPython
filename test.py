@@ -62,7 +62,7 @@ print(1)
 try:
     print(0//0)
 except NativeError as e:
-    print(e)
+    print(e.typename == "DivideByZeroException")
 print(1)
 print(1)
 print(1)
