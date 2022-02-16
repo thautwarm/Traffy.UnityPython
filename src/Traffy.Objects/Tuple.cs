@@ -21,16 +21,19 @@ namespace Traffy.Objects
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-        [InitSetup(InitOrder.SetupClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("tuple");
+            CLASS = TrClass.FromPrototype<TrTuple>();
             CLASS.Name = "tuple";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.IsSealed = true;
             CLASS.__new = TrTuple.datanew;
+            TrClass.TypeDict[typeof(TrTuple)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+
+        [Mark(typeof(TrTuple))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

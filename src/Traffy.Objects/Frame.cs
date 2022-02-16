@@ -108,7 +108,7 @@ namespace Traffy.Objects
         [OnDeserialized]
         internal Metadata OnDeserializedMethod()
         {
-            for(int i = 0; i < positions.Length; i++)
+            for (int i = 0; i < positions.Length; i++)
             {
                 positions[i].filename = filename;
             }
@@ -154,17 +154,19 @@ namespace Traffy.Objects
 
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("function");
+            CLASS = TrClass.FromPrototype<TrFunc>();
             CLASS.Name = "function";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.IsSealed = true;
             CLASS.__new = TrDict.datanew;
+            TrClass.TypeDict[typeof(TrFunc)] = CLASS;
         }
 
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(TrFunc))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

@@ -5,7 +5,7 @@ using System.Linq;
 namespace Traffy.Objects
 {
 
-    public interface TrExceptionBase : TrObject
+    public interface TrExceptionBase : TrUserObjectBase
     {
 
         public static string TrException_repr(TrObject self)
@@ -30,6 +30,7 @@ namespace Traffy.Objects
             }
         }
     }
+
     public static class TrExceptionExt
     {
         public static TrExceptionBase Base<T>(this T self) where T : TrExceptionBase
@@ -76,14 +77,19 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("BaseException");
+            CLASS = TrClass.CreateClass("BaseException");
             CLASS.__repr = TrExceptionBase.TrException_repr;
             CLASS.Name = "BaseException";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.__new = TrExceptionExt.datanew<TrBaseException>;
+            TrClass.TypeDict[typeof(TrBaseException)] = CLASS;
+        }
+        [Mark(typeof(TrBaseException))]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
@@ -108,18 +114,21 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("Exception", TrBaseException.CLASS);
+            CLASS = TrClass.CreateClass("Exception", TrBaseException.CLASS);
             CLASS.Name = "Exception";
             CLASS.__new = TrExceptionExt.datanew<TrException>;
+            TrClass.TypeDict[typeof(TrException)] = CLASS;
+        }
+        [Mark(typeof(TrException))]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
     }
-
 
     // fields: 'name', 'obj'
     public class AttributeError : Exception, TrExceptionBase
@@ -143,12 +152,19 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("AttributeError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("AttributeError", TrException.CLASS);
             CLASS.Name = "AttributeError";
             CLASS.__new = TrExceptionExt.datanew<AttributeError>;
+            TrClass.TypeDict[typeof(AttributeError)] = CLASS;
+        }
+        [Mark(typeof(AttributeError))]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
@@ -173,12 +189,17 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("NameError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("NameError", TrException.CLASS);
             CLASS.Name = "NameError";
             CLASS.__new = TrExceptionExt.datanew<NameError>;
+            TrClass.TypeDict[typeof(NameError)] = CLASS;
+        }
+        [Mark(typeof(NameError))]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
@@ -201,12 +222,17 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("TypeError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("TypeError", TrException.CLASS);
             CLASS.Name = "TypeError";
             CLASS.__new = TrExceptionExt.datanew<TypeError>;
+            TrClass.TypeDict[typeof(TypeError)] = CLASS;
+        }
+        [Mark(typeof(TypeError))]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
@@ -230,12 +256,18 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("ValueError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("ValueError", TrException.CLASS);
             CLASS.Name = "ValueError";
             CLASS.__new = TrExceptionExt.datanew<ValueError>;
+            TrClass.TypeDict[typeof(ValueError)] = CLASS;
+        }
+        [Mark(typeof(ValueError))]
+        static void _SetupClasses()
+        {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
@@ -262,14 +294,16 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("StopIteration", TrException.CLASS);
+            CLASS = TrClass.CreateClass("StopIteration", TrException.CLASS);
             CLASS.Name = "StopIteration";
             CLASS.__new = TrExceptionExt.datanew<StopIteration>;
+            TrClass.TypeDict[typeof(StopIteration)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+
+        [Mark(typeof(StopIteration))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -294,14 +328,15 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("LookupError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("LookupError", TrException.CLASS);
             CLASS.Name = "LookupError";
             CLASS.__new = TrExceptionExt.datanew<LookupError>;
+            TrClass.TypeDict[typeof(LookupError)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(LookupError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -327,15 +362,17 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("KeyError", LookupError.CLASS);
+            CLASS = TrClass.CreateClass("KeyError", LookupError.CLASS);
             CLASS.Name = "KeyError";
             CLASS.__new = TrExceptionExt.datanew<KeyError>;
+            TrClass.TypeDict[typeof(KeyError)] = CLASS;
         }
 
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(KeyError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -360,14 +397,16 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("IndexError", LookupError.CLASS);
+            CLASS = TrClass.CreateClass("IndexError", LookupError.CLASS);
             CLASS.Name = "IndexError";
             CLASS.__new = TrExceptionExt.datanew<IndexError>;
+            TrClass.TypeDict[typeof(IndexError)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(IndexError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -392,14 +431,16 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("AssertionError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("AssertionError", TrException.CLASS);
             CLASS.Name = "AssertionError";
             CLASS.__new = TrExceptionExt.datanew<AssertionError>;
+            TrClass.TypeDict[typeof(AssertionError)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(AssertionError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -434,14 +475,16 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("ImportError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("ImportError", TrException.CLASS);
             CLASS.Name = "ImportError";
             CLASS.__new = TrExceptionExt.datanew<ImportError>;
+            TrClass.TypeDict[typeof(ImportError)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(ImportError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -466,14 +509,16 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("RuntimeError", TrException.CLASS);
+            CLASS = TrClass.CreateClass("RuntimeError", TrException.CLASS);
             CLASS.Name = "RuntimeError";
             CLASS.__new = TrExceptionExt.datanew<RuntimeError>;
+            TrClass.TypeDict[typeof(RuntimeError)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(RuntimeError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -498,14 +543,60 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("NotImplementError", RuntimeError.CLASS);
+            CLASS = TrClass.CreateClass("NotImplementError", RuntimeError.CLASS);
             CLASS.Name = "NotImplementError";
             CLASS.__new = TrExceptionExt.datanew<NotImplementError>;
+            TrClass.TypeDict[typeof(NotImplementError)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(NotImplementError))]
+        static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            ModuleInit.Prelude(CLASS);
+        }
+    }
+
+    public class NativeError : Exception, TrExceptionBase
+    {
+        public Exception Error;
+        public object Native => Error;
+        public bool __eq__(TrObject other)
+        {
+            if (other is NativeError)
+            {
+                return Error == ((NativeError)other).Error;
+            }
+            return false;
+        }
+        public NativeError(Exception native) : base(native.Message)
+        {
+            if (native is TrExceptionBase)
+                throw new Exception("native error should not be a traffy error");
+            Error = native;
+            __dict__ = RTS.baredict_create();
+            RTS.baredict_set(__dict__, "typename".ToTr(), MK.Str(Error.GetType().Name));
+            RTS.baredict_set(__dict__, "msg".ToTr(), MK.Str(Error.Message));
+            this.Base().args = new TrObject[] { MK.Str(Error.Message) };
+        }
+        public Dictionary<TrObject, TrObject> __dict__ { get; set; }
+
+        public static TrClass CLASS;
+        public TrClass Class => CLASS;
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
+        {
+            CLASS = TrClass.CreateClass("NativeError", TrException.CLASS);
+            CLASS.Name = "NativeError";
+            CLASS.__eq = (o, r) => ((NativeError)o).__eq__(r);
+            CLASS.IsFixed = true;
+            CLASS.IsSealed = true;
+            TrClass.TypeDict[typeof(NativeError)] = CLASS;
+        }
+        [Mark(typeof(NativeError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

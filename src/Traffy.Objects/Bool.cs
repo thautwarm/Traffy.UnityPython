@@ -12,7 +12,7 @@ namespace Traffy.Objects
 
         public static bool AsBool(this TrObject o)
         {
-            return ((TrBool) o).value;
+            return ((TrBool)o).value;
         }
     }
 
@@ -24,19 +24,15 @@ namespace Traffy.Objects
         public bool __bool__() => value;
         public object Native => value;
 
-        public static TrBool TrBool_True;
-        public static TrBool TrBool_False;
+        public static TrBool TrBool_True = new TrBool(true);
+        public static TrBool TrBool_False = new TrBool(false);
 
         private TrBool(bool v)
         {
             value = v;
         }
 
-        static TrBool()
-        {
-            TrBool_True = new TrBool(true);
-            TrBool_False = new TrBool(false);
-        }
+
 
         public Dictionary<TrObject, TrObject> __dict__ => throw new NotImplementedException();
 
@@ -65,17 +61,18 @@ namespace Traffy.Objects
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("bool");
+            CLASS = TrClass.FromPrototype<TrBool>();
             CLASS.Name = "bool";
-            CLASS.Fixed = true;
             CLASS.__bool = o => o.AsBool();
             CLASS.__new = TrBool.datanew;
+            TrClass.TypeDict[typeof(TrBool)] = CLASS;
         }
 
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(TrBool))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

@@ -319,7 +319,7 @@ namespace Traffy
         {
             var o = tos.__getattr__(attr, out var found);
             if (!o)
-                throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr}'.");
+                throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr.__str__()}'.");
             return found;
         }
 
@@ -473,20 +473,38 @@ namespace Traffy
 
         internal static bool exc_check_instance(Exception e, TrObject rt_exc)
         {
-            // TODO
-            throw new NotImplementedException();
+            if (e is TrObject obj)
+            {
+                return obj.__instancecheck__(rt_exc);
+            }
+            if (rt_exc is TrClass cls)
+            {
+                return cls == NativeError.CLASS;
+            }
+            else
+            {
+                throw new TypeError($"exception class must be a class, not '{rt_exc.Class.Name}'.");
+            }
         }
 
         internal static TrObject exc_frombare(Exception e)
         {
-            // TODO
-            throw new NotImplementedException();
+            if (e is TrExceptionBase o)
+                return o;
+            return new NativeError(e);
         }
 
         internal static Exception exc_tobare(TrObject rt_exc)
         {
-            // TODO
-            throw new NotImplementedException();
+            if (rt_exc is NativeError native)
+            {
+                return native.Error;
+            }
+            if (rt_exc is Exception o)
+            {
+                return o;
+            }
+            throw new ValueError($"{rt_exc.__repr__()} is not an exception");
         }
 
         static IEnumerator<TrObject> coroutine_of_object_mkCont0(IEnumerator<TrObject> itr, TraffyCoroutine coro)

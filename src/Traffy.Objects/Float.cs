@@ -36,16 +36,17 @@ namespace Traffy.Objects
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("float");
+            CLASS = TrClass.FromPrototype<TrFloat>();
             CLASS.Name = "float";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.IsSealed = true;
             CLASS.__new = TrFloat.datanew;
+            TrClass.TypeDict[typeof(TrFloat)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(TrFloat))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

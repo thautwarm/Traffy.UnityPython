@@ -64,16 +64,15 @@ namespace Traffy.Objects
         public TrObject __next__() =>
             MoveNext() ? Current : throw new StopIteration(Result);
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("generator");
+            CLASS = TrClass.FromPrototype<TraffyCoroutine>();
             CLASS.Name = "generator";
-            CLASS.Fixed = true;
-            CLASS.IsSealed = true;
             CLASS.__new = TraffyCoroutine.datanew;
+            TrClass.TypeDict[typeof(TraffyCoroutine)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(TraffyCoroutine))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

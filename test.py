@@ -54,10 +54,18 @@ xs = test2()
 print("value", xs)
 print("time1", time() - a)
 
-a = time()
-xs = list(test1())
-print("len", len(xs))
-print("time2", time() - a)
+# a = time()
+# xs = list(test1())
+# print("len", len(xs))
+# print("time2", time() - a)
+print(1)
+try:
+    print(0//0)
+except NativeError as e:
+    print(e)
+print(1)
+print(1)
+print(1)
 """, "a.py")
 
 

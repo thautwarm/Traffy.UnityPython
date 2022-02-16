@@ -24,17 +24,20 @@ namespace Traffy.Objects
             container[key] = value;
         }
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("dict");
+            CLASS = TrClass.CreateClass("dict");
             CLASS.Name = "dict";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.__new = TrDict.datanew;
-            CLASS.__bool = o => ((TrDict) o).__bool__();
+            CLASS.__bool = o => ((TrDict)o).__bool__();
+            TrClass.TypeDict[typeof(TrDict)] = CLASS;
             // TODO: __init_subclass__
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+
+        [Mark(typeof(TrDict))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

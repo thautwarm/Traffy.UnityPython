@@ -17,17 +17,17 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("builtin_function");
+            CLASS = TrClass.FromPrototype<TrSharpFunc>();
             CLASS.Name = "builtin_function";
-            CLASS.Fixed = true;
             CLASS.__new = TrSharpFunc.datanew;
+            TrClass.TypeDict[typeof(TrSharpFunc)] = CLASS;
         }
 
-        [InitSetup(InitOrder.SetupClassObjects)]
-        static void _InitializeClasses2()
+        [Mark(typeof(TrSharpFunc))]
+        static void _SetupClasses()
         {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
@@ -207,6 +207,5 @@ namespace Traffy.Objects
             }
             return new TrSharpFunc(name, call);
         }
-
     }
 }

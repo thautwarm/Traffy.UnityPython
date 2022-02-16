@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Traffy.Objects
 {
-    public partial class TrList: TrObject
+    public partial class TrList : TrObject
     {
         public List<TrObject> container;
 
@@ -11,17 +11,18 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("list");
+            CLASS = TrClass.FromPrototype<TrList>();
             CLASS.Name = "list";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.IsSealed = true;
             CLASS.__new = TrList.datanew;
+            TrClass.TypeDict[typeof(TrList)] = CLASS;
         }
 
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(TrList))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

@@ -10,16 +10,17 @@ namespace Traffy.Objects
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("set");
+            CLASS = TrClass.FromPrototype<TrSet>();
             CLASS.Name = "set";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.IsSealed = true;
             CLASS.__new = TrSet.datanew;
+            TrClass.TypeDict[typeof(TrSet)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+        [Mark(typeof(TrSet))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

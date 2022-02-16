@@ -3,380 +3,219 @@ using System.Collections.Generic;
 
 namespace Traffy.Objects
 {
-    public class TrUserObject : TrObject
+    public interface TrUserObjectBase : TrObject
     {
-        public Dictionary<TrObject, TrObject> innerDict = RTS.baredict_create();
-        public object Native => this;
-        public TrClass Class { get; }
-        public Dictionary<TrObject, TrObject> __dict__ => innerDict;
-
-        public string __str__() =>
-            (Class.__str != null) ? Class.__str(this) : __repr__();
-        public string __repr__() =>
-            (Class.__repr != null) ? Class.__repr(this) : Native.ToString();
-
-        Exception unsupported(string op) =>
-            throw new TypeError($"{Class.Name} has no {op} method");
-        public TrObject __next__() =>
-            (Class.__next != null) ? Class.__next(this) : throw unsupported(nameof(__next__));
+        object TrObject.Native => this;
+        string TrObject.__str__() =>
+            (Class.__str != null) ? Class.__str(this) : TrObject.__raw_str__(this);
+        string TrObject.__repr__() =>
+            (Class.__repr != null) ? Class.__repr(this) : TrObject.__raw_repr__(this);
+        TrObject TrObject.__next__() =>
+            (Class.__next != null) ? Class.__next(this) : TrObject.__raw_next__(this);
 
         // Arithmetic ops
-        public TrObject __add__(TrObject a)
+        TrObject TrObject.__add__(TrObject a)
         {
             if (Class.__add != null)
                 return Class.__add(this, a);
-            throw unsupported(nameof(__add__));
+            return TrObject.__raw_add__(this, a);
         }
-        public TrObject __sub__(TrObject a)
+        TrObject TrObject.__sub__(TrObject a)
         {
             if (Class.__sub != null)
                 return Class.__sub(this, a);
-            throw unsupported(nameof(__sub__));
+            return TrObject.__raw_sub__(this, a);
         }
 
-        public TrObject __mul__(TrObject a)
+        TrObject TrObject.__mul__(TrObject a)
         {
             if (Class.__mul != null)
                 return Class.__mul(this, a);
-            throw unsupported(nameof(__mul__));
+            return TrObject.__raw_mul__(this, a);
         }
 
-        public TrObject __matmul__(TrObject a)
+        TrObject TrObject.__matmul__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__matmul;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__matmul__));
+            if (Class.__matmul != null)
+                return Class.__matmul(this, a);
+            return TrObject.__raw_matmul__(this, a);
         }
 
-        public TrObject __floordiv__(TrObject a)
+        TrObject TrObject.__floordiv__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__floordiv;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__floordiv__));
+            if (Class.__floordiv != null)
+                return Class.__floordiv(this, a);
+            return TrObject.__raw_floordiv__(this, a);
         }
 
-        public TrObject __truediv__(TrObject a)
+        TrObject TrObject.__truediv__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__truediv;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__truediv__));
+            if (Class.__truediv != null)
+                return Class.__truediv(this, a);
+            return TrObject.__raw_truediv__(this, a);
         }
 
-        public TrObject __mod__(TrObject a)
+        TrObject TrObject.__mod__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__mod;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__mod__));
+            if (Class.__mod != null)
+                return Class.__mod(this, a);
+            return TrObject.__raw_mod__(this, a);
         }
 
-        public TrObject __pow__(TrObject a)
+        TrObject TrObject.__pow__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__pow;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__pow__));
+            if (Class.__pow != null)
+                return Class.__pow(this, a);
+            return TrObject.__raw_pow__(this, a);
         }
 
         // Bitwise logic operations
 
-        public TrObject __bitand__(TrObject a)
+        TrObject TrObject.__bitand__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__bitand;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__bitand__));
+            if (Class.__bitand != null)
+                return Class.__bitand(this, a);
+            return TrObject.__raw_bitand__(this, a);
         }
 
-        public TrObject __bitor__(TrObject a)
+        TrObject TrObject.__bitor__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__bitor;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__bitor__));
+            if (Class.__bitor != null)
+                return Class.__bitor(this, a);
+            return TrObject.__raw_bitor__(this, a);
         }
 
-        public TrObject __bitxor__(TrObject a)
+        TrObject TrObject.__bitxor__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__bitxor;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__bitxor__));
+            if (Class.__bitxor != null)
+                return Class.__bitxor(this, a);
+            return TrObject.__raw_bitxor__(this, a);
         }
 
         // bit shift
-        public TrObject __lshift__(TrObject a)
+        TrObject TrObject.__lshift__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__lshift;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__lshift__));
+            if (Class.__lshift != null)
+                return Class.__lshift(this, a);
+            return TrObject.__raw_lshift__(this, a);
         }
 
-        public TrObject __rshift__(TrObject a)
+        TrObject TrObject.__rshift__(TrObject a)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__rshift;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__rshift__));
+            if (Class.__rshift != null)
+                return Class.__rshift(this, a);
+            return TrObject.__raw_rshift__(this, a);
         }
 
         // Object protocol
-        public int __hash__()
+        int TrObject.__hash__()
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__hash;
-                if (meth != null)
-                    return meth(this);
-            }
-            return Native.GetHashCode();
-        }
-        public TrObject Call(params TrObject[] objs)
-        {
-            var xs = new BList<TrObject>();
-            foreach (var e in objs)
-            {
-                xs.Add(e);
-            }
-            return __call__(xs, null);
+            if (Class.__hash != null)
+                return Class.__hash(this);
+            return TrObject.__raw_hash__(this);
         }
 
-        public TrObject Call()
+        TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
-            var xs = new BList<TrObject>();
-            return __call__(xs, null);
+            if (Class.__call != null)
+                return Class.__call(this, args, kwargs);
+            return TrObject.__raw_call__(this, args, kwargs);
         }
 
-        public TrObject Call(TrObject a1)
+        bool TrObject.__contains__(TrObject a)
         {
-            var xs = new BList<TrObject> { a1 };
-            return __call__(xs, null);
-        }
-
-        public TrObject Call(TrObject a1, TrObject a2)
-        {
-            var xs = new BList<TrObject> { a1, a2 };
-            return __call__(xs, null);
-        }
-
-        public TrObject Call(TrObject a1, TrObject a2, TrObject a3)
-        {
-            var xs = new BList<TrObject> { a1, a2, a3 };
-            return __call__(xs, null);
-        }
-
-        public TrObject Call(TrObject a1, TrObject a2, TrObject a3, TrObject a4)
-        {
-            var xs = new BList<TrObject> { a1, a2, a3, a4 };
-            return __call__(xs, null);
+            if (Class.__contains != null)
+                return Class.__contains(this, a);
+            return TrObject.__raw_contains__(this, a);
         }
 
 
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        bool TrObject.__getitem__(TrObject item, TrRef found)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__call;
-                if (meth != null)
-                    return meth(this, args, kwargs);
-            }
-            throw unsupported(nameof(__call__));
+            if (Class.__getitem != null)
+                return Class.__getitem(this, item, found);
+            return TrObject.__raw_getitem__(this, item, found);
         }
 
-        public bool __contains__(TrObject a)
+        void TrObject.__setitem__(TrObject key, TrObject value)
         {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__contains;
-                if (meth != null)
-                    return meth(this, a);
-            }
-            throw unsupported(nameof(__contains__));
+            if (Class.__setitem != null)
+                Class.__setitem(this, key, value);
+            else
+                TrObject.__raw_setitem__(this, key, value);
         }
-
-        public bool __getitem__(TrObject item, out TrObject found)
-        {
-            var reference = MK.Ref();
-            var res = __getitem__(item, reference);
-            found = reference.value;
-            return res;
-        }
-        public bool __getitem__(TrObject item, TrRef found)
-        {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__getitem;
-                if (meth != null)
-                    return meth(this, item, found);
-            }
-            throw unsupported(nameof(__getitem__));
-        }
-
-        public void __setitem__(TrObject item, TrObject value)
-        {
-            for (int i = 0; i < Class.__mro.Length; i++)
-            {
-                var meth = Class.__mro[i].__setitem;
-                if (meth != null)
-                {
-                    meth(this, item, value);
-                    return;
-                }
-            }
-            throw unsupported(nameof(__setitem__));
-        }
-
-        public bool __getattr__(TrObject s, out TrObject found)
-        {
-            var reference = MK.Ref();
-            var res = __getattr__(s, reference);
-            found = reference.value;
-            return res;
-        }
-        public bool __getattr__(TrObject s, TrRef found)
+        bool TrObject.__getattr__(TrObject s, TrRef found)
         {
             if (Class.__getattr != null)
                 return Class.__getattr(this, s, found);
 
-            TrObject getter;
-            if (this.__dict__ != null)
-            {
-                if (RTS.baredict_get_noerror(__dict__, s, out found.value))
-                {
-                    return true;
-                }
-            }
-            Dictionary<TrObject, TrObject> MAGIC_METHODS = this.Class.__dict__;
-            if (MAGIC_METHODS.TryGetValue(s, out getter))
-            {
-                // TODO: check proper type
-                found.value = Objects.TrSharpMethod.BindOrUnwrap(getter, this);
-                return true;
-            }
-            if (this.Class.__base.Length != 0)
-            {
-                var mro = this.Class.__mro;
-                for (int i = 0; i < mro.Length; i++)
-                {
-                    var get = mro[i].__dict__.TryGetValue(s, out getter);
-                    if (get)
-                    {
-                        // TODO: check proper type
-                        found.value = Objects.TrSharpMethod.BindOrUnwrap(getter, this);
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return TrObject.__raw_getattr__(this, s, found);
         }
 
-        public void __setattr__(TrObject s, TrObject value)
+        void TrObject.__setattr__(TrObject s, TrObject value)
         {
             if (Class.__setattr != null)
             {
                 Class.__setattr(this, s, value);
                 return;
             }
-
-            if (this.__dict__ != null)
-            {
-                RTS.baredict_set(__dict__, s, value);
-                return;
-            }
-            throw new AttributeError(this, s, $"cannot set attribute {s.__repr__()}.");
+            TrObject.__raw_setattr__(this, s, value);
         }
 
-        public IEnumerator<TrObject> __iter__()
+        IEnumerator<TrObject> TrObject.__iter__()
         {
             if (Class.__iter != null)
                 return Class.__iter(this);
 
-            throw unsupported(nameof(__iter__));
+            return TrObject.__raw_iter__(this);
         }
 
-        public TrObject __len__()
+        TrObject TrObject.__len__()
         {
             if (Class.__len != null)
                 return Class.__len(this);
-            throw unsupported(nameof(__len__));
+            return TrObject.__raw_len__(this);
         }
 
         // Comparators
-        public bool __eq__(TrObject o)
+        bool TrObject.__eq__(TrObject o)
         {
             if (Class.__eq != null)
                 return Class.__eq(this, o);
-            return Object.ReferenceEquals(o.Native, this.Native);
+            return TrObject.__raw_eq__(this, o);
         }
 
-        public bool __lt__(TrObject o)
+        bool TrObject.__lt__(TrObject o)
         {
             if (Class.__lt != null)
                 return Class.__lt(this, o);
-            throw unsupported(nameof(__lt__));
+            return TrObject.__raw_lt__(this, o);
         }
 
 
         // Unary ops
-        public TrObject __neg__()
+        TrObject TrObject.__neg__()
         {
             if (Class.__neg != null)
                 return Class.__neg(this);
-            throw unsupported(nameof(__neg__));
+            return TrObject.__raw_neg__(this);
         }
 
-        public TrObject __inv__()
+        TrObject TrObject.__inv__()
         {
             if (Class.__inv != null)
                 return Class.__inv(this);
-            throw unsupported(nameof(__inv__));
+            return TrObject.__raw_inv__(this);
         }
 
-        public TrObject __pos__()
+        TrObject TrObject.__pos__()
         {
             if (Class.__pos != null)
                 return Class.__pos(this);
-            throw unsupported(nameof(__pos__));
+            return TrObject.__raw_pos__(this);
         }
 
-        public bool __bool__() =>
-            (Class.__bool != null) ? Class.__bool(this) : true;
+        bool TrObject.__bool__() =>
+            (Class.__bool != null) ? Class.__bool(this) : TrObject.__raw_bool__(this);
     }
-
-
-
 }

@@ -114,7 +114,7 @@ public class App
         // Perf.Test(Perf.MeasureTestA);
         // Perf.Test(Perf.MeasureTestB);
         // Perf.Test(Perf.MeasureTestC);
-        InitSetup.ApplyInitialization();
+        ModuleInit.InitRuntime();
         var o = System.IO.File.ReadAllText("c.json");
         var x = JsonParse<TrFuncPointer>(o);
         var d = RTS.baredict_create();

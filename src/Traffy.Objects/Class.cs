@@ -22,81 +22,21 @@ namespace Traffy.Objects
 
     public class TrClass : TrObject
     {
+        public static Dictionary<Type, TrClass> TypeDict = new Dictionary<Type, TrClass>();
         public static TrClass MetaClass = null;
-        public bool Fixed = false;
+        public bool IsFixed = false;
+
+        public bool __subclasscheck__(TrClass @class)
+        {
+            // XXX: future extension: allow users to define their own subclass check
+            if (@class == this)
+                return true;
+            if (__mro.Contains(@class))
+                return true;
+            return false;
+        }
+
         public bool IsSealed = false;
-        internal Dictionary<TrObject, Action<TrObject>> MAGIC_METHOD_SETTERS = new Dictionary<TrObject, Action<TrObject>>(RTS.DICT_COMPARE);
-
-
-        public TrObject AsObject => this as TrObject;
-
-        public static TrObject default_datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            TrObject clsobj = args[0];
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
-        }
-
-        [InitSetup(InitOrder.InitClassObjects)]
-        static void _InitializeClasses()
-        {
-            MetaClass = FromPrototype("type");
-            MetaClass.Class = MetaClass;
-            MetaClass.__call = typecall;
-            MetaClass.Fixed = true;
-            MetaClass.Name = "type";
-        }
-
-        [InitSetup(InitOrder.SetupClassObjects)]
-        static void _SetupClasses()
-        {
-            MetaClass.SetupClass();
-            ModuleInit.Prelude(MetaClass);
-        }
-
-        Dictionary<TrObject, TrObject> innerDict = RTS.baredict_create();
-        public Dictionary<TrObject, TrObject> __dict__ => innerDict;
-        public static TrObject typecall(TrObject clsobj, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            TrClass cls = (TrClass)clsobj;
-            if (cls == MetaClass && args.Count == 1 && kwargs == null)
-            {
-                return args[0].Class;
-            }
-
-            args.AddLeft(cls);
-            var o = cls.__new(args, kwargs);
-            args.PopLeft();
-
-            if (RTS.isinstanceof(o, cls) && cls.__init != null)
-            {
-                args.AddLeft(o);
-                cls.__init(args, kwargs);
-                args.PopLeft();
-            }
-            return o;
-        }
-
-        public static TrObject typenew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            // cls, name, bases, ns
-            if (args.Count == 0)
-            {
-                throw new TypeError($"typenew cannot take zero arguments");
-            }
-            var cls = (TrClass)args[0];
-            if (cls == MetaClass)
-            {
-                if (args.Count != 4)
-                    throw new TypeError($"calling 'type' requires 4 arguments");
-                var name = (TrStr)args[1];
-                var bases = (TrTuple)args[2];
-                var ns = (TrDict)args[3];
-                var newCls = FromPrototype(name.value);
-                RTS.init_class(cls, newCls, name, bases, ns);
-                return newCls;
-            }
-            throw new NotImplementedException("custom metaclasses not supported yet.");
-        }
 
         public TrClass[] __base;
         public TrClass[] __mro;
@@ -146,6 +86,79 @@ namespace Traffy.Objects
         public unary_func __inv;
         public unary_func __pos;
         public bool_conv __bool;
+        internal Dictionary<TrObject, Action<TrObject>> MAGIC_METHOD_SETTERS = new Dictionary<TrObject, Action<TrObject>>(RTS.DICT_COMPARE);
+        public TrObject AsObject => this as TrObject;
+
+        public static TrObject default_datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            TrObject clsobj = args[0];
+            throw new TypeError($"{clsobj.Class.Name}.__new__() is invalid.");
+        }
+
+
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
+        {
+            MetaClass = CreateClass("type");
+            MetaClass.Class = MetaClass;
+            MetaClass.__call = typecall;
+            MetaClass.IsFixed = true;
+            MetaClass.Name = "type";
+            TrClass.TypeDict[typeof(TrClass)] = MetaClass;
+        }
+
+        [Mark(typeof(TrClass))]
+        static void _SetupClasses()
+        {
+            MetaClass.SetupClass();
+            ModuleInit.Prelude(MetaClass);
+        }
+
+        Dictionary<TrObject, TrObject> innerDict = RTS.baredict_create();
+        public Dictionary<TrObject, TrObject> __dict__ => innerDict;
+        public static TrObject typecall(TrObject clsobj, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            TrClass cls = (TrClass)clsobj;
+            if (cls == MetaClass && args.Count == 1 && kwargs == null)
+            {
+                return args[0].Class;
+            }
+            if (cls.__new == null)
+                throw new TypeError($"Fatal: {cls.Name}.__new__() is not defined.");
+            args.AddLeft(cls);
+            var o = cls.__new(args, kwargs);
+            args.PopLeft();
+
+            if (RTS.isinstanceof(o, cls) && cls.__init != null)
+            {
+                args.AddLeft(o);
+                cls.__init(args, kwargs);
+                args.PopLeft();
+            }
+            return o;
+        }
+
+        public static TrObject typenew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            // cls, name, bases, ns
+            if (args.Count == 0)
+            {
+                throw new TypeError($"typenew cannot take zero arguments");
+            }
+            var cls = (TrClass)args[0];
+            if (cls == MetaClass)
+            {
+                if (args.Count != 4)
+                    throw new TypeError($"calling 'type' requires 4 arguments");
+                var name = (TrStr)args[1];
+                var bases = (TrTuple)args[2];
+                var ns = (TrDict)args[3];
+                var newCls = CreateClass(name.value);
+                RTS.init_class(cls, newCls, name, bases, ns);
+                return newCls;
+            }
+            throw new NotImplementedException("custom metaclasses not supported yet.");
+        }
 
         public TrClass Class { set; get; }
 
@@ -189,7 +202,7 @@ namespace Traffy.Objects
         public void __setattr__(TrObject s, TrObject value)
         {
 
-            if (Fixed)
+            if (IsFixed)
                 throw new AttributeError(this, s, $"cannot set attribute {s.__repr__()}.");
 
             SetAttr(s, value);
@@ -248,6 +261,8 @@ namespace Traffy.Objects
         // check if '__xxx' exists in the mro class 'cls', if so, assign '__xxx' to current class.
         internal void ResolveMagicMethods(TrClass cls)
         {
+            if (object.ReferenceEquals(cls, TrRawObject.CLASS))
+                return;
             if (__str == null && cls.__str != null)
                 __str = cls.__str;
             if (__repr == null && cls.__repr != null)
@@ -311,61 +326,112 @@ namespace Traffy.Objects
 
         }
 
-        internal static TrClass FromPrototype(string name, params TrClass[] bases)
+        internal static TrClass CreateClass(string name, params TrClass[] bases)
         {
             // XXX: builtin types cannot be inherited, or methods report incompatible errors
             var cls = new TrClass
             {
                 Name = name,
-                Class = MetaClass,
                 __mro = new TrClass[0],
                 __base = bases,
             };
             return cls;
         }
 
-        // internal static TrClass FromPrototype<T>(params TrClass[] bases) where T : TrObject
-        // {
-        //     // XXX: builtin types cannot be inherited, or methods report incompatible errors
-        //     var cls = new TrClass
-        //     {
-        //         Name = typeof(T).Name,
-        //         Class = MetaClass,
-        //         __mro = new TrClass[0],
-        //         __base = bases,
-        //         __str = a => a.__str__(),
-        //         __repr = a => a.__repr__(),
-        //         __next = a => a.__next__(),
-        //         __add = (a, b) => a.__add__(b),
-        //         __mul = (a, b) => a.__mul__(b),
-        //         __matmul = (a, b) => a.__matmul__(b),
-        //         __floordiv = (a, b) => a.__floordiv__(b),
-        //         __truediv = (a, b) => a.__truediv__(b),
-        //         __mod = (a, b) => a.__mod__(b),
-        //         __pow = (a, b) => a.__pow__(b),
-        //         __bitand = (a, b) => a.__bitand__(b),
-        //         __bitor = (a, b) => a.__bitor__(b),
-        //         __bitxor = (a, b) => a.__bitxor__(b),
-        //         __lshift = (a, b) => a.__lshift__(b),
-        //         __rshift = (a, b) => a.__rshift__(b),
-        //         __hash = a => a.__hash__(),
-        //         __call = (a, b, c) => a.__call__(b, c),
-        //         __contains = (a, b) => a.__contains__(b),
-        //         __getattr = (a, b, c) => a.__getattr__(b, c),
-        //         __setattr = (a, b, c) => a.__setattr__(b, c),
-        //         __getitem = (a, b, c) => a.__getitem__(b, c),
-        //         __setitem = (a, b, c) => a.__setitem__(b, c),
-        //         __iter = (a) => a.__iter__(),
-        //         __len = (a) => a.__len__(),
-        //         __eq = (a, b) => a.__eq__(b),
-        //         __lt = (a, b) => a.__lt__(b),
-        //         __neg = (a) => a.__neg__(),
-        //         __inv = (a) => a.__inv__(),
-        //         __pos = (a) => a.__pos__(),
-        //         __bool = (a) => a.__bool__(),
-        //     };
-        //     return cls;
-        // }
+        // use for sealed classes which shall not be inherited
+        internal static TrClass FromPrototype<T>(params TrClass[] bases) where T : TrObject
+        {
+            // XXX: builtin types cannot be inherited, or methods report incompatible errors
+            var cls = new TrClass
+            {
+                Name = typeof(T).Name,
+                __mro = new TrClass[0],
+                __base = bases,
+                __str = a => ((T)a).__str__(),
+                __repr = a => ((T)a).__repr__(),
+                __next = a => ((T)a).__next__(),
+                __add = (a, b) => ((T)a).__add__(b),
+                __sub = (a, b) => ((T)a).__sub__(b),
+                __mul = (a, b) => ((T)a).__mul__(b),
+                __matmul = (a, b) => ((T)a).__matmul__(b),
+                __floordiv = (a, b) => ((T)a).__floordiv__(b),
+                __truediv = (a, b) => ((T)a).__truediv__(b),
+                __mod = (a, b) => ((T)a).__mod__(b),
+                __pow = (a, b) => ((T)a).__pow__(b),
+                __bitand = (a, b) => ((T)a).__bitand__(b),
+                __bitor = (a, b) => ((T)a).__bitor__(b),
+                __bitxor = (a, b) => ((T)a).__bitxor__(b),
+                __lshift = (a, b) => ((T)a).__lshift__(b),
+                __rshift = (a, b) => ((T)a).__rshift__(b),
+                __hash = a => ((T)a).__hash__(),
+                __call = (a, b, c) => ((T)a).__call__(b, c),
+                __contains = (a, b) => ((T)a).__contains__(b),
+                __getattr = (a, b, c) => ((T)a).__getattr__(b, c),
+                __setattr = (a, b, c) => ((T)a).__setattr__(b, c),
+                __getitem = (a, b, c) => ((T)a).__getitem__(b, c),
+                __setitem = (a, b, c) => ((T)a).__setitem__(b, c),
+                __iter = (a) => ((T)a).__iter__(),
+                __len = (a) => ((T)a).__len__(),
+                __eq = (a, b) => ((T)a).__eq__(b),
+                __lt = (a, b) => ((T)a).__lt__(b),
+                __neg = (a) => ((T)a).__neg__(),
+                __inv = (a) => ((T)a).__inv__(),
+                __pos = (a) => ((T)a).__pos__(),
+                __bool = (a) => ((T)a).__bool__(),
+            };
+            cls.IsSealed = true;
+            cls.IsFixed = true;
+            return cls;
+        }
+
+        static bool isRawInit = false;
+
+        internal static TrClass RawObjectClassObject()
+        {
+            if (isRawInit)
+                throw new InvalidOperationException("RawObjectClassObject() can only be called once");
+            isRawInit = true;
+            // XXX: builtin types cannot be inherited, or methods report incompatible errors
+            var cls = new TrClass
+            {
+                Name = "object",
+                __mro = new TrClass[0],
+                __base = new TrClass[0],
+                __str = TrObject.__raw_str__,
+                __repr = TrObject.__raw_repr__,
+                __next = TrObject.__raw_next__,
+                __add = TrObject.__raw_add__,
+                __mul = TrObject.__raw_mul__,
+                __matmul = TrObject.__raw_matmul__,
+                __floordiv = TrObject.__raw_floordiv__,
+                __truediv = TrObject.__raw_truediv__,
+                __mod = TrObject.__raw_mod__,
+                __pow = TrObject.__raw_pow__,
+                __bitand = TrObject.__raw_bitand__,
+                __bitor = TrObject.__raw_bitor__,
+                __bitxor = TrObject.__raw_bitxor__,
+                __lshift = TrObject.__raw_lshift__,
+                __rshift = TrObject.__raw_rshift__,
+                __hash = TrObject.__raw_hash__,
+                __call = TrObject.__raw_call__,
+                __contains = TrObject.__raw_contains__,
+                __getattr = TrObject.__raw_getattr__,
+                __setattr = TrObject.__raw_setattr__,
+                __getitem = TrObject.__raw_getitem__,
+                __setitem = TrObject.__raw_setitem__,
+                __iter = TrObject.__raw_iter__,
+                __len = TrObject.__raw_len__,
+                __eq = TrObject.__raw_eq__,
+                __lt = TrObject.__raw_lt__,
+                __neg = TrObject.__raw_neg__,
+                __inv = TrObject.__raw_inv__,
+                __pos = TrObject.__raw_pos__,
+                __bool = TrObject.__raw_bool__,
+            };
+            cls.IsSealed = true;
+            cls.IsFixed = true;
+            return cls;
+        }
 
         public void SetupClass()
         {
@@ -373,6 +439,13 @@ namespace Traffy.Objects
         }
         public void SetupClass(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
+            Class = MetaClass;
+            __mro = C3_linearize(this);
+            foreach (var cls in __mro)
+            {
+                ResolveMagicMethods(cls);
+            }
+
             Dictionary<TrObject, TrObject> cp_kwargs;
             if (kwargs != null)
                 cp_kwargs = kwargs.Copy();
@@ -381,25 +454,17 @@ namespace Traffy.Objects
                 cp_kwargs = null;
             }
 
-            __mro = C3_linearize(this);
-            foreach (var cls in __mro)
-            {
-                ResolveMagicMethods(cls);
-            }
-
-
-
-            if (__init != null)
-                __dict__[s_init] = TrSharpFunc.FromFunc("__init__", __init);
-
+            __dict__[s_init] = TrSharpFunc.FromFunc("__init__", __init ?? TrObject.__raw_init__);
             MAGIC_METHOD_SETTERS[s_init] = (o) =>
             {
                 __init = o.__call__;
             };
             if (__init != null && cp_kwargs != null && cp_kwargs.TryPop(s_init, out var o_init))
                 SetAttr(s_init, o_init);
+
             if (__new != null)
                 __dict__[s_new] = TrSharpFunc.FromFunc("__new__", __new);
+
             MAGIC_METHOD_SETTERS[s_new] = (o) =>
             {
                 __new = o.__call__;
@@ -407,23 +472,22 @@ namespace Traffy.Objects
             if (__new != null && cp_kwargs != null && cp_kwargs.TryPop(s_new, out var o_new))
                 SetAttr(s_new, o_new);
 
-            if (__str != null)
-                __dict__[s_str] = TrSharpFunc.FromFunc("__str__", __str);
+
+            __dict__[s_str] = TrSharpFunc.FromFunc("__str__", __str ?? TrObject.__raw_str__);
             MAGIC_METHOD_SETTERS[s_str] = (o) =>
             {
                 __str = (o) => o.Call(o).AsString();
             };
             if (__str != null && cp_kwargs != null && cp_kwargs.TryPop(s_str, out var o_str))
                 SetAttr(s_str, o_str);
-            if (__repr != null)
-                __dict__[s_repr] = TrSharpFunc.FromFunc("__repr__", __repr);
+
+            __dict__[s_repr] = TrSharpFunc.FromFunc("__repr__", __repr ?? TrObject.__raw_repr__);
             MAGIC_METHOD_SETTERS[s_repr] = (o) =>
             {
                 __repr = (o) => o.Call(o).AsString();
             };
             if (__repr != null && cp_kwargs != null && cp_kwargs.TryPop(s_repr, out var o_repr))
                 SetAttr(s_repr, o_repr);
-
 
             if (__next != null)
                 __dict__[s_next] = TrSharpFunc.FromFunc("__next__", __next);

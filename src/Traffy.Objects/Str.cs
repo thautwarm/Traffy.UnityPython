@@ -17,21 +17,25 @@ namespace Traffy.Objects
     {
         public string value;
 
-        public Dictionary<TrObject, TrObject> __dict__ => throw new NotImplementedException();
+        public Dictionary<TrObject, TrObject> __dict__ => null;
+        public string __repr__() => value.Escape();
+        public string __str__() => value;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [InitSetup(InitOrder.SetupClassObjects)]
-        static void _InitializeClasses()
+        [Mark(ModuleInit.ClasInitToken)]
+        static void _Init()
         {
-            CLASS = TrClass.FromPrototype("str");
+            CLASS = TrClass.FromPrototype<TrStr>();
             CLASS.Name = "str";
-            CLASS.Fixed = true;
+            CLASS.IsFixed = true;
             CLASS.IsSealed = true;
             CLASS.__new = TrStr.datanew;
+            TrClass.TypeDict[typeof(TrStr)] = CLASS;
         }
-        [InitSetup(InitOrder.SetupClassObjects)]
+
+        [Mark(typeof(TrStr))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
