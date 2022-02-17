@@ -59,6 +59,11 @@ namespace Traffy
             RTS.object_pos,
         };
 
+        internal static Exception exc_wrap_frame(Exception e, Frame frame)
+        {
+            throw new NotImplementedException();
+        }
+
         internal static void arg_check_positional_only(BList<TrObject> args, int v)
         {
             if (args.Count != v)
@@ -326,6 +331,11 @@ namespace Traffy
         internal static void object_setattr(TrObject tos, string attr, TrObject value)
         {
             tos.__setattr__(MK.Str(attr), value);
+        }
+
+        internal static void object_setattr(TrObject tos, TrObject attr, TrObject value)
+        {
+            tos.__setattr__(attr, value);
         }
 
         internal static void object_delattr(TrObject tos, string attr)

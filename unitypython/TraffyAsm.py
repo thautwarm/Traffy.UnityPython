@@ -105,6 +105,7 @@ class AugAssign(TypedDict):
     op: OpBin
     lhs: TraffyLHS
     rhs: TraffyIR
+    position: int
 
 
 class Assign(TypedDict):
@@ -131,6 +132,7 @@ class ForIn(TypedDict):
     itr: TraffyIR
     body: TraffyIR
     orelse: TraffyIR | None
+    position: int
 
 
 class IfClause(TypedDict):
@@ -164,6 +166,7 @@ class Try(TypedDict):
     handlers: list[Handler]
     orelse: TraffyIR | None
     final: TraffyIR | None
+    position: int
 
 
 class Raise(TypedDict):
@@ -175,24 +178,28 @@ class BoolAnd2(TypedDict):
     hasCont: bool
     left: TraffyIR
     right: TraffyIR
+    position: int
 
 
 class BoolOr2(TypedDict):
     hasCont: bool
     left: TraffyIR
     right: TraffyIR
+    position: int
 
 
 class BoolAnd(TypedDict):
     hasCont: bool
     left: TraffyIR
     comparators: list[TraffyIR]
+    position: int
 
 
 class BoolOr(TypedDict):
     hasCont: bool
     left: TraffyIR
     comparators: list[TraffyIR]
+    position: int
 
 
 class NamedExpr(TypedDict):
@@ -206,18 +213,21 @@ class BinOp(TypedDict):
     left: TraffyIR
     right: TraffyIR
     op: OpBin
+    position: int
 
 class CmpOp(TypedDict):
     hasCont: bool
     op: OpBin
     left: TraffyIR
     comparators: list[TraffyIR]
+    position: int
 
 
 class UnaryOp(TypedDict):
     hasCont: bool
     op: OpU
     operand: TraffyIR
+    position: int
 
 
 class DefaultArgEntry(TypedDict):
@@ -232,16 +242,12 @@ class Lambda(TypedDict):
     freeslots: list[int]
 
 
-class Call(TypedDict):
-    hasCont: bool
-    func: TraffyIR
-    args: list[TraffyIR]
-
 class CallEx(TypedDict):
     hasCont: bool
     func: TraffyIR
     args: list[SequenceElement]
     kwargs: list[tuple[TrObject | None, TraffyIR]]
+    position: int
 
 class Constant(TypedDict):
     o: TrObject
@@ -255,6 +261,7 @@ class DictEntry(TypedDict):
 class Dict(TypedDict):
     hasCont: bool
     entries: list[DictEntry]
+    position: int
 
 
 class SequenceElement(TypedDict):
@@ -265,28 +272,33 @@ class SequenceElement(TypedDict):
 class List(TypedDict):
     hasCont: bool
     elements: list[SequenceElement]
+    position: int
 
 
 class Tuple(TypedDict):
     hasCont: bool
     elements: list[SequenceElement]
+    position: int
 
 
 class Set(TypedDict):
     hasCont: bool
     elements: list[SequenceElement]
+    position: int
 
 
 class Attribute(TypedDict):
     hasCont: bool
     value: TraffyIR
-    attr: str
+    attr: TrObject
+    position: int
 
 
 class Subscript(TypedDict):
     hasCont: bool
     value: TraffyIR
     item: TraffyIR
+    position: int
 
 
 class Yield(TypedDict):
@@ -297,18 +309,22 @@ class Yield(TypedDict):
 class YieldFrom(TypedDict):
     value: TraffyIR
     hasCont: bool
+    position: int
 
 
 class LocalVar(TypedDict):
     slot: int
+    position: int
 
 
 class GlobalVar(TypedDict):
     name: TrObject
+    position: int
 
 
 class StoreListEx(TypedDict):
     hasCont: bool
+    position: int
     before: list[TraffyLHS]
     unpack: TraffyLHS
     after: list[TraffyLHS]
@@ -316,6 +332,7 @@ class StoreListEx(TypedDict):
 
 class StoreList(TypedDict):
     hasCont: bool
+    position: int
     elts: list[TraffyLHS]
 
 
@@ -329,14 +346,16 @@ class StoreGlobal(TypedDict):
 
 class StoreItem(TypedDict):
     hasCont: bool
+    position: int
     value: TraffyIR
     item: TraffyIR
 
 
 class StoreAttr(TypedDict):
-    value: TraffyIR
-    attr: str
     hasCont: bool
+    position: int
+    attr: TrObject
+    value: TraffyIR
 
 class MultiAssign(TypedDict):
     hasCont: bool
@@ -357,9 +376,13 @@ class Position(TypedDict):
     line: int
     col: int
 
+class Span(TypedDict):
+    start: Position
+    end: Position
+
 
 class Metadata(TypedDict):
-    positions: list[Position]
+    positions: list[Span]
     localnames: list[str]
     freenames: list[str]
     codename: str

@@ -9,6 +9,9 @@ namespace Traffy.Asm
     public interface TraffyAsm
     {
         public bool hasCont { get; }
+
+        // if hasCont is true, then 'exec' shall not be called;
+        // instead, the method 'cont' is called
         public TrObject exec(Frame frame);
         public TraffyCoroutine cont(Frame frame);
     }

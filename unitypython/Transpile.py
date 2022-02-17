@@ -3,13 +3,13 @@ from ast import *
 from asyncio import constants
 from operator import le
 from re import A
-import typing
 from unitypython.Collections import OrderedSet, OrderedDict
 from . import Structures as S
 from .Symtable import Symtable, ConciseSymtable
-from . import traffy_ir as ir
+from . import TraffyAsm as ir
 from typing import Any
 from .Scoper import *
+import typing
 
 
 class IRStmtTransformerInlineCache(NodeTransformer):
@@ -88,11 +88,12 @@ class AutoIndex(OrderedDict):
         v = self[k] = len(self)
         return v
 
-
+def extract_pos(node: AST) -> ir.Position:
+    return ir.Position(line=node.lineno, col=node.col_offset)
 
 
 class Transpiler:
-    def __init__(self, filename: str, parent_scope: ConciseSymtable | None):
+    def __init__(self, filename: str, init_pos: ir.Position, parent_scope: ConciseSymtable | None):
         self.instructions = []  # type: list[ir.TraffyIR]
         self.constants: OrderedDict[tuple[type, object], ir.TrObject] = OrderedDict()
         self.filename = filename
@@ -102,7 +103,9 @@ class Transpiler:
         self.stmt_transpiler = TranspileStmt(self)
 
         self.flag = 0
-        self.positions: list[ir.Position] = []
+        self._cur_pos : ir.Position = init_pos
+        self.positions: OrderedSet[ir.Position] = OrderedSet()
+        self.positions.add(init_pos)
 
         self.posargcount = 0 # count of non-variadic positional args
         self.allargcount = 0
@@ -112,6 +115,20 @@ class Transpiler:
 
     def __lshift__(self, o: ir.TraffyIR):
         self.instructions.append(o)
+
+    @property
+    def cur_pos(self):
+        return self._cur_pos
+
+    @cur_pos.setter
+    def cur_pos(self, value: ir.Position):
+        self._cur_pos = value
+        self.positions.add(value)
+
+    @property
+    def pos_ind(self) -> int:
+        return self.positions.order(self._cur_pos)
+
 
     def localname_slot(self, id: str):
         if id in self.scope.localvars:
@@ -136,12 +153,12 @@ class Transpiler:
     def load_name_(self, id: str) -> ir.TraffyIR:
         if id in self.scope.localvars:
             i = self.scope.localvars.order(id)
-            return ir.LocalVar(slot=i)
+            return ir.LocalVar(slot=i, position=self.pos_ind)
         elif id in self.scope.freevars:
             i = self.scope.freevars.order(id)
-            return ir.LocalVar(slot=-i -1)
+            return ir.LocalVar(slot=-i -1, position=self.pos_ind)
         else:
-            return ir.GlobalVar(name=const_to_variant(id))
+            return ir.GlobalVar(name=const_to_variant(id), position=self.pos_ind)
 
     def store_name_(self, id: str) -> ir.TraffyLHS:
 
@@ -160,7 +177,7 @@ class Transpiler:
 
     def create_fptr_builder(self, code: ir.TraffyIR, name: str) -> ir.TrFuncPointer:
         metadata = ir.Metadata(
-            positions=self.positions,
+            positions=list(self.positions),
             localnames=list(self.scope.localvars),
             freenames=list(self.scope.freevars),
             codename=name,
@@ -240,17 +257,28 @@ class TranspilerRHS(IRExprTransformerInlineCache):
         return ir.Constant(o=ob)
 
     def visit_BoolOp(self, node: BoolOp):
+        self.root.cur_pos = extract_pos(node)
         if isinstance(node.op, And):
             if len(node.values) == 2:
                 l = self.visit(node.values[0])
                 r = self.visit(node.values[1])
-                return ir.BoolAnd2(hasCont=l.get('hasCont', False) or r.get('hasCont', False), left=l, right=r)
+                return ir.BoolAnd2(
+                    hasCont=l.get('hasCont', False) or r.get('hasCont', False),
+                    left=l,
+                    right=r,
+                    position=self.root.pos_ind,
+                )
 
             left = self.visit(node.values[0])
             args = list(map(self.visit, node.values[1:]))
             hasCont = (left.get('hasCont', False) or
                         any(each.get('hasCont', False) for each in args))
-            return ir.BoolAnd(hasCont=hasCont, left=left, comparators=args)
+            return ir.BoolAnd(
+                hasCont=hasCont,
+                left=left,
+                comparators=args,
+                position=self.root.pos_ind
+            )
 
         elif isinstance(node.op, Or):
             if len(node.values) == 2:

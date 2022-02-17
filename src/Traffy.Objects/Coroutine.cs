@@ -36,6 +36,30 @@ namespace Traffy.Objects
             throw new TypeError($"invalid invocation of {args[0].AsClass.Name}");
         }
 
+        // check exceptions
+        public void AsTopLevelGenerator(Frame frame)
+        {
+            IEnumerator<TrObject> wrap(IEnumerator<TrObject> gen, Frame frame)
+            {
+                bool test;
+            loop_head:
+                try
+                {
+                    test = gen.MoveNext();
+                }
+                catch (Exception e)
+                {
+                    throw RTS.exc_wrap_frame(e, frame);
+                }
+                if (test)
+                {
+                    yield return gen.Current;
+                    goto loop_head;
+                }
+            }
+            m_generator = wrap(m_generator, frame);
+        }
+
         public IEnumerator<TrObject> ToIEnumerator()
         {
             Sent = RTS.object_none;

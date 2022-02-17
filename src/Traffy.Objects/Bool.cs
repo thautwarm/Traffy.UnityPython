@@ -32,9 +32,7 @@ namespace Traffy.Objects
             value = v;
         }
 
-
-
-        public Dictionary<TrObject, TrObject> __dict__ => throw new NotImplementedException();
+        public Dictionary<TrObject, TrObject> __dict__ => null;
 
         public static TrClass CLASS = null;
         public TrClass Class => Class;

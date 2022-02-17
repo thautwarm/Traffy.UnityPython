@@ -9,49 +9,15 @@ namespace Traffy.Asm
     using binary_func = Func<TrObject, TrObject, TrObject>;
 
     [Serializable]
-    public class Expr: TraffyAsm
-    {
-        public bool hasCont { get; set; }
-
-        public TraffyAsm value;
-
-        public TrObject exec(Frame frame)
-        {
-            value.exec(frame);
-            return RTS.object_none;
-        }
-
-        public TraffyCoroutine cont(Frame frame)
-        {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                TrObject rt_value;
-                if (value.hasCont)
-                {
-                    var cont = value.cont(frame);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                    rt_value = cont.Result;
-                }
-                else
-                {
-                    rt_value = value.exec(frame);
-                }
-            }
-            var coro = new TraffyCoroutine();
-            coro.Result = RTS.object_none;
-            coro.generator = mkCont(frame, coro);
-            return coro;
-        }
-    }
-    [Serializable]
     public class Block : TraffyAsm
     {
         public bool hasCont { get; set; }
+        public int position;
         public TraffyAsm[] suite;
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             for (int i = 0; i < suite.Length; i++)
             {
                 suite[i].exec(frame);
@@ -60,6 +26,7 @@ namespace Traffy.Asm
                     break;
                 }
             }
+            frame.traceback.Pop();
             return RTS.object_none;
         }
 
@@ -67,6 +34,7 @@ namespace Traffy.Asm
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
+                frame.traceback.Push(position);
                 for (int i = 0; i < suite.Length; i++)
                 {
                     var stmt = suite[i];
@@ -85,6 +53,7 @@ namespace Traffy.Asm
                         break;
                     }
                 }
+                frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
             coro.Result = RTS.object_none;
@@ -95,8 +64,9 @@ namespace Traffy.Asm
     [Serializable]
     public class AugAssign : TraffyAsm
     {
-        public bool hasCont { get; set; }
+        public bool hasCont => op < 0;
         public int op;
+        public int position;
         public TraffyLHS lhs;
         public TraffyAsm rhs;
         private binary_func opfunc;
@@ -104,21 +74,25 @@ namespace Traffy.Asm
         [OnDeserialized]
         internal AugAssign OnDeserializedMethod()
         {
-            opfunc = RTS.InplaceOOOFuncs[op];
+            opfunc = RTS.InplaceOOOFuncs[op < 0 ? -op : op];
             return this;
         }
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             var o = rhs.exec(frame);
             lhs.execOp(frame, opfunc, rhs);
+            frame.traceback.Pop();
             return RTS.object_none;
+
         }
 
         public TraffyCoroutine cont(Frame frame)
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
+                frame.traceback.Push(position);
                 TrObject rt_rhs;
                 if (rhs.hasCont)
                 {
@@ -138,6 +112,7 @@ namespace Traffy.Asm
                         yield return cont.Current;
                     }
                 }
+                frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
             coro.Result = RTS.object_none;
@@ -150,6 +125,7 @@ namespace Traffy.Asm
     public class Assign : TraffyAsm
     {
         public bool hasCont { get; set; }
+        public int position;
         public TraffyLHS lhs;
         public TraffyAsm rhs;
 
@@ -157,6 +133,7 @@ namespace Traffy.Asm
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
+                frame.traceback.Push(position);
                 TrObject rt_rhs;
                 if (rhs.hasCont)
                 {
@@ -179,6 +156,7 @@ namespace Traffy.Asm
                 {
                     lhs.exec(frame, rt_rhs);
                 }
+                frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
             coro.Result = RTS.object_none;
@@ -188,8 +166,10 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             var o = rhs.exec(frame);
             lhs.exec(frame, o);
+            frame.traceback.Pop();
             return RTS.object_none;
         }
     }
@@ -197,13 +177,14 @@ namespace Traffy.Asm
     public class Return : TraffyAsm
     {
         public bool hasCont { get; set; }
-
+        public int position;
         public TraffyAsm value;
 
         public TraffyCoroutine cont(Frame frame)
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
+                frame.traceback.Push(position);
                 TrObject rt_value;
                 if (value.hasCont)
                 {
@@ -219,6 +200,7 @@ namespace Traffy.Asm
                 frame.CONT = STATUS.RETURN;
                 frame.retval = rt_value;
                 coro.Result = RTS.object_none;
+                frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
             coro.generator = mkCont(frame, coro);
@@ -227,9 +209,11 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             var rt_value = value.exec(frame);
             frame.CONT = STATUS.RETURN;
             frame.retval = rt_value;
+            frame.traceback.Pop();
             return RTS.object_none;
         }
     }
@@ -238,6 +222,7 @@ namespace Traffy.Asm
     public class While : TraffyAsm
     {
         public bool hasCont { get; set; }
+        public int position;
         public TraffyAsm test;
         public TraffyAsm body;
         [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
@@ -247,6 +232,7 @@ namespace Traffy.Asm
 
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
+                frame.traceback.Push(position);
                 while (true)
                 {
                     TrObject rt_test;
@@ -310,6 +296,7 @@ namespace Traffy.Asm
                 }
 
                 coro.Result = RTS.object_none;
+                frame.traceback.Pop();
             }
 
             var coro = new TraffyCoroutine();
@@ -319,6 +306,7 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             TrObject val_return = RTS.object_none;
             while (RTS.object_bool(test.exec(frame)))
             {
@@ -345,6 +333,7 @@ namespace Traffy.Asm
                 frame.CONT = STATUS.NORMAL;
             }
 
+            frame.traceback.Pop();
             return val_return;
         }
     }
@@ -353,6 +342,7 @@ namespace Traffy.Asm
     public class ForIn : TraffyAsm
     {
         public bool hasCont { get; set; }
+        public int position;
         public TraffyLHS target;
         public TraffyAsm itr;
         public TraffyAsm body;
@@ -363,6 +353,7 @@ namespace Traffy.Asm
 
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
+                frame.traceback.Push(position);
                 TrObject rt_itr;
                 if (itr.hasCont)
                 {
@@ -433,6 +424,7 @@ namespace Traffy.Asm
                 }
 
                 coro.Result = RTS.object_none;
+                frame.traceback.Pop();
             }
 
             var coro = new TraffyCoroutine();
@@ -442,6 +434,7 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             var rt_itr = itr.exec(frame);
             var enumerator = RTS.object_getiter(rt_itr);
             while (enumerator.MoveNext())
@@ -469,6 +462,7 @@ namespace Traffy.Asm
                 frame.CONT = STATUS.NORMAL;
             }
 
+            frame.traceback.Pop();
             return RTS.object_none;
         }
     }
@@ -482,6 +476,7 @@ namespace Traffy.Asm
     public class IfThenElse : TraffyAsm
     {
         public bool hasCont { get; set; }
+
         public IfClause[] clauses;
 
         [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
@@ -617,6 +612,7 @@ namespace Traffy.Asm
     public class Try : TraffyAsm
     {
         public bool hasCont { set; get; }
+        public int position;
         public TraffyAsm body;
         public Handler[] handlers;
         [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
@@ -624,6 +620,7 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             try
             {
                 body.exec(frame);
@@ -663,6 +660,7 @@ namespace Traffy.Asm
                     final.exec(frame);
                 }
             }
+            frame.traceback.Pop();
             return RTS.object_none;
         }
 
@@ -672,16 +670,17 @@ namespace Traffy.Asm
             {
                 if (orelse != null)
                 {
-                    throw new NotImplementedException("yield statements in try-else are not implemented.");
+                    throw new InvalidProgramException("yield statements in try-else are not implemented.");
                 }
                 if (handlers.Length != 0)
                 {
-                    throw new NotImplementedException("yield statements in try-catch are not implemented.");
+                    throw new InvalidProgramException("yield statements in try-catch are not implemented.");
                 }
                 if (final != null && final.hasCont)
                 {
-                    throw new NotImplementedException("yield statements in finally blocks are not implemented.");
+                    throw new InvalidProgramException("yield statements in finally blocks are not implemented.");
                 }
+                frame.traceback.Push(position);
                 try
                 {
                     TrObject rt_body;
@@ -702,6 +701,7 @@ namespace Traffy.Asm
                     if (final != null)
                         final.exec(frame);
                 }
+                frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
             coro.generator = mkCont(frame, coro);
@@ -713,6 +713,7 @@ namespace Traffy.Asm
     public class Raise : TraffyAsm
     {
         public bool hasCont { get; set; }
+        public int position;
 
         [AllowNull] public TraffyAsm exc;
 
@@ -720,6 +721,7 @@ namespace Traffy.Asm
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
+                frame.traceback.Push(position);
                 TrObject rt_exc;
                 if (exc.hasCont)
                 {
@@ -744,6 +746,7 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             Exception e;
             if (exc != null)
             {

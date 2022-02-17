@@ -88,18 +88,24 @@ namespace Traffy.Objects
     }
 
     [Serializable]
-    public class Postion
+    public struct Postion
     {
         public int line;
         public int col;
-        public string filename;
     }
 
+    [Serializable]
+    public class Span
+    {
+        public Postion start;
+        public Postion end;
+        public string filename;
+    }
 
     [Serializable]
     public class Metadata
     {
-        public Postion[] positions;
+        public Span[] positions;
         public string[] localnames;
         public string[] freenames;
         public string codename;
@@ -280,10 +286,19 @@ namespace Traffy.Objects
             var frame = Frame.Make(this, localvars);
             if (!fptr.code.hasCont)
             {
-                fptr.code.exec(frame);
-                return frame.retval == null ? RTS.object_none : frame.retval;
+                try
+                {
+                    fptr.code.exec(frame);
+                }
+                catch (Exception e)
+                {
+                    throw RTS.exc_wrap_frame(e, frame);
+                }
+                return frame.retval;
             }
-            return fptr.code.cont(frame);
+            var coroutine = fptr.code.cont(frame);
+            coroutine.AsTopLevelGenerator(frame);
+            return coroutine;
         }
     }
 
@@ -301,9 +316,15 @@ namespace Traffy.Objects
         public Variable[] localvars;
         public STATUS CONT;
         public TrObject retval;
-        public Stack<(Postion, string)> callstack;
+        public Stack<int> traceback;
 
-        public static Frame Make(TrFunc func, Variable[] localvars) => new Frame { func = func, err = null, localvars = localvars, retval = null, callstack = new Stack<(Postion, string)>() };
+        public static Frame Make(TrFunc func, Variable[] localvars) => new Frame
+        {
+            func = func,
+            localvars = localvars,
+            retval = RTS.object_none,
+            traceback = new Stack<int>()
+        };
 
         internal Variable load_reference(int operand)
         {

@@ -27,6 +27,7 @@ namespace Traffy.Objects
 
         public TrClass AsClass => (TrClass)this;
         public Dictionary<TrObject, TrObject> __dict__ { get; }
+        public TrObject[] __array__ => null;
         public object Native => this;
         public TrClass Class { get; }
         Exception unsupported(string op) =>
