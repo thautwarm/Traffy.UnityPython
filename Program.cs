@@ -114,6 +114,7 @@ public class App
         // Perf.Test(Perf.MeasureTestA);
         // Perf.Test(Perf.MeasureTestB);
         // Perf.Test(Perf.MeasureTestC);
+
         ModuleInit.InitRuntime();
         var o = System.IO.File.ReadAllText("c.json");
         var x = JsonParse<TrFuncPointer>(o);

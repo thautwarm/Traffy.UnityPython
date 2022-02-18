@@ -78,7 +78,7 @@ namespace Traffy
         internal static void arg_check_positional_range(BList<TrObject> args, int least, int most)
         {
             var narg = args.Count;
-            if (least <= narg && narg <= most) {}
+            if (least <= narg && narg <= most) { }
             else
                 throw new ValueError($"requires {least}-{most} argument(s), got {narg}");
         }
@@ -179,7 +179,7 @@ namespace Traffy
 
         internal static TrObject object_neg(TrObject arg) => arg.__neg__();
 
-        internal static TrObject object_not(TrObject arg) =>  MK.Bool(!arg.__bool__());
+        internal static TrObject object_not(TrObject arg) => MK.Bool(!arg.__bool__());
 
         internal static TrObject object_inv(TrObject arg) => arg.__inv__();
 
@@ -191,9 +191,9 @@ namespace Traffy
                 return true;
             }
             if (cls.__base.Length != 0)
-                for(int i = 0; i < cls.__base.Length; i++)
+                for (int i = 0; i < cls.__base.Length; i++)
                 {
-                    if(isinstanceof(o, cls.__base[i])) return true;
+                    if (isinstanceof(o, cls.__base[i])) return true;
                 }
             return false;
         }
@@ -320,12 +320,34 @@ namespace Traffy
             return object_getattr(tos, MK.Str(attr));
         }
 
+
+        internal static void object_setic(TrObject tos, InlineCache.IC ic, TrObject value)
+        {
+            tos.__setic__(ic, value);
+        }
+
+        internal static TrObject object_getic(TrObject tos, InlineCache.IC ic)
+        {
+            if (!tos.Class.InstanceUseInlineCache)
+                return object_getattr(tos, ic.Name);
+
+            if (tos.__getic__(ic, out var o))
+            {
+                return o;
+            }
+            if (tos is TrClass cls)
+                throw new AttributeError(tos, MK.Str(ic.Name), $"class {cls.Name} has no attribute {ic.Name}");
+            throw new AttributeError(tos, MK.Str(ic.Name), $"{tos.Class.Name} object has no attribute {ic.Name}");
+        }
+
+
         internal static TrObject object_getattr(TrObject tos, TrObject attr)
         {
-            var o = tos.__getattr__(attr, out var found);
+            var found = new TrRef();
+            var o = tos.__getattr__(attr, found);
             if (!o)
                 throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr.__str__()}'.");
-            return found;
+            return found.value;
         }
 
         internal static void object_setattr(TrObject tos, string attr, TrObject value)
@@ -391,7 +413,7 @@ namespace Traffy
         {
             if (other is TrDict map)
             {
-                foreach(var kv in map.container)
+                foreach (var kv in map.container)
                 {
                     dict.Add(kv.Key, kv.Value);
                 }
@@ -577,11 +599,11 @@ namespace Traffy
 
         internal static TrInt Int(ulong p)
         {
-            return new TrInt { value = unchecked((long) p) };
+            return new TrInt { value = unchecked((long)p) };
         }
         internal static TrInt Int(int p)
         {
-            return new TrInt { value = unchecked((long) p) };
+            return new TrInt { value = unchecked((long)p) };
         }
 
         internal static TrInt Int(bool p)
@@ -627,6 +649,16 @@ namespace Traffy
         internal static TrStr Str(string v)
         {
             return new TrStr { value = v };
+        }
+
+        internal static TrStr Str(InternedString v)
+        {
+            return new TrStr { value = v, isInterned = true };
+        }
+
+        internal static TrStr IStr(string v)
+        {
+            return new TrStr { value = String.Intern(v), isInterned = true };
         }
 
         internal static TrTuple Tuple(TrObject[] trObjects)
@@ -707,7 +739,7 @@ namespace Traffy
 
         internal static TrRawObject RawObject()
         {
-            return new TrRawObject {};
+            return new TrRawObject { };
         }
     }
 }

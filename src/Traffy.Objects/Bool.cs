@@ -37,6 +37,8 @@ namespace Traffy.Objects
         public static TrClass CLASS = null;
         public TrClass Class => Class;
 
+        public List<TrObject> __array__ => null;
+
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             TrObject clsobj = args[0];
@@ -60,13 +62,13 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrBool>();
             CLASS.Name = "bool";
-            CLASS.__bool = o => o.AsBool();
-            CLASS.__new = TrBool.datanew;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("bool.__new__", TrBool.datanew));
             TrClass.TypeDict[typeof(TrBool)] = CLASS;
         }
 
@@ -74,6 +76,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
     }

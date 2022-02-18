@@ -26,10 +26,10 @@ namespace Traffy.Objects
 
         object IEnumerator.Current => Current;
 
-        public Dictionary<TrObject, TrObject> __dict__ => null;
-
         public static TrClass CLASS;
         public TrClass Class => CLASS;
+
+        public List<TrObject> __array__ => null;
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
@@ -88,12 +88,13 @@ namespace Traffy.Objects
         public TrObject __next__() =>
             MoveNext() ? Current : throw new StopIteration(Result);
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TraffyCoroutine>();
             CLASS.Name = "generator";
-            CLASS.__new = TraffyCoroutine.datanew;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("generator.__new__", TraffyCoroutine.datanew));
             TrClass.TypeDict[typeof(TraffyCoroutine)] = CLASS;
         }
         [Mark(typeof(TraffyCoroutine))]

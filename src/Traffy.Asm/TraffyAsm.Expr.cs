@@ -631,13 +631,11 @@ namespace Traffy.Asm
         public TrFuncPointer fptr;
         public DefaultArgEntry[] default_args;
         public int[] freeslots;
-        public int position;
 
         public bool hasCont { get; set; }
 
         public TrObject exec(Frame frame)
         {
-            frame.traceback.Push(position);
 
             Variable[] freevars;
             if (freeslots.Length != 0)
@@ -672,7 +670,7 @@ namespace Traffy.Asm
                 default_args: rt_default_args,
                 fptr: fptr
             );
-            frame.traceback.Pop();
+
             return rt_res;
         }
 
@@ -680,7 +678,6 @@ namespace Traffy.Asm
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
-                frame.traceback.Push(position);
 
                 Variable[] freevars;
                 if (freeslots.Length != 0)
@@ -728,8 +725,6 @@ namespace Traffy.Asm
                     default_args: rt_default_args,
                     fptr: fptr
                 );
-
-                frame.traceback.Pop();
 
                 coro.Result = rt_res;
                 yield break;
@@ -1316,7 +1311,21 @@ namespace Traffy.Asm
         public int position;
 
         public TraffyAsm value;
-        public TrObject attr;
+        public TrStr attr;
+
+        private InlineCache.PolyIC ic;
+
+        [OnDeserialized]
+        public Attribute OnDeserialized()
+        {
+            if (attr.value == null)
+            {
+                throw new InvalidProgramException("attr.value is null");
+            }
+            ic = new InlineCache.PolyIC(attr);
+            return this;
+        }
+
         public TraffyCoroutine cont(Frame frame)
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
@@ -1334,7 +1343,7 @@ namespace Traffy.Asm
                 {
                     rt_value = value.exec(frame);
                 }
-                coro.Result = RTS.object_getattr(rt_value, attr);
+                coro.Result = RTS.object_getic(rt_value, ic);
                 frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
@@ -1346,7 +1355,7 @@ namespace Traffy.Asm
         {
             frame.traceback.Push(position);
             var rt_value = value.exec(frame);
-            rt_value = RTS.object_getattr(rt_value, attr);
+            rt_value = RTS.object_getic(rt_value, ic);
             frame.traceback.Pop();
             return rt_value;
         }

@@ -1,4 +1,5 @@
 from unitypython.Transpile import compile_module
+from unitypython.TraffyAsm import fast_asdict
 import ast
 
 
@@ -71,8 +72,12 @@ print(1)
 
 tr = compile_module("a.py", node)
 
-import json
+try:
+    import ujson as json
+except ImportError:
+    import json
+
+dict_data = fast_asdict(tr)
 
 with open("c.json", 'w', encoding='utf-8') as file:
-    file.write(json.dumps(tr))
-
+    file.write(json.dumps(dict_data))

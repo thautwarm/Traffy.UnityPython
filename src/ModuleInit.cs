@@ -25,11 +25,11 @@ namespace Traffy
     }
     public static class ModuleInit
     {
-        internal const string ClasInitToken = "Traffy.ClassInit";
+        internal const string TokenClassInit = "Traffy.ClassInit";
         static Dictionary<string, TrObject> m_Prelude = new Dictionary<string, TrObject>();
         public static void InitRuntime()
         {
-            Mark.Query(typeof(TrObject), x => x is string s && s == ClasInitToken).ToList().ForEach(
+            Mark.Query(typeof(TrObject), x => x is string s && s == TokenClassInit).ToList().ForEach(
                 f => f.method()
             );
             var triples = Mark.Query(typeof(TrObject), x => x is Type t && typeof(TrObject).IsAssignableFrom(t)).ToArray();

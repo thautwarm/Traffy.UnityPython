@@ -17,19 +17,19 @@ namespace Traffy.Objects
     {
         public TrObject[] elts;
 
-        public Dictionary<TrObject, TrObject> __dict__ => throw new NotImplementedException();
-
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(ModuleInit.ClasInitToken)]
+        public List<TrObject> __array__ => null;
+
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrTuple>();
             CLASS.Name = "tuple";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("tuple.__new__", TrTuple.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrTuple.datanew;
             TrClass.TypeDict[typeof(TrTuple)] = CLASS;
         }
 
@@ -37,6 +37,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
 

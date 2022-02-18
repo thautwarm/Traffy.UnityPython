@@ -7,12 +7,13 @@ namespace Traffy.Objects
     public partial class TrFloat : TrObject
     {
         public float value;
-        public Dictionary<TrObject, TrObject> __dict__ => null;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
         public object Native => value;
+
+        public List<TrObject> __array__ => null;
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
@@ -36,20 +37,21 @@ namespace Traffy.Objects
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFloat>();
             CLASS.Name = "float";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("float.__new__", TrFloat.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrFloat.datanew;
             TrClass.TypeDict[typeof(TrFloat)] = CLASS;
         }
         [Mark(typeof(TrFloat))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
     }

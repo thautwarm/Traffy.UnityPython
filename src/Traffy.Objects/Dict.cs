@@ -12,6 +12,9 @@ namespace Traffy.Objects
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
+
+        public List<TrObject> __array__ => null;
+
         public bool __bool__() => container.Count > 0;
 
         public bool __getitem__(TrObject key, TrRef found)
@@ -25,14 +28,14 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("dict");
             CLASS.Name = "dict";
-            CLASS.IsFixed = true;
-            CLASS.__new = TrDict.datanew;
-            CLASS.__bool = o => ((TrDict)o).__bool__();
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("dict.__new__", TrDict.datanew));
+            CLASS[CLASS.ic__bool] = TrSharpFunc.FromFunc("dict.__new__", o => ((TrDict)o).__bool__());
             TrClass.TypeDict[typeof(TrDict)] = CLASS;
             // TODO: __init_subclass__
         }
@@ -41,6 +44,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
 

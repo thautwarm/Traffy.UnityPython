@@ -7,22 +7,20 @@ namespace Traffy.Objects
     {
         public string __repr__() => $"<function {name}>";
         public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
-
         public bool __bool__() => true;
-
         public string name;
-
         public Dictionary<TrObject, TrObject> __dict__ => null;
-
         public static TrClass CLASS;
         public TrClass Class => CLASS;
+        public List<TrObject> __array__ => null;
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSharpFunc>();
             CLASS.Name = "builtin_function";
-            CLASS.__new = TrSharpFunc.datanew;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("builtin_function.__new__", TrSharpFunc.datanew));
             TrClass.TypeDict[typeof(TrSharpFunc)] = CLASS;
         }
 

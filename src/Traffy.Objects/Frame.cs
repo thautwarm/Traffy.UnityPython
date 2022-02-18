@@ -154,21 +154,20 @@ namespace Traffy.Objects
         TrFuncPointer fptr
      ) : TrObject
     {
-        public Dictionary<TrObject, TrObject> __dict__ => null;
 
         public static TrClass CLASS;
 
         public TrClass Class => CLASS;
 
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFunc>();
             CLASS.Name = "function";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("function.__new__", TrFunc.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrDict.datanew;
             TrClass.TypeDict[typeof(TrFunc)] = CLASS;
         }
 
@@ -176,6 +175,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
         }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -184,6 +184,9 @@ namespace Traffy.Objects
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
         TrObject AsObject => this;
+
+        public List<TrObject> __array__ => null;
+
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             var localvars = new Variable[fptr.metadata.localnames.Length];

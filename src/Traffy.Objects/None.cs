@@ -7,7 +7,8 @@ namespace Traffy.Objects
     [Serializable]
     public partial class TrNone : TrObject
     {
-        public Dictionary<TrObject, TrObject> __dict__ => null;
+
+        public List<TrObject> __array__ => null;
 
         public object Native => this;
 
@@ -16,13 +17,13 @@ namespace Traffy.Objects
         public static TrNone Unique = new TrNone();
         public static bool unique_set = false;
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrNone>();
             CLASS.Name = "NoneType";
-            CLASS.__new = TrNone.datanew;
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NoneType.__new__", TrNone.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrNone)] = CLASS;
         }
@@ -30,6 +31,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
 

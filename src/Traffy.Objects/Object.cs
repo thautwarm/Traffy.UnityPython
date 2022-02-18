@@ -18,16 +18,19 @@ namespace Traffy.Objects
         }
     }
 
-    public interface TrObject : IEquatable<TrObject>
+    public partial interface TrObject : IEquatable<TrObject>
     {
         bool IEquatable<TrObject>.Equals(TrObject other)
         {
             return __eq__(other);
         }
 
+
         public TrClass AsClass => (TrClass)this;
-        public Dictionary<TrObject, TrObject> __dict__ { get; }
-        public TrObject[] __array__ => null;
+
+        public bool IsClass => false;
+
+        public List<TrObject> __array__ { get; }
         public object Native => this;
         public TrClass Class { get; }
         Exception unsupported(string op) =>
@@ -60,6 +63,20 @@ namespace Traffy.Objects
 
         public static TrObject __raw_init__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         { return RTS.object_none; }
+
+        public static TrObject __raw_new__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            RTS.arg_check_positional_atleast(args, 1);
+            if (args[0] is TrClass cls)
+            {
+                var cls_new = cls[cls.ic__new];
+                if (cls_new == null)
+                    throw new TypeError($"Fatal: {cls.Name} has no __new__ method");
+                var res = cls_new.__call__(args, kwargs);
+                return res;
+            }
+            throw new TypeError($"object.__new__(X): X is not a type object ({args[0].Class.Name})");
+        }
 
         // default '__str__'
         public static string __raw_str__(TrObject self) => self.__repr__();
@@ -216,60 +233,18 @@ namespace Traffy.Objects
             throw self.unsupported(nameof(__setitem__));
         public void __setitem__(TrObject key, TrObject value) => TrObject.__raw_setitem__(this, key, value);
 
-        public bool __getattr__(TrObject s, out TrObject found)
+        public static bool __raw_getattr__(TrObject self, TrObject name, TrRef found)
         {
-            var reference = MK.Ref();
-            var res = __getattr__(s, reference);
-            found = reference.value;
-            return res;
+            return self.__getic__(name.AsString(), out found.value);
         }
 
-        // default '__getattr__'
-        public static bool __raw_getattr__(TrObject self, TrObject s, TrRef found)
+        public static void __raw_setattr__(TrObject self, TrObject name, TrObject value)
         {
-            TrObject getter;
-            if (self.__dict__ != null)
-            {
-                if (RTS.baredict_get_noerror(self.__dict__, s, out found.value))
-                {
-                    return true;
-                }
-            }
-            Dictionary<TrObject, TrObject> MAGIC_METHODS = self.Class.__dict__;
-            if (MAGIC_METHODS.TryGetValue(s, out getter))
-            {
-                // TODO: check proper type
-                found.value = Objects.TrSharpMethod.BindOrUnwrap(getter, self);
-                return true;
-            }
-            if (self.Class.__base.Length != 0)
-            {
-                var mro = self.Class.__mro;
-                for (int i = 0; i < mro.Length; i++)
-                {
-                    var get = mro[i].__dict__.TryGetValue(s, out getter);
-                    if (get)
-                    {
-                        // TODO: check proper type
-                        found.value = Objects.TrSharpMethod.BindOrUnwrap(getter, self);
-                        return true;
-                    }
-                }
-            }
-            return false;
+            self.__setic__(name.AsString(), value);
         }
-        public bool __getattr__(TrObject s, TrRef found) => TrObject.__raw_getattr__(this, s, found);
 
-        public static void __raw_setattr__(TrObject self, TrObject s, TrObject value)
-        {
-            if (self.__dict__ != null)
-            {
-                RTS.baredict_set(self.__dict__, s, value);
-                return;
-            }
-            throw new AttributeError(self, s, $"cannot set attribute {s.__repr__()}.");
-        }
-        public void __setattr__(TrObject s, TrObject value) => TrObject.__raw_setattr__(this, s, value);
+        public bool __getattr__(TrObject name, TrRef found) => __raw_getattr__(this, name, found);
+        public void __setattr__(TrObject name, TrObject value) => __raw_setattr__(this, name, value);
 
         // default '__iter__'
         public static IEnumerator<TrObject> __raw_iter__(TrObject self) =>
@@ -286,7 +261,7 @@ namespace Traffy.Objects
         // Comparators
 
         public static bool __raw_eq__(TrObject self, TrObject other) =>
-            throw self.unsupported(nameof(__eq__));
+            self.Native == other.Native;
         public bool __eq__(TrObject other) => TrObject.__raw_eq__(this, other);
 
         // default '__lt__'
@@ -322,19 +297,23 @@ namespace Traffy.Objects
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-        [Mark(ModuleInit.ClasInitToken)]
+
+        public List<TrObject> __array__ => null;
+
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.RawObjectClassObject();
+            CLASS.InitInlineCacheForMagicMethods();
             CLASS.Name = "object";
-            CLASS.__new = TrRawObject.datanew;
-            CLASS.IsFixed = true;
+            CLASS[CLASS.ic__new] = TrSharpFunc.FromFunc("object.__new__", TrRawObject.datanew);
             TrClass.TypeDict[typeof(TrRawObject)] = CLASS;
         }
         [Mark(typeof(TrRawObject))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
 

@@ -16,23 +16,28 @@ namespace Traffy.Objects
     public partial class TrStr : TrObject
     {
         public string value;
-
-        public Dictionary<TrObject, TrObject> __dict__ => null;
+        public bool isInterned = false;
         public string __repr__() => value.Escape();
         public string __str__() => value;
         public bool __bool__() => value.Length != 0;
+        public List<TrObject> __array__ => null;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
+        public TrStr Interned() => isInterned ? this : MK.IStr(value);
 
-        [Mark(ModuleInit.ClasInitToken)]
+        public InternedString AsIString() => isInterned ?
+            InternedString.Unsafe(this.value) :
+            InternedString.FromString(value);
+
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrStr>();
             CLASS.Name = "str";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("str.__new__", TrStr.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrStr.datanew;
             TrClass.TypeDict[typeof(TrStr)] = CLASS;
         }
 
@@ -40,6 +45,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
 
@@ -47,7 +53,11 @@ namespace Traffy.Objects
 
         public bool __eq__(TrObject other)
         {
-            return other is TrStr s && s.value == value;
+            return
+                other is TrStr s &&
+                (isInterned
+                    ? object.ReferenceEquals(s.value, value)
+                    : s.value == value);
         }
 
         public bool __lt__(TrObject other)

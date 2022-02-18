@@ -3,6 +3,7 @@ from ast import *
 from asyncio import constants
 from operator import le
 from re import A
+from turtle import pos, position
 from unitypython.Collections import OrderedSet, OrderedDict
 from . import Structures as S
 from .Symtable import Symtable, ConciseSymtable
@@ -14,6 +15,7 @@ import typing
 
 class IRStmtTransformerInlineCache(NodeTransformer):
     _dispatch_tables: dict[type, typing.Callable]
+
     def __init_subclass__(cls) -> None:
         cls._dispatch_tables = {}
 
@@ -24,8 +26,10 @@ class IRStmtTransformerInlineCache(NodeTransformer):
         self._dispatch_tables[node.__class__] = method
         return method(self, node)
 
+
 class IRExprTransformerInlineCache(NodeTransformer):
     _dispatch_tables: dict[type, typing.Callable]
+
     def __init_subclass__(cls) -> None:
         cls._dispatch_tables = {}
 
@@ -39,6 +43,7 @@ class IRExprTransformerInlineCache(NodeTransformer):
 
 class LHSTransformerInlineCache(NodeTransformer):
     _dispatch_tables: dict[type, typing.Callable]
+
     def __init_subclass__(cls) -> None:
         cls._dispatch_tables = {}
 
@@ -51,6 +56,8 @@ class LHSTransformerInlineCache(NodeTransformer):
 
 
 _constants = {}
+
+
 def const_to_variant(v: object) -> ir.TrObject:
     key = type(v), v
     n = _constants.get(key)
@@ -74,7 +81,7 @@ def _const_to_variant(v):
     elif isinstance(v, frozenset):
         raise TypeError(v)
     elif isinstance(v, tuple):
-        return ir.TrTuple(elts = list(map(const_to_variant, v)))
+        return ir.TrTuple(elts=list(map(const_to_variant, v)))
     else:
         raise TypeError(v)
 
@@ -88,12 +95,25 @@ class AutoIndex(OrderedDict):
         v = self[k] = len(self)
         return v
 
-def extract_pos(node: AST) -> ir.Position:
-    return ir.Position(line=node.lineno, col=node.col_offset)
+
+def extract_pos(node: AST) -> ir.Span:
+    start = ir.Position(line=node.lineno, col=node.col_offset)
+    if node.end_lineno is not None:
+        end_line = node.end_lineno
+    else:
+        end_line = start.line
+    if node.end_col_offset is not None:
+        end_col_offset = node.end_col_offset
+    else:
+        end_col_offset = start.col
+    end = ir.Position(line=end_line, col=end_col_offset)
+    return ir.Span(start, end)
 
 
 class Transpiler:
-    def __init__(self, filename: str, init_pos: ir.Position, parent_scope: ConciseSymtable | None):
+    def __init__(
+        self, filename: str, init_pos: ir.Span, parent_scope: ConciseSymtable | None
+    ):
         self.instructions = []  # type: list[ir.TraffyIR]
         self.constants: OrderedDict[tuple[type, object], ir.TrObject] = OrderedDict()
         self.filename = filename
@@ -103,11 +123,11 @@ class Transpiler:
         self.stmt_transpiler = TranspileStmt(self)
 
         self.flag = 0
-        self._cur_pos : ir.Position = init_pos
-        self.positions: OrderedSet[ir.Position] = OrderedSet()
+        self._cur_pos: ir.Span = init_pos
+        self.positions: OrderedSet[ir.Span] = OrderedSet()
         self.positions.add(init_pos)
 
-        self.posargcount = 0 # count of non-variadic positional args
+        self.posargcount = 0  # count of non-variadic positional args
         self.allargcount = 0
         self.vararg: str | None = None
         self.kwarg: str | None = None
@@ -121,14 +141,13 @@ class Transpiler:
         return self._cur_pos
 
     @cur_pos.setter
-    def cur_pos(self, value: ir.Position):
+    def cur_pos(self, value: ir.Span):
         self._cur_pos = value
         self.positions.add(value)
 
     @property
     def pos_ind(self) -> int:
         return self.positions.order(self._cur_pos)
-
 
     def localname_slot(self, id: str):
         if id in self.scope.localvars:
@@ -146,7 +165,7 @@ class Transpiler:
             return i
         elif id in self.scope.freevars:
             i = self.scope.freevars.order(id)
-            return -i -1
+            return -i - 1
         else:
             raise NameError(f"{id} is not a local/free variable")
 
@@ -156,7 +175,7 @@ class Transpiler:
             return ir.LocalVar(slot=i, position=self.pos_ind)
         elif id in self.scope.freevars:
             i = self.scope.freevars.order(id)
-            return ir.LocalVar(slot=-i -1, position=self.pos_ind)
+            return ir.LocalVar(slot=-i - 1, position=self.pos_ind)
         else:
             return ir.GlobalVar(name=const_to_variant(id), position=self.pos_ind)
 
@@ -167,10 +186,9 @@ class Transpiler:
             return ir.StoreLocal(slot=i)
         elif id in self.scope.freevars:
             i = self.scope.freevars.order(id)
-            return ir.StoreLocal(slot=-i -1)
+            return ir.StoreLocal(slot=-i - 1)
         else:
             return ir.StoreGlobal(name=const_to_variant(id))
-
 
     def delete_name_(self, id: str):
         raise NotImplementedError
@@ -190,7 +208,9 @@ class Transpiler:
             allargcount=self.allargcount,
             hasvararg=hasvararg,
             haskwarg=haskwarg,
-            kwindices={v: const_to_variant(k) for k, v in self.kwindices.asdict().items()},
+            kwindices={
+                v: const_to_variant(k) for k, v in self.kwindices.asdict().items()
+            },
             code=code,
             metadata=metadata,
         )
@@ -242,6 +262,7 @@ class Transpiler:
     def instr_offset(self):
         return len(self.instructions)
 
+
 class TranspilerRHS(IRExprTransformerInlineCache):
     def __init__(self, root: Transpiler):
         self.root = root
@@ -258,39 +279,42 @@ class TranspilerRHS(IRExprTransformerInlineCache):
 
     def visit_BoolOp(self, node: BoolOp):
         self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         if isinstance(node.op, And):
             if len(node.values) == 2:
                 l = self.visit(node.values[0])
                 r = self.visit(node.values[1])
                 return ir.BoolAnd2(
-                    hasCont=l.get('hasCont', False) or r.get('hasCont', False),
+                    hasCont=l.hasCont or r.hasCont,
                     left=l,
                     right=r,
-                    position=self.root.pos_ind,
+                    position=position,
                 )
 
             left = self.visit(node.values[0])
             args = list(map(self.visit, node.values[1:]))
-            hasCont = (left.get('hasCont', False) or
-                        any(each.get('hasCont', False) for each in args))
+            hasCont = left.hasCont or ir.hasCont(*args)
             return ir.BoolAnd(
-                hasCont=hasCont,
-                left=left,
-                comparators=args,
-                position=self.root.pos_ind
+                hasCont=hasCont, left=left, comparators=args, position=position
             )
 
         elif isinstance(node.op, Or):
             if len(node.values) == 2:
                 l = self.visit(node.values[0])
                 r = self.visit(node.values[1])
-                return ir.BoolOr2(hasCont=l.get('hasCont', False) or r.get('hasCont', False), left=l, right=r)
+                return ir.BoolOr2(
+                    position=position,
+                    hasCont=l.hasCont or r.hasCont,
+                    left=l,
+                    right=r,
+                )
 
             left = self.visit(node.values[0])
             args = list(map(self.visit, node.values[1:]))
-            hasCont = (left.get('hasCont', False) or
-                        any(each.get('hasCont', False) for each in args))
-            return ir.BoolOr(hasCont=hasCont, left=left, comparators=args)
+            hasCont = left.hasCont or ir.hasCont(args)
+            return ir.BoolOr(
+                position=position, hasCont=hasCont, left=left, comparators=args
+            )
 
         else:
             raise TypeError(
@@ -314,16 +338,27 @@ class TranspilerRHS(IRExprTransformerInlineCache):
     }
 
     def visit_BinOp(self, node: BinOp) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         op = self._binop_indices[type(node.op)]
         l = self.visit(node.left)
         r = self.visit(node.right)
-        return ir.BinOp(hasCont=ir.hasCont(l, r), left=l, right=r, op=op)
+        return ir.BinOp(
+            position=position, hasCont=ir.hasCont(l, r), left=l, right=r, op=op
+        )
 
     def visit_NamedExpr(self, node: NamedExpr) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         expr = self.visit(node.value)
         lhs_transpiler = TranspilerLHS(self.root)
         lhs = lhs_transpiler.visit(node.target)
-        return ir.NamedExpr(hasCont=ir.hasCont(expr, lhs), lhs=lhs, expr=expr)
+        return ir.NamedExpr(
+            position=position,
+            hasCont=ir.hasCont(expr, lhs),
+            lhs=lhs,
+            expr=expr,
+        )
 
     _unaryop_indices: dict[typing.Type[unaryop], ir.OpU] = {
         Invert: ir.OpU.INV,
@@ -333,21 +368,35 @@ class TranspilerRHS(IRExprTransformerInlineCache):
     }
 
     def visit_UnaryOp(self, node: UnaryOp) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         operand = self.visit(node.operand)
         op = self._unaryop_indices[type(node.op)]
-        return ir.UnaryOp(hasCont=ir.hasCont(operand), op=op, operand=operand)
+        return ir.UnaryOp(
+            position=position,
+            hasCont=ir.hasCont(operand),
+            op=op,
+            operand=operand,
+        )
 
     def visit_Lambda(self, node: Lambda) -> Any:
         for each in node.args.defaults:
             self.visit(each)
-        transpiler = Transpiler(self.root.filename, self.root.scope)
+        transpiler = Transpiler(self.root.filename, extract_pos(node), self.root.scope)
         transpiler.before_visit(node)
         body = transpiler.rhs_transpiler.visit(node.body)
-        lambda_body = ir.Return(hasCont=ir.hasCont(body), value=body)
+        lambda_body = ir.Return(
+            position=transpiler.pos_ind, hasCont=ir.hasCont(body), value=body
+        )
 
         hasCont = False
         default_arg_entries: list[ir.DefaultArgEntry] = []
-        for default, i in zip(node.args.defaults, range(transpiler.posargcount-len(node.args.defaults), transpiler.posargcount)):
+        for default, i in zip(
+            node.args.defaults,
+            range(
+                transpiler.posargcount - len(node.args.defaults), transpiler.posargcount
+            ),
+        ):
             v_arg = self.visit(default)
             default_arg_entries.append(ir.DefaultArgEntry(slot=i, value=v_arg))
             hasCont = hasCont or ir.hasCont(v_arg)
@@ -359,10 +408,14 @@ class TranspilerRHS(IRExprTransformerInlineCache):
                 default_arg_entries.append(ir.DefaultArgEntry(slot=i, value=v_arg))
                 hasCont = hasCont or ir.hasCont(v_arg)
 
-
         fptr = transpiler.create_fptr_builder(lambda_body, "<lambda>")
         freeslots = [self.root.load_derefence(id) for id in transpiler.scope.freevars]
-        return ir.Lambda(hasCont=hasCont, fptr=fptr, default_args=default_arg_entries, freeslots=freeslots)
+        return ir.Lambda(
+            hasCont=hasCont,
+            fptr=fptr,
+            default_args=default_arg_entries,
+            freeslots=freeslots,
+        )
 
     _cmp_opcodes: dict[typing.Type[cmpop], ir.OpBin] = {
         Eq: ir.OpBin.EQ,
@@ -378,6 +431,8 @@ class TranspilerRHS(IRExprTransformerInlineCache):
     }
 
     def visit_Compare(self, node: Compare) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         l = self.visit(node.left)
         hasCont = ir.hasCont(l)
         comparators: list[ir.TraffyIR] = []
@@ -386,9 +441,17 @@ class TranspilerRHS(IRExprTransformerInlineCache):
             comparators.append(v)
             hasCont = hasCont or ir.hasCont(v)
         op = self._cmp_opcodes[type(node.ops[0])]
-        return ir.CmpOp(hasCont=hasCont, op=op, left=l, comparators=comparators)
+        return ir.CmpOp(
+            position=position,
+            hasCont=hasCont,
+            op=op,
+            left=l,
+            comparators=comparators,
+        )
 
     def visit_Call(self, node: Call) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         func = self.visit(node.func)
         hasCont = ir.hasCont(func)
         args: list[ir.SequenceElement] = []
@@ -410,10 +473,17 @@ class TranspilerRHS(IRExprTransformerInlineCache):
                 arg = self.visit(each.value)
                 kwargs.append((const_to_variant(each.arg), arg))
             hasCont = hasCont or ir.hasCont(arg)
-        return ir.CallEx(hasCont=hasCont, func=func, args=args, kwargs=kwargs)
+        return ir.CallEx(
+            position=position,
+            hasCont=hasCont,
+            func=func,
+            args=args,
+            kwargs=kwargs,
+        )
 
     def visit_Slice(self, node: Slice) -> ir.TraffyIR:
-
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         if node.lower:
             low = self.visit(node.lower)
         else:
@@ -428,18 +498,42 @@ class TranspilerRHS(IRExprTransformerInlineCache):
             step = self.visit(node.step)
         else:
             step = ir.Constant(o=const_to_variant(None))
-        slice = ir.GlobalVar(name = const_to_variant("slice"))
-        return ir.Call(hasCont=ir.hasCont(low, high, step), func=slice, args=[low, high, step])
+        slice = ir.GlobalVar(position=position, name=const_to_variant("slice"))
+        return ir.CallEx(
+            position=position,
+            hasCont=ir.hasCont(low, high, step),
+            func=slice,
+            args=[
+                ir.SequenceElement(False, low),
+                ir.SequenceElement(False, high),
+                ir.SequenceElement(False, step),
+            ],
+            kwargs=[],
+        )
 
     def visit_Attribute(self, node: Attribute) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         value = self.visit(node.value)
         attr = node.attr
-        return ir.Attribute(hasCont=ir.hasCont(value), value=value, attr=attr)
+        return ir.Attribute(
+            position=position,
+            hasCont=ir.hasCont(value),
+            value=value,
+            attr=ir.TrStr(attr),
+        )
 
     def visit_Subscript(self, node: Subscript) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         value = self.visit(node.value)
         item = self.visit(node.slice)
-        return ir.Subscript(hasCont=ir.hasCont(value, item), value=value, item=item)
+        return ir.Subscript(
+            position=position,
+            hasCont=ir.hasCont(value, item),
+            value=value,
+            item=item,
+        )
 
     def visit_Index(self, node: Index) -> ir.TraffyIR:
         return self.visit(getattr(node, "value"))
@@ -453,6 +547,8 @@ class TranspilerRHS(IRExprTransformerInlineCache):
         )
 
     def visit_Name(self, node: Name) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         return self.root.load_name_(node.id)
 
     def visit_sequence(self, xs: list[expr]) -> tuple[bool, list[ir.SequenceElement]]:
@@ -469,18 +565,26 @@ class TranspilerRHS(IRExprTransformerInlineCache):
         return hasCont, args
 
     def visit_List(self, node: List) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         hasCont, sequence = self.visit_sequence(node.elts)
-        return ir.List(hasCont=hasCont, elements=sequence)
+        return ir.List(position=position, hasCont=hasCont, elements=sequence)
 
     def visit_Set(self, node: Set) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         hasCont, sequence = self.visit_sequence(node.elts)
-        return ir.Set(hasCont=hasCont, elements=sequence)
+        return ir.Set(position=position, hasCont=hasCont, elements=sequence)
 
     def visit_Tuple(self, node: Tuple) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         hasCont, sequence = self.visit_sequence(node.elts)
-        return ir.Tuple(hasCont=hasCont, elements=sequence)
+        return ir.Tuple(position=position, hasCont=hasCont, elements=sequence)
 
     def visit_Dict(self, node: Dict) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         hasCont = False
         args: list[ir.DictEntry] = []
         for key, value in zip(node.keys, node.values):
@@ -493,18 +597,23 @@ class TranspilerRHS(IRExprTransformerInlineCache):
                 key = self.visit(key)
                 args.append(ir.DictEntry(key=key, value=arg))
                 hasCont = hasCont or ir.hasCont(arg, key)
-        return ir.Dict(hasCont=hasCont, entries=args)
+        return ir.Dict(position=position, hasCont=hasCont, entries=args)
 
     def visit_Yield(self, node: Yield) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         if node.value:
             value = self.visit(node.value)
         else:
             value = ir.Constant(o=const_to_variant(None))
-        return ir.Yield(value=value, hasCont=True)
+        return ir.Yield(position=position, value=value)
 
     def visit_YieldFrom(self, node: YieldFrom) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         value = self.visit(node.value)
-        return ir.YieldFrom(value=value, hasCont=True)
+        return ir.YieldFrom(position=position, value=value)
+
 
 class TranspilerLHS(LHSTransformerInlineCache):
     def __init__(self, root: Transpiler):
@@ -517,8 +626,15 @@ class TranspilerLHS(LHSTransformerInlineCache):
         return self.root.store_name_(node.id)
 
     def visit_Attribute(self, node: Attribute) -> ir.TraffyLHS:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         value = self.root.rhs_transpiler.visit(node.value)
-        return ir.StoreAttr(hasCont=ir.hasCont(value), value=value, attr=node.attr)
+        return ir.StoreAttr(
+            position=position,
+            hasCont=ir.hasCont(value),
+            value=value,
+            attr=ir.TrStr(node.attr),
+        )
 
     def visit_Starred(self, node: Starred) -> ir.TraffyLHS:
         raise TypeError(
@@ -526,30 +642,40 @@ class TranspilerLHS(LHSTransformerInlineCache):
         )
 
     def visit_Subscript(self, node: Subscript) -> ir.TraffyLHS:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         value = self.root.rhs_transpiler.visit(node.value)
         item = self.root.rhs_transpiler.visit(node.slice)
-        return ir.StoreItem(hasCont=ir.hasCont(value, item), value=value, item=item)
+        return ir.StoreItem(
+            position=position, hasCont=ir.hasCont(value, item), value=value, item=item
+        )
 
     def visit_Tuple(self, node: Tuple) -> ir.TraffyLHS:
         return self.visit_List(node)
 
     def visit_List(self, node: List | Tuple) -> ir.TraffyLHS:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         if not any(isinstance(elt, Starred) for elt in node.elts):
             xs = list(map(self.visit, node.elts))
-            return ir.StoreList(hasCont=ir.hasCont(*xs), elts=xs)
+            return ir.StoreList(position=position, hasCont=ir.hasCont(xs), elts=xs)
         offset = 0
         for i, elt in enumerate(node.elts):
             if isinstance(elt, Starred):
                 offset = i
         xs = list(map(self.visit, node.elts[:offset]))
-        ys = list(map(self.visit, node.elts[offset+1:]))
+        ys = list(map(self.visit, node.elts[offset + 1 :]))
 
         starred = node.elts[offset]
         assert isinstance(starred, Starred)
         v = self.visit(starred.value)
-        return ir.StoreListEx(hasCont=ir.hasCont(*xs, *ys, v), before=xs, unpack=v, after=ys)
-
-
+        return ir.StoreListEx(
+            position=position,
+            hasCont=ir.hasCont(*xs, *ys, v),
+            before=xs,
+            unpack=v,
+            after=ys,
+        )
 
 
 class TranspileStmt(IRStmtTransformerInlineCache):
@@ -563,25 +689,33 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         return self.root.rhs_transpiler.visit(node.value)
 
     def visit_Return(self, node: Return) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         if node.value:
             expr = self.root.rhs_transpiler.visit(node.value)
         else:
             expr = ir.Constant(o=const_to_variant(None))
-        return ir.Return(hasCont=ir.hasCont(expr), value=expr)
+        return ir.Return(position=position, hasCont=ir.hasCont(expr), value=expr)
 
     def visit_FunctionDef(self, node: FunctionDef) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
         rhs_transpiler = self.root.rhs_transpiler
         for each in node.args.defaults:
             rhs_transpiler.visit(each)
-        transpiler = Transpiler(self.root.filename, self.root.scope)
+        transpiler = Transpiler(self.root.filename, extract_pos(node), self.root.scope)
         transpiler.before_visit(node)
-
+        position = transpiler.pos_ind
         suite = [transpiler.stmt_transpiler.visit(stmt) for stmt in node.body]
-        block = ir.Block(hasCont=ir.hasCont(*suite), suite=suite)
+        block = ir.Block(hasCont=ir.hasCont(suite), suite=suite)
 
         hasCont = False
         default_arg_entries: list[ir.DefaultArgEntry] = []
-        for default, i in zip(node.args.defaults, range(transpiler.posargcount-len(node.args.defaults), transpiler.posargcount)):
+        for default, i in zip(
+            node.args.defaults,
+            range(
+                transpiler.posargcount - len(node.args.defaults), transpiler.posargcount
+            ),
+        ):
             v_arg = self.root.rhs_transpiler.visit(default)
             default_arg_entries.append(ir.DefaultArgEntry(slot=i, value=v_arg))
             hasCont = hasCont or ir.hasCont(v_arg)
@@ -593,36 +727,54 @@ class TranspileStmt(IRStmtTransformerInlineCache):
                 default_arg_entries.append(ir.DefaultArgEntry(slot=i, value=v_arg))
                 hasCont = hasCont or ir.hasCont(v_arg)
 
-
         fptr = transpiler.create_fptr_builder(block, node.name)
         freeslots = [self.root.load_derefence(id) for id in transpiler.scope.freevars]
-        func_body = ir.Lambda(hasCont=hasCont, fptr=fptr, default_args=default_arg_entries, freeslots=freeslots)
+        func_body = ir.Lambda(
+            hasCont=hasCont,
+            fptr=fptr,
+            default_args=default_arg_entries,
+            freeslots=freeslots,
+        )
         lhs = self.root.store_name_(node.name)
-        return ir.Assign(hasCont=hasCont, lhs=lhs, rhs=func_body)
+        return ir.Assign(position=position, hasCont=hasCont, lhs=lhs, rhs=func_body)
 
     def visit_Assign(self, node: Assign) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         value = self.root.rhs_transpiler.visit(node.value)
         targets = list(map(self.root.lhs_transpiler.visit, node.targets))
         if len(targets) == 1:
             lhs = targets[0]
         else:
-            lhs =ir.MultiAssign(hasCont=ir.hasCont(*targets), targets=targets)
-        return ir.Assign(hasCont=ir.hasCont(lhs, value), lhs=lhs, rhs=value)
+            lhs = ir.MultiAssign(hasCont=ir.hasCont(*targets), targets=targets)
+        return ir.Assign(
+            position=position, hasCont=ir.hasCont(lhs, value), lhs=lhs, rhs=value
+        )
 
     def visit_AnnAssign(self, node: AnnAssign) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         if not node.value:
             return ir.Constant(o=const_to_variant(None))
         value = self.root.rhs_transpiler.visit(node.value)
         lhs = self.root.lhs_transpiler.visit(node.target)
-        return ir.Assign(hasCont=ir.hasCont(lhs, value), lhs=lhs, rhs=value)
+        return ir.Assign(
+            position=position, hasCont=ir.hasCont(lhs, value), lhs=lhs, rhs=value
+        )
 
     def visit_AugAssign(self, node: AugAssign) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         value = self.root.rhs_transpiler.visit(node.value)
         lhs = self.root.lhs_transpiler.visit(node.target)
         op = self.root.rhs_transpiler._binop_indices[type(node.op)]
-        return ir.AugAssign(hasCont=ir.hasCont(lhs, value), lhs=lhs, op=op, rhs=value)
+        return ir.AugAssign(
+            position=position, hasCont=ir.hasCont(lhs, value), lhs=lhs, op=op, rhs=value
+        )
 
     def visit_While(self, node: While) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         test = self.root.rhs_transpiler.visit(node.test)
         body = [self.visit(each) for each in node.body]
         body_block = ir.Block(hasCont=ir.hasCont(*body), suite=body)
@@ -634,7 +786,13 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             orelse_block = None
             hasCont = False
 
-        return ir.While(hasCont = hasCont or ir.hasCont(test, body_block), test=test, body=body_block, orelse=orelse_block)
+        return ir.While(
+            position=position,
+            hasCont=hasCont or ir.hasCont(test, body_block),
+            test=test,
+            body=body_block,
+            orelse=orelse_block,
+        )
 
     def visit_Global(self, node: Global) -> ir.TraffyIR:
         return ir.Constant(o=const_to_variant(None))
@@ -653,6 +811,8 @@ class TranspileStmt(IRStmtTransformerInlineCache):
                 return (flatten, node.orelse)
 
     def visit_If(self, node: If) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         flatten, orelse = self._flat(node)
         hasCont = False
         clauses: list[ir.IfClause] = []
@@ -668,7 +828,9 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             v_orelse = [self.visit(stmt) for stmt in orelse]
             v_orelse = ir.Block(hasCont=ir.hasCont(*v_orelse), suite=v_orelse)
             hasCont = hasCont or ir.hasCont(v_orelse)
-        return ir.IfThenElse(hasCont=hasCont, clauses=clauses, orelse=v_orelse)
+        return ir.IfThenElse(
+            position=position, hasCont=hasCont, clauses=clauses, orelse=v_orelse
+        )
 
     def visit_Pass(self, node: Pass) -> ir.TraffyIR:
         return ir.Constant(o=const_to_variant(None))
@@ -690,6 +852,8 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         return ir.Block(hasCont=ir.hasCont(*xs), suite=xs)
 
     def visit_Try(self, node: Try) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         body = self.visit_block(node.body)
         handlers: list[ir.Handler] = []
         hasCont = ir.hasCont(body)
@@ -707,7 +871,9 @@ class TranspileStmt(IRStmtTransformerInlineCache):
                 hasCont_ = hasCont_ or ir.hasCont(exc_bind)
             handler_body = self.visit_block(h.body)
             hasCont_ = hasCont_ or ir.hasCont(handler_body)
-            handlers.append(ir.Handler(exc_type=exc_type, exc_bind=exc_bind, body=handler_body))
+            handlers.append(
+                ir.Handler(exc_type=exc_type, exc_bind=exc_bind, body=handler_body)
+            )
             hasCont = hasCont or hasCont_
         if node.orelse:
             orelse = self.visit_block(node.orelse)
@@ -719,18 +885,28 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             hasCont = hasCont or ir.hasCont(final)
         else:
             final = None
-        return ir.Try(hasCont=hasCont, body=body, handlers=handlers, orelse=None, final=None)
+        return ir.Try(
+            position=position,
+            hasCont=hasCont,
+            body=body,
+            handlers=handlers,
+            orelse=None,
+            final=None,
+        )
 
     def visit_Raise(self, node: Raise) -> ir.TraffyIR:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
         if node.cause:
             raise NotImplementedError(f"Unity Python does not support raise from yet.")
         if node.exc:
             exc = self.root.rhs_transpiler.visit(node.exc)
-            return ir.Raise(hasCont=ir.hasCont(exc), exc=exc)
-        return ir.Raise(hasCont=False, exc=None)
+            return ir.Raise(position=position, hasCont=ir.hasCont(exc), exc=exc)
+        return ir.Raise(position=position, hasCont=False, exc=None)
+
 
 def compile_module(filename: str, node: Module):
-    top = Transpiler(filename, None)
+    top = Transpiler(filename, ir.Span.empty(), None)
     top.before_visit(node)
     block = top.stmt_transpiler.visit_block(node.body)
     return top.create_fptr_builder(block, "<module>")

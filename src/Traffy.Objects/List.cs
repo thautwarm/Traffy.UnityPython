@@ -11,14 +11,16 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(ModuleInit.ClasInitToken)]
+        public List<TrObject> __array__ => null;
+
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrList>();
             CLASS.Name = "list";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("list.__new__", TrList.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrList.datanew;
             TrClass.TypeDict[typeof(TrList)] = CLASS;
         }
 
@@ -26,6 +28,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
 

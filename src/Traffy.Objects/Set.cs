@@ -6,24 +6,26 @@ namespace Traffy.Objects
     {
         public HashSet<TrObject> container;
 
-        public Dictionary<TrObject, TrObject> __dict__ => null;
-
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-        [Mark(ModuleInit.ClasInitToken)]
+
+        public List<TrObject> __array__ => null;
+
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSet>();
             CLASS.Name = "set";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("set.__new__", TrSet.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrSet.datanew;
             TrClass.TypeDict[typeof(TrSet)] = CLASS;
         }
         [Mark(typeof(TrSet))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
 

@@ -12,12 +12,10 @@ namespace Traffy.Asm
     public class Block : TraffyAsm
     {
         public bool hasCont { get; set; }
-        public int position;
         public TraffyAsm[] suite;
 
         public TrObject exec(Frame frame)
         {
-            frame.traceback.Push(position);
             for (int i = 0; i < suite.Length; i++)
             {
                 suite[i].exec(frame);
@@ -26,7 +24,6 @@ namespace Traffy.Asm
                     break;
                 }
             }
-            frame.traceback.Pop();
             return RTS.object_none;
         }
 
@@ -34,7 +31,6 @@ namespace Traffy.Asm
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
-                frame.traceback.Push(position);
                 for (int i = 0; i < suite.Length; i++)
                 {
                     var stmt = suite[i];
@@ -53,7 +49,6 @@ namespace Traffy.Asm
                         break;
                     }
                 }
-                frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
             coro.Result = RTS.object_none;

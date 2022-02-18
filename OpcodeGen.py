@@ -1,7 +1,14 @@
 from pretty_doc import *
 import pathlib
 
-x = {}
+class X:
+    def __init__(self) -> None:
+        self.x = 1
+
+
+
+
+
 
 c = Ref(1)
 

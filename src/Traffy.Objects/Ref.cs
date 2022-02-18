@@ -6,22 +6,23 @@ namespace Traffy.Objects
 {
     public partial class TrRef : TrObject
     {
-        public Dictionary<TrObject, TrObject> __dict__ => null;
         public TrObject value;
-
+        static string s_attrValue = String.Intern("value");
         public object Native => this;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(ModuleInit.ClasInitToken)]
+        public List<TrObject> __array__ => null;
+
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrRef>();
             CLASS.Name = "ref";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ref.__new__", TrRef.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrRef.datanew;
             TrClass.TypeDict[typeof(TrRef)] = CLASS;
         }
 
@@ -29,7 +30,44 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
+        }
+
+        public bool __getattr__(TrObject s, TrRef found)
+        {
+            TrStr attr = (TrStr)s;
+            if (attr.isInterned && object.ReferenceEquals(attr.value, s_attrValue))
+            {
+                found.value = value;
+                return true;
+            }
+            switch (attr.value)
+            {
+                case "value":
+                    found.value = value;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public void __setattr__(TrObject s, TrObject m_value)
+        {
+            TrStr attr = (TrStr)s;
+            if (attr.isInterned && object.ReferenceEquals(attr.value, s_attrValue))
+            {
+                value = m_value;
+                return;
+            }
+            switch (attr.value)
+            {
+                case "value":
+                    value = m_value;
+                    return;
+                default:
+                    throw new AttributeError(this, s, $"ref has no attribute '{attr.value}'");
+            }
         }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

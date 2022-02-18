@@ -1,31 +1,57 @@
 from __future__ import annotations
+import dataclasses
 
 from enum import IntEnum
 from logging import handlers
+from dataclasses import InitVar, dataclass
+from turtle import position
 import typing
-
+import typing_extensions
 
 if typing.TYPE_CHECKING:
-    from typing import TypedDict
+    class TraffyIR(typing_extensions.Protocol):
+        hasCont: bool
+
+    class TraffyLHS(typing_extensions.Protocol):
+        hasCont: bool
 else:
+    TraffyIR = object
+    TraffyLHS = object
 
-    class TypedDict:
-
-        def __init_subclass__(cls: type) -> type:
-            anns = getattr(cls, '__annotations__', {})
-            _defaults = {}
-            for k, v in cls.__dict__.items():
-                if k.startswith('__'):
-                    continue
-                if k in anns:
-                    _defaults[k] = v
-            setattr(cls, '_defaults', _defaults)
-            return cls
-
-        def __new__(cls, **kwargs):
-            kwargs = {"$type": cls.__name__, **kwargs}
-            kwargs.update(cls._defaults)
-            return kwargs
+# else:
+#     TraffyIR = (
+#         Block,
+#         AugAssign,
+#         Return,
+#         Assign,
+#         While,
+#         ForIn,
+#         Dict,
+#         List,
+#         Tuple,
+#         Set,
+#         Attribute,
+#         Subscript,
+#         Constant,
+#         Yield,
+#         YieldFrom,
+#         LocalVar,
+#         GlobalVar,
+#         CmpOp,
+#         Try,
+#         Raise,
+#         Continue,
+#         Break,
+#     )
+#     TraffyLHS = (
+#         StoreListEx,
+#         StoreList,
+#         StoreLocal,
+#         StoreGlobal,
+#         StoreItem,
+#         StoreAttr,
+#         MultiAssign,
+#     )
 
 
 class OpU(IntEnum):
@@ -35,8 +61,16 @@ class OpU(IntEnum):
     POS = 3  # positive
 
 
-def hasCont(*xs: TraffyLHS | TraffyIR):
-    return any(x.get('hasCont', False) for x in xs)
+def hasCont(head: TraffyLHS | TraffyIR | list[TraffyLHS | TraffyIR], *xs: TraffyLHS | TraffyIR) -> bool:
+    if isinstance(head, list):
+        test_head = bool(head) and any(x.hasCont for x in head)
+        if test_head:
+            return True
+    else:
+        if head.hasCont:
+            return True
+    return bool(xs) and any(x.hasCont for x in xs)
+
 
 class OpBin(IntEnum):
     ADD = 0
@@ -65,27 +99,33 @@ class OpBin(IntEnum):
     NOTIN = 22
 
 
-class TrInt(TypedDict):
+@dataclass
+class TrInt(object):
     value: int
 
-
-class TrFloat(TypedDict):
+@dataclass
+class TrFloat(object):
     value: float
 
 
-class TrStr(TypedDict):
+@dataclass
+class TrStr(object):
     value: str
+    isInterned: bool = False
 
 
-class TrNone(TypedDict):
+@dataclass
+class TrNone(object):
     pass
 
 
-class TrTuple(TypedDict):
+@dataclass
+class TrTuple(object):
     elts: list[TrObject]
 
 
-class TrBool(TypedDict):
+@dataclass
+class TrBool(object):
     value: bool
 
 
@@ -95,274 +135,377 @@ else:
     TrObject = (TrInt, TrFloat, TrStr, TrTuple, TrNone)
 
 
-class Block(TypedDict):
+@dataclass
+class Block(TraffyIR):
     hasCont: bool
     suite: list[TraffyIR]
 
 
-class AugAssign(TypedDict):
-    hasCont: bool
+@dataclass
+class AugAssign(TraffyIR):
+    position: int
     op: OpBin
     lhs: TraffyLHS
     rhs: TraffyIR
+    hasCont: InitVar[bool]  # type: ignore
+
+    def __post_init__(self, hasCont):
+        op = self.op
+        if hasCont:
+            op = -op
+        self.op = op  # type: ignore
+
+    @property
+    def hasCont(self) -> bool:
+        return self.op < 0
+
+
+@dataclass
+class Assign(TraffyIR):
     position: int
-
-
-class Assign(TypedDict):
     hasCont: bool
     lhs: TraffyLHS
     rhs: TraffyIR
 
 
-class Return(TypedDict):
+@dataclass
+class Return(TraffyIR):
+    position: int
     hasCont: bool
     value: TraffyIR
 
 
-class While(TypedDict):
+@dataclass
+class While(TraffyIR):
+    position: int
     hasCont: bool
     test: TraffyIR
     body: TraffyIR
     orelse: TraffyIR | None
 
 
-class ForIn(TypedDict):
+@dataclass
+class ForIn(TraffyIR):
+    position: int
     hasCont: bool
     target: TraffyLHS
     itr: TraffyIR
     body: TraffyIR
     orelse: TraffyIR | None
-    position: int
 
 
-class IfClause(TypedDict):
+@dataclass
+class IfClause(object):
     cond: TraffyIR
     body: TraffyIR
 
 
-class IfThenElse(TypedDict):
+@dataclass
+class IfThenElse(TraffyIR):
+    position: int
     hasCont: bool
     clauses: list[IfClause]
     orelse: TraffyIR | None
 
 
-class Continue(TypedDict):
-    pass
+@dataclass
+class Continue(TraffyIR):
+    hasCont = False
 
 
-class Break(TypedDict):
-    pass
+@dataclass
+class Break(TraffyIR):
+    hasCont = False
 
 
-class Handler(TypedDict):
+@dataclass
+class Handler(object):
     exc_type: TraffyIR | None
     exc_bind: TraffyLHS | None
     body: TraffyIR
 
 
-class Try(TypedDict):
+@dataclass
+class Try(TraffyIR):
+    position: int
     hasCont: bool
     body: TraffyIR
     handlers: list[Handler]
     orelse: TraffyIR | None
     final: TraffyIR | None
+
+
+@dataclass
+class Raise(TraffyIR):
     position: int
-
-
-class Raise(TypedDict):
     hasCont: bool
     exc: TraffyIR | None
 
 
-class BoolAnd2(TypedDict):
+@dataclass
+class BoolAnd2(TraffyIR):
+    position: int
     hasCont: bool
     left: TraffyIR
     right: TraffyIR
+
+
+@dataclass
+class BoolOr2(TraffyIR):
     position: int
-
-
-class BoolOr2(TypedDict):
     hasCont: bool
     left: TraffyIR
     right: TraffyIR
+
+
+@dataclass
+class BoolAnd(TraffyIR):
     position: int
-
-
-class BoolAnd(TypedDict):
     hasCont: bool
     left: TraffyIR
     comparators: list[TraffyIR]
     position: int
 
 
-class BoolOr(TypedDict):
+@dataclass
+class BoolOr(TraffyIR):
+    position: int
     hasCont: bool
     left: TraffyIR
     comparators: list[TraffyIR]
     position: int
 
 
-class NamedExpr(TypedDict):
+@dataclass
+class NamedExpr(TraffyIR):
+    position: int
     hasCont: bool
     lhs: TraffyLHS
     expr: TraffyIR
 
 
-class BinOp(TypedDict):
-    hasCont: bool
+@dataclass
+class BinOp(TraffyIR):
+    position: int
     left: TraffyIR
     right: TraffyIR
     op: OpBin
-    position: int
+    hasCont: InitVar[bool]  # type: ignore
 
-class CmpOp(TypedDict):
-    hasCont: bool
+    def __post_init__(self, hasCont):
+        op = self.op
+        if hasCont:
+            op = -op
+        self.op = op  # type: ignore
+
+    @property
+    def hasCont(self) -> bool:
+        return self.op < 0
+
+
+@dataclass
+class CmpOp(TraffyIR):
+    position: int
     op: OpBin
     left: TraffyIR
     comparators: list[TraffyIR]
+    hasCont: InitVar[bool]  # type: ignore
+
+    def __post_init__(self, hasCont):
+        op = self.op
+        if hasCont:
+            op = -op
+        self.op = op  # type: ignore
+
+    @property
+    def hasCont(self) -> bool:
+        return self.op < 0
+
+
+@dataclass
+class UnaryOp(TraffyIR):
     position: int
-
-
-class UnaryOp(TypedDict):
-    hasCont: bool
     op: OpU
     operand: TraffyIR
-    position: int
+    hasCont: InitVar[bool]  # type: ignore
+
+    def __post_init__(self, hasCont):
+        op = self.op
+        if hasCont:
+            op = -op
+        self.op = op  # type: ignore
+
+    @property
+    def hasCont(self) -> bool:
+        return self.op < 0
 
 
-class DefaultArgEntry(TypedDict):
+@dataclass
+class DefaultArgEntry(object):
     slot: int
     value: TraffyIR
 
 
-class Lambda(TypedDict):
+@dataclass
+class Lambda(TraffyIR):
     hasCont: bool
     fptr: TrFuncPointer
     default_args: list[DefaultArgEntry]
     freeslots: list[int]
 
 
-class CallEx(TypedDict):
+@dataclass
+class CallEx(TraffyIR):
+    position: int
     hasCont: bool
     func: TraffyIR
     args: list[SequenceElement]
     kwargs: list[tuple[TrObject | None, TraffyIR]]
-    position: int
 
-class Constant(TypedDict):
+
+@dataclass
+class Constant(TraffyIR):
     o: TrObject
+    hasCont = False
 
 
-class DictEntry(TypedDict):
+@dataclass
+class DictEntry(object):
     key: TraffyIR | None
     value: TraffyIR
 
 
-class Dict(TypedDict):
+@dataclass
+class Dict(TraffyIR):
+    position: int
     hasCont: bool
     entries: list[DictEntry]
-    position: int
 
 
-class SequenceElement(TypedDict):
+@dataclass
+class SequenceElement(object):
     unpack: bool
     value: TraffyIR
 
 
-class List(TypedDict):
+@dataclass
+class List(TraffyIR):
+    position: int
     hasCont: bool
     elements: list[SequenceElement]
+
+
+@dataclass
+class Tuple(TraffyIR):
     position: int
-
-
-class Tuple(TypedDict):
     hasCont: bool
     elements: list[SequenceElement]
+
+
+@dataclass
+class Set(TraffyIR):
     position: int
-
-
-class Set(TypedDict):
     hasCont: bool
     elements: list[SequenceElement]
+
+
+@dataclass
+class Attribute(TraffyIR):
     position: int
-
-
-class Attribute(TypedDict):
     hasCont: bool
     value: TraffyIR
-    attr: TrObject
+    attr: TrStr
+
+
+@dataclass
+class Subscript(TraffyIR):
     position: int
-
-
-class Subscript(TypedDict):
     hasCont: bool
     value: TraffyIR
     item: TraffyIR
+
+
+@dataclass
+class Yield(TraffyIR):
     position: int
-
-
-class Yield(TypedDict):
     value: TraffyIR
-    hasCont: bool
+    hasCont = True
 
 
-class YieldFrom(TypedDict):
-    value: TraffyIR
-    hasCont: bool
+@dataclass
+class YieldFrom(TraffyIR):
     position: int
+    value: TraffyIR
+    position: int
+    hasCont = True
 
 
-class LocalVar(TypedDict):
+@dataclass
+class LocalVar(TraffyIR):
+    position: int
     slot: int
+    hasCont = False
+
+
+@dataclass
+class GlobalVar(TraffyIR):
     position: int
-
-
-class GlobalVar(TypedDict):
     name: TrObject
+    hasCont = False
+
+
+@dataclass
+class StoreListEx(TraffyLHS):
     position: int
-
-
-class StoreListEx(TypedDict):
     hasCont: bool
-    position: int
     before: list[TraffyLHS]
     unpack: TraffyLHS
     after: list[TraffyLHS]
 
 
-class StoreList(TypedDict):
-    hasCont: bool
+@dataclass
+class StoreList(TraffyLHS):
     position: int
+    hasCont: bool
     elts: list[TraffyLHS]
 
 
-class StoreLocal(TypedDict):
+@dataclass
+class StoreLocal(TraffyLHS):
     slot: int
+    hasCont = False
 
 
-class StoreGlobal(TypedDict):
+@dataclass
+class StoreGlobal(TraffyLHS):
     name: TrObject
+    hasCont = False
 
 
-class StoreItem(TypedDict):
-    hasCont: bool
+@dataclass
+class StoreItem(TraffyLHS):
     position: int
+    hasCont: bool
     value: TraffyIR
     item: TraffyIR
 
 
-class StoreAttr(TypedDict):
-    hasCont: bool
+@dataclass
+class StoreAttr(TraffyLHS):
     position: int
-    attr: TrObject
+    hasCont: bool
+    attr: TrStr
     value: TraffyIR
 
-class MultiAssign(TypedDict):
+
+@dataclass
+class MultiAssign(TraffyLHS):
     hasCont: bool
     targets: list[TraffyLHS]
 
 
-class TrFuncPointer(TypedDict):
+@dataclass
+class TrFuncPointer(object):
     posargcount: int
     allargcount: int
     hasvararg: bool
@@ -372,16 +515,24 @@ class TrFuncPointer(TypedDict):
     metadata: Metadata
 
 
-class Position(TypedDict):
+@dataclass(frozen=True)
+class Position(object):
     line: int
     col: int
 
-class Span(TypedDict):
+
+@dataclass(frozen=True)
+class Span(object):
     start: Position
     end: Position
+    filename: str | None = None
 
+    @staticmethod
+    def empty() -> Span:
+        return Span(Position(1, 0), Position(1, 0))
 
-class Metadata(TypedDict):
+@dataclass
+class Metadata(object):
     positions: list[Span]
     localnames: list[str]
     freenames: list[str]
@@ -389,59 +540,27 @@ class Metadata(TypedDict):
     filename: str
 
 
-if typing.TYPE_CHECKING:
-    TraffyIR = typing.Union[
-        Block,
-        AugAssign,
-        Return,
-        Assign,
-        While,
-        ForIn,
-        Dict,
-        List,
-        Tuple,
-        Set,
-        Attribute,
-        Subscript,
-        Constant,
-        Yield,
-        YieldFrom,
-        LocalVar,
-        GlobalVar,
-        CmpOp,
+__cache_type_dict = {
+}
+__prim_types = (int, float, str, bool, type(None))
+__seq_types = (list, tuple, set, frozenset)
 
-        Try,
-        Raise,
-        Continue,
-        Break
-    ]
-    TraffyLHS = typing.Union[
-        StoreListEx, StoreList, StoreLocal, StoreGlobal, StoreItem, StoreAttr, MultiAssign
-    ]
-else:
-    TraffyIR = (
-        Block,
-        AugAssign,
-        Return,
-        Assign,
-        While,
-        ForIn,
-        Dict,
-        List,
-        Tuple,
-        Set,
-        Attribute,
-        Subscript,
-        Constant,
-        Yield,
-        YieldFrom,
-        LocalVar,
-        GlobalVar,
-        CmpOp,
-
-        Try,
-        Raise,
-        Continue,
-        Break,
-    )
-    TraffyLHS = (StoreListEx, StoreList, StoreLocal, StoreGlobal, StoreItem, StoreAttr, MultiAssign)
+def fast_asdict(o):
+    if isinstance(o, __seq_types):
+        return [fast_asdict(x) for x in o]
+    if isinstance(o, dict):
+        return {k: fast_asdict(v) for k, v in o.items()}
+    if isinstance(o, __prim_types):
+        return o
+    if lookuptype := __cache_type_dict.get(o.__class__):
+        pass
+    else:
+        cls = o.__class__
+        assert dataclasses.is_dataclass(cls), "only dataclasses can be serialized!"
+        lookuptype = cls.__name__, [field.name for field in dataclasses.fields(cls) ]
+        __cache_type_dict[cls] = lookuptype
+    tname, fields = lookuptype
+    res = {"$type": tname}
+    for k in fields:
+        res[k] = fast_asdict(getattr(o, k))
+    return res

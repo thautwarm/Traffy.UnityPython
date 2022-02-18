@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Traffy.Objects;
 
 namespace Traffy.Asm
@@ -11,19 +12,15 @@ namespace Traffy.Asm
     public class MultiAssign : TraffyLHS
     {
         public bool hasCont { set; get; }
-        public int position;
         public TraffyLHS[] targets;
 
         public void exec(Frame frame, TrObject o)
         {
-            frame.traceback.Push(position);
 
             foreach (var lhs in targets)
             {
                 lhs.exec(frame, o);
             }
-
-            frame.traceback.Pop();
         }
 
         public void execOp(Frame frame, binary_func op, TraffyAsm asm)
@@ -35,7 +32,6 @@ namespace Traffy.Asm
         {
             IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
             {
-                frame.traceback.Push(position);
 
                 foreach (var lhs in targets)
                 {
@@ -50,8 +46,6 @@ namespace Traffy.Asm
                         lhs.exec(frame, o);
                     }
                 }
-
-                frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
             coro.generator = mkCont(frame, coro);
@@ -469,12 +463,27 @@ namespace Traffy.Asm
 
         public bool hasCont { get; set; }
         public TraffyAsm value;
-        public TrObject attr;
+        public TrStr attr;
+
+        private InlineCache.PolyIC ic;
+
+        [OnDeserialized]
+        private StoreAttr OnDeserialized()
+        {
+            // check if attr.value is null
+            if (attr.value == null)
+            {
+                throw new InvalidProgramException("attr.value is null");
+            }
+            ic = new InlineCache.PolyIC(attr);
+            return this;
+        }
+
         public void exec(Frame frame, TrObject o)
         {
             frame.traceback.Push(position);
             var rt_value = value.exec(frame);
-            RTS.object_setattr(rt_value, attr, o);
+            RTS.object_setic(rt_value, ic, o);
             frame.traceback.Pop();
         }
 
@@ -482,14 +491,14 @@ namespace Traffy.Asm
         {
             frame.traceback.Push(position);
             var rt_value = value.exec(frame);
-            var rt_res = RTS.object_getattr(rt_value, attr);
+            var rt_res = RTS.object_getic(rt_value, ic);
             rt_res = op(rt_res, rhs.exec(frame));
-            RTS.object_setattr(rt_value, attr, rt_res);
+            RTS.object_setic(rt_value, ic, rt_res);
             frame.traceback.Pop();
         }
         public TraffyCoroutine cont(Frame frame, TrObject o)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, InlineCache.PolyIC selector)
             {
                 frame.traceback.Push(position);
 
@@ -501,18 +510,18 @@ namespace Traffy.Asm
                         yield return cont_value.Current;
                     rt_value = cont_value.Result;
                 }
-                RTS.object_setattr(rt_value, attr, o);
+                RTS.object_setic(rt_value, selector, o);
 
                 frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
+            coro.generator = mkCont(frame, coro, ic);
             return coro;
         }
 
         public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm rhs)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, binary_func op, TraffyAsm rhs)
+            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, binary_func op, TraffyAsm rhs, InlineCache.PolyIC selector)
             {
                 frame.traceback.Push(position);
 
@@ -525,7 +534,7 @@ namespace Traffy.Asm
                     rt_value = cont_value.Result;
                 }
 
-                var rt_res = RTS.object_getattr(rt_value, attr);
+                var rt_res = RTS.object_getic(rt_value, selector);
                 if (rhs.hasCont)
                 {
                     var cont_rhs = rhs.cont(frame);
@@ -537,12 +546,12 @@ namespace Traffy.Asm
                 {
                     rt_res = op(rt_res, rhs.exec(frame));
                 }
-                RTS.object_setattr(rt_value, attr, rt_res);
+                RTS.object_setic(rt_value, selector, rt_res);
 
                 frame.traceback.Pop();
             }
             var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro, op, rhs);
+            coro.generator = mkCont(frame, coro, op, rhs, ic);
             return coro;
 
         }

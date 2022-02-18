@@ -223,7 +223,7 @@ namespace SimpleJSON
                         var obj = t.MakeInstance();
                         foreach (var (name_field, t_field, setter) in action.fields)
                         {
-                            var jattr = jobject[name_field];
+                                var jattr = jobject[name_field];
 #if DEBUG
                                 Console.WriteLine(node.Tag + " ." + name_field + " -> " + t_field.Name);
 #endif
@@ -282,7 +282,7 @@ namespace SimpleJSON
                     }
                 case JSONNodeType.Custom:
                 case JSONNodeType.None:
-                    throw new InvalidCastException($"invalid json!");
+                    throw new InvalidCastException($"expect {t}, invalid json!");
             }
             throw new NotImplementedException();
         }

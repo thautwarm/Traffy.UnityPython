@@ -5,13 +5,15 @@ namespace Traffy.Objects
 {
     public class TrSlice : TrObject
     {
-        public Dictionary<TrObject, TrObject> __dict__ => null;
         public TrObject low;
         public TrObject high;
         public TrObject step;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
+
+        public List<TrObject> __array__ => null;
+
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             RTS.arg_check_positional_range(args, 1, 4);
@@ -36,14 +38,14 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(ModuleInit.ClasInitToken)]
+        [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSlice>();
             CLASS.Name = "slice";
-            CLASS.IsFixed = true;
+            CLASS.InitInlineCacheForMagicMethods();
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("slice.__new__", TrSlice.datanew);
             CLASS.IsSealed = true;
-            CLASS.__new = TrSlice.datanew;
             TrClass.TypeDict[typeof(TrSlice)] = CLASS;
         }
 
@@ -51,6 +53,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             ModuleInit.Prelude(CLASS);
         }
     }
