@@ -1,35 +1,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using static Traffy.Objects.ExtMonoAsyn;
 
 namespace Traffy.Objects
 {
-    public class TraffyCoroutine : IEnumerator<TrObject>, TrObject
+
+    public sealed class TrCoroutine : TrObject, IEnumerator<TrObject>
     {
         // at the end of such generator, result is set.
-        private IEnumerator<TrObject> m_generator;
-        public TrObject Result;
-        public TrObject Sent;
-        public IEnumerator<TrObject> generator { set => m_generator = value; }
-        public bool MoveNext(TrObject o)
+        public MonoAsync<TrObject> m_generator;
+
+        private TrCoroutine(MonoAsync<TrObject> generator)
         {
-            Sent = o;
-            return m_generator.MoveNext();
-        }
-        public TraffyCoroutine()
-        {
-            this.Sent = RTS.object_none;
-            this.Result = RTS.object_none;
+            m_generator = generator;
         }
 
-        public TrObject Current => m_generator.Current;
-
-        object IEnumerator.Current => Current;
+        public TrObject Current => m_generator.m_Result;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
         public List<TrObject> __array__ => null;
+
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
@@ -37,41 +31,28 @@ namespace Traffy.Objects
         }
 
         // check exceptions
-        public void AsTopLevelGenerator(Frame frame)
+
+        public static TrCoroutine Create(MonoAsync<TrObject> gen)
         {
-            IEnumerator<TrObject> wrap(IEnumerator<TrObject> gen, Frame frame)
+            return new TrCoroutine(gen);
+        }
+
+        public static TrCoroutine Create(MonoAsync<TrObject> gen, Frame frame)
+        {
+            async MonoAsync<TrObject> wrap(MonoAsync<TrObject> gen, Frame frame)
             {
-                bool test;
-            loop_head:
                 try
                 {
-                    test = gen.MoveNext();
+                    return await gen;
                 }
                 catch (Exception e)
                 {
                     throw RTS.exc_wrap_frame(e, frame);
                 }
-                if (test)
-                {
-                    yield return gen.Current;
-                    goto loop_head;
-                }
             }
-            m_generator = wrap(m_generator, frame);
-        }
 
-        public IEnumerator<TrObject> ToIEnumerator()
-        {
-            Sent = RTS.object_none;
-            while (m_generator.MoveNext())
-            {
-                yield return Current;
-            }
-        }
-
-        public bool MoveNext()
-        {
-            return MoveNext(RTS.object_none);
+            var wrapped = wrap(gen, frame);
+            return new TrCoroutine(wrapped);
         }
 
         public void Reset()
@@ -79,29 +60,44 @@ namespace Traffy.Objects
             throw new NotSupportedException("cannot reset Traffy coroutines");
         }
 
-        public void Dispose()
+        public IEnumerator<TrObject> __iter__() => this;
+
+        [MethodImpl(MethodImplOptionsCompat.Best)]
+        public TrObject __next__()
         {
-            Sent = RTS.object_none;
+            m_generator.m_Result = RTS.object_none;
+            return m_generator.MoveNext() ? m_generator.m_Result : throw new StopIteration(m_generator.m_Result);
         }
 
-        public IEnumerator<TrObject> __iter__() => ToIEnumerator();
-        public TrObject __next__() =>
-            MoveNext() ? Current : throw new StopIteration(Result);
+        public TrObject __send__(TrObject v)
+        {
+            m_generator.m_Result = v;
+            return m_generator.MoveNext() ? m_generator.m_Result : throw new StopIteration(m_generator.m_Result);
+        }
 
         [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TraffyCoroutine>();
+            CLASS = TrClass.FromPrototype<TrCoroutine>();
             CLASS.Name = "generator";
             CLASS.InitInlineCacheForMagicMethods();
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("generator.__new__", TraffyCoroutine.datanew));
-            TrClass.TypeDict[typeof(TraffyCoroutine)] = CLASS;
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("generator.__new__", TrCoroutine.datanew));
+            TrClass.TypeDict[typeof(TrCoroutine)] = CLASS;
         }
-        [Mark(typeof(TraffyCoroutine))]
+        [Mark(typeof(TrCoroutine))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
             ModuleInit.Prelude(CLASS);
         }
+
+        object IEnumerator.Current => m_generator.m_Result;
+        public bool MoveNext()
+        {
+            m_generator.m_Result = RTS.object_none;
+            return m_generator.MoveNext();
+        }
+
+        public void Dispose(){ }
     }
 }

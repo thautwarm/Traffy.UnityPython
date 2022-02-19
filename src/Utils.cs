@@ -166,6 +166,11 @@ public static class Utils
     {
         return apply(me);
     }
+
+    public static void By<G>(this G me, Action<G> apply)
+    {
+        apply(me);
+    }
     public static Dictionary<K, V> Copy<K, V>(this Dictionary<K, V> me)
     {
         var res = new Dictionary<K, V>(me.Comparer);

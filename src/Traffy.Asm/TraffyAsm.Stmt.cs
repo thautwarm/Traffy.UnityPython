@@ -27,33 +27,21 @@ namespace Traffy.Asm
             return RTS.object_none;
         }
 
-        public TraffyCoroutine cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            for (int i = 0; i < suite.Length; i++)
             {
-                for (int i = 0; i < suite.Length; i++)
+                if (suite[i].hasCont)
+                    await suite[i].cont(frame);
+                else
+                    suite[i].exec(frame);
+
+                if (frame.CONT != STATUS.NORMAL)
                 {
-                    var stmt = suite[i];
-                    if (stmt.hasCont)
-                    {
-                        var cont = stmt.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                    }
-                    else
-                    {
-                        stmt.exec(frame);
-                    }
-                    if (frame.CONT != STATUS.NORMAL)
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
-            var coro = new TraffyCoroutine();
-            coro.Result = RTS.object_none;
-            coro.generator = mkCont(frame, coro);
-            return coro;
+            return RTS.object_none;
         }
     }
     [Serializable]
@@ -83,36 +71,16 @@ namespace Traffy.Asm
 
         }
 
-        public TraffyCoroutine cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                frame.traceback.Push(position);
-                TrObject rt_rhs;
-                if (rhs.hasCont)
-                {
-                    var cont = rhs.cont(frame);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                    rt_rhs = cont.Result;
-                }
-                else
-                {
-                    rt_rhs = rhs.exec(frame);
-                }
-                {
-                    var cont = lhs.contOp(frame, opfunc, rhs);
-                    while (cont.MoveNext(coro.Sent))
-                    {
-                        yield return cont.Current;
-                    }
-                }
-                frame.traceback.Pop();
-            }
-            var coro = new TraffyCoroutine();
-            coro.Result = RTS.object_none;
-            coro.generator = mkCont(frame, coro);
-            return coro;
+            frame.traceback.Push(position);
+            var o = rhs.hasCont ? await rhs.cont(frame) : rhs.exec(frame);
+            if (lhs.hasCont)
+                await lhs.contOp(frame, opfunc, rhs);
+            else
+                lhs.execOp(frame, opfunc, rhs);
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
     }
 
@@ -124,46 +92,23 @@ namespace Traffy.Asm
         public TraffyLHS lhs;
         public TraffyAsm rhs;
 
-        public TraffyCoroutine cont(Frame frame)
-        {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                frame.traceback.Push(position);
-                TrObject rt_rhs;
-                if (rhs.hasCont)
-                {
-                    var cont = rhs.cont(frame);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                    rt_rhs = cont.Result;
-                }
-                else
-                {
-                    rt_rhs = rhs.exec(frame);
-                }
-                if (lhs.hasCont)
-                {
-                    var cont = lhs.cont(frame, rt_rhs);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                }
-                else
-                {
-                    lhs.exec(frame, rt_rhs);
-                }
-                frame.traceback.Pop();
-            }
-            var coro = new TraffyCoroutine();
-            coro.Result = RTS.object_none;
-            coro.generator = mkCont(frame, coro);
-            return coro;
-        }
-
         public TrObject exec(Frame frame)
         {
             frame.traceback.Push(position);
             var o = rhs.exec(frame);
             lhs.exec(frame, o);
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var o = rhs.hasCont ? await rhs.cont(frame) : rhs.exec(frame);
+            if (lhs.hasCont)
+                await lhs.cont(frame, o);
+            else
+                lhs.exec(frame, o);
             frame.traceback.Pop();
             return RTS.object_none;
         }
@@ -174,34 +119,6 @@ namespace Traffy.Asm
         public bool hasCont { get; set; }
         public int position;
         public TraffyAsm value;
-
-        public TraffyCoroutine cont(Frame frame)
-        {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                frame.traceback.Push(position);
-                TrObject rt_value;
-                if (value.hasCont)
-                {
-                    var cont = value.cont(frame);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                    rt_value = cont.Result;
-                }
-                else
-                {
-                    rt_value = value.exec(frame);
-                }
-                frame.CONT = STATUS.RETURN;
-                frame.retval = rt_value;
-                coro.Result = RTS.object_none;
-                frame.traceback.Pop();
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
-        }
-
         public TrObject exec(Frame frame)
         {
             frame.traceback.Push(position);
@@ -211,6 +128,17 @@ namespace Traffy.Asm
             frame.traceback.Pop();
             return RTS.object_none;
         }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            frame.CONT = STATUS.RETURN;
+            frame.retval = rt_value;
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+
     }
 
     [Serializable]
@@ -221,83 +149,6 @@ namespace Traffy.Asm
         public TraffyAsm test;
         public TraffyAsm body;
         [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
-
-        public TraffyCoroutine cont(Frame frame)
-        {
-
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                frame.traceback.Push(position);
-                while (true)
-                {
-                    TrObject rt_test;
-                    if (test.hasCont)
-                    {
-                        var cont = test.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_test = cont.Result;
-                    }
-                    else
-                    {
-                        rt_test = test.exec(frame);
-                    }
-                    if (!RTS.object_bool(rt_test))
-                    {
-                        break;
-                    }
-
-                    TrObject rt_body;
-                    if (body.hasCont)
-                    {
-                        var cont = body.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_body = cont.Result;
-                    }
-                    else
-                    {
-                        rt_body = body.exec(frame);
-                    }
-
-                    if (frame.CONT == STATUS.NORMAL)
-                    {
-                        continue;
-                    }
-                    else if (frame.CONT == STATUS.CONTINUE)
-                    {
-                        frame.CONT = STATUS.NORMAL;
-                        continue;
-                    }
-                    break;
-                }
-
-                if (orelse != null && frame.CONT == STATUS.NORMAL)
-                {
-                    if (orelse.hasCont)
-                    {
-                        var cont = orelse.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                    }
-                    else
-                    {
-                        orelse.exec(frame);
-                    }
-                }
-                else if (frame.CONT == STATUS.BREAK)
-                {
-                    frame.CONT = STATUS.NORMAL;
-                }
-
-                coro.Result = RTS.object_none;
-                frame.traceback.Pop();
-            }
-
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
-        }
 
         public TrObject exec(Frame frame)
         {
@@ -331,6 +182,39 @@ namespace Traffy.Asm
             frame.traceback.Pop();
             return val_return;
         }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            TrObject val_return = RTS.object_none;
+            while (RTS.object_bool(test.hasCont ? await test.cont(frame) : test.exec(frame)))
+            {
+                var rt_body = body.hasCont ? await body.cont(frame) : body.exec(frame);
+                val_return = rt_body;
+                if (frame.CONT == STATUS.NORMAL)
+                {
+                    continue;
+                }
+                else if (frame.CONT == STATUS.CONTINUE)
+                {
+                    frame.CONT = STATUS.NORMAL;
+                    continue;
+                }
+                break;
+            }
+
+            if (orelse != null && frame.CONT == STATUS.NORMAL)
+            {
+                val_return = orelse.hasCont ? await orelse.cont(frame) : orelse.exec(frame);
+            }
+            else if (frame.CONT == STATUS.BREAK)
+            {
+                frame.CONT = STATUS.NORMAL;
+            }
+
+            frame.traceback.Pop();
+            return val_return;
+        }
     }
 
     [Serializable]
@@ -343,89 +227,6 @@ namespace Traffy.Asm
         public TraffyAsm body;
         [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
 
-        public TraffyCoroutine cont(Frame frame)
-        {
-
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                frame.traceback.Push(position);
-                TrObject rt_itr;
-                if (itr.hasCont)
-                {
-                    var cont = itr.cont(frame);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                    rt_itr = cont.Result;
-                }
-                else
-                {
-                    rt_itr = itr.exec(frame);
-                }
-
-                var enumerator = RTS.object_getiter(rt_itr);
-                while (enumerator.MoveNext())
-                {
-                    var target = enumerator.Current;
-
-                    if (this.target.hasCont)
-                    {
-                        var cont = this.target.cont(frame, target);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                    }
-
-                    TrObject rt_body;
-                    if (body.hasCont)
-                    {
-                        var cont = body.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_body = cont.Result;
-                    }
-                    else
-                    {
-                        rt_body = body.exec(frame);
-                    }
-
-                    if (frame.CONT == STATUS.NORMAL)
-                    {
-                        continue;
-                    }
-                    else if (frame.CONT == STATUS.CONTINUE)
-                    {
-                        frame.CONT = STATUS.NORMAL;
-                        continue;
-                    }
-                    break;
-                }
-                if (orelse != null && frame.CONT == STATUS.NORMAL)
-                {
-                    TrObject rt_orelse;
-                    if (orelse.hasCont)
-                    {
-                        var cont = orelse.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_orelse = cont.Result;
-                    }
-                    else
-                    {
-                        rt_orelse = orelse.exec(frame);
-                    }
-                }
-                else if (frame.CONT == STATUS.BREAK)
-                {
-                    frame.CONT = STATUS.NORMAL;
-                }
-
-                coro.Result = RTS.object_none;
-                frame.traceback.Pop();
-            }
-
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
-        }
 
         public TrObject exec(Frame frame)
         {
@@ -451,6 +252,46 @@ namespace Traffy.Asm
             if (orelse != null && frame.CONT == STATUS.NORMAL)
             {
                 orelse.exec(frame);
+            }
+            else if (frame.CONT == STATUS.BREAK)
+            {
+                frame.CONT = STATUS.NORMAL;
+            }
+
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_itr = itr.hasCont ? await itr.cont(frame) : itr.exec(frame);
+            var enumerator = RTS.object_getiter(rt_itr);
+            while (enumerator.MoveNext())
+            {
+                var target = enumerator.Current;
+                if (this.target.hasCont)
+                    await this.target.cont(frame, target);
+                else
+                    this.target.exec(frame, target);
+                var rt_body = body.hasCont ? await body.cont(frame) : body.exec(frame);
+                if (frame.CONT == STATUS.NORMAL)
+                {
+                    continue;
+                }
+                else if (frame.CONT == STATUS.CONTINUE)
+                {
+                    frame.CONT = STATUS.NORMAL;
+                    continue;
+                }
+                break;
+            }
+            if (orelse != null && frame.CONT == STATUS.NORMAL)
+            {
+                if (orelse.hasCont)
+                    await orelse.cont(frame);
+                else
+                    orelse.exec(frame);
             }
             else if (frame.CONT == STATUS.BREAK)
             {
@@ -497,66 +338,28 @@ namespace Traffy.Asm
             return RTS.object_none;
         }
 
-        public TraffyCoroutine cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            for (int i = 0; i < clauses.Length; i++)
             {
-                for (int i = 0; i < clauses.Length; i++)
-                {
-                    var cond = clauses[i].cond;
-                    TrObject rt_cond;
-                    if (cond.hasCont)
-                    {
-                        var cont = cond.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_cond = cont.Result;
-                    }
-                    else
-                    {
-                        rt_cond = cond.exec(frame);
-                    }
+                var cond = clauses[i].cond;
+                var rt_cond = cond.hasCont ? await cond.cont(frame) : cond.exec(frame);
 
-                    if (RTS.object_bool(rt_cond))
-                    {
-                        var body = clauses[i].body;
-                        TrObject rt_body;
-                        if (body.hasCont)
-                        {
-                            var cont = body.cont(frame);
-                            while (cont.MoveNext(coro.Sent))
-                                yield return cont.Current;
-                            rt_body = cont.Result;
-                        }
-                        else
-                        {
-                            rt_body = body.exec(frame);
-                        }
-                        coro.Result = RTS.object_none;
-                        yield break;
-                    }
-                }
-                if (orelse != null)
+                if (RTS.object_bool(rt_cond))
                 {
-                    TrObject rt_orelse;
-                    if (orelse.hasCont)
-                    {
-                        var cont = orelse.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_orelse = cont.Result;
-                    }
-                    else
-                    {
-                        rt_orelse = orelse.exec(frame);
-                    }
+                    var body = clauses[i].body;
+                    var rt_body = cond.hasCont ? await body.cont(frame) : body.exec(frame);
+                    return RTS.object_none;
                 }
-                coro.Result = RTS.object_none;
             }
-
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
+            if (orelse != null)
+            {
+                if (orelse.hasCont)
+                    await orelse.cont(frame);
+                else
+                    orelse.exec(frame);
+            }
+            return RTS.object_none;
         }
     }
 
@@ -565,7 +368,7 @@ namespace Traffy.Asm
     {
         public bool hasCont => false;
 
-        public TraffyCoroutine cont(Frame frame)
+        public MonoAsync<TrObject> cont(Frame frame)
         {
             throw new InvalidOperationException("continue statements shall not produce coroutines");
         }
@@ -582,7 +385,7 @@ namespace Traffy.Asm
     {
         public bool hasCont => false;
 
-        public TraffyCoroutine cont(Frame frame)
+        public MonoAsync<TrObject> cont(Frame frame)
         {
             throw new InvalidOperationException("break statements shall not produce coroutines");
         }
@@ -659,48 +462,56 @@ namespace Traffy.Asm
             return RTS.object_none;
         }
 
-        public TraffyCoroutine cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            frame.traceback.Push(position);
+            try
             {
+                var rt_body = body.hasCont ? await body.cont(frame) : body.exec(frame);
                 if (orelse != null)
                 {
-                    throw new InvalidProgramException("yield statements in try-else are not implemented.");
-                }
-                if (handlers.Length != 0)
-                {
-                    throw new InvalidProgramException("yield statements in try-catch are not implemented.");
-                }
-                if (final != null && final.hasCont)
-                {
-                    throw new InvalidProgramException("yield statements in finally blocks are not implemented.");
-                }
-                frame.traceback.Push(position);
-                try
-                {
-                    TrObject rt_body;
-                    if (body.hasCont)
-                    {
-                        var cont = body.cont(frame);
-                        while (cont.MoveNext(coro.Sent))
-                            yield return cont.Current;
-                        rt_body = cont.Result;
-                    }
+                    if (orelse.hasCont)
+                        await orelse.cont(frame);
                     else
-                    {
-                        rt_body = body.exec(frame);
-                    }
+                        orelse.exec(frame);
                 }
-                finally
-                {
-                    if (final != null)
-                        final.exec(frame);
-                }
-                frame.traceback.Pop();
             }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
+            catch (System.Exception e)
+            {
+                foreach (var handler in handlers)
+                {
+                    if (handler.exc_type != null)
+                    {
+                        var exc_type = handler.exc_type;
+                        var rt_exc = exc_type.hasCont ? await exc_type.cont(frame) : exc_type.exec(frame);
+                        if (!RTS.exc_check_instance(e, rt_exc))
+                            continue;
+                    }
+                    frame.set_exception(e);
+                    if (handler.exc_bind != null)
+                    {
+                        TrObject rt_e = RTS.exc_frombare(e);
+                        if (handler.exc_bind.hasCont)
+                            await handler.exc_bind.cont(frame, rt_e);
+                        else
+                            handler.exc_bind.exec(frame, rt_e);
+                    }
+                    var rt_body = handler.body.hasCont ? await handler.body.cont(frame) : handler.body.exec(frame);
+                    frame.clear_exception();
+                    goto handled;
+                }
+                throw;
+            handled:;
+            }
+            finally
+            {
+                if (final != null)
+                {
+                    final.exec(frame);
+                }
+            }
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
     }
 
@@ -712,33 +523,6 @@ namespace Traffy.Asm
 
         [AllowNull] public TraffyAsm exc;
 
-        public TraffyCoroutine cont(Frame frame)
-        {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                frame.traceback.Push(position);
-                TrObject rt_exc;
-                if (exc.hasCont)
-                {
-                    var cont = exc.cont(frame);
-                    while (cont.MoveNext(coro.Sent))
-                        yield return cont.Current;
-                    rt_exc = cont.Result;
-                }
-                else
-                {
-                    rt_exc = exc.exec(frame);
-                }
-                Exception e = RTS.exc_tobare(rt_exc);
-                throw e;
-            }
-
-            var coro = new TraffyCoroutine();
-            coro.Result = RTS.object_none;
-            coro.generator = mkCont(frame, coro);
-            return coro;
-        }
-
         public TrObject exec(Frame frame)
         {
             frame.traceback.Push(position);
@@ -746,6 +530,24 @@ namespace Traffy.Asm
             if (exc != null)
             {
                 var rt_exc = exc.exec(frame);
+                e = RTS.exc_tobare(rt_exc);
+                throw e;
+            }
+            e = frame.get_exception();
+            if (e == null)
+            {
+                throw frame.exc_notset();
+            }
+            throw e;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            Exception e;
+            if (exc != null)
+            {
+                var rt_exc = exc.hasCont ? await exc.cont(frame) : exc.exec(frame);
                 e = RTS.exc_tobare(rt_exc);
                 throw e;
             }

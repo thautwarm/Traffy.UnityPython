@@ -6,7 +6,7 @@
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
      <DefineConstants>NUNITY</DefineConstants>
-    <!-- <Nullable>enable</Nullable> -->
+     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 

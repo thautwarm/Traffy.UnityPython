@@ -13,15 +13,15 @@ namespace Traffy.Asm
         // if hasCont is true, then 'exec' shall not be called;
         // instead, the method 'cont' is called
         public TrObject exec(Frame frame);
-        public TraffyCoroutine cont(Frame frame);
+        public MonoAsync<TrObject> cont(Frame frame);
     }
     public interface TraffyLHS
     {
         public bool hasCont { get; }
         public void exec(Frame frame, TrObject o);
         public void execOp(Frame frame, binary_func op, TraffyAsm asm);
-        public TraffyCoroutine cont(Frame frame, TrObject o);
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm asm);
+        public MonoAsync<TrObject> cont(Frame frame, TrObject o);
+        public MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm asm);
 
     }
 

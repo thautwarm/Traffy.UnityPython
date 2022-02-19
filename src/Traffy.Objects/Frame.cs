@@ -94,30 +94,30 @@ namespace Traffy.Objects
         public int col;
     }
 
-    [Serializable]
-    public class Span
-    {
-        public Postion start;
-        public Postion end;
-        public string filename;
-    }
 
     [Serializable]
     public class Metadata
     {
-        public Span[] positions;
+        // compactly encoded (int32, int32) pairs as int32[]
+        //   'undecoded(span_pointer_compressed: int[])'
+        //     =
+        //   'span_pointers: (int start, int end)[]'
+        // given 'undecoded(position_compressed: int[]) = positions: (int line, int col)[]'
+        // a span pointed by the index 'i' at 'span_pointer_compressed' represents
+        //    '(positions[span_pointers[i].start], positions[span_pointers[i].end])'
+        public int[] compressedSpanPointers;
+
+        // compactly encoded (int32, int32) pairs as int32[]
+        public int[] compressedPositions;
         public string[] localnames;
         public string[] freenames;
         public string codename;
         public string filename;
+        public string sourceCode; // in release mode, can be null
 
         [OnDeserialized]
-        internal Metadata OnDeserializedMethod()
+        public Metadata OnDeserialized()
         {
-            for (int i = 0; i < positions.Length; i++)
-            {
-                positions[i].filename = filename;
-            }
             return this;
         }
     }
@@ -300,8 +300,7 @@ namespace Traffy.Objects
                 return frame.retval;
             }
             var coroutine = fptr.code.cont(frame);
-            coroutine.AsTopLevelGenerator(frame);
-            return coroutine;
+            return TrCoroutine.Create(coroutine, frame);
         }
     }
 

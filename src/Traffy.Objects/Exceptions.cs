@@ -8,11 +8,14 @@ namespace Traffy.Objects
 
     public interface TrExceptionBase : TrUserObjectBase
     {
-        public InlineCache.InlineCacheInstance CacheArgs { get; }
+        public int IndexArgs { get; }
+
+        public TrTraceback traceback { get; }
+
         public TrObject[] args
         {
-            get => RTS.object_getic(this, CacheArgs).AsTuple().elts;
-            set => RTS.object_setic(this, CacheArgs, MK.Tuple(value));
+            get => this.GetInstField(IndexArgs, "args").AsTuple().elts;
+            set => this.SetInstField(IndexArgs, "args", MK.Tuple(value));
         }
 
         public static string TrException_repr(TrObject self)
@@ -50,6 +53,10 @@ namespace Traffy.Objects
     public class TrBaseException : Exception, TrExceptionBase
     {
 
+        public TrTraceback traceback { set; get; }
+
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
 
         public List<TrObject> __array__ { get; set; } = new List<TrObject>(1);
 
@@ -67,11 +74,6 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
-
         [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
@@ -80,6 +82,7 @@ namespace Traffy.Objects
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__repr] = TrSharpFunc.FromFunc("BaseException.__repr__", TrExceptionBase.TrException_repr);
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("BaseException.__new__", TrExceptionExt.datanew<TrBaseException>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(TrBaseException)] = CLASS;
         }
 
@@ -94,8 +97,9 @@ namespace Traffy.Objects
 
     public class TrException : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
         public TrException() : base()
         {
             this.Base().args = new TrObject[0];
@@ -117,6 +121,7 @@ namespace Traffy.Objects
             CLASS.Name = "Exception";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("Exception.__new__", TrExceptionExt.datanew<TrException>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(TrException)] = CLASS;
         }
         [Mark(typeof(TrException))]
@@ -130,8 +135,9 @@ namespace Traffy.Objects
     // fields: 'name', 'obj'
     public class AttributeError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
 
         public List<TrObject> __array__ { get; } = new List<TrObject>(3);
 
@@ -164,6 +170,7 @@ namespace Traffy.Objects
             CLASS = TrClass.CreateClass("AttributeError", TrException.CLASS);
             CLASS.Name = "AttributeError";
             CLASS.InitInlineCacheForMagicMethods();
+            _IndexArgs = CLASS.AddField("args");
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AttributeError.__new__", TrExceptionExt.datanew<AttributeError>);
             TrClass.TypeDict[typeof(AttributeError)] = CLASS;
         }
@@ -177,8 +184,9 @@ namespace Traffy.Objects
     // fields: 'name'
     public class NameError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
         static InlineCache.InlineCacheInstance CacheName = new InlineCache.InlineCacheInstance("name".ToIntern());
 
         // __array__
@@ -209,6 +217,7 @@ namespace Traffy.Objects
             CLASS = TrClass.CreateClass("NameError", TrException.CLASS);
             CLASS.Name = "NameError";
             CLASS.InitInlineCacheForMagicMethods();
+            _IndexArgs = CLASS.AddField("args");
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NameError.__new__", TrExceptionExt.datanew<NameError>);
             TrClass.TypeDict[typeof(NameError)] = CLASS;
         }
@@ -222,8 +231,10 @@ namespace Traffy.Objects
 
     public class TypeError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public TypeError(string msg) : base(msg)
         {
@@ -245,6 +256,7 @@ namespace Traffy.Objects
             CLASS.Name = "TypeError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("TypeError.__new__", TrExceptionExt.datanew<TypeError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(TypeError)] = CLASS;
         }
 
@@ -259,8 +271,10 @@ namespace Traffy.Objects
 
     public class ValueError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public ValueError(string msg) : base(msg)
         {
@@ -282,6 +296,7 @@ namespace Traffy.Objects
             CLASS.Name = "ValueError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ValueError.__new__", TrExceptionExt.datanew<ValueError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(ValueError)] = CLASS;
         }
         [Mark(typeof(ValueError))]
@@ -296,8 +311,10 @@ namespace Traffy.Objects
     // fields: 'value'
     public class StopIteration : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         static InlineCache.InlineCacheInstance CacheValue = new InlineCache.InlineCacheInstance("value".ToIntern());
         public List<TrObject> __array__ { get; } = new List<TrObject>(2);
         public StopIteration(TrObject value) : base()
@@ -322,6 +339,7 @@ namespace Traffy.Objects
             CLASS.Name = "StopIteration";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("StopIteration.__new__", TrExceptionExt.datanew<StopIteration>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(StopIteration)] = CLASS;
         }
 
@@ -335,8 +353,10 @@ namespace Traffy.Objects
 
     public class LookupError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public LookupError(string msg) : base(msg)
         {
@@ -357,6 +377,7 @@ namespace Traffy.Objects
             CLASS.Name = "LookupError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("LookupError.__new__", TrExceptionExt.datanew<LookupError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(LookupError)] = CLASS;
         }
         [Mark(typeof(LookupError))]
@@ -370,8 +391,10 @@ namespace Traffy.Objects
 
     public class KeyError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public KeyError(TrObject value) : base(value.__repr__())
         {
@@ -393,6 +416,7 @@ namespace Traffy.Objects
             CLASS.Name = "KeyError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("KeyError.__new__", TrExceptionExt.datanew<KeyError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(KeyError)] = CLASS;
         }
 
@@ -406,8 +430,10 @@ namespace Traffy.Objects
 
     public class IndexError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public IndexError(string msg) : base(msg)
         {
@@ -430,6 +456,7 @@ namespace Traffy.Objects
             CLASS.Name = "IndexError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("IndexError.__new__", TrExceptionExt.datanew<IndexError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(IndexError)] = CLASS;
         }
         [Mark(typeof(IndexError))]
@@ -442,8 +469,10 @@ namespace Traffy.Objects
 
     public class AssertionError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public AssertionError(TrObject value) : base(value.__repr__())
         {
@@ -465,6 +494,7 @@ namespace Traffy.Objects
             CLASS.Name = "AssertionError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AssertionError.__new__", TrExceptionExt.datanew<AssertionError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(AssertionError)] = CLASS;
         }
         [Mark(typeof(AssertionError))]
@@ -481,8 +511,10 @@ namespace Traffy.Objects
     // - 'path': string
     public class ImportError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         static InlineCacheInstance CacheName = new InlineCacheInstance("name".ToIntern());
         static InlineCacheInstance CachePath = new InlineCacheInstance("path".ToIntern());
         static InlineCacheInstance CacheMsg = new InlineCacheInstance("msg".ToIntern());
@@ -517,6 +549,7 @@ namespace Traffy.Objects
             CLASS.Name = "ImportError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ImportError.__new__", TrExceptionExt.datanew<ImportError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(ImportError)] = CLASS;
         }
         [Mark(typeof(ImportError))]
@@ -529,8 +562,10 @@ namespace Traffy.Objects
 
     public class RuntimeError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public RuntimeError(string msg) : base(msg)
         {
@@ -552,6 +587,7 @@ namespace Traffy.Objects
             CLASS.Name = "RuntimeError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("RuntimeError.__new__", TrExceptionExt.datanew<RuntimeError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(RuntimeError)] = CLASS;
         }
         [Mark(typeof(RuntimeError))]
@@ -564,8 +600,10 @@ namespace Traffy.Objects
 
     public class NotImplementError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public NotImplementError(string msg) : base(msg)
         {
@@ -589,6 +627,7 @@ namespace Traffy.Objects
             CLASS.Name = "NotImplementError";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NotImplementError.__new__", TrExceptionExt.datanew<NotImplementError>);
+            _IndexArgs = CLASS.AddField("args");
             TrClass.TypeDict[typeof(NotImplementError)] = CLASS;
         }
         [Mark(typeof(NotImplementError))]
@@ -601,10 +640,13 @@ namespace Traffy.Objects
 
     public class NativeError : Exception, TrExceptionBase
     {
-        public static InlineCache.InlineCacheInstance args_cache = new InlineCache.InlineCacheInstance("args".ToIntern());
-        InlineCache.InlineCacheInstance TrExceptionBase.CacheArgs => args_cache;
-        static InlineCacheInstance CacheTypeName = new InlineCacheInstance("typename".ToIntern());
-        static InlineCacheInstance CacheMsg = new InlineCacheInstance("msg".ToIntern());
+        public TrTraceback traceback { set; get; }
+        static int _IndexArgs = -1;
+        int TrExceptionBase.IndexArgs => _IndexArgs;
+
+        static int _IndexTypeName = -1;
+        static int _IndexMsg = -1;
+
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public Exception Error;
         public object Native => Error;
@@ -622,8 +664,8 @@ namespace Traffy.Objects
                 throw new Exception("native error should not be a traffy error");
             Error = native;
             this.Base().args = new TrObject[] { MK.Str(native.Message) };
-            this.Base()[CacheTypeName] = MK.Str(native.GetType().Name);
-            this.Base()[CacheMsg] = MK.Str(native.Message);
+            this.Base().SetInstField(_IndexTypeName, "typename", MK.Str(native.GetType().Name));
+            this.Base().SetInstField(_IndexMsg, "msg", MK.Str(native.Message));
         }
 
         public static TrClass CLASS;
@@ -637,6 +679,9 @@ namespace Traffy.Objects
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NativeError.__new__", NativeError.datanew);
             CLASS[CLASS.ic__eq] = TrSharpFunc.FromFunc("NativeError.__eq__", (o, r) => ((NativeError)o).__eq__(r));
+            _IndexArgs = CLASS.AddField("args");
+            _IndexMsg = CLASS.AddField("msg");
+            _IndexTypeName = CLASS.AddField("typename");
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(NativeError)] = CLASS;
         }

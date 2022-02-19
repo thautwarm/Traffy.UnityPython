@@ -28,31 +28,17 @@ namespace Traffy.Asm
             throw new NotImplementedException();
         }
 
-        public TraffyCoroutine cont(Frame frame, TrObject o)
+        public async MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            foreach (var lhs in targets)
             {
-
-                foreach (var lhs in targets)
-                {
-                    if (lhs.hasCont)
-                    {
-                        var cont_lhs = lhs.cont(frame, o);
-                        while (cont_lhs.MoveNext(coro.Sent))
-                            yield return cont_lhs.Current;
-                    }
-                    else
-                    {
-                        lhs.exec(frame, o);
-                    }
-                }
+                if (lhs.hasCont) { await lhs.cont(frame, o); }
+                else { lhs.exec(frame, o); }
             }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
+            return RTS.object_none;
         }
 
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm asm)
+        public MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm asm)
         {
             throw new NotImplementedException();
         }
@@ -91,63 +77,35 @@ namespace Traffy.Asm
             frame.traceback.Pop();
         }
 
-        public TraffyCoroutine cont(Frame frame, TrObject o)
+        public async MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            frame.traceback.Push(position);
+
+            List<TrObject> rt_itr = RTS.object_as_list(o);
+            var left = rt_itr.Count - before.Length - after.Length;
+            if (rt_itr.Count < 0)
             {
-                frame.traceback.Push(position);
-
-                List<TrObject> rt_itr = RTS.object_as_list(o);
-                var left = rt_itr.Count - before.Length - after.Length;
-                if (rt_itr.Count < 0)
-                {
-                    throw RTS.exc_unpack_notenough(rt_itr.Count, before.Length + after.Length);
-                }
-                for (int i = 0; i < before.Length; i++)
-                {
-                    if (before[i].hasCont)
-                    {
-                        var cont_before_i = before[i].cont(frame, rt_itr[i]);
-                        while (cont_before_i.MoveNext(coro.Sent))
-                            yield return cont_before_i.Current;
-                    }
-                    else
-                    {
-                        before[i].exec(frame, rt_itr[i]);
-                    }
-                }
-                for (int i = rt_itr.Count - after.Length, j = 0; j < after.Length; j++, i++)
-                {
-                    if (after[j].hasCont)
-                    {
-                        var cont_after_j = after[j].cont(frame, rt_itr[i]);
-                        while (cont_after_j.MoveNext(coro.Sent))
-                            yield return cont_after_j.Current;
-                    }
-                    else
-                    {
-                        after[j].exec(frame, rt_itr[i]);
-                    }
-                }
-                rt_itr = rt_itr.GetRange(before.Length, left);
-
-                if (unpack.hasCont)
-                {
-                    var cont_unpack = unpack.cont(frame, RTS.object_from_list(rt_itr));
-                    while (cont_unpack.MoveNext(coro.Sent))
-                        yield return cont_unpack.Current;
-                }
-                else
-                {
-                    unpack.exec(frame, RTS.object_from_list(rt_itr));
-                }
-
-                frame.traceback.Pop();
+                throw RTS.exc_unpack_notenough(rt_itr.Count, before.Length + after.Length);
             }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
+            for (int i = 0; i < before.Length; i++)
+            {
+                if (before[i].hasCont) { await before[i].cont(frame, rt_itr[i]); }
+                else { before[i].exec(frame, rt_itr[i]); }
+            }
+            for (int i = rt_itr.Count - after.Length, j = 0; j < after.Length; j++, i++)
+            {
+                if (after[j].hasCont) { await after[j].cont(frame, rt_itr[i]); }
+                else { after[j].exec(frame, rt_itr[i]); }
+            }
+            rt_itr = rt_itr.GetRange(before.Length, left);
+
+            if (unpack.hasCont) { await unpack.cont(frame, RTS.object_from_list(rt_itr)); }
+            else { unpack.exec(frame, RTS.object_from_list(rt_itr)); }
+
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
+
 
 
         public void execOp(Frame frame, binary_func op, TraffyAsm asm)
@@ -155,7 +113,7 @@ namespace Traffy.Asm
             throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
         }
 
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm asm)
+        public MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm asm)
         {
             throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
         }
@@ -188,43 +146,29 @@ namespace Traffy.Asm
             frame.traceback.Pop();
         }
 
-        public TraffyCoroutine cont(Frame frame, TrObject o)
+        public async MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
+            frame.traceback.Push(position);
+
+            var rt_itr = RTS.object_getiter(o);
+            for (int i = 0; i < elts.Length; i++)
             {
-                frame.traceback.Push(position);
-
-                var rt_itr = RTS.object_getiter(o);
-                for (int i = 0; i < elts.Length; i++)
+                var elt = elts[i];
+                if (!rt_itr.MoveNext())
                 {
-                    var elt = elts[i];
-
-                    if (!rt_itr.MoveNext())
-                    {
-                        throw RTS.exc_unpack_notenough(i, elts.Length);
-                    }
-
-                    if (elt.hasCont)
-                    {
-                        var cont_elt = elt.cont(frame, rt_itr.Current);
-                        while (cont_elt.MoveNext(coro.Sent))
-                            yield return cont_elt.Current;
-                    }
-                    else
-                    {
-                        elt.exec(frame, rt_itr.Current);
-                    }
+                    throw RTS.exc_unpack_notenough(i, elts.Length);
                 }
-                if (rt_itr.MoveNext())
-                {
-                    throw RTS.exc_unpack_toomuch(elts.Length);
-                }
-
-                frame.traceback.Pop();
+                if (elt.hasCont) { await elt.cont(frame, rt_itr.Current); }
+                else { elt.exec(frame, rt_itr.Current); }
             }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
+
+            if (rt_itr.MoveNext())
+            {
+                throw RTS.exc_unpack_toomuch(elts.Length);
+            }
+
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
 
         public void execOp(Frame frame, binary_func op, TraffyAsm asm)
@@ -232,7 +176,7 @@ namespace Traffy.Asm
             throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
         }
 
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm asm)
+        public MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm asm)
         {
             throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
         }
@@ -256,34 +200,19 @@ namespace Traffy.Asm
             frame.store_local(slot, localval);
         }
 
-        public TraffyCoroutine cont(Frame frame, TrObject o)
+        public MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            throw new InvalidOperationException("local variable store cannot be async");
+            throw new InvalidOperationException("augassign is invalid for left-hand side local");
         }
 
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm asm)
+
+        public async MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm rhs)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, binary_func op, TraffyAsm rhs)
-            {
-                TrObject rt_rhs;
-                if (rhs.hasCont)
-                {
-                    var cont_rhs = rhs.cont(frame);
-                    while (cont_rhs.MoveNext(coro.Sent))
-                        yield return cont_rhs.Current;
-                    rt_rhs = cont_rhs.Result;
-                }
-                else
-                {
-                    rt_rhs = rhs.exec(frame);
-                }
-                var localval = frame.load_local(slot);
-                localval = op(localval, rt_rhs);
-                frame.store_local(slot, localval);
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro, op, asm);
-            return coro;
+            var rt_rhs = rhs.hasCont ? await rhs.cont(frame) : rhs.exec(frame);
+            var localval = frame.load_local(slot);
+            localval = op(localval, rt_rhs);
+            frame.store_local(slot, localval);
+            return RTS.object_none;
         }
     }
 
@@ -305,33 +234,17 @@ namespace Traffy.Asm
             frame.store_global(name, globalval);
         }
 
-        public TraffyCoroutine cont(Frame frame, TrObject o)
+        public MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
             throw new InvalidOperationException("local variable store cannot be async");
         }
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm asm)
+        public async MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm rhs)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, binary_func op, TraffyAsm rhs)
-            {
-                TrObject rt_rhs;
-                if (rhs.hasCont)
-                {
-                    var cont_rhs = rhs.cont(frame);
-                    while (cont_rhs.MoveNext(coro.Sent))
-                        yield return cont_rhs.Current;
-                    rt_rhs = cont_rhs.Result;
-                }
-                else
-                {
-                    rt_rhs = rhs.exec(frame);
-                }
-                var globalval = frame.load_global(name);
-                globalval = op(globalval, rt_rhs);
-                frame.store_global(name, globalval);
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro, op, asm);
-            return coro;
+            var rt_rhs = rhs.hasCont ? await rhs.cont(frame) : rhs.exec(frame);
+            var globalval = frame.load_global(name);
+            globalval = op(globalval, rt_rhs);
+            frame.store_global(name, globalval);
+            return RTS.object_none;
         }
     }
 
@@ -352,108 +265,36 @@ namespace Traffy.Asm
             frame.traceback.Pop();
         }
 
-        public void execOp(Frame frame, binary_func op, TraffyAsm asm)
+        public void execOp(Frame frame, binary_func op, TraffyAsm rhs)
         {
             frame.traceback.Push(position);
             var rt_value = value.exec(frame);
             var rt_item = item.exec(frame);
             var rt_res = RTS.object_getitem(rt_value, rt_item);
-            rt_res = op(rt_res, asm.exec(frame));
+            rt_res = op(rt_res, rhs.exec(frame));
             RTS.object_setitem(rt_value, rt_item, rt_res);
             frame.traceback.Pop();
         }
 
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm rhs)
+        public async MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm rhs)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, binary_func op, TraffyAsm rhs)
-            {
-                frame.traceback.Push(position);
-
-                TrObject rt_value;
-                if (value.hasCont)
-                {
-                    var cont_value = value.cont(frame);
-                    while (cont_value.MoveNext(coro.Sent))
-                        yield return cont_value.Current;
-                    rt_value = cont_value.Result;
-                }
-                else
-                {
-                    rt_value = value.exec(frame);
-                }
-
-                TrObject rt_item;
-                if (item.hasCont)
-                {
-                    var cont_item = item.cont(frame);
-                    while (cont_item.MoveNext(coro.Sent))
-                        yield return cont_item.Current;
-                    rt_item = cont_item.Result;
-                }
-                else
-                {
-                    rt_item = item.exec(frame);
-                }
-
-                TrObject rt_res = RTS.object_getitem(rt_value, rt_item);
-                if (rhs.hasCont)
-                {
-                    var cont_rhs = rhs.cont(frame);
-                    while (cont_rhs.MoveNext(coro.Sent))
-                        yield return cont_rhs.Current;
-                    rt_res = op(rt_res, cont_rhs.Result);
-                }
-                else
-                {
-                    rt_res = op(rt_res, rhs.exec(frame));
-                }
-                RTS.object_setitem(rt_value, rt_item, rt_res);
-
-                frame.traceback.Pop();
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro, op, rhs);
-            return coro;
+            frame.traceback.Push(position);
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            var rt_item = item.hasCont ? await item.cont(frame) : item.exec(frame);
+            var rt_res = RTS.object_getitem(rt_value, rt_item);
+            rt_res = op(rt_res, rhs.hasCont ? await rhs.cont(frame) : rhs.exec(frame));
+            RTS.object_setitem(rt_value, rt_item, rt_res);
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
-        public TraffyCoroutine cont(Frame frame, TrObject o)
+        public async MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro)
-            {
-                frame.traceback.Push(position);
-
-                TrObject rt_value;
-                if (value.hasCont)
-                {
-                    var cont_value = value.cont(frame);
-                    while (cont_value.MoveNext(coro.Sent))
-                        yield return cont_value.Current;
-                    rt_value = cont_value.Result;
-                }
-                else
-                {
-                    rt_value = value.exec(frame);
-                }
-
-                TrObject rt_item;
-                if (item.hasCont)
-                {
-                    var cont_item = item.cont(frame);
-                    while (cont_item.MoveNext(coro.Sent))
-                        yield return cont_item.Current;
-                    rt_item = cont_item.Result;
-                }
-                else
-                {
-                    rt_item = item.exec(frame);
-                }
-
-                RTS.object_setitem(rt_value, rt_item, o);
-
-                frame.traceback.Pop();
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro);
-            return coro;
+            frame.traceback.Push(position);
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            var rt_item = item.hasCont ? await item.cont(frame) : item.exec(frame);
+            RTS.object_setitem(rt_value, rt_item, o);
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
     }
     [Serializable]
@@ -496,64 +337,24 @@ namespace Traffy.Asm
             RTS.object_setic(rt_value, ic, rt_res);
             frame.traceback.Pop();
         }
-        public TraffyCoroutine cont(Frame frame, TrObject o)
+        public async MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, InlineCache.PolyIC selector)
-            {
-                frame.traceback.Push(position);
-
-                var rt_value = value.exec(frame);
-                if (value.hasCont)
-                {
-                    var cont_value = value.cont(frame);
-                    while (cont_value.MoveNext(coro.Sent))
-                        yield return cont_value.Current;
-                    rt_value = cont_value.Result;
-                }
-                RTS.object_setic(rt_value, selector, o);
-
-                frame.traceback.Pop();
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro, ic);
-            return coro;
+            frame.traceback.Push(position);
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            RTS.object_setic(rt_value, ic, o);
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
 
-        public TraffyCoroutine contOp(Frame frame, binary_func op, TraffyAsm rhs)
+        public async MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm rhs)
         {
-            IEnumerator<TrObject> mkCont(Frame frame, TraffyCoroutine coro, binary_func op, TraffyAsm rhs, InlineCache.PolyIC selector)
-            {
-                frame.traceback.Push(position);
-
-                var rt_value = value.exec(frame);
-                if (value.hasCont)
-                {
-                    var cont_value = value.cont(frame);
-                    while (cont_value.MoveNext(coro.Sent))
-                        yield return cont_value.Current;
-                    rt_value = cont_value.Result;
-                }
-
-                var rt_res = RTS.object_getic(rt_value, selector);
-                if (rhs.hasCont)
-                {
-                    var cont_rhs = rhs.cont(frame);
-                    while (cont_rhs.MoveNext(coro.Sent))
-                        yield return cont_rhs.Current;
-                    rt_res = op(rt_res, cont_rhs.Result);
-                }
-                else
-                {
-                    rt_res = op(rt_res, rhs.exec(frame));
-                }
-                RTS.object_setic(rt_value, selector, rt_res);
-
-                frame.traceback.Pop();
-            }
-            var coro = new TraffyCoroutine();
-            coro.generator = mkCont(frame, coro, op, rhs, ic);
-            return coro;
-
+            frame.traceback.Push(position);
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            var rt_res = RTS.object_getic(rt_value, ic);
+            rt_res = op(rt_res, rhs.hasCont ? await rhs.cont(frame) : rhs.exec(frame));
+            RTS.object_setic(rt_value, ic, rt_res);
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
     }
 

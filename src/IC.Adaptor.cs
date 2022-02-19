@@ -152,12 +152,11 @@ namespace Traffy.InlineCache
                 WriteInst(self, ad, value);
                 return;
             }
-            if (self.Class.__array__ == null || self.Class.IsFixed)
-                throw new AttributeError(self, MK.Str(s), $"object {self.Class.Name} has no attribute {s}");
-            var Token = self.Class.UpdatePrototype();
-            var ad_ = Shape.MKField(s.ToIntern(), self.Class.fieldCnt++);
-            self.__array__.Add(value);
-            self.Class.__prototype__.Add(ad_.Name, ad_);
+            if (self.__array__ == null)
+                throw new AttributeError(self, MK.Str(s), $"object {self.Class.Name} has no attribute {s} (immutable)");
+
+            int index = self.Class.AddField(s);
+            self.SetInstField(index, s, value);
         }
 
         public static bool ReadInst(TrObject self, Shape shape, out TrObject ob)
@@ -209,16 +208,7 @@ namespace Traffy.InlineCache
         {
             if (self.__array__ == null || self.Class.IsFixed)
                 throw new AttributeError(self, MK.Str(shape.Name), $"object {self.Class.Name} has no attribute {shape.Name}");
-            if (shape.FieldIndex < self.__array__.Count)
-            {
-                self.__array__[shape.FieldIndex] = value;
-            }
-            else
-            {
-                for (int j = self.__array__.Count; j < shape.FieldIndex + 1; j++)
-                    self.__array__.Add(null);
-                self.__array__[shape.FieldIndex] = value;
-            }
+            self.SetInstField(shape.FieldIndex, shape.Name, value);
         }
         public bool ReadInst(TrObject self, out TrObject ob)
         {

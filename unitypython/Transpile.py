@@ -1,15 +1,10 @@
 from __future__ import annotations
 from ast import *
-from asyncio import constants
-from operator import le
-from re import A
-from turtle import pos, position
 from unitypython.Collections import OrderedSet, OrderedDict
-from . import Structures as S
-from .Symtable import Symtable, ConciseSymtable
 from . import TraffyAsm as ir
+from .JSON import dump_json
 from typing import Any
-from .Scoper import *
+from .Scoper import get_position_string, ConciseSymtable, ScoperStmt
 import typing
 
 
@@ -86,16 +81,6 @@ def _const_to_variant(v):
         raise TypeError(v)
 
 
-def json_str(x: str):
-    return json.dumps(x, ensure_ascii=False)
-
-
-class AutoIndex(OrderedDict):
-    def __missing__(self, k):
-        v = self[k] = len(self)
-        return v
-
-
 def extract_pos(node: AST) -> ir.Span:
     start = ir.Position(line=node.lineno, col=node.col_offset)
     if node.end_lineno is not None:
@@ -112,8 +97,13 @@ def extract_pos(node: AST) -> ir.Span:
 
 class Transpiler:
     def __init__(
-        self, filename: str, init_pos: ir.Span, parent_scope: ConciseSymtable | None
+        self,
+        filename: str,
+        source_code: str | None,
+        init_pos: ir.Span,
+        parent_scope: ConciseSymtable | None,
     ):
+        self.source_code = source_code
         self.instructions = []  # type: list[ir.TraffyIR]
         self.constants: OrderedDict[tuple[type, object], ir.TrObject] = OrderedDict()
         self.filename = filename
@@ -124,8 +114,9 @@ class Transpiler:
 
         self.flag = 0
         self._cur_pos: ir.Span = init_pos
-        self.positions: OrderedSet[ir.Span] = OrderedSet()
-        self.positions.add(init_pos)
+        self.positions: OrderedSet[ir.Position] = OrderedSet()
+        self.spans: OrderedSet[tuple[int, int]] = OrderedSet()
+        self._add_span(init_pos)
 
         self.posargcount = 0  # count of non-variadic positional args
         self.allargcount = 0
@@ -143,11 +134,19 @@ class Transpiler:
     @cur_pos.setter
     def cur_pos(self, value: ir.Span):
         self._cur_pos = value
-        self.positions.add(value)
+        self._add_span(value)
+
+    def _add_span(self, span: ir.Span):
+        self.positions.add(span.start)
+        self.positions.add(span.end)
+        key = (self.positions.order(span.start), self.positions.order(span.end))
+        self.spans.add(key)
 
     @property
     def pos_ind(self) -> int:
-        return self.positions.order(self._cur_pos)
+        span = self._cur_pos
+        key = (self.positions.order(span.start), self.positions.order(span.end))
+        return self.spans.order(key)
 
     def localname_slot(self, id: str):
         if id in self.scope.localvars:
@@ -196,6 +195,8 @@ class Transpiler:
     def create_fptr_builder(self, code: ir.TraffyIR, name: str) -> ir.TrFuncPointer:
         metadata = ir.Metadata(
             positions=list(self.positions),
+            spanPointers=list(self.spans),
+            sourceCode=self.source_code,
             localnames=list(self.scope.localvars),
             freenames=list(self.scope.freevars),
             codename=name,
@@ -382,7 +383,12 @@ class TranspilerRHS(IRExprTransformerInlineCache):
     def visit_Lambda(self, node: Lambda) -> Any:
         for each in node.args.defaults:
             self.visit(each)
-        transpiler = Transpiler(self.root.filename, extract_pos(node), self.root.scope)
+        transpiler = Transpiler(
+            self.root.filename,
+            self.root.source_code,
+            extract_pos(node),
+            self.root.scope,
+        )
         transpiler.before_visit(node)
         body = transpiler.rhs_transpiler.visit(node.body)
         lambda_body = ir.Return(
@@ -702,7 +708,12 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         rhs_transpiler = self.root.rhs_transpiler
         for each in node.args.defaults:
             rhs_transpiler.visit(each)
-        transpiler = Transpiler(self.root.filename, extract_pos(node), self.root.scope)
+        transpiler = Transpiler(
+            self.root.filename,
+            self.root.source_code,
+            extract_pos(node),
+            self.root.scope,
+        )
         transpiler.before_visit(node)
         position = transpiler.pos_ind
         suite = [transpiler.stmt_transpiler.visit(stmt) for stmt in node.body]
@@ -905,8 +916,11 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         return ir.Raise(position=position, hasCont=False, exc=None)
 
 
-def compile_module(filename: str, node: Module):
-    top = Transpiler(filename, ir.Span.empty(), None)
+def compile_module(
+    filename: str, src: str, ignore_src: bool = True
+) -> ir.TrFuncPointer:
+    node: Module = parse(src, filename=filename)
+    top = Transpiler(filename, None if ignore_src else src, ir.Span.empty(), None)
     top.before_visit(node)
     block = top.stmt_transpiler.visit_block(node.body)
     return top.create_fptr_builder(block, "<module>")

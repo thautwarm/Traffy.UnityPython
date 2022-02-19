@@ -1,14 +1,15 @@
 from __future__ import annotations
-import dataclasses
-
 from enum import IntEnum
-from logging import handlers
+from .IntEncode import encode as encode_int
 from dataclasses import InitVar, dataclass
-from turtle import position
+import dataclasses
 import typing
-import typing_extensions
+
+
+
 
 if typing.TYPE_CHECKING:
+    import typing_extensions
     class TraffyIR(typing_extensions.Protocol):
         hasCont: bool
 
@@ -515,8 +516,7 @@ class TrFuncPointer(object):
     metadata: Metadata
 
 
-@dataclass(frozen=True)
-class Position(object):
+class Position(typing.NamedTuple):
     line: int
     col: int
 
@@ -533,15 +533,21 @@ class Span(object):
 
 @dataclass
 class Metadata(object):
-    positions: list[Span]
     localnames: list[str]
     freenames: list[str]
     codename: str
     filename: str
+    sourceCode: str | None
+    compressedSpanPointers: list[int] = dataclasses.field(default_factory=list)
+    compressedPositions: list[int] = dataclasses.field(default_factory=list)
+    positions: InitVar[list[tuple[int, int]]] = []
+    spanPointers: InitVar[list[tuple[int, int]]] = []
+    def __post_init__(self, positions: list[tuple[int, int]], span_pointers: list[tuple[int, int]]):
+        self.compressedPositions = encode_int(positions)
+        self.compressedSpanPointers = encode_int(span_pointers)
 
 
-__cache_type_dict = {
-}
+__cache_type_dict = { }
 __prim_types = (int, float, str, bool, type(None))
 __seq_types = (list, tuple, set, frozenset)
 
@@ -556,7 +562,7 @@ def fast_asdict(o):
         pass
     else:
         cls = o.__class__
-        assert dataclasses.is_dataclass(cls), "only dataclasses can be serialized!"
+        assert dataclasses.is_dataclass(cls), f"cannot serialize {cls} object: not a dataclass."
         lookuptype = cls.__name__, [field.name for field in dataclasses.fields(cls) ]
         __cache_type_dict[cls] = lookuptype
     tname, fields = lookuptype

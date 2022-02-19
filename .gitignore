@@ -1,3 +1,4 @@
+BenchmarkDotNet.Artifacts/
 /UnityEngine.dll
 /cross-editor-highlighter/
 .antlr/

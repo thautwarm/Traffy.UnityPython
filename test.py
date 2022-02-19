@@ -1,9 +1,14 @@
+import cProfile, pstats, io
+from pstats import SortKey
+pr = cProfile.Profile()
+pr.enable()
+
 from unitypython.Transpile import compile_module
 from unitypython.TraffyAsm import fast_asdict
-import ast
+from unitypython.JSON import dump_json
 
 
-node = ast.parse("""
+src = """
 x = 1
 x, *z, y = [1, 2, 3]
 
@@ -50,16 +55,16 @@ def test2():
     while x < 10000000:
         x += 1
     return x
-a = time()
-xs = test2()
-print("value", xs)
-print("time1", time() - a)
+# a = time()
+# xs = test2()
+# print("value", xs)
+# print("time1", time() - a)
 
 # a = time()
 # xs = list(test1())
 # print("len", len(xs))
 # print("time2", time() - a)
-print(1)
+# print(1)
 try:
     print(0//0)
 except NativeError as e:
@@ -67,17 +72,26 @@ except NativeError as e:
 print(1)
 print(1)
 print(1)
-""", "a.py")
+e.a = 1
+"""
 
 
-tr = compile_module("a.py", node)
+def pipeline(src):
+    tr = compile_module("a.py", src)
+    dict_data = fast_asdict(tr)
+    with open("c.json", 'w', encoding='utf-8') as file:
+        file.write(dump_json(dict_data))
 
-try:
-    import ujson as json
-except ImportError:
-    import json
+pipeline(src)
+pipeline(src)
+pipeline(src)
 
-dict_data = fast_asdict(tr)
+pr.disable()
 
-with open("c.json", 'w', encoding='utf-8') as file:
-    file.write(json.dumps(dict_data))
+
+s = io.StringIO()
+sortby = SortKey.CUMULATIVE
+ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+ps.print_stats()
+with open("report.txt", 'w', encoding='utf-8') as file:
+    file.write(s.getvalue())

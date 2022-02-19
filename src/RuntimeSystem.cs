@@ -61,7 +61,7 @@ namespace Traffy
 
         internal static Exception exc_wrap_frame(Exception e, Frame frame)
         {
-            throw new NotImplementedException();
+            throw e;
         }
 
         internal static void arg_check_positional_only(BList<TrObject> args, int v)
@@ -539,27 +539,39 @@ namespace Traffy
             throw new ValueError($"{rt_exc.__repr__()} is not an exception");
         }
 
-        static IEnumerator<TrObject> coroutine_of_object_mkCont0(IEnumerator<TrObject> itr, TraffyCoroutine coro)
+        static async MonoAsync<TrObject> coroutine_of_object_mkCont0(IEnumerator<TrObject> itr)
         {
             while (itr.MoveNext())
             {
-                yield return itr.Current;
+                await Objects.ExtMonoAsyn.Yield(itr.Current);
             }
+            return TrNone.Unique;
         }
 
-        internal static TraffyCoroutine coroutine_of_iter(IEnumerator<TrObject> o)
+        internal static MonoAsync<TrObject> coroutine_of_iter(IEnumerator<TrObject> o)
         {
-            if (o is TraffyCoroutine coro)
-                return coro;
-            coro = new TraffyCoroutine();
-            coro.generator = coroutine_of_object_mkCont0(o, coro);
-            return coro;
+            if (o is TrCoroutine coro)
+                return coro.m_generator;
+            return coroutine_of_object_mkCont0(o);
         }
-        internal static TraffyCoroutine coroutine_of_object(TrObject rt_value)
+        internal static MonoAsync<TrObject> coroutine_of_object(TrObject rt_value)
         {
             var o = rt_value.__iter__();
             return coroutine_of_iter(o);
         }
+
+        internal static TrObject object_of_coroutine(MonoAsync<TrObject> rt_value)
+        {
+
+            return TrCoroutine.Create(rt_value);
+        }
+
+        internal static TrObject object_of_iter(MonoAsync<TrObject> rt_value)
+        {
+
+            return TrCoroutine.Create(rt_value);
+        }
+
 
         internal static TrObject object_call_ex(TrObject rt_func, BList<TrObject> rt_args, Dictionary<TrObject, TrObject> rt_kwargs)
         {
@@ -671,6 +683,20 @@ namespace Traffy
         {
             return new TrTuple { elts = _zeroelts };
         }
+
+        internal static TrObject Iter(IEnumerator<TrObject> v)
+        {
+            if(v is TrCoroutine coro)
+            {
+                return coro;
+            }
+            if (v is TrIter iterable)
+            {
+                return iterable;
+            }
+            return new TrIter(v);
+        }
+
 
         internal static TrObject object_imod(TrObject arg1, TrObject arg2)
         {

@@ -176,8 +176,7 @@ namespace Traffy.Objects
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
-                return RTS.coroutine_of_iter(func(args[0]));
-
+                return MK.Iter(func(args[0]));
             }
             return new TrSharpFunc(name, call);
         }

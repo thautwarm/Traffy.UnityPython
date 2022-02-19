@@ -82,6 +82,28 @@ namespace Traffy.Objects
             ic__init_subclass = new MonoIC(MagicNames.i___init_subclass__);
         }
 
+        public int AddField(string name)
+        {
+            if (IsFixed)
+                throw new TypeError($"{Name} class has no attribute {name} (immutable)");
+            if (fieldCnt == ModuleInit.OBJECT_SHAPE_MAX_FIELD)
+            {
+                throw new TypeError($"class {Name} cannot add a shape for field {name} (more than 255 fields)");
+            }
+            var Token = UpdatePrototype();
+            var ad_ = Shape.MKField(name.ToIntern(), fieldCnt++);
+            __prototype__.Add(ad_.Name, ad_);
+            if (__prototype__.TryGetValue(name, out var shape))
+            {
+                if (shape.Kind == AttributeKind.Field)
+                    return shape.FieldIndex;
+                throw new TypeError($"{name} is already a {shape.Kind}");
+            }
+            var index = fieldCnt++;
+            __prototype__[name] = Shape.MKField(name.ToIntern(), index);
+            return index;
+        }
+
 
     }
 }

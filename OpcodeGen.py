@@ -8,10 +8,6 @@ class X:
 
 
 
-
-
-c = Ref(1)
-
 cur = pathlib.Path(__file__)
 cases = []
 for each in open("instrs").read().splitlines():

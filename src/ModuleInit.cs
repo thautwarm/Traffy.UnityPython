@@ -25,6 +25,7 @@ namespace Traffy
     }
     public static class ModuleInit
     {
+        internal const int OBJECT_SHAPE_MAX_FIELD = 255;
         internal const string TokenClassInit = "Traffy.ClassInit";
         static Dictionary<string, TrObject> m_Prelude = new Dictionary<string, TrObject>();
         public static void InitRuntime()

@@ -36,8 +36,8 @@ public sealed class BList<T> : IList<T>
     {
         int capacity = (int)sizeKind;
         _array = new T[(capacity << 1) + 1];
-        _head = capacity;
-        _tail = capacity;
+        _head = 2;
+        _tail = 2;
     }
 
     public BList()
@@ -203,6 +203,13 @@ public sealed class BList<T> : IList<T>
     public void CopyTo(T[] array, int arrayIndex)
     {
         Array.Copy(_array, _head, array, arrayIndex, Count);
+    }
+
+    public T[] ToArray()
+    {
+        T[] newArray = new T[Count];
+        Array.Copy(_array, _head, newArray, 0, Count);
+        return newArray;
     }
 
     public bool Remove(T item)

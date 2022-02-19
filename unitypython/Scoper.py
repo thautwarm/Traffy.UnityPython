@@ -1,20 +1,53 @@
 from __future__ import annotations
-from ast import *
+from ast import (
+    AST,
+    stmt,
+    expr,
+    NodeVisitor,
+
+    Return,
+    FunctionDef,
+    Assign,
+    AnnAssign,
+    AugAssign,
+    While,
+    Global,
+    Nonlocal,
+    Expr,
+    If,
+    Pass,
+    Break,
+    Continue,
+    Delete,
+
+    Try,
+    Raise,
+    Yield,
+    YieldFrom,
+
+    BoolOp,
+    NamedExpr,
+    BinOp,
+    UnaryOp,
+    Lambda,
+    # IfExp,
+    Compare,
+    Call,
+    Constant,
+    Slice,
+    Dict,
+    Set,
+    Attribute,
+    Subscript,
+    Starred,
+    Name,
+    List,
+    Tuple,
+)
 import typing
 from .Symtable import Symtable, ConciseSymtable
 from typing import Any
-
-try:
-    import ujson
-
-    def dump_json(x):
-        return ujson.dumps(x, ensure_ascii=False, escape_forward_slashes=False)
-
-except ImportError:
-    import json
-
-    def dump_json(x):
-        return json.dumps(x, ensure_ascii=False)
+from .JSON import dump_json
 
 
 def get_position_string(x: AST, filename: str):
