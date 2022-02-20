@@ -1,5 +1,5 @@
 BenchmarkDotNet.Artifacts/
-/UnityEngine.dll
+**/UnityEngine.dll
 /cross-editor-highlighter/
 .antlr/
 /parser-data/
