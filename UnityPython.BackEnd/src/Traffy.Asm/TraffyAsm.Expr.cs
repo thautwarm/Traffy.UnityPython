@@ -214,7 +214,7 @@ namespace Traffy.Asm
             frame.traceback.Push(position);
             TrObject rt_res;
             rt_res = expr.hasCont ? await expr.cont(frame) : expr.exec(frame);
-            lhs.exec(frame, rt_res);
+            lhs.exec(frame, rt_res); // left-hand side expressions in named expressions are variable assignments
             frame.traceback.Pop();
             return rt_res;
         }
@@ -223,7 +223,7 @@ namespace Traffy.Asm
     [Serializable]
     public class CmpOp : TraffyAsm
     {
-        public bool hasCont => op < 0;
+        public bool hasCont => op < 0; // save memory usage and no performance penalty
         public int op;
         public int position;
         public TraffyAsm left;
@@ -346,7 +346,8 @@ namespace Traffy.Asm
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             frame.traceback.Push(position);
-            var rt_operand = operand.hasCont ? await operand.cont(frame) : operand.exec(frame);
+            // only one expression that results in continuation, so no need to check for 'hasCont'
+            var rt_operand = await operand.cont(frame);
             var rt_res = opfunc(rt_operand);
             frame.traceback.Pop();
             return rt_res;
@@ -433,7 +434,12 @@ namespace Traffy.Asm
                 rt_default_args = new (int, TrObject)[default_args.Length];
                 for (int i = 0; i < rt_default_args.Length; i++)
                 {
-                    rt_default_args[i] = (default_args[i].slot, default_args[i].value.hasCont ? await default_args[i].value.cont(frame) : default_args[i].value.exec(frame));
+                    rt_default_args[i] = (
+                        default_args[i].slot,
+                        default_args[i].value.hasCont
+                            ? await default_args[i].value.cont(frame)
+                            : default_args[i].value.exec(frame)
+                    );
                 }
             }
             else
@@ -553,7 +559,7 @@ namespace Traffy.Asm
 
 
     [Serializable]
-    public class GuessVar : TraffyAsm // used for CPython class scope semantics
+    public class GuessVar : TraffyAsm // used for CPython class semantics
     {
         public TrStr name;
         public int position;
@@ -561,7 +567,7 @@ namespace Traffy.Asm
 
         public MonoAsync<TrObject> cont(Frame frame)
         {
-            throw new InvalidOperationException("variables shall not produce coroutines");
+            throw new InvalidProgramException("variables shall not produce coroutines");
         }
 
         public TrObject exec(Frame frame)
@@ -600,7 +606,7 @@ namespace Traffy.Asm
 
         public MonoAsync<TrObject> cont(Frame frame)
         {
-            throw new InvalidOperationException("variables shall not produce coroutines");
+            throw new InvalidProgramException("variables shall not produce coroutines");
         }
 
         public TrObject exec(Frame frame)
@@ -620,7 +626,7 @@ namespace Traffy.Asm
 
         public MonoAsync<TrObject> cont(Frame frame)
         {
-            throw new InvalidOperationException("variables shall not produce coroutines");
+            throw new InvalidProgramException("variables shall not produce coroutines");
         }
 
         public TrObject exec(Frame frame)
@@ -640,7 +646,7 @@ namespace Traffy.Asm
 
         public MonoAsync<TrObject> cont(Frame frame)
         {
-            throw new InvalidOperationException("constants shall not produce coroutines");
+            throw new InvalidProgramException("constants shall not produce coroutines");
         }
 
         public TrObject exec(Frame frame)
@@ -891,7 +897,8 @@ namespace Traffy.Asm
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             frame.traceback.Push(position);
-            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            // only one inner expression, so no need to check for 'hasCont'
+            var rt_value = await value.cont(frame);
             rt_value = RTS.object_getic(rt_value, ic);
             frame.traceback.Pop();
             return rt_value;
@@ -941,7 +948,7 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
-            throw new InvalidOperationException("yield statements cannot be executed in non-generator contexts.");
+            throw new InvalidProgramException("yield statements cannot be executed in non-generator contexts.");
         }
     }
 
@@ -955,22 +962,14 @@ namespace Traffy.Asm
 
         public TrObject exec(Frame frame)
         {
-            throw new NotImplementedException();
-        }
-
-
-        private async MonoAsync<TrObject> contIfInnerCont(Frame frame)
-        {
-            var rt_value = await value.cont(frame);
-            MonoAsync<TrObject> co = RTS.coroutine_of_object(rt_value);
-            return await co;
+            throw new InvalidProgramException("yield from statements cannot be executed in non-generator contexts.");
         }
 
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
-            MonoAsync<TrObject> co = RTS.coroutine_of_object(rt_value);
-            return await co;
+            MonoAsync<TrObject> rt_co = RTS.coroutine_of_object(rt_value);
+            return await rt_co;
         }
     }
 }
