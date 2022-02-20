@@ -58,7 +58,7 @@ namespace Traffy.Asm
 
             List<TrObject> rt_itr = RTS.object_as_list(o);
             var left = rt_itr.Count - before.Length - after.Length;
-            if (rt_itr.Count < 0)
+            if (left < 0)
             {
                 throw RTS.exc_unpack_notenough(rt_itr.Count, before.Length + after.Length);
             }
@@ -83,7 +83,7 @@ namespace Traffy.Asm
 
             List<TrObject> rt_itr = RTS.object_as_list(o);
             var left = rt_itr.Count - before.Length - after.Length;
-            if (rt_itr.Count < 0)
+            if (left < 0)
             {
                 throw RTS.exc_unpack_notenough(rt_itr.Count, before.Length + after.Length);
             }
@@ -110,12 +110,12 @@ namespace Traffy.Asm
 
         public void execOp(Frame frame, binary_func op, TraffyAsm asm)
         {
-            throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
+            throw new InvalidProgramException("augassign is invalid for left-hand side list/tuple(s)");
         }
 
         public MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm asm)
         {
-            throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
+            throw new InvalidProgramException("augassign is invalid for left-hand side list/tuple(s)");
         }
     }
     [Serializable]
@@ -173,12 +173,12 @@ namespace Traffy.Asm
 
         public void execOp(Frame frame, binary_func op, TraffyAsm asm)
         {
-            throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
+            throw new InvalidProgramException("augassign is invalid for left-hand side list/tuple(s)");
         }
 
         public MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm asm)
         {
-            throw new InvalidOperationException("augassign is invalid for left-hand side list/tuple(s)");
+            throw new InvalidProgramException("augassign is invalid for left-hand side list/tuple(s)");
         }
     }
     [Serializable]
@@ -202,7 +202,7 @@ namespace Traffy.Asm
 
         public MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            throw new InvalidOperationException("augassign is invalid for left-hand side local");
+            throw new InvalidProgramException("augassign is invalid for left-hand side local");
         }
 
 
@@ -236,7 +236,7 @@ namespace Traffy.Asm
 
         public MonoAsync<TrObject> cont(Frame frame, TrObject o)
         {
-            throw new InvalidOperationException("local variable store cannot be async");
+            throw new InvalidProgramException("local variable store cannot be async");
         }
         public async MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm rhs)
         {

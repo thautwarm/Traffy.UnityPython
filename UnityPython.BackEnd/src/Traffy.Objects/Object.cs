@@ -25,7 +25,6 @@ namespace Traffy.Objects
             return __eq__(other);
         }
 
-
         public TrClass AsClass => (TrClass)this;
 
         public bool IsClass => false;
@@ -318,7 +317,7 @@ namespace Traffy.Objects
         static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             RTS.arg_check_positional_atleast(args, 1);
-            var clsobj = (TrClass) args[0];
+            var clsobj = (TrClass)args[0];
             if (clsobj == CLASS)
             {
                 return MK.RawObject();
