@@ -16,7 +16,7 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSharpMethod>();
@@ -32,7 +32,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

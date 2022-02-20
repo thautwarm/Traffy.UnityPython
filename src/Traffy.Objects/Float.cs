@@ -37,7 +37,7 @@ namespace Traffy.Objects
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFloat>();
@@ -52,7 +52,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
     }
 }

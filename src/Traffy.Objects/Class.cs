@@ -87,7 +87,7 @@ namespace Traffy.Objects
         }
         public TrObject AsObject => this as TrObject;
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             MetaClass = CreateClass("type");
@@ -106,7 +106,7 @@ namespace Traffy.Objects
         {
             MetaClass.SetupClass();
             MetaClass.IsFixed = true;
-            ModuleInit.Prelude(MetaClass);
+            Initialization.Prelude(MetaClass);
         }
 
         public static TrObject typecall(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

@@ -39,7 +39,7 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrIter>();
@@ -54,7 +54,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
 
         public bool MoveNext()

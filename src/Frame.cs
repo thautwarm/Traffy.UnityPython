@@ -1,12 +1,11 @@
 using System;
+using Traffy.Objects;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
-namespace Traffy.Objects
+namespace Traffy
 {
-    using static JsonExt;
     public static class ListExt
     {
         [MethodImpl(MethodImplOptionsCompat.Best)]
@@ -87,11 +86,53 @@ namespace Traffy.Objects
         }
     }
 
-    [Serializable]
+
     public struct Postion
     {
         public int line;
         public int col;
+
+        public override string ToString()
+        {
+            return $"line {line}, colum {col}";
+        }
+    }
+
+    public struct Span
+    {
+        public Postion start;
+        public Postion end;
+
+        public override string ToString()
+        {
+            return $"{start} - {end}";
+        }
+
+        public string UnsafeClip(string sourceCode)
+        {
+            var span = this;
+            int line = 1;
+            int offset = -1;
+            if (line != span.start.line)
+                while (++offset < sourceCode.Length)
+                {
+                    if (sourceCode[offset] == '\n')
+                    {
+                        if (++line == span.start.line) break;
+                    }
+                }
+            int start_offset = offset + span.start.col + 1;
+            if (line != span.end.line)
+                while (++offset < sourceCode.Length)
+                {
+                    if (sourceCode[offset] == '\n')
+                    {
+                        if (++line == span.end.line) break;
+                    }
+                }
+            int end_offset = offset + span.end.col + 1;
+            return sourceCode.Substring(start_offset, end_offset - start_offset);
+        }
     }
 
 
@@ -105,20 +146,67 @@ namespace Traffy.Objects
         // given 'undecoded(position_compressed: int[]) = positions: (int line, int col)[]'
         // a span pointed by the index 'i' at 'span_pointer_compressed' represents
         //    '(positions[span_pointers[i].start], positions[span_pointers[i].end])'
-        public int[] compressedSpanPointers;
+        public uint[] compressedSpanPointers;
 
         // compactly encoded (int32, int32) pairs as int32[]
-        public int[] compressedPositions;
+        public uint[] compressedPositions;
         public string[] localnames;
         public string[] freenames;
         public string codename;
         public string filename;
         public string sourceCode; // in release mode, can be null
 
+        private Postion[] _positions;
+        private (int start, int end)[] _spanPointers;
+
         [OnDeserialized]
         public Metadata OnDeserialized()
         {
+            // Positions.Select(x => x.ToString()).By(x => String.Join(",", x)).By(Console.WriteLine);
             return this;
+        }
+
+        private (int start, int end)[] SpanPointers
+        {
+            get
+            {
+                if (_spanPointers == null)
+                {
+                    _spanPointers = Traffy.Utils.IntEncoding.decode(compressedSpanPointers, (start, end) => (start, end));
+                }
+                return _spanPointers;
+            }
+        }
+        public Postion[] Positions
+        {
+            get
+            {
+                if (_positions == null)
+                {
+                    _positions = Traffy.Utils.IntEncoding.decode(compressedPositions, (line, col) => new Postion { line = line, col = col });
+                }
+                return _positions;
+            }
+        }
+
+        public Span FindSpan(int pointer)
+        {
+            if (_spanPointers == null)
+            {
+                _spanPointers = Traffy.Utils.IntEncoding.decode(compressedSpanPointers, (start, end) => (start, end));
+
+                // _positions.Select(x => x.ToString()).By(x => String.Join(",", x)).By(Console.WriteLine);
+            }
+            return new Span { start = Positions[_spanPointers[pointer].start], end = Positions[_spanPointers[pointer].end] };
+        }
+
+        public string FindSourceSpan(int pointer)
+        {
+            Span span = FindSpan(pointer);
+            if (sourceCode == null)
+                return "";
+            // skip the first 'start_line-1' lines and the following 'start_col-1' chars
+            return span.UnsafeClip(sourceCode);
         }
     }
 
@@ -145,165 +233,6 @@ namespace Traffy.Objects
             ((TrObject)func).Call();
         }
     }
-
-    // runtime
-    public record TrFunc(
-        Variable[] freevars,
-        Dictionary<TrObject, TrObject> globals,
-        (int slot, TrObject value)[] default_args,
-        TrFuncPointer fptr
-     ) : TrObject
-    {
-
-        public static TrClass CLASS;
-
-        public TrClass Class => CLASS;
-
-
-        [Mark(ModuleInit.TokenClassInit)]
-        static void _Init()
-        {
-            CLASS = TrClass.FromPrototype<TrFunc>();
-            CLASS.Name = "function";
-            CLASS.InitInlineCacheForMagicMethods();
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("function.__new__", TrFunc.datanew);
-            CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrFunc)] = CLASS;
-        }
-
-        [Mark(typeof(TrFunc))]
-        static void _SetupClasses()
-        {
-            CLASS.SetupClass();
-            CLASS.IsFixed = true;
-        }
-
-        public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            var clsobj = args[0];
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
-        }
-        TrObject AsObject => this;
-
-        public List<TrObject> __array__ => null;
-
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            var localvars = new Variable[fptr.metadata.localnames.Length];
-            if (default_args.Length != 0)
-                for (int i = 0, j = 0; i < localvars.Length; i++)
-                {
-                    if (j < default_args.Length && default_args[j].slot == i)
-                        localvars[i] = new Variable(default_args[j++].value);
-                    else
-                        localvars[i] = new Variable(null);
-                }
-            else
-                for (int i = 0; i < localvars.Length; i++)
-                {
-                    localvars[i] = new Variable(null);
-                }
-            var args_itr = args.GetEnumerator();
-            for (int i = 0; i < fptr.posargcount; i++)
-            {
-                if (!args_itr.MoveNext())
-                {
-                    var arg_string = fptr.metadata.localnames.GetRange(i, fptr.posargcount - i).Select(x => $"\"{x}\"").By(x => String.Join(", ", x));
-                    throw new TypeError($"{this.AsObject.__repr__()} missing {fptr.posargcount - i} positional argument(s): {arg_string}");
-                }
-                localvars[i].Value = args_itr.Current;
-            }
-            if (fptr.hasvararg)
-            {
-                var vararg = RTS.barelist_create();
-                while (args_itr.MoveNext())
-                {
-                    RTS.barelist_add(vararg, args_itr.Current);
-                }
-                localvars[fptr.posargcount].Value = RTS.object_from_barearray(vararg.ToArray());
-            }
-            else
-            {
-                if (args_itr.MoveNext())
-                {
-                    throw new TypeError($"{this.AsObject.__repr__()} takes {fptr.posargcount} positional argument(s) but {args.Count} were given");
-                }
-            }
-            int i_kwstart, i_kwend;
-            if (fptr.hasvararg)
-                i_kwstart = fptr.posargcount + 1;
-            else
-                i_kwstart = fptr.posargcount;
-            if (fptr.haskwarg)
-                i_kwend = fptr.allargcount - 1;
-            else
-                i_kwend = fptr.allargcount;
-
-            if (kwargs != null)
-            {
-                var missing = new List<string>();
-                var dictargs = kwargs.Copy();
-                for (int i = i_kwstart; i < i_kwend; i++)
-                {
-                    if (dictargs.TryPop(fptr.kwindices[i], out var arg))
-                    {
-                        localvars[i].Value = arg;
-                    }
-                    else
-                    {
-                        if (localvars[i].Value == null)
-                            missing.Add(fptr.kwindices[i].__repr__());
-                    }
-                }
-                if (fptr.haskwarg)
-                {
-                    localvars[fptr.allargcount - 1].Value = RTS.object_from_baredict(dictargs);
-                }
-                else
-                {
-                    if (dictargs.Count != 0)
-                        throw new TypeError($"{this.AsObject.__repr__()}  got unexpected keyword argument(s): {dictargs.Keys.Select(x => x.__repr__()).By(x => String.Join(", ", x))} ");
-                }
-                if (missing.Count != 0)
-                    throw new TypeError($"{this.AsObject.__repr__()}  missing {missing.Count} keyword-only argument(s): {missing.By(x => String.Join(", ", x))} ");
-            }
-            else
-            {
-                if (i_kwstart < i_kwend)
-                {
-                    var missing = new List<string>();
-                    for (int i = i_kwstart; i < i_kwend; i++)
-                        if (localvars[i].Value == null)
-                            missing.Add(fptr.kwindices[i].__repr__());
-                    if (missing.Count != 0)
-                    {
-                        var msg = missing.By(x => String.Join(", ", x));
-                        throw new TypeError($"{this.AsObject.__repr__()}  missing {i_kwend - i_kwstart} keyword-only argument(s): {msg} ");
-                    }
-                }
-                if (fptr.haskwarg)
-                {
-                    localvars[fptr.allargcount - 1].Value = RTS.object_from_baredict(RTS.baredict_create());
-                }
-            }
-            var frame = Frame.Make(this, localvars);
-            if (!fptr.code.hasCont)
-            {
-                try
-                {
-                    fptr.code.exec(frame);
-                }
-                catch (Exception e)
-                {
-                    throw RTS.exc_wrap_frame(e, frame);
-                }
-                return frame.retval;
-            }
-            var coroutine = fptr.code.cont(frame);
-            return TrCoroutine.Create(coroutine, frame);
-        }
-    }
-
     public enum STATUS
     {
         NORMAL,
@@ -319,13 +248,15 @@ namespace Traffy.Objects
         public STATUS CONT;
         public TrObject retval;
         public Stack<int> traceback;
+        public Stack<int> marked;
 
         public static Frame Make(TrFunc func, Variable[] localvars) => new Frame
         {
             func = func,
             localvars = localvars,
             retval = RTS.object_none,
-            traceback = new Stack<int>()
+            traceback = new Stack<int>(),
+            marked = new Stack<int>()
         };
 
         internal Variable load_reference(int operand)
@@ -386,7 +317,17 @@ namespace Traffy.Objects
 
         internal void set_exception(Exception e)
         {
-            err = e;
+            var new_err = RTS.exc_wrap_frame(e, this);
+            if (err != null)
+            {
+                var new_err_ = RTS.exc_frombare(new_err);
+                new_err_.UnsafeCause = RTS.exc_frombare(err);
+                err = new_err_.AsException();
+            }
+            else
+            {
+                err = new_err;
+            }
         }
 
         internal Exception get_exception()
@@ -403,6 +344,19 @@ namespace Traffy.Objects
         {
             throw new NotImplementedException();
         }
-    }
 
+        internal void mark()
+        {
+            marked.Push(traceback.Count);
+        }
+
+        internal void restore()
+        {
+            int count = marked.Pop();
+            while (traceback.Count > count)
+            {
+                traceback.Pop();
+            }
+        }
+    }
 }

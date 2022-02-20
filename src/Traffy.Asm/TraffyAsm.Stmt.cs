@@ -420,6 +420,7 @@ namespace Traffy.Asm
         public TrObject exec(Frame frame)
         {
             frame.traceback.Push(position);
+            frame.mark();
             try
             {
                 body.exec(frame);
@@ -447,6 +448,7 @@ namespace Traffy.Asm
                     }
                     handler.body.exec(frame);
                     frame.clear_exception();
+                    frame.restore();
                     goto handled;
                 }
                 throw;
@@ -466,6 +468,7 @@ namespace Traffy.Asm
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             frame.traceback.Push(position);
+            frame.mark();
             try
             {
                 var rt_body = body.hasCont ? await body.cont(frame) : body.exec(frame);
@@ -499,6 +502,7 @@ namespace Traffy.Asm
                     }
                     var rt_body = handler.body.hasCont ? await handler.body.cont(frame) : handler.body.exec(frame);
                     frame.clear_exception();
+                    frame.restore();
                     goto handled;
                 }
                 throw;

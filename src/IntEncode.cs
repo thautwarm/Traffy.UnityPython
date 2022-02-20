@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Traffy.Utils
 {
-    public static class ExtSourceCodePositions
+    public static class IntEncoding
     {
         private const int BIT_END = 0b_0100_0000;
 
@@ -26,20 +26,20 @@ namespace Traffy.Utils
         // where each pair of 2 32-bit integers is encoded compactly.
         // 'retrieve' is the inverse operation.
 
-        public static T[] decode<T>(this int[] encoded, Func<int, int, T> construct)
+        public static T[] decode<T>(this uint[] encoded, Func<int, int, T> construct)
         {
             var result = new List<T>(1024);
-            var builder = new Decoder();
+            var decoder = new Decoder();
             var state = STATE.EXTEND1;
             // perform action on each byte
-            STATE action(sbyte x, STATE state, List<T> result)
+            STATE action(uint x, STATE state, List<T> result)
             {
                 switch (state)
                 {
                     case STATE.EXTEND1:
-                        if (x >= 0)
+                        if ((x & 0x80) == 0)
                         {
-                            builder.first = (builder.first << 7) | (int)x;
+                            decoder.first = (decoder.first << 7) | (int) x;
                             return state;
                         }
                         else
@@ -47,16 +47,16 @@ namespace Traffy.Utils
                             return STATE.EXTEND2;
                         }
                     case STATE.EXTEND2:
-                        if (x >= 0)
+                        if ((x & 0x80) == 0)
                         {
-                            builder.second = (builder.second << 7) | (int)x;
+                            decoder.second = (decoder.second << 7) | (int) x;
                             return state;
                         }
                         else
                         {
-                            result.Add(construct(builder.first, builder.second));
-                            builder.first = 0;
-                            builder.second = 0;
+                            result.Add(construct(decoder.first, decoder.second));
+                            decoder.first = 0;
+                            decoder.second = 0;
                             var flag = (int)x & BIT_END;
                             if (flag == 0)
                             {
@@ -68,17 +68,17 @@ namespace Traffy.Utils
                             }
                         }
                     case STATE.ENDING:
-                        return STATE.ENDING;
+                        return state;
                     default:
                         throw new Exception("invalid state");
                 }
             }
             for (int i = 0; i < encoded.Length; i++)
             {
-                state = action(unchecked((sbyte)(encoded[i] >> 24)), state, result);
-                state = action(unchecked((sbyte)((encoded[i] & 0x00_ff_00_00) >> 16)), state, result);
-                state = action(unchecked((sbyte)((encoded[i] & 0x00_00_ff_00) >> 8)), state, result);
-                state = action(unchecked((sbyte)(encoded[i] & 0x00_00_00_ff)), state, result);
+                state = action(encoded[i] >> 24, state, result);
+                state = action((encoded[i] & 0x00_ff_00_00) >> 16, state, result);
+                state = action((encoded[i] & 0x00_00_ff_00) >> 8, state, result);
+                state = action(encoded[i] & 0x00_00_00_ff, state, result);
             }
             return result.ToArray();
         }

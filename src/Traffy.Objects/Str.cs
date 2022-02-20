@@ -30,7 +30,7 @@ namespace Traffy.Objects
             InternedString.Unsafe(this.value) :
             InternedString.FromString(value);
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrStr>();
@@ -46,7 +46,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
 
         public object Native => value;

@@ -106,6 +106,22 @@ public class Mark : Attribute
 
 public static class Utils
 {
+
+    public static int IndexOfNth(this string str, string value, int offset, int nth = 0)
+    {
+        if (nth < 0)
+            throw new ArgumentException("Can not find a negative index of substring in string. Must start with 0");
+
+        offset = str.IndexOf(value, offset);
+        for (int i = 0; i < nth; i++)
+        {
+            if (offset == -1) return -1;
+            offset = str.IndexOf(value, offset + 1);
+        }
+
+        return offset;
+    }
+
     public static string Escape(this string s)
     {
         var buf = new System.Text.StringBuilder();
@@ -167,6 +183,15 @@ public static class Utils
         return apply(me);
     }
 
+    public static string Repeat(this string me, int i)
+    {
+        var buf = new System.Text.StringBuilder();
+        for (int j = 0; j < i; j++)
+        {
+            buf.Append(me);
+        }
+        return buf.ToString();
+    }
     public static void By<G>(this G me, Action<G> apply)
     {
         apply(me);

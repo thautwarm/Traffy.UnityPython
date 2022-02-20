@@ -253,6 +253,10 @@ namespace SimpleJSON
                         {
                             return node.AsInt;
                         }
+                        if (t == typeof(uint))
+                        {
+                            return (uint) node.AsULong;
+                        }
                         if (t == typeof(long))
                         {
                             return node.AsLong;

@@ -139,14 +139,14 @@ class Transpiler:
     def _add_span(self, span: ir.Span):
         self.positions.add(span.start)
         self.positions.add(span.end)
-        key = (self.positions.order(span.start), self.positions.order(span.end))
-        self.spans.add(key)
+        m_key = (self.positions.order(span.start), self.positions.order(span.end))
+        self.spans.add(m_key)
 
     @property
     def pos_ind(self) -> int:
         span = self._cur_pos
-        key = (self.positions.order(span.start), self.positions.order(span.end))
-        return self.spans.order(key)
+        m_key = (self.positions.order(span.start), self.positions.order(span.end))
+        return self.spans.order(m_key)
 
     def localname_slot(self, id: str):
         if id in self.scope.localvars:
@@ -917,7 +917,7 @@ class TranspileStmt(IRStmtTransformerInlineCache):
 
 
 def compile_module(
-    filename: str, src: str, ignore_src: bool = True
+    filename: str, src: str, ignore_src: bool = False
 ) -> ir.TrFuncPointer:
     node: Module = parse(src, filename=filename)
     top = Transpiler(filename, None if ignore_src else src, ir.Span.empty(), None)

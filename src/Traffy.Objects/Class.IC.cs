@@ -86,7 +86,7 @@ namespace Traffy.Objects
         {
             if (IsFixed)
                 throw new TypeError($"{Name} class has no attribute {name} (immutable)");
-            if (fieldCnt == ModuleInit.OBJECT_SHAPE_MAX_FIELD)
+            if (fieldCnt == Initialization.OBJECT_SHAPE_MAX_FIELD)
             {
                 throw new TypeError($"class {Name} cannot add a shape for field {name} (more than 255 fields)");
             }

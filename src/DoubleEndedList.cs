@@ -36,15 +36,14 @@ public sealed class BList<T> : IList<T>
     {
         int capacity = (int)sizeKind;
         _array = new T[(capacity << 1) + 1];
-        _head = 2;
-        _tail = 2;
+        _head = _tail = 2;
     }
 
     public BList()
     {
         _array = new T[7];
         _head = 2;
-        _tail = 2;
+        _head = _tail = 2;
     }
 
     // the left side is full, double the capacity

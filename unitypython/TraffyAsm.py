@@ -1,6 +1,7 @@
 from __future__ import annotations
+from base64 import decode
 from enum import IntEnum
-from .IntEncode import encode as encode_int
+from .IntEncode import encode as encode_int, decode as decode_int
 from dataclasses import InitVar, dataclass
 import dataclasses
 import typing
@@ -542,9 +543,14 @@ class Metadata(object):
     compressedPositions: list[int] = dataclasses.field(default_factory=list)
     positions: InitVar[list[tuple[int, int]]] = []
     spanPointers: InitVar[list[tuple[int, int]]] = []
-    def __post_init__(self, positions: list[tuple[int, int]], span_pointers: list[tuple[int, int]]):
+    def __post_init__(self, positions: list[tuple[int, int]], span_pointers: list
+    [tuple[int, int]]):
+        # print(list(map(tuple, positions)))
         self.compressedPositions = encode_int(positions)
+        # print(self.compressedPositions)
+        # assert decode_int(self.compressedPositions, lambda x, y: (x, y)) == positions
         self.compressedSpanPointers = encode_int(span_pointers)
+        # assert decode_int(self.compressedSpanPointers, lambda x, y: (x, y)) == span_pointers
 
 
 __cache_type_dict = { }

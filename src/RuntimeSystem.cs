@@ -61,10 +61,9 @@ namespace Traffy
 
         internal static Exception exc_wrap_frame(Exception e, Frame frame)
         {
-#if DEBUG
-            Console.WriteLine(e.StackTrace);
-#endif
-            throw e;
+            TrExceptionBase exc = exc_frombare(e);
+            exc.traceback = new TrTraceback(frame.func.fptr.metadata.codename, frame.func.fptr.metadata, frame.traceback.ToArray(), null);
+            return exc.AsException();
         }
 
         internal static void arg_check_positional_only(BList<TrObject> args, int v)
@@ -522,7 +521,7 @@ namespace Traffy
             }
         }
 
-        internal static TrObject exc_frombare(Exception e)
+        internal static TrExceptionBase exc_frombare(Exception e)
         {
             if (e is TrExceptionBase o)
                 return o;

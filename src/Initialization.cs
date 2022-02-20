@@ -27,6 +27,8 @@ namespace Traffy
     {
         internal const int OBJECT_SHAPE_MAX_FIELD = 255;
         internal const string TokenClassInit = "Traffy.ClassInit";
+
+        internal const string TokenBuiltinInit = "Traffy.BuiltinInit";
         static Dictionary<string, TrObject> m_Prelude = new Dictionary<string, TrObject>();
         public static void InitRuntime()
         {
@@ -63,6 +65,12 @@ namespace Traffy
         {
             m_Prelude[name] = o;
         }
+
+        public static void Prelude(TrSharpFunc o)
+        {
+            m_Prelude[o.name] = o;
+        }
+
 
         public static void Prelude(TrClass cls)
         {

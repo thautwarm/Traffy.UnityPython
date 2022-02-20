@@ -221,7 +221,7 @@ public class App
         // Perf.Test(Perf.MeasureTestB);
         // // Perf.Test(Perf.MeasureTestC);
 
-        ModuleInit.InitRuntime();
+        Initialization.InitRuntime();
         var o = System.IO.File.ReadAllText("c.json");
         var x = JsonParse<TrFuncPointer>(o);
         var d = RTS.baredict_create();
@@ -243,8 +243,17 @@ public class App
         d[MK.Str("next")] = TrSharpFunc.FromFunc("next", x => x.__next__());
         d[MK.Str("time")] = TrSharpFunc.FromFunc("time", time);
         d[MK.Str("len")] = TrSharpFunc.FromFunc("len", x => x.__len__());
-        ModuleInit.Populate(d);
-        x.Exec(d);
+        Initialization.Populate(d);
+        try
+        {
+            x.Exec(d);
+        }
+        catch (Exception e)
+        {
+            var exc = RTS.exc_frombare(e);
+            Console.WriteLine(exc.GetStackTrace());
+            throw e;
+        }
 
     }
 }

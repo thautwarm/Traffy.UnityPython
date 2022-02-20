@@ -114,7 +114,7 @@ namespace Traffy.Objects
 
         public static TrObject _obj__send__ = TrSharpFunc.FromFunc("generator.send", _overloaded_send);
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrCoroutine>();
@@ -128,7 +128,7 @@ namespace Traffy.Objects
         static void _SetupClasses()
         {
             CLASS.SetupClass();
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
 
         object IEnumerator.Current => m_generator.GetResult();

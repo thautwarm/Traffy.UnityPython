@@ -28,7 +28,7 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("dict");
@@ -45,7 +45,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

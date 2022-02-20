@@ -59,7 +59,7 @@ namespace Traffy.Objects
             }
         }
 
-        public bool __instancecheck__(TrObject classes) => this.__instancecheck__(classes);
+        public bool __instancecheck__(TrObject classes) => __instancecheck__(this, classes);
 
         public static TrObject __raw_init__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         { return RTS.object_none; }
@@ -300,7 +300,7 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.RawObjectClassObject();
@@ -314,7 +314,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
 
         static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

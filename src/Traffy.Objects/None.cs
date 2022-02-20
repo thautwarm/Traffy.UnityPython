@@ -17,7 +17,7 @@ namespace Traffy.Objects
         public static TrNone Unique = new TrNone();
         public static bool unique_set = false;
 
-        [Mark(ModuleInit.TokenClassInit)]
+        [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrNone>();
@@ -32,7 +32,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            ModuleInit.Prelude(CLASS);
+            Initialization.Prelude(CLASS);
         }
 
         [OnDeserialized]
