@@ -303,6 +303,7 @@ namespace Traffy.Asm
         }
     }
 
+    [Serializable]
     public struct IfClause
     {
         public TraffyAsm cond;
@@ -327,7 +328,7 @@ namespace Traffy.Asm
                 if (RTS.object_bool(rt_cond))
                 {
                     var body = clauses[i].body;
-                    var rt_body = cond.exec(frame);
+                    var rt_body = body.exec(frame);
                     return RTS.object_none;
                 }
             }
@@ -348,7 +349,7 @@ namespace Traffy.Asm
                 if (RTS.object_bool(rt_cond))
                 {
                     var body = clauses[i].body;
-                    var rt_body = cond.hasCont ? await body.cont(frame) : body.exec(frame);
+                    var rt_body = body.hasCont ? await body.cont(frame) : body.exec(frame);
                     return RTS.object_none;
                 }
             }

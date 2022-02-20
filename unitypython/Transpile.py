@@ -815,8 +815,8 @@ class TranspileStmt(IRStmtTransformerInlineCache):
     def _flat(node: If) -> tuple[list[tuple[expr, list[stmt]]], list[stmt]]:
         flatten: list[tuple[expr, list[stmt]]] = []
         while True:
+            flatten.append((node.test, node.body))
             if len(node.orelse) == 1 and isinstance(node.orelse[0], If):
-                flatten.append((node.test, node.body))
                 node = node.orelse[0]
             else:
                 return (flatten, node.orelse)

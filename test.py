@@ -23,6 +23,7 @@ def u(x):
 print(g(1)(2))
 
 gen = u(5)
+print("starting gen")
 print(next(gen))
 print(next(gen))
 print(next(gen))
@@ -72,7 +73,29 @@ except NativeError as e:
 print(1)
 print(1)
 print(1)
-e.a = 1
+
+
+def f():
+    print("s2", (yield 5))
+print(9)
+c = f()
+
+def k():
+    yield from c
+
+x = ref()
+z = c.send(None, x)
+print("z", z)
+if z:
+    print("s1", x.value)
+
+if k().send(None, x):
+    print(x.value)
+
+
+co = f()
+print(co.send(None))
+co.send(3)
 """
 
 

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Traffy.Objects
 {
     public class TrSharpFunc : TrObject
     {
         public string __repr__() => $"<function {name}>";
-        public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
+        [NotNull] public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
         public bool __bool__() => true;
         public string name;
         public Dictionary<TrObject, TrObject> __dict__ => null;
@@ -44,13 +45,16 @@ namespace Traffy.Objects
 
         private TrSharpFunc(string name, Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             this.func = func;
             this.name = name;
         }
 
         public static TrSharpFunc FromFunc(string name, Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
-
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             return new TrSharpFunc(name, func);
         }
 
@@ -58,6 +62,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 0);
@@ -69,6 +75,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -79,7 +87,8 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject> func)
         {
-
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 2);
@@ -90,7 +99,8 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject, TrObject> func)
         {
-
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 3);
@@ -102,6 +112,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrRef, bool> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 3);
@@ -113,6 +125,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, TrObject, TrObject, TrObject> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 4);
@@ -124,6 +138,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_atleast(args, 1);
@@ -137,6 +153,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, string> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -148,7 +166,8 @@ namespace Traffy.Objects
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject, int> func)
         {
-
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -161,6 +180,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, bool> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -173,6 +194,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, IEnumerator<TrObject>> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 1);
@@ -183,6 +206,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Action<TrObject, TrObject, TrObject> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 3);
@@ -196,6 +221,8 @@ namespace Traffy.Objects
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, bool> func)
         {
 
+            if (func == null)
+                throw new InvalidProgramException("func is null");
             TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 RTS.arg_check_positional_only(args, 2);

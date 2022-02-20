@@ -925,18 +925,11 @@ namespace Traffy.Asm
             return await co;
         }
 
-        public MonoAsync<TrObject> cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
-            if (!value.hasCont)
-            {
-                var rt_value = value.exec(frame);
-                MonoAsync<TrObject> co = RTS.coroutine_of_object(rt_value);
-                return co;
-            }
-            else
-            {
-                return contIfInnerCont(frame);
-            }
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            MonoAsync<TrObject> co = RTS.coroutine_of_object(rt_value);
+            return await co;
         }
     }
 }

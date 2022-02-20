@@ -90,18 +90,40 @@ namespace Traffy.Objects
             {
                 throw new TypeError($"class {Name} cannot add a shape for field {name} (more than 255 fields)");
             }
-            var Token = UpdatePrototype();
-            var ad_ = Shape.MKField(name.ToIntern(), fieldCnt++);
-            __prototype__.Add(ad_.Name, ad_);
             if (__prototype__.TryGetValue(name, out var shape))
             {
                 if (shape.Kind == AttributeKind.Field)
                     return shape.FieldIndex;
                 throw new TypeError($"{name} is already a {shape.Kind}");
             }
+            var Token = UpdatePrototype();
             var index = fieldCnt++;
             __prototype__[name] = Shape.MKField(name.ToIntern(), index);
             return index;
+        }
+
+        public void AddProperty(string name, TrProperty prop)
+        {
+            if (__prototype__.TryGetValue(name, out var shape))
+            {
+                if (shape.Kind == AttributeKind.Property)
+                    return;
+                throw new TypeError($"{name} is already a {shape.Kind}");
+            }
+            var Token = UpdatePrototype();
+            __prototype__[name] = Shape.MKProperty(name.ToIntern(), prop);
+        }
+
+        public void AddMethod(string name, TrObject meth)
+        {
+            if (__prototype__.TryGetValue(name, out var shape))
+            {
+                if (shape.Kind == AttributeKind.Method)
+                    return;
+                throw new TypeError($"{name} is already a {shape.Kind}");
+            }
+            var Token = UpdatePrototype();
+            __prototype__[name] = Shape.MKMethod(name.ToIntern(), meth);
         }
 
 

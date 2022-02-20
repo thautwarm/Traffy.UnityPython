@@ -22,6 +22,7 @@ namespace Traffy.Objects
             CLASS.Name = "ref";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ref.__new__", TrRef.datanew);
+            CLASS.InstanceUseInlineCache = false;
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrRef)] = CLASS;
         }
@@ -45,6 +46,8 @@ namespace Traffy.Objects
             switch (attr.value)
             {
                 case "value":
+                    if (value == null)
+                        value = RTS.object_none;
                     found.value = value;
                     return true;
                 default:

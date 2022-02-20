@@ -23,7 +23,7 @@ namespace Traffy
             return 0;
         }
     }
-    public static class ModuleInit
+    public static class Initialization
     {
         internal const int OBJECT_SHAPE_MAX_FIELD = 255;
         internal const string TokenClassInit = "Traffy.ClassInit";

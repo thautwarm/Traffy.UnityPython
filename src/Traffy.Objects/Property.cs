@@ -12,6 +12,18 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
+        TrObject bind_setter(TrObject o)
+        {
+            setter = (self, v) => o.Call(self, v);
+            return this;
+        }
+
+        TrObject bind_getter(TrObject o)
+        {
+            getter = (self) => o.Call(self);
+            return this;
+        }
+
         [Mark(ModuleInit.TokenClassInit)]
         static void _Init()
         {
@@ -37,19 +49,9 @@ namespace Traffy.Objects
             switch (attr)
             {
                 case "setter":
-                    TrObject bind_setter(TrObject o)
-                    {
-                        setter = (self, v) => o.Call(self, v);
-                        return this;
-                    }
                     found.value = TrSharpFunc.FromFunc("property.setter", bind_setter);
                     return true;
                 case "getter":
-                    TrObject bind_getter(TrObject o)
-                    {
-                        getter = (self) => o.Call(self);
-                        return this;
-                    }
                     found.value = TrSharpFunc.FromFunc("property.getter", bind_getter);
                     return true;
                 default:
@@ -71,6 +73,13 @@ namespace Traffy.Objects
             setter(trObject, value);
         }
 
+        public static TrProperty Create(Func<TrObject, TrObject> getter, Action<TrObject, TrObject> setter)
+        {
+            var prop = new TrProperty();
+            prop.getter = getter;
+            prop.setter = setter;
+            return prop;
+        }
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             TrObject clsobj = args[0];
@@ -83,7 +92,7 @@ namespace Traffy.Objects
 
                 var pyfunc = args[1];
                 Func<TrObject, TrObject> getter = self => pyfunc.Call(self);
-                return new TrProperty { getter = getter };
+                return TrProperty.Create(getter, null);
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }

@@ -6,7 +6,7 @@
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
      <DefineConstants>NUNITY</DefineConstants>
-     <!-- <Nullable>enable</Nullable> -->
+    <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 
   <ItemGroup>

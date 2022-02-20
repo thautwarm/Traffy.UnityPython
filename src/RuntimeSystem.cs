@@ -61,6 +61,9 @@ namespace Traffy
 
         internal static Exception exc_wrap_frame(Exception e, Frame frame)
         {
+#if DEBUG
+            Console.WriteLine(e.StackTrace);
+#endif
             throw e;
         }
 
@@ -551,7 +554,9 @@ namespace Traffy
         internal static MonoAsync<TrObject> coroutine_of_iter(IEnumerator<TrObject> o)
         {
             if (o is TrCoroutine coro)
+            {
                 return coro.m_generator;
+            }
             return coroutine_of_object_mkCont0(o);
         }
         internal static MonoAsync<TrObject> coroutine_of_object(TrObject rt_value)
