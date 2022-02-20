@@ -564,6 +564,21 @@ namespace Traffy
             return coroutine_of_iter(o);
         }
 
+        internal static TrClass class_new(string name, TrObject[] rt_bases, Dictionary<TrObject, TrObject> ns)
+        {
+            var cls = TrClass.CreateClass(name, rt_bases.Select(x => (TrClass)x).ToArray());
+            cls.Name = name;
+            cls.InitInlineCacheForMagicMethods();
+            TrObject new_inst(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+            {
+                var o = MK.UserObject(cls);
+                return o;
+            }
+            cls[cls.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc($"{name}.__new__", new_inst));
+            cls.SetupClass(ns);
+            return cls;
+        }
+
         internal static TrObject object_of_coroutine(MonoAsync<TrObject> rt_value)
         {
 
@@ -770,6 +785,11 @@ namespace Traffy
         internal static TrRawObject RawObject()
         {
             return new TrRawObject { };
+        }
+
+        internal static TrUserObject UserObject(TrClass cls)
+        {
+            return new TrUserObject(cls);
         }
     }
 }

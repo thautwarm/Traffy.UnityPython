@@ -338,9 +338,9 @@ namespace Traffy.Objects
 
         public void SetupClass()
         {
-            SetupClass(new BList<TrObject> { }, null);
+            SetupClass(null);
         }
-        public void SetupClass(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public void SetupClass(Dictionary<TrObject, TrObject> kwargs)
         {
             Class = MetaClass;
             __mro = C3_linearize(this);
@@ -452,13 +452,15 @@ namespace Traffy.Objects
                         throw new Exception($"Invalid keyword argument {kv.Key}");
                 }
 
-            args.AddLeft(this);
-            foreach (var cls in __base)
+            var args = new BList<TrObject> { this };
+            foreach (var cls in __mro)
             {
+                if (cls == this)
+                    continue;
                 var init_class = cls[ic__init_subclass];
                 if (init_class != null)
                 {
-                    init_class.__call__(args, kwargs);
+                    init_class.Call(cls, this);
                     // XXX: different from CPython, we don't break here
                     // break;
                 }

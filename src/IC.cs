@@ -304,10 +304,11 @@ namespace Traffy.InlineCache
         public TrStr attribute;
         public PolyIC(TrStr name)
         {
-            name = name.Interned();
             s_name = name.AsString().ToIntern();
             ICClass = new InlineCacheClass(s_name);
             ICInstance = new InlineCacheInstance(s_name);
+            if (!name.isInterned)
+                name = name.Interned();
             this.attribute = name;
         }
 

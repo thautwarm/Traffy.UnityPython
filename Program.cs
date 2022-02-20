@@ -222,7 +222,7 @@ public class App
         // // Perf.Test(Perf.MeasureTestC);
 
         Initialization.InitRuntime();
-        var o = System.IO.File.ReadAllText("c.json");
+        var o = System.IO.File.ReadAllText("test.src.py.json");
         var x = JsonParse<TrFuncPointer>(o);
         var d = RTS.baredict_create();
         d[MK.Str("print")] = TrSharpFunc.FromFunc("print", (BList<TrObject> xs, Dictionary<TrObject, TrObject> kwargs) => {

@@ -57,6 +57,11 @@ namespace Traffy.Objects
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
+            return Execute(args, kwargs, null);
+        }
+
+        public TrObject Execute(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs, Frame frame)
+        {
             var localvars = new Variable[fptr.metadata.localnames.Length];
             if (default_args.Length != 0)
                 for (int i = 0, j = 0; i < localvars.Length; i++)
@@ -154,7 +159,13 @@ namespace Traffy.Objects
                     localvars[fptr.allargcount - 1].Value = RTS.object_from_baredict(RTS.baredict_create());
                 }
             }
-            var frame = Frame.Make(this, localvars);
+            if (frame == null)
+                frame = Frame.Make(this, localvars);
+            else
+            {
+                frame.localvars = localvars;
+                frame.func = this;
+            }
             if (!fptr.code.hasCont)
             {
                 try

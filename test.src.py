@@ -55,10 +55,7 @@ def test2():
 # print("len", len(xs))
 # print("time2", time() - a)
 # print(1)
-try:
-    raise Exception("test")
-except NativeError as e:
-    print(e.typename == "DivideByZeroException")
+
 print(1)
 print(1)
 print(1)
@@ -72,16 +69,34 @@ c = f()
 def k():
     yield from c
 
-x = ref()
-z = c.send(None, x)
-print("z", z)
-if z:
-    print("s1", x.value)
+z = c.send(None, x := ref())
 
-if k().send(None, x):
-    print(x.value)
+# try:
+#     raise Exception("test")
+# except NativeError as e:
+#     print(e.typename == "DivideByZeroException")
+
+# if z:
+#     print("s1", x.value)
+
+# if k().send(None, x):
+#     print(x.value)
 
 
-co = f()
-print(co.send(None))
-co.send(3)
+# co = f()
+# print(co.send(None))
+# co.send(3)
+
+class S:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+    def __repr__(self):
+        return "S" + "(" + str(self.x) + ", " + str(self.y) + ")"
+
+a = S(1, 2)
+
+print(a)
+
+
+z = 1.0 == 2.0

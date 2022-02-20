@@ -250,6 +250,13 @@ namespace Traffy
         public Stack<int> traceback;
         public Stack<int> marked;
 
+        public static Frame UnsafeMake() => new Frame
+        {
+            retval = RTS.object_none,
+            traceback = new Stack<int>(),
+            marked = new Stack<int>()
+        };
+
         public static Frame Make(TrFunc func, Variable[] localvars) => new Frame
         {
             func = func,

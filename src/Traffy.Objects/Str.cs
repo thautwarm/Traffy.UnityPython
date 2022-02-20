@@ -51,6 +51,13 @@ namespace Traffy.Objects
 
         public object Native => value;
 
+        public TrObject __add__(TrObject other)
+        {
+            if (other is TrStr)
+                return MK.Str(value + ((TrStr)other).value);
+            throw new TypeError($"unsupported operand type(s) for +: '{CLASS.Name}' and '{other.Class.Name}'");
+        }
+
         public bool __eq__(TrObject other)
         {
             return

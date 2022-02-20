@@ -564,4 +564,64 @@ namespace Traffy.Asm
             throw e;
         }
     }
+
+    [Serializable]
+    public class DefClass : TraffyAsm
+    {
+        public bool hasCont { get; set; }
+        public TraffyAsm[] bases;
+        public Lambda body;
+
+        public TrObject exec(Frame frame)
+        {
+            var rt_bases = new TrObject[bases.Length];
+            for (int i = 0; i < bases.Length; i++)
+            {
+                rt_bases[i] = bases[i].exec(frame);
+            }
+            var rt_body = body.exec(frame);
+            if (!(rt_body is TrFunc ufunc))
+            {
+                throw new InvalidOperationException("class body must be a user function");
+            }
+            var localnames = ufunc.fptr.metadata.localnames;
+            var subframe = Frame.UnsafeMake();
+            ufunc.Execute(new BList<TrObject>(), null, subframe);
+            var ns = RTS.baredict_create();
+            for(int i = 0; i < localnames.Length; i++)
+            {
+                var name = localnames[i];
+                var value = subframe.load_local(i);
+                RTS.baredict_set(ns, MK.Str(name), value);
+            }
+            var rt_cls = RTS.class_new(ufunc.fptr.metadata.codename, rt_bases, ns);
+            return rt_cls;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            var rt_bases = new TrObject[bases.Length];
+            for (int i = 0; i < bases.Length; i++)
+            {
+                rt_bases[i] = bases[i].hasCont ? await bases[i].cont(frame) : bases[i].exec(frame);
+            }
+            var rt_body = body.hasCont ? await body.cont(frame) : body.exec(frame);
+            if (!(rt_body is TrFunc ufunc))
+            {
+                throw new InvalidOperationException("class body must be a user function");
+            }
+            var localnames = ufunc.fptr.metadata.localnames;
+            var subframe = Frame.UnsafeMake();
+            ufunc.Execute(new BList<TrObject>(), null, subframe);
+            var ns = RTS.baredict_create();
+            for (int i = 0; i < localnames.Length; i++)
+            {
+                var name = localnames[i];
+                var value = subframe.load_local(i);
+                RTS.baredict_set(ns, MK.Str(name), value);
+            }
+            var rt_cls = RTS.class_new(ufunc.fptr.metadata.codename, rt_bases, ns);
+            return rt_cls;
+        }
+    }
 }

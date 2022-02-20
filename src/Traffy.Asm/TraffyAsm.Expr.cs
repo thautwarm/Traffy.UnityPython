@@ -411,7 +411,7 @@ namespace Traffy.Asm
             return rt_res;
         }
 
-       public async MonoAsync<TrObject> cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
             Variable[] freevars;
             if (freeslots.Length != 0)
@@ -505,7 +505,7 @@ namespace Traffy.Asm
             return rt_res;
         }
 
-       public async MonoAsync<TrObject> cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
             frame.traceback.Push(position);
 
@@ -548,6 +548,46 @@ namespace Traffy.Asm
             var rt_res = RTS.object_call_ex(rt_func, rt_args, rt_kwargs);
             frame.traceback.Pop();
             return rt_res;
+        }
+    }
+
+
+    [Serializable]
+    public class GuessVar : TraffyAsm // used for CPython class scope semantics
+    {
+        public TrStr name;
+        public int position;
+        public bool hasCont => false;
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidOperationException("variables shall not produce coroutines");
+        }
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var metadata = frame.func.fptr.metadata;
+            int idx = 0;
+            TrObject res;
+            if ((idx = metadata.localnames.IndexOf(name.value)) != -1
+               && (res = frame.localvars[idx].Value) != null)
+            {
+                goto end;
+            }
+            if ((idx = metadata.freenames.IndexOf(name.value)) != -1
+               && (res = frame.func.freevars[idx].Value) != null)
+            {
+                goto end;
+            }
+            if (frame.func.globals.TryGetValue(name, out res))
+            {
+                goto end;
+            }
+            throw new NameError(name.value, $"name '{name.value}' is not defined");
+        end:
+            frame.traceback.Pop();
+            return res;
         }
     }
 
@@ -831,6 +871,7 @@ namespace Traffy.Asm
         [OnDeserialized]
         public Attribute OnDeserialized()
         {
+            attr = attr.Interned();
             if (attr.value == null)
             {
                 throw new InvalidProgramException("attr.value is null");

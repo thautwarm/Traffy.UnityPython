@@ -293,8 +293,6 @@ namespace Traffy.Objects
 
     public class TrRawObject : TrUserObjectBase
     {
-        public Dictionary<TrObject, TrObject> __dict__ => null;
-
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
@@ -319,11 +317,25 @@ namespace Traffy.Objects
 
         static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
-            TrObject clsobj = args[0];
-            var narg = args.Count;
-            if (narg == 1)
+            RTS.arg_check_positional_atleast(args, 1);
+            var clsobj = (TrClass) args[0];
+            if (clsobj == CLASS)
+            {
                 return MK.RawObject();
-            throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 positional argument but {narg} were given");
+            }
+            return clsobj[clsobj.ic__new].__call__(args, kwargs);
+        }
+    }
+
+    public class TrUserObject : TrUserObjectBase
+    {
+        public TrClass Class { get; private set; }
+
+        public List<TrObject> __array__ { get; } = new List<TrObject>();
+
+        public TrUserObject(TrClass cls)
+        {
+            Class = cls;
         }
     }
 }

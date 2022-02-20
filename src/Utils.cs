@@ -122,6 +122,16 @@ public static class Utils
         return offset;
     }
 
+    public static int IndexOf<T>(this T[] array, T value)
+    {
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (array[i].Equals(value))
+                return i;
+        }
+        return -1;
+    }
+
     public static string Escape(this string s)
     {
         var buf = new System.Text.StringBuilder();
