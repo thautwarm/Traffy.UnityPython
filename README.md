@@ -12,8 +12,7 @@ Unity Python is based on CPython 3.10, but not fully compatible to CPython. For 
 ```python
 import UnityEngine
 
-
-class MyComponent(MonoBehaviour):
+class MyComponent(UnityEngine.MonoBehaviour):
     def Start(self):
         async def coro():
             while not cond_satisfied:
@@ -26,3 +25,7 @@ class MyComponent(MonoBehaviour):
         self.StartCoroutine(coro())
         self.StartCoroutine(coro2())
 ```
+
+## Contributing
+
+See [0.1 roadmap](https://github.com/thautwarm/TraffyAsm.UnityPython/issues/7)
