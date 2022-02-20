@@ -1,6 +1,5 @@
 from __future__ import annotations
 from enum import IntEnum
-import enum
 import typing
 
 _T = typing.TypeVar('_T')

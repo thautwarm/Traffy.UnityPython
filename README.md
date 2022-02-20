@@ -29,3 +29,10 @@ class MyComponent(UnityEngine.MonoBehaviour):
 ## Contributing
 
 See [0.1 roadmap](https://github.com/thautwarm/TraffyAsm.UnityPython/issues/7)
+
+Basic development workflow:
+1. `cd UnityPython.FrontEnd && pip install -e . && cd ..`; requires Python 3.8+ (Python 3.10 is better)
+2. `cd UnityPython.BackEnd`
+3. `dotnet restore`
+4. `unitypython.exe test.src.py --includesrc && dotnet run`
+5. edit code and run `unitypython.exe test.src.py --includesrc && dotnet run` again
