@@ -7,7 +7,7 @@ Key points:
 3. Dynamic and fast code loading in Unity. Edit code and see how UI changes immediately (Unity Editor is painful to me)!
 4. An extensible coroutine implementation. `async` and `await` are not as restricted as that in CPython and can be used as fast/fine-grained controlled event loops in game development.
 
-UnityPython is based on CPython 3.10, but not fully compatible to CPython. For instance, `StopIteration` is not used for loop constructs (exceptions are heavy and not used for control flow); `type` is the only metaclass.
+UnityPython is based on CPython 3.10, but not fully compatible to CPython. For instance, `StopIteration` is not used for loop constructs (exceptions are heavy and not used for control flow); `type` is the only metaclass, etc.
 
 ```python
 import UnityEngine
