@@ -15,13 +15,14 @@ namespace Traffy.Objects
     public partial class TrInt : TrObject
     {
         public Int64 value;
-        public object Native => value;
-        public Dictionary<TrObject, TrObject> __dict__ => null;
+        object TrObject.Native => value;
+
+        string TrObject.__repr__() => value.ToString();
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        TrClass TrObject.Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

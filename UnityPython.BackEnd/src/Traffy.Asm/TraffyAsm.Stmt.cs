@@ -594,7 +594,7 @@ namespace Traffy.Asm
                 var value = subframe.load_local(i);
                 RTS.baredict_set(ns, MK.Str(name), value);
             }
-            var rt_cls = RTS.class_new(ufunc.fptr.metadata.codename, rt_bases, ns);
+            var rt_cls = RTS.new_class(ufunc.fptr.metadata.codename, rt_bases, ns);
             return rt_cls;
         }
 
@@ -620,7 +620,7 @@ namespace Traffy.Asm
                 var value = subframe.load_local(i);
                 RTS.baredict_set(ns, MK.Str(name), value);
             }
-            var rt_cls = RTS.class_new(ufunc.fptr.metadata.codename, rt_bases, ns);
+            var rt_cls = RTS.new_class(ufunc.fptr.metadata.codename, rt_bases, ns);
             return rt_cls;
         }
     }

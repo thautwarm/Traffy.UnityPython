@@ -38,6 +38,7 @@ namespace Traffy.Objects
 
     public partial class TrClass : TrObject
     {
+        public static object AllClassLock = new object();
         public bool InstanceUseInlineCache = true;
         public bool IsClass => true;
         static IdComparer idComparer = new IdComparer();
@@ -62,22 +63,20 @@ namespace Traffy.Objects
         // when shape update, update all subclasses' 'Token's;
         // include itself
         public HashSet<TrClass> __subclasses = new HashSet<TrClass>(idComparer);
-        public int fieldCnt = 0;
+
         public List<TrObject> __array__ => null;
 
         // does not contain those that are inherited from '__mro__'
         // values are never null
-        public Dictionary<string, Shape> __prototype__ = new Dictionary<string, Shape>();
-
         public TrClass[] __base;
         public TrClass[] __mro;
 
-        public bool __getattr__(TrObject name, TrRef found) => TrObject.__raw_getattr__(this, name, found);
+        public bool __getattr__(TrObject name, TrRef found) => this.__getic__(name.AsString(), out found.value);
         public void __setattr__(TrObject name, TrObject value)
         {
             if (IsFixed)
                 throw new TypeError($"can't set attribute '{name}' on {this}");
-            TrObject.__raw_setattr__(this, name, value);
+            this.__setic__(name.AsString(), value);
         }
         public string Name;
         public bool __subclasscheck__(TrClass @class)
@@ -95,8 +94,6 @@ namespace Traffy.Objects
             MetaClass.InitInlineCacheForMagicMethods();
             MetaClass[MetaClass.ic__call] = TrClassMethod.Bind(TrSharpFunc.FromFunc("type.__call__", typecall));
             MetaClass[MetaClass.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("type.__new__", typenew));
-            // TODO: new type
-            // MetaClass[MetaClass.ic__new] = TrSharpFunc.FromFunc("type.__call__", typecall);
             MetaClass.Name = "type";
             TrClass.TypeDict[typeof(TrClass)] = MetaClass;
         }
@@ -144,11 +141,10 @@ namespace Traffy.Objects
             {
                 if (args.Count != 4)
                     throw new TypeError($"calling 'type' requires 4 arguments");
-                var name = (TrStr)args[1];
+                var name = args[1].AsString();
                 var bases = (TrTuple)args[2];
                 var ns = (TrDict)args[3];
-                var newCls = CreateClass(name.value);
-                RTS.init_class(cls, newCls, name, bases, ns);
+                var newCls = RTS.new_class(name, bases.elts, ns.container);
                 return newCls;
             }
             throw new NotImplementedException("custom metaclasses not supported yet.");
@@ -274,7 +270,11 @@ namespace Traffy.Objects
                 cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc($"{cls.Name}.__iter__", a => ((T)a).__iter__());
                 cls[MagicNames.i___len__] = TrSharpFunc.FromFunc($"{cls.Name}.__len__", a => ((T)a).__len__());
                 cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc($"{cls.Name}.__eq__", (a, b) => ((T)a).__eq__(b));
+                cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc($"{cls.Name}.__ne__", (a, b) => ((T)a).__ne__(b));
                 cls[MagicNames.i___lt__] = TrSharpFunc.FromFunc($"{cls.Name}.__lt__", (a, b) => ((T)a).__lt__(b));
+                cls[MagicNames.i___le__] = TrSharpFunc.FromFunc($"{cls.Name}.__le__", (a, b) => ((T)a).__le__(b));
+                cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"{cls.Name}.__gt__", (a, b) => ((T)a).__gt__(b));
+                cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"{cls.Name}.__ge__", (a, b) => ((T)a).__ge__(b));
                 cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"{cls.Name}.__neg__", a => ((T)a).__neg__());
                 cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"{cls.Name}.__inv__", a => ((T)a).__inv__());
                 cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"{cls.Name}.__pos__", a => ((T)a).__pos__());
@@ -326,7 +326,11 @@ namespace Traffy.Objects
                 cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc($"object.__iter__", TrObject.__raw_iter__);
                 cls[MagicNames.i___len__] = TrSharpFunc.FromFunc($"object.__len__", TrObject.__raw_len__);
                 cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc($"object.__eq__", TrObject.__raw_eq__);
+                cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc($"object.__ne__", TrObject.__raw_ne__);
                 cls[MagicNames.i___lt__] = TrSharpFunc.FromFunc($"object.__lt__", TrObject.__raw_lt__);
+                cls[MagicNames.i___le__] = TrSharpFunc.FromFunc($"object.__le__", TrObject.__raw_le__);
+                cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"object.__gt__", TrObject.__raw_gt__);
+                cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"object.__ge__", TrObject.__raw_ge__);
                 cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"object.__neg__", TrObject.__raw_neg__);
                 cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"object.__inv__", TrObject.__raw_inv__);
                 cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"object.__pos__", TrObject.__raw_pos__);
@@ -419,6 +423,7 @@ namespace Traffy.Objects
                 this[MagicNames.i___len__] = o_len;
             if (this[ic__hash] == null && cp_kwargs != null && cp_kwargs.TryPop(s_hash, out var o_hash))
                 this[MagicNames.i___hash__] = o_hash;
+
             if (this[ic__eq] == null && cp_kwargs != null && cp_kwargs.TryPop(s_eq, out var o_eq))
             {
                 if (this[ic__hash] == null)
@@ -431,8 +436,30 @@ namespace Traffy.Objects
                 }
                 this[MagicNames.i___eq__] = o_eq;
             }
+
+            // '__ne__' delegates automatically to '__eq__'
+            if (this[ic__ne] == null && cp_kwargs != null && cp_kwargs.TryPop(s_ne, out var o_ne))
+            {
+                if (this[ic__hash] == null)
+                { // unhashable if '__eq__' is set but '__hash__' is not set
+                    TrObject unhashable(TrObject self)
+                    {
+                        throw new TypeError($"unhashable type: '{self.Class.Name}'");
+                    }
+                    this[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"{Class.Name}.__hash__", unhashable);
+                }
+                this[MagicNames.i___ne__] = o_ne;
+            }
+
             if (this[ic__lt] == null && cp_kwargs != null && cp_kwargs.TryPop(s_lt, out var o_lt))
                 this[MagicNames.i___lt__] = o_lt;
+            if (this[ic__le] == null && cp_kwargs != null && cp_kwargs.TryPop(s_le, out var o_le))
+                this[MagicNames.i___le__] = o_le;
+            if (this[ic__gt] == null && cp_kwargs != null && cp_kwargs.TryPop(s_gt, out var o_gt))
+                this[MagicNames.i___gt__] = o_gt;
+            if (this[ic__ge] == null && cp_kwargs != null && cp_kwargs.TryPop(s_ge, out var o_ge))
+                this[MagicNames.i___ge__] = o_ge;
+
             if (this[ic__neg] == null && cp_kwargs != null && cp_kwargs.TryPop(s_neg, out var o_neg))
                 this[MagicNames.i___neg__] = o_neg;
             if (this[ic__inv] == null && cp_kwargs != null && cp_kwargs.TryPop(s_inv, out var o_inv))

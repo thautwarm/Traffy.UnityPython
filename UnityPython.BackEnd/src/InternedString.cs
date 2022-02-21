@@ -16,7 +16,7 @@ namespace Traffy
     [Serializable]
     public struct InternedString: IEquatable<InternedString>
     {
-        string Value;
+        public string Value { get; private set; }
 
         [OnDeserialized]
         internal InternedString OnDeserialized(StreamingContext context)
@@ -62,15 +62,6 @@ namespace Traffy
         public override string ToString()
         {
             return Value;
-        }
-
-        public static implicit operator string(InternedString str)
-        {
-#if DEBUG
-            if (str.Value == null)
-                throw new NullReferenceException("InternedString.Value is null");
-#endif
-            return str.Value;
         }
 
         public override bool Equals(object obj)

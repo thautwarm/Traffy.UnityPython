@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using Traffy.Objects;
-using Traffy;
+using System.Runtime.CompilerServices;
+
 public static partial class JsonExt
 {
     public static T JsonParse<T>(string s)
@@ -12,6 +12,7 @@ public static partial class JsonExt
     }
 }
 
+
 public class Mark : Attribute
 {
     public object Token;
@@ -19,7 +20,6 @@ public class Mark : Attribute
     {
         Token = token;
     }
-
     public static IEnumerable<(Type t, Mark attr, Action method)> Query(Type entry, Func<object, bool> predicate)
     {
         return Assembly
@@ -38,74 +38,168 @@ public class Mark : Attribute
     }
 }
 
-// public class InitSetup : Attribute
-// {
-//     public int Order;
-//     public InitSetup(int order = 0)
-//     {
-//         Order = order;
-//     }
-//     static IEnumerable<(InitSetup attr, T method)> GetStaticAttributedMethods<T>(Type self, Func<MethodInfo, bool> predicate) where T : Delegate
-//     {
-//         return self
-//             .GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
-//             .Where(mi =>
-//             {
-//                 var attr = mi.GetCustomAttribute<InitSetup>();
-//                 return attr != null && predicate(mi);
-//             })
-//             .Select(mi => (mi.GetCustomAttribute<InitSetup>(), (T)Delegate.CreateDelegate(typeof(T), null, mi)));
-//     }
-//     public static void ApplyInitialization()
-//     {
-//         bool predicate(MethodInfo m)
-//         {
-//             var ps = m.GetParameters();
-//             return ps.Length == 0;
-//         }
-//         Assembly
-//             .GetExecutingAssembly()
-//             .GetTypes()
-//             .SelectMany(x =>
-//                 GetStaticAttributedMethods<Action>(x, predicate))
-//             .OrderBy(x => x.attr.Order)
-//             .ForEach(x => x.method());
-//     }
-//     public static void ApplyInitialization<A>(A arg)
-//     {
-//         bool predicate(MethodInfo m)
-//         {
-//             var ps = m.GetParameters();
-//             return ps.Length == 1 && ps[0].ParameterType == typeof(A);
-//         }
-//         Assembly
-//             .GetExecutingAssembly()
-//             .GetTypes()
-//             .SelectMany(x =>
-//                 GetStaticAttributedMethods<Action<A>>(x, predicate))
-//             .OrderBy(x => x.attr.Order)
-//             .ForEach(x => x.method(arg));
-//     }
 
-//     public static void ApplyInitialization<A, B>(A arg1, B arg2)
-//     {
-//         bool predicate(MethodInfo m)
-//         {
-//             var ps = m.GetParameters();
-//             return ps.Length == 2 && ps[0].ParameterType == typeof(A) && ps[1].ParameterType == typeof(B);
-//         }
-//         Assembly
-//             .GetExecutingAssembly()
-//             .GetTypes()
-//             .SelectMany(x =>
-//                 GetStaticAttributedMethods<Action<A, B>>(x, predicate))
-//             .OrderBy(x => x.attr.Order)
-//             .ForEach(x => x.method(arg1, arg2));
-//     }
-// }
 
 public static class Utils
 {
+
+    public static bool TryFindValue<T>(this List<T> self, Func<T, bool> predicate, out T value)
+    {
+        foreach (var item in self)
+        {
+            if (predicate(item))
+            {
+                value = item;
+                return true;
+            }
+        }
+        value = default(T);
+        return false;
+    }
+    public static G[] Map<T, G>(this T[] self, Func<T, G> tranform)
+    {
+        var xs = new G[self.Length];
+        for (int i = 0; i < self.Length; i++)
+            xs[i] = tranform(self[i]);
+        return xs;
+    }
+
+    public static Cmp Compare<T>(this T a, T b) where T : IComparable<T>
+    {
+        return a.CompareTo(b) < 0 ? Cmp.LT : a.CompareTo(b) > 0 ? Cmp.GT : Cmp.EQ;
+    }
+
+    public static int ByteSequenceHash<TList>(this TList xs, int seed, int primSeed) where TList : IList<byte>
+    {
+        unchecked
+        {
+            int hash = seed;
+            for (int i = 0; i < xs.Count; i++)
+            {
+                hash = hash * primSeed + xs[i];
+            }
+            return hash;
+        }
+    }
+
+    // length equal
+    public static bool SeqEq<Col1, Col2, T>(this Col1 seq1, Col2 seq2) where Col1 : IList<T> where Col2 : IList<T> where T : IEquatable<T>
+    {
+        if (seq1.Count != seq2.Count)
+            return false;
+        for (int i = 0; i < seq1.Count; i++)
+        {
+            if (!seq1[i].Equals(seq2[i]))
+                return false;
+        }
+        return true;
+    }
+
+    public static bool SeqNe<Col1, Col2, T>(this Col1 seq1, Col2 seq2) where Col1 : IList<T> where Col2 : IList<T> where T : IEquatable<T>
+    {
+        if (seq1.Count != seq2.Count)
+            return true;
+        for (int i = 0; i < seq1.Count; i++)
+        {
+            if (seq1[i].Equals(seq2[i]))
+                return false;
+        }
+        return true;
+    }
+
+
+    public static bool SeqLtE<Col1, Col2, T>(this Col1 seq1, Col2 seq2, out bool seqIsEqual) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
+    {
+        var commonLen = Math.Min(seq1.Count, seq2.Count);
+        int cmp;
+        for (int i = 0; i < commonLen; i++)
+        {
+            cmp = seq1[i].CompareTo(seq2[i]);
+            if (cmp == -1)
+            {
+                seqIsEqual = false;
+                return true;
+            }
+            else if (cmp == 0)
+            {
+                continue;
+            }
+            else
+            {
+                seqIsEqual = false;
+                return false;
+            }
+        }
+        if (seq1.Count < seq2.Count)
+        {
+            seqIsEqual = false;
+            return true;
+        }
+        else if (seq1.Count == seq2.Count)
+        {
+            seqIsEqual = true;
+            return true;
+        }
+        seqIsEqual = false;
+        return false;
+    }
+
+    [MethodImpl(MethodImplOptionsCompat.Best)]
+    public static bool SeqLt<Col1, Col2, T>(this Col1 seq1, Col2 seq2) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
+    {
+        return seq1.SeqLtE<Col1, Col2, T>(seq2, out var isEqual) && !isEqual;
+    }
+
+    public static bool SeqGtE<Col1, Col2, T>(this Col1 seq1, Col2 seq2, out bool seqIsEqual) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
+    {
+        var commonLen = Math.Min(seq1.Count, seq2.Count);
+        for (int i = 0; i < commonLen; i++)
+        {
+            var cmp = seq1[i].CompareTo(seq2[i]);
+            if (cmp == 1)
+            {
+                seqIsEqual = false;
+                return true;
+            }
+            else if (cmp == 0)
+            {
+                continue;
+            }
+            else
+            {
+                seqIsEqual = false;
+                return false;
+            }
+        }
+        if (seq1.Count > seq2.Count)
+        {
+            seqIsEqual = false;
+            return true;
+        }
+        else if (seq1.Count == seq2.Count)
+        {
+            seqIsEqual = true;
+            return true;
+        }
+        seqIsEqual = false;
+        return false;
+    }
+
+    [MethodImpl(MethodImplOptionsCompat.Best)]
+    public static bool SeqGt<Col1, Col2, T>(this Col1 seq1, Col2 seq2) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
+    {
+        return seq1.SeqGtE<Col1, Col2, T>(seq2, out var isEqual) && !isEqual;
+    }
+
+    public static T[] ConcatArray<T>(this T[] self, T[] other)
+    {
+        var xs = new T[self.Length + other.Length];
+        for (int i = 0; i < self.Length; i++)
+            xs[i] = self[i];
+        for (int i = 0, j = self.Length; i < other.Length; i++, j++)
+            xs[j] = other[i];
+        return xs;
+    }
 
     public static int IndexOfNth(this string str, string value, int offset, int nth = 0)
     {
@@ -122,7 +216,7 @@ public static class Utils
         return offset;
     }
 
-    public static int IndexOf<T>(this T[] array, T value)
+    public static int IndexOf<T>(this T[] array, T value) where T : IEquatable<T>
     {
         for (int i = 0; i < array.Length; i++)
         {
@@ -272,115 +366,6 @@ public static class Utils
             if (pred(lst[i]))
                 return true;
         }
-        return false;
-    }
-
-    public static bool SequenceLessThan(this List<TrObject> seq1, List<TrObject> seq2)
-    {
-        for (int i = 0; i < seq1.Count; i++)
-        {
-            if (i == seq2.Count)
-            {
-                return false;
-            }
-            else if (seq1[i].__lt__(seq2[i]))
-            {
-                return true;
-            }
-        }
-        if (seq2.Count > seq1.Count)
-            return true;
-        return false;
-    }
-
-    public static bool SequenceLessThan(this TrObject[] seq1, TrObject[] seq2)
-    {
-        for (int i = 0; i < seq1.Length; i++)
-        {
-            if (i == seq2.Length)
-            {
-                return false;
-            }
-            else if (seq1[i].__lt__(seq2[i]))
-            {
-                return true;
-            }
-        }
-        if (seq2.Length > seq1.Length)
-            return true;
-        return false;
-    }
-    public static bool SequenceLessThan(this string seq1, string seq2)
-    {
-        for (int i = 0; i < seq1.Length; i++)
-        {
-            if (i == seq2.Length)
-            {
-                return false;
-            }
-            else if (seq1[i] < seq2[i])
-            {
-                return true;
-            }
-        }
-        if (seq2.Length > seq1.Length)
-            return true;
-        return false;
-    }
-
-    public static bool SequenceLessEqualThan(this List<TrObject> seq1, List<TrObject> seq2)
-    {
-        for (int i = 0; i < seq1.Count; i++)
-        {
-            if (i == seq2.Count)
-            {
-                return false;
-            }
-            else if (RTS.object_le(seq1[i], seq2[i]).__bool__())
-            {
-                return true;
-            }
-            {
-                return true;
-            }
-        }
-        if (seq2.Count >= seq1.Count)
-            return true;
-        return false;
-    }
-
-    public static bool SequenceLessEqualThan(this TrObject[] seq1, TrObject[] seq2)
-    {
-        for (int i = 0; i < seq1.Length; i++)
-        {
-            if (i == seq2.Length)
-            {
-                return false;
-            }
-            else if (RTS.object_le(seq1[i], seq2[i]).__bool__())
-            {
-                return true;
-            }
-        }
-        if (seq2.Length >= seq1.Length)
-            return true;
-        return false;
-    }
-    public static bool SequenceLessEqualThan(this string seq1, string seq2)
-    {
-        for (int i = 0; i < seq1.Length; i++)
-        {
-            if (i == seq2.Length)
-            {
-                return false;
-            }
-            else if (seq1[i] <= seq2[i])
-            {
-                return true;
-            }
-        }
-        if (seq2.Length >= seq1.Length)
-            return true;
         return false;
     }
 }

@@ -20,8 +20,15 @@ namespace Traffy.Objects
             CLASS.Name = "list";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("list.__new__", TrList.datanew);
+            CLASS["append".ToIntern()] = TrSharpFunc.FromFunc("list.append", TrList.append);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrList)] = CLASS;
+        }
+
+        public static TrObject append(TrObject self, TrObject value)
+        {
+            ((TrList)self).container.Add(value);
+            return RTS.object_none;
         }
 
         [Mark(typeof(TrList))]

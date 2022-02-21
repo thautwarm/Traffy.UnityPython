@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Traffy.Objects
 {
+    [Serializable]
     public class TrSlice : TrObject
     {
         public TrObject low;
@@ -10,9 +11,11 @@ namespace Traffy.Objects
         public TrObject step;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        TrClass TrObject.Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
+
+        string TrObject.__repr__() => $"slice({low.__repr__()}:{high.__repr__()}:{step.__repr__()})";
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

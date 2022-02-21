@@ -18,9 +18,11 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS = null;
-        public TrClass Class => Class;
+        public TrClass Class => CLASS;
 
         public List<TrObject> __array__ => null;
+
+        IEnumerator<TrObject> TrObject.__iter__() => this;
 
         public TrObject Current => iter.Current;
 

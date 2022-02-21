@@ -25,6 +25,13 @@ namespace Traffy
     }
     public static class Initialization
     {
+        public static class HashConfig
+        {
+            public const int BYTE_HASH_SEED = 17;
+            public const int BYTE_HASH_PRIME = 23;
+            public const int TUPLE_HASH_SEED = 17;
+            public const int TUPLE_HASH_PRIME = 23;
+        }
         internal const int OBJECT_SHAPE_MAX_FIELD = 255;
         internal const string TokenClassInit = "Traffy.ClassInit";
 
@@ -60,6 +67,11 @@ namespace Traffy
                 .OrderBy(x => x, new MroComparer())
                 .ToList()
                 .ForEach(x => x.f());
+
+
+            Mark.Query(typeof(TrObject), x => x is string s && s == TokenBuiltinInit).ToList().ForEach(
+                f => f.method()
+            );
         }
         public static void Prelude(string name, TrObject o)
         {

@@ -3,12 +3,24 @@ namespace Traffy.InlineCache
 {
     public enum AttributeKind
     {
-        Field = 0,
+        InstField = 0,
         Property = 1,
         Method = 2,
         ClassField = 3,
         ClassMethod = 4
     }
+
+    public struct FieldShape
+    {
+        Shape shape;
+        public FieldShape(Shape shape)
+        {
+            this.shape = shape;
+        }
+
+        public Shape Get => shape;
+    }
+
     public class Shape
     {
         public InternedString Name;
@@ -18,13 +30,14 @@ namespace Traffy.InlineCache
         public TrObject MethodOrClassFieldOrClassMethod;
         public TrObject Class;
 
-
-        public static Shape MKField(InternedString name, int index) => new Shape
-        {
-            Name = name,
-            Kind = AttributeKind.Field,
-            FieldIndex = index
-        };
+        public static FieldShape MKField(InternedString name, int index) => new FieldShape(
+            new Shape
+            {
+                Name = name,
+                Kind = AttributeKind.InstField,
+                FieldIndex = index
+            }
+        );
 
         public static Shape MKProperty(InternedString name, TrProperty property) => new Shape
         {

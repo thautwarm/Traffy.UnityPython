@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ast import (
     AST,
+    For,
     stmt,
     expr,
     NodeVisitor,
@@ -56,6 +57,7 @@ def get_position_string(x: AST, filename: str):
 
 
 SupportedStmts = [
+    ClassDef,
     Return,
     FunctionDef,
     Assign,
@@ -146,6 +148,14 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
     def solve(self):
         solved = self.symtable_builder.solve()
         return solved
+
+    def visit_For(self, node: For) -> Any:
+        self.rhs_scoper.visit(node.iter)
+        self.lhs_scoper.visit(node.target)
+        for each in node.body:
+            self.visit(each)
+        for each in node.orelse:
+            self.visit(each)
 
     def visit_Return(self, node: Return) -> Any:
         if node.value:

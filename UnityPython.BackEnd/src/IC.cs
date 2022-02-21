@@ -9,7 +9,7 @@ namespace Traffy.InlineCache
         public TrClass cls;
         public object Token;
         public Shape shape = null;
-        public const int PolymorphicInlineCacheMax = 5;
+        public const int MaxPolymorphicInlineCacheStore = 5;
     }
     public abstract partial class IC
     {
@@ -23,76 +23,21 @@ namespace Traffy.InlineCache
 
         public abstract InlineCacheReceiver ClassReadProto(TrClass cls);
 
-
-        public static bool NoICReadShapeInst(TrClass cls, string name, out Shape ad)
-        {
-            if (name == "__new__")
-            {
-                ad = null;
-                return false;
-            }
-
-            for (int i = 0; i < cls.__mro.Length; i++)
-            {
-                var other_cls = cls.__mro[i];
-                if (cls.__mro[i].__prototype__.TryGetValue(name, out ad))
-                {
-                    if (ad.Kind == AttributeKind.Field && other_cls != cls)
-                    {
-                        // fields from parent classes are not inherited
-                        // should create new ones in the current class
-                        continue;
-                    }
-                    return true;
-                }
-            }
-            ad = null;
-            return false;
-        }
-        public static bool NoICOverwriteShapeInst(TrClass cls, string name, out Shape ad)
-        {
-            return cls.__prototype__.TryGetValue(name, out ad);
-        }
-
-        public static bool NOICReadShapeClass(TrClass cls, string name, out Shape ad)
-        {
-            for (int i = 0; i < cls.__mro.Length; i++)
-            {
-                var other_cls = cls.__mro[i];
-                if (cls.__mro[i].__prototype__.TryGetValue(name, out ad))
-                {
-                    if (ad.Kind == AttributeKind.Field)
-                    {
-                        // classes cannot access instance fields
-                        continue;
-                    }
-                    return true;
-                }
-            }
-            ad = null;
-            return false;
-        }
-
-        public static bool NOICOverwriteShapeClass(TrClass cls, string name, out Shape ad)
-        {
-            return cls.__prototype__.TryGetValue(name, out ad) && ad.Kind != AttributeKind.Field;
-        }
     }
 
 
-
-    public class InlineCacheInstance: IC
+    public class PolyIC_Inst : IC
     {
         int LastReceiver;
-        public InlineCacheReceiver[] receivers = new InlineCacheReceiver[InlineCacheReceiver.PolymorphicInlineCacheMax];
+        public InlineCacheReceiver[] receivers = new InlineCacheReceiver[InlineCacheReceiver.MaxPolymorphicInlineCacheStore];
 
         public void AddReceiver(InlineCacheReceiver receiver)
         {
-            receivers[(LastReceiver++) % InlineCacheReceiver.PolymorphicInlineCacheMax] = receiver;
-            LastReceiver %= InlineCacheReceiver.PolymorphicInlineCacheMax;
+            receivers[(LastReceiver++) % InlineCacheReceiver.MaxPolymorphicInlineCacheStore] = receiver;
+            LastReceiver %= InlineCacheReceiver.MaxPolymorphicInlineCacheStore;
         }
 
-        public InlineCacheInstance(InternedString name)
+        public PolyIC_Inst(InternedString name)
         {
             LastReceiver = 0;
             this.s_name = name;
@@ -101,7 +46,7 @@ namespace Traffy.InlineCache
         public override InlineCacheReceiver InstReadProto(TrClass cls)
         {
             InlineCacheReceiver receiver;
-            for (int i = 0; i < InlineCacheReceiver.PolymorphicInlineCacheMax; i++)
+            for (int i = 0; i < InlineCacheReceiver.MaxPolymorphicInlineCacheStore; i++)
             {
                 receiver = receivers[i];
                 if (receiver == null)
@@ -110,19 +55,14 @@ namespace Traffy.InlineCache
                 {
                     if (receiver.Token == cls.Token)
                     {
-                        if (i != 0)
-                        {
-                            // move the receiver to the previous position
-                            receivers[i] = receivers[i - 1];
-                            receivers[i - 1] = receiver;
-                        }
+
                         return receiver;
                     }
                     else
                     {
                         // the class has been changed, so we need to update the receiver
                         receiver.Token = cls.Token;
-                        if (IC.NoICReadShapeInst(cls, Name, out receiver.shape))
+                        if (cls.LoadCachedShape_ReadInst(Name.Value, out receiver.shape))
                         {
                             return receiver;
                         }
@@ -135,14 +75,14 @@ namespace Traffy.InlineCache
             receiver.cls = cls;
             receiver.Token = cls.Token;
             AddReceiver(receiver);
-            IC.NoICReadShapeInst(cls, Name, out receiver.shape);
+            cls.LoadCachedShape_ReadInst(Name.Value, out receiver.shape);
             return receiver;
         }
 
         public override InlineCacheReceiver InstWriteProto(TrClass cls)
         {
             InlineCacheReceiver receiver;
-            for (int i = 0; i < InlineCacheReceiver.PolymorphicInlineCacheMax; i++)
+            for (int i = 0; i < InlineCacheReceiver.MaxPolymorphicInlineCacheStore; i++)
             {
                 receiver = receivers[i];
                 if (receiver == null)
@@ -151,12 +91,7 @@ namespace Traffy.InlineCache
                 {
                     if (receiver.Token == cls.Token)
                     {
-                        if (i != 0)
-                        {
-                            // move the receiver to the previous position
-                            receivers[i] = receivers[i - 1];
-                            receivers[i - 1] = receiver;
-                        }
+
                         if (receiver.shape == null)
                             goto update;
                         return receiver;
@@ -165,7 +100,7 @@ namespace Traffy.InlineCache
                     {
                         // the class has been changed, so we need to update the receiver
                         receiver.Token = cls.Token;
-                        if (IC.NoICOverwriteShapeInst(cls, Name, out receiver.shape))
+                        if (cls.LoadCachedShape_WriteInst(Name.Value, out receiver.shape))
                         {
                             return receiver;
                         }
@@ -174,24 +109,18 @@ namespace Traffy.InlineCache
                 }
             }
             receiver = new InlineCacheReceiver();
-            update:
+        update:
 
             if (cls.IsFixed)
                 throw new TypeError($"{cls.Name} object is frozen, can't set attribute {Name}");
             receiver.cls = cls;
             receiver.Token = cls.Token;
             AddReceiver(receiver);
-            IC.NoICOverwriteShapeInst(cls, Name, out receiver.shape);
-
-            if (object.ReferenceEquals(receiver.shape, null))
+            if (!cls.LoadCachedShape_WriteInst(Name.Value, out receiver.shape))
             {
-                var Token = cls.UpdatePrototype(); // mark the class as changed
-                int field_index;
-                field_index = cls.fieldCnt++;
-                var shape = Shape.MKField(Name, field_index);
-                cls.__prototype__.Add(Name, shape);
-                receiver.Token = Token;
-                receiver.shape = shape;
+                cls.AddFieldOrFind(Name.Value, out var fieldShape);
+                receiver.shape = fieldShape.Get;
+                receiver.Token = cls.Token;
             }
             return receiver;
         }
@@ -204,7 +133,7 @@ namespace Traffy.InlineCache
         }
     }
 
-    public class InlineCacheClass: IC
+    public class PolyIC_Class : IC
     {
         int LastReceiver;
         public InlineCacheReceiver[] receivers = new InlineCacheReceiver[2];
@@ -215,7 +144,7 @@ namespace Traffy.InlineCache
             LastReceiver %= 2;
         }
 
-        public InlineCacheClass(InternedString name)
+        public PolyIC_Class(InternedString name)
         {
             LastReceiver = 0;
             this.s_name = name;
@@ -241,7 +170,7 @@ namespace Traffy.InlineCache
                 {
                     // the class has been changed, so we need to update the receiver
                     receiver.Token = cls.Token;
-                    if (IC.NOICReadShapeClass(cls, Name, out receiver.shape))
+                    if (cls.LoadCachedShape_ReadClass(Name.Value, out receiver.shape))
                     {
                         return receiver;
                     }
@@ -269,7 +198,7 @@ namespace Traffy.InlineCache
                 {
                     // the class has been changed, so we need to update the receiver
                     receiver.Token = cls.Token;
-                    if (IC.NOICReadShapeClass(cls, Name, out receiver.shape))
+                    if (cls.LoadCachedShape_ReadClass(Name.Value, out receiver.shape))
                     {
                         return receiver;
                     }
@@ -282,7 +211,7 @@ namespace Traffy.InlineCache
             receiver.cls = cls;
             receiver.Token = cls.Token;
             AddReceiver(receiver);
-            IC.NOICReadShapeClass(cls, Name, out receiver.shape);
+            cls.LoadCachedShape_ReadClass(Name.Value, out receiver.shape);
             return receiver;
         }
 
@@ -297,16 +226,16 @@ namespace Traffy.InlineCache
         }
     }
 
-    public class PolyIC: IC
+    public class PolyIC : IC
     {
-        public InlineCacheClass ICClass;
-        public InlineCacheInstance ICInstance;
+        public PolyIC_Class ICClass;
+        public PolyIC_Inst ICInstance;
         public TrStr attribute;
         public PolyIC(TrStr name)
         {
             s_name = name.AsString().ToIntern();
-            ICClass = new InlineCacheClass(s_name);
-            ICInstance = new InlineCacheInstance(s_name);
+            ICClass = new PolyIC_Class(s_name);
+            ICInstance = new PolyIC_Inst(s_name);
             if (!name.isInterned)
                 name = name.Interned();
             this.attribute = name;
@@ -315,8 +244,8 @@ namespace Traffy.InlineCache
         public PolyIC(InternedString name)
         {
             s_name = name;
-            ICClass = new InlineCacheClass(s_name);
-            ICInstance = new InlineCacheInstance(s_name);
+            ICClass = new PolyIC_Class(s_name);
+            ICInstance = new PolyIC_Inst(s_name);
             this.attribute = MK.Str(name);
         }
 
@@ -337,7 +266,7 @@ namespace Traffy.InlineCache
     }
 
 
-    public class MonoInlineCacheInstance: IC
+    public class MonoInlineCacheInstance : IC
     {
         public InlineCacheReceiver receiver = null;
 
@@ -365,7 +294,7 @@ namespace Traffy.InlineCache
                     {
                         // the class has been changed, so we need to update the receiver
                         receiver.Token = cls.Token;
-                        if (IC.NoICReadShapeInst(cls, Name, out receiver.shape))
+                        if (cls.LoadCachedShape_ReadInst(Name.Value, out receiver.shape))
                         {
                             return receiver;
                         }
@@ -375,7 +304,7 @@ namespace Traffy.InlineCache
             receiver = new InlineCacheReceiver();
             receiver.cls = cls;
             receiver.Token = cls.Token;
-            IC.NoICReadShapeInst(cls, Name, out receiver.shape);
+            cls.LoadCachedShape_ReadInst(Name.Value, out receiver.shape);
             return receiver;
         }
 
@@ -395,7 +324,7 @@ namespace Traffy.InlineCache
                     {
                         // the class has been changed, so we need to update the receiver
                         receiver.Token = cls.Token;
-                        if (IC.NoICOverwriteShapeInst(cls, Name, out receiver.shape))
+                        if (cls.LoadCachedShape_WriteInst(Name.Value, out receiver.shape))
                         {
                             return receiver;
                         }
@@ -403,27 +332,17 @@ namespace Traffy.InlineCache
                 }
             }
             receiver = new InlineCacheReceiver();
-            update:
+        update:
             if (cls.IsFixed)
                 throw new TypeError($"{cls.Name} object is frozen, can't set attribute {Name}");
-            receiver.cls = cls;
+            cls.AddFieldOrFind(Name.Value, out var fieldshape);
+            receiver.shape = fieldshape.Get;
             receiver.Token = cls.Token;
-            IC.NoICOverwriteShapeInst(cls, Name, out receiver.shape);
-            if (object.ReferenceEquals(receiver.shape, null))
-            {
-                var Token = cls.UpdatePrototype(); // mark the class as changed
-                int field_index;
-                field_index = cls.fieldCnt++;
-                var shape = Shape.MKField(Name, field_index);
-                receiver.shape = shape;
-                cls.__prototype__.Add(Name, shape);
-                receiver.Token = Token;
-            }
             return receiver;
         }
     }
 
-    public class MonoInlineCacheClass: IC
+    public class MonoInlineCacheClass : IC
     {
         public InlineCacheReceiver receiver = null;
 
@@ -454,7 +373,7 @@ namespace Traffy.InlineCache
                 {
                     // the class has been changed, so we need to update the receiver
                     receiver.Token = cls.Token;
-                    if (IC.NOICReadShapeClass(cls, Name, out receiver.shape))
+                    if (cls.LoadCachedShape_ReadClass(Name.Value, out receiver.shape))
                     {
                         return receiver;
                     }
@@ -463,12 +382,12 @@ namespace Traffy.InlineCache
             receiver = new InlineCacheReceiver();
             receiver.cls = cls;
             receiver.Token = cls.Token;
-            IC.NOICReadShapeClass(cls, Name, out receiver.shape);
+            cls.LoadCachedShape_ReadClass(Name.Value, out receiver.shape);
             return receiver;
         }
     }
 
-    public class MonoIC: IC
+    public class MonoIC : IC
     {
         public MonoInlineCacheClass ICClass;
         public MonoInlineCacheInstance ICInstance;

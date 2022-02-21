@@ -1,9 +1,87 @@
 using System;
+using System.Collections.Generic;
 using Traffy.InlineCache;
 namespace Traffy.Objects
 {
     public partial class TrClass
     {
+
+        public Dictionary<string, Shape> __prototype__ = new Dictionary<string, Shape>();
+
+        public List<FieldShape> __instance_fields__ = new List<FieldShape>();
+
+        public bool LoadCachedShape_WriteInst(string name, out Shape ad)
+        {
+            for (int i = 0; i < __instance_fields__.Count; i++)
+            {
+                var fieldshape = __instance_fields__[i];
+                if (fieldshape.Get.Kind != AttributeKind.InstField)
+                    throw new InvalidProgramException(
+                        $"inline cache system failed: {fieldshape.Get.Name} should be an instance field cache.");
+
+                if (fieldshape.Get.Name.Value == name)
+                {
+                    ad = fieldshape.Get;
+                    return true;
+                }
+            }
+            ad = null;
+            return false;
+        }
+
+
+        public bool LoadCachedShape_ReadInst(string name, out Shape ad)
+        {
+            if (name != "__new__")
+            {
+                for (int i = 0; i < __instance_fields__.Count; i++)
+                {
+                    var fieldshape = __instance_fields__[i];
+                    if (fieldshape.Get.Kind != AttributeKind.InstField)
+                        throw new InvalidProgramException(
+                            $"inline cache system failed: {fieldshape.Get.Name} should be an instance field cache.");
+
+                    if (fieldshape.Get.Name.Value == name)
+                    {
+                        ad = fieldshape.Get;
+                        return true;
+                    }
+                }
+            }
+
+            return LoadCachedShape_ReadClass(name, out ad);
+        }
+
+        public bool LoadCachedShape_ReadClass(string name, out Shape ad)
+        {
+            for (int i = 0; i < __mro.Length; i++)
+            {
+                var other_cls = __mro[i];
+                if (other_cls.__prototype__.TryGetValue(name, out ad))
+                {
+                    if (ad.Kind == AttributeKind.InstField)
+                    {
+                        throw new InvalidProgramException("inline cache system failed: " + name + " is an instance field, not available to class " + Name);
+                    }
+                    return true;
+                }
+            }
+            ad = null;
+            return false;
+        }
+
+        public bool LoadCachedShape_TryWriteClass(string name, out Shape ad)
+        {
+            if (__prototype__.TryGetValue(name, out ad))
+            {
+                if (ad.Kind == AttributeKind.InstField)
+                {
+                    throw new InvalidProgramException("inline cache system failed: " + name + " is an instance field, not available to class " + Name);
+                }
+                return true;
+            }
+            return false;
+        }
 
         public bool __getic__(IC ic, out TrObject found) =>
             ic.ReadClass(this, out found);
@@ -18,14 +96,14 @@ namespace Traffy.Objects
 
         public TrObject this[InternedString s]
         {
-            get => __getic__(s, out var value) ? value : null;
-            set => __setic__(s, value);
+            get => __getic__(s.Value, out var value) ? value : null;
+            set => __setic__(s.Value, value);
         }
 
         public TrObject this[IC ic]
         {
             get => __getic__(ic, out var value) ? value : null;
-            set => __setic__(ic.Name, value);
+            set => __setic__(ic.Name.Value, value);
         }
 
         public MonoIC
@@ -33,7 +111,8 @@ namespace Traffy.Objects
             ic__mul, ic__matmul, ic__floordiv, ic__truediv, ic__mod, ic__pow,
             ic__bitand, ic__bitor, ic__bitxor, ic__lshift, ic__rshift, ic__hash,
             ic__call, ic__contains, ic__getitem, ic__setitem, ic__iter, ic__len,
-            ic__eq, ic__lt, ic__neg, ic__inv, ic__pos, ic__bool, ic__init_subclass,
+            ic__eq, ic__ne, ic__lt, ic__le, ic__gt, ic__ge,
+            ic__neg, ic__inv, ic__pos, ic__bool, ic__init_subclass,
             ic__getattr, ic__setattr;
 
         public void InitInlineCacheForMagicMethods()
@@ -71,7 +150,11 @@ namespace Traffy.Objects
             ic__len = new MonoIC(MagicNames.i___len__);
 
             ic__eq = new MonoIC(MagicNames.i___eq__);
+            ic__ne = new MonoIC(MagicNames.i___ne__);
             ic__lt = new MonoIC(MagicNames.i___lt__);
+            ic__le = new MonoIC(MagicNames.i___le__);
+            ic__gt = new MonoIC(MagicNames.i___gt__);
+            ic__ge = new MonoIC(MagicNames.i___ge__);
 
             ic__neg = new MonoIC(MagicNames.i___neg__);
             ic__inv = new MonoIC(MagicNames.i___inv__);
@@ -82,23 +165,26 @@ namespace Traffy.Objects
             ic__init_subclass = new MonoIC(MagicNames.i___init_subclass__);
         }
 
-        public int AddField(string name)
+        public int AddField(string name) => AddFieldOrFind(name, out var _);
+
+        public int AddFieldOrFind(string name, out FieldShape shape)
         {
+            if (__instance_fields__.TryFindValue(x => x.Get.Name.Value == name, out shape))
+            {
+                if (shape.Get.Kind != AttributeKind.InstField)
+                    throw new TypeError($"fatal: find a non-field shape in instance field areas of class {Name}.");
+                return shape.Get.FieldIndex;
+            }
             if (IsFixed)
                 throw new TypeError($"{Name} class has no attribute {name} (immutable)");
-            if (fieldCnt == Initialization.OBJECT_SHAPE_MAX_FIELD)
+            if (__instance_fields__.Count == Initialization.OBJECT_SHAPE_MAX_FIELD)
             {
                 throw new TypeError($"class {Name} cannot add a shape for field {name} (more than 255 fields)");
             }
-            if (__prototype__.TryGetValue(name, out var shape))
-            {
-                if (shape.Kind == AttributeKind.Field)
-                    return shape.FieldIndex;
-                throw new TypeError($"{name} is already a {shape.Kind}");
-            }
             var Token = UpdatePrototype();
-            var index = fieldCnt++;
-            __prototype__[name] = Shape.MKField(name.ToIntern(), index);
+            var index = __instance_fields__.Count;
+            shape = Shape.MKField(name.ToIntern(), index);
+            __instance_fields__.Add(shape);
             return index;
         }
 

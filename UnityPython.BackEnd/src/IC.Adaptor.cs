@@ -24,7 +24,7 @@ namespace Traffy.InlineCache
 
         public static bool ReadClass(TrClass Class, string name, out TrObject value)
         {
-            if (IC.NOICReadShapeClass(Class, name, out var shape))
+            if (Class.LoadCachedShape_ReadClass(name, out var shape))
             {
                 return ReadClass(Class, shape, out value);
             }
@@ -35,7 +35,7 @@ namespace Traffy.InlineCache
         {
             switch (shape.Kind)
             {
-                case AttributeKind.Field:
+                case AttributeKind.InstField:
                     throw new InvalidProgramException($"inline cache system failed: {shape.Name} is an instance field, not available to class {Class.Name}.");
                 case AttributeKind.Property:
                     value = shape.Property;
@@ -59,7 +59,7 @@ namespace Traffy.InlineCache
             if (Class.IsFixed)
                 throw new AttributeError(Class, MK.Str(s), $"class {Class.Name} has no attribute {s}");
 
-            if (IC.NOICOverwriteShapeClass(Class, s, out var ad))
+            if (Class.LoadCachedShape_TryWriteClass(s, out var ad))
             {
                 Class.UpdatePrototype();
                 if (value is TrProperty prop)
@@ -127,12 +127,12 @@ namespace Traffy.InlineCache
                 }
             }
 
-            Class.__prototype__.Add(ad_.Name, ad_);
+            Class.__prototype__.Add(ad_.Name.Value, ad_);
         }
 
         public static bool ReadInst(TrObject self, string s, out TrObject ob)
         {
-            if (!IC.NoICReadShapeInst(self.Class, s, out var shape))
+            if (!self.Class.LoadCachedShape_ReadInst(s, out var shape))
             {
                 ob = null;
                 return false;
@@ -147,7 +147,7 @@ namespace Traffy.InlineCache
 
         public static void WriteInst(TrObject self, string s, TrObject value)
         {
-            if (IC.NoICOverwriteShapeInst(self.Class, s, out var ad))
+            if (self.Class.LoadCachedShape_WriteInst(s, out var ad))
             {
                 WriteInst(self, ad, value);
                 return;
@@ -163,7 +163,7 @@ namespace Traffy.InlineCache
         {
             switch (shape.Kind)
             {
-                case AttributeKind.Field:
+                case AttributeKind.InstField:
                     if (self.__array__ == null)
                     {
                         ob = null;
@@ -208,7 +208,7 @@ namespace Traffy.InlineCache
         {
             if (self.__array__ == null || self.Class.IsFixed)
                 throw new AttributeError(self, MK.Str(shape.Name), $"object {self.Class.Name} has no attribute {shape.Name}");
-            self.SetInstField(shape.FieldIndex, shape.Name, value);
+            self.SetInstField(shape.FieldIndex, shape.Name.Value, value);
         }
         public bool ReadInst(TrObject self, out TrObject ob)
         {
@@ -226,7 +226,7 @@ namespace Traffy.InlineCache
         {
             var receiver = InstWriteProto(self.Class);
             var shape = receiver.shape;
-            if (shape.Kind != AttributeKind.Field)
+            if (shape.Kind != AttributeKind.InstField)
                 throw new InvalidProgramException($"instance IC is writing a non-field {this.Name} ({self.Class.Name}).");
             WriteInst(self, shape, value);
         }
@@ -245,7 +245,7 @@ namespace Traffy.InlineCache
 
         public void WriteClass(TrClass Class, TrObject value)
         {
-            WriteClass(Class, Name, value);
+            WriteClass(Class, Name.Value, value);
         }
     }
 }

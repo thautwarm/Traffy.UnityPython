@@ -239,8 +239,16 @@ namespace SimpleJSON
                     }
                 case JSONNodeType.String:
                     {
-                        checkType<string>(t);
-                        return node.Value;
+
+                        if (typeof(string) == t)
+                        {
+                            return node.Value;
+                        }
+                        else if (typeof(byte[]) == t)
+                        {
+                            return System.Text.Encoding.ASCII.GetBytes(node.Value);
+                        }
+                        throw new InvalidCastException($"expect {t}, got a string");
                     }
                 case JSONNodeType.Boolean:
                     {

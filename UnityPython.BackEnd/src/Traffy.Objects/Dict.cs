@@ -8,7 +8,6 @@ namespace Traffy.Objects
     {
         public Dictionary<TrObject, TrObject> container;
 
-        public Dictionary<TrObject, TrObject> __dict__ => null;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;

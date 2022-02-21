@@ -877,11 +877,11 @@ namespace Traffy.Asm
         [OnDeserialized]
         public Attribute OnDeserialized()
         {
-            attr = attr.Interned();
             if (attr.value == null)
             {
                 throw new InvalidProgramException("attr.value is null");
             }
+            attr = attr.Interned();
             ic = new InlineCache.PolyIC(attr);
             return this;
         }

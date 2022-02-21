@@ -18,47 +18,25 @@ namespace Traffy.Objects
         }
     }
 
-    public partial interface TrObject : IEquatable<TrObject>
+    public partial interface TrObject : IEquatable<TrObject>, IComparable<TrObject>
     {
         bool IEquatable<TrObject>.Equals(TrObject other)
         {
             return __eq__(other);
         }
-
+        int IComparable<TrObject>.CompareTo(TrObject other)
+        {
+            if (__eq__(other)) return 0;
+            if (__lt__(other)) return -1;
+            return 1;
+        }
         public TrClass AsClass => (TrClass)this;
-
         public bool IsClass => false;
-
         public List<TrObject> __array__ { get; }
         public object Native => this;
         public TrClass Class { get; }
         Exception unsupported(string op) =>
             throw new TypeError($"{Class.Name} has no {op} method");
-
-        public static bool __instancecheck__(TrObject obj, TrObject classes)
-        {
-            if (classes is TrClass cls)
-            {
-                return cls.__subclasscheck__(obj.Class);
-            }
-            else if (classes is TrTuple tup)
-            {
-                foreach (var cls_ in tup.elts)
-                {
-                    if (__instancecheck__(obj, cls_))
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            else
-            {
-                throw new TypeError($"{classes.__repr__()} is not a class or tuple of classes");
-            }
-        }
-
-        public bool __instancecheck__(TrObject classes) => __instancecheck__(this, classes);
 
         public static TrObject __raw_init__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         { return RTS.object_none; }
@@ -82,7 +60,7 @@ namespace Traffy.Objects
         public string __str__() => __raw_str__(this);
 
         // default '__repr__'
-        public static string __raw_repr__(TrObject self) => self.Native.ToString();
+        public static string __raw_repr__(TrObject self) => $"<{self.Class.Name} object>";
         public string __repr__() => __raw_repr__(this);
 
         // default '__next__'
@@ -256,18 +234,30 @@ namespace Traffy.Objects
             throw self.unsupported(nameof(__len__));
         public TrObject __len__() => TrObject.__raw_len__(this);
 
-
         // Comparators
-
         public static bool __raw_eq__(TrObject self, TrObject other) =>
             self.Native == other.Native;
         public bool __eq__(TrObject other) => TrObject.__raw_eq__(this, other);
 
-        // default '__lt__'
+        public static bool __raw_ne__(TrObject self, TrObject other) =>
+            self.Native != other.Native;
+        public bool __ne__(TrObject other) => TrObject.__raw_ne__(this, other);
+
         public static bool __raw_lt__(TrObject self, TrObject other) =>
             throw self.unsupported(nameof(__lt__));
         public bool __lt__(TrObject other) => TrObject.__raw_lt__(this, other);
+        public static bool __raw_le__(TrObject self, TrObject other) =>
+            throw self.unsupported(nameof(__le__));
+        public bool __le__(TrObject other) => TrObject.__raw_le__(this, other);
 
+        public static bool __raw_gt__(TrObject self, TrObject other) =>
+            throw self.unsupported(nameof(__gt__));
+
+        public bool __gt__(TrObject other) => TrObject.__raw_gt__(this, other);
+
+        public static bool __raw_ge__(TrObject self, TrObject other) =>
+            throw self.unsupported(nameof(__ge__));
+        public bool __ge__(TrObject other) => TrObject.__raw_ge__(this, other);
 
         // Unary ops
         // default '__neg__'
@@ -292,10 +282,10 @@ namespace Traffy.Objects
 
     public class TrRawObject : TrUserObjectBase
     {
-        public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        internal static TrClass CLASS;
+        TrClass TrObject.Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
         [Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -328,13 +318,14 @@ namespace Traffy.Objects
 
     public class TrUserObject : TrUserObjectBase
     {
-        public TrClass Class { get; private set; }
+        public TrClass CLASS;
+        TrClass TrObject.Class => CLASS;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>();
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>();
 
         public TrUserObject(TrClass cls)
         {
-            Class = cls;
+            CLASS = cls;
         }
     }
 }

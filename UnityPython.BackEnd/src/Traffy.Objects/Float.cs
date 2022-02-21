@@ -15,6 +15,8 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
+        string TrObject.__repr__() => value.ToString();
+
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             TrObject clsobj = args[0];

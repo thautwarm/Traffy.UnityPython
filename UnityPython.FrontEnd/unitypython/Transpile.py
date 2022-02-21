@@ -77,6 +77,8 @@ def _const_to_variant(v):
         raise TypeError(v)
     elif isinstance(v, tuple):
         return ir.TrTuple(elts=list(map(const_to_variant, v)))
+    elif isinstance(v, bytes):
+        return ir.TrBytes(value=v.decode('ascii'))
     else:
         raise TypeError(v)
 
@@ -700,6 +702,30 @@ class TranspileStmt(IRStmtTransformerInlineCache):
 
     def visit_Expr(self, node: Expr) -> Any:
         return self.root.rhs_transpiler.visit(node.value)
+
+    def visit_many(self, nodes: list[stmt]):
+        xs = list(map(self.visit, nodes))
+        if xs:
+            return ir.Block(hasCont=ir.hasCont(xs), suite=xs)
+        return ir.Constant(o=const_to_variant(None))
+
+    def visit_For(self, node: For) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        hasCont = False
+        iterable = self.root.rhs_transpiler.visit(node.iter)
+        hasCont = hasCont or iterable.hasCont
+        target = self.root.lhs_transpiler.visit(node.target)
+        hasCont = hasCont or target.hasCont
+        body = self.visit_many(node.body)
+        hasCont = hasCont or body.hasCont
+        if node.orelse:
+            orelse = self.visit_many(node.orelse)
+            hasCont = hasCont or ir.hasCont(orelse)
+        else:
+            orelse = None
+        return ir.ForIn(position=position, hasCont=hasCont, itr=iterable, target=target, body=body, orelse=orelse)
+
 
     def visit_Return(self, node: Return) -> Any:
         self.root.cur_pos = extract_pos(node)

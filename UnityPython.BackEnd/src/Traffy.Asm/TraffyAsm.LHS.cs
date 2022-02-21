@@ -316,6 +316,7 @@ namespace Traffy.Asm
             {
                 throw new InvalidProgramException("attr.value is null");
             }
+            attr = attr.Interned();
             ic = new InlineCache.PolyIC(attr);
             return this;
         }

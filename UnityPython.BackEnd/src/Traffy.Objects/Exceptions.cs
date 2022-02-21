@@ -6,6 +6,14 @@ using Traffy.InlineCache;
 namespace Traffy.Objects
 {
 
+    public static class ExtExceptions
+    {
+        public static TrExceptionBase ToTr(this Exception e)
+        {
+            return RTS.exc_frombare(e);
+        }
+    }
+
     public interface TrExceptionBase : TrUserObjectBase
     {
         public Exception AsException();
@@ -43,7 +51,7 @@ namespace Traffy.Objects
 
         public string GetStackTrace()
         {
-            return $"{__repr__()}\n{traceback?.GetStackTrace()}";
+            return $"{traceback?.GetStackTrace()}\n{__repr__()}";
         }
     }
 
@@ -174,8 +182,8 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ { get; } = new List<TrObject>(3);
 
-        static InlineCache.InlineCacheInstance CacheName = new InlineCache.InlineCacheInstance("name".ToIntern());
-        static InlineCache.InlineCacheInstance CacheObj = new InlineCache.InlineCacheInstance("obj".ToIntern());
+        static InlineCache.PolyIC_Inst CacheName = new InlineCache.PolyIC_Inst("name".ToIntern());
+        static InlineCache.PolyIC_Inst CacheObj = new InlineCache.PolyIC_Inst("obj".ToIntern());
         public void Init(TrObject obj, TrObject attr, string msg)
         {
 
@@ -224,7 +232,7 @@ namespace Traffy.Objects
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
-        static InlineCache.InlineCacheInstance CacheName = new InlineCache.InlineCacheInstance("name".ToIntern());
+        static InlineCache.PolyIC_Inst CacheName = new InlineCache.PolyIC_Inst("name".ToIntern());
 
         // __array__
         public List<TrObject> __array__ { get; } = new List<TrObject>(2);
@@ -367,7 +375,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        static InlineCache.InlineCacheInstance CacheValue = new InlineCache.InlineCacheInstance("value".ToIntern());
+        static InlineCache.PolyIC_Inst CacheValue = new InlineCache.PolyIC_Inst("value".ToIntern());
         public List<TrObject> __array__ { get; } = new List<TrObject>(2);
         public StopIteration(TrObject value) : base()
         {
@@ -587,9 +595,9 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        static InlineCacheInstance CacheName = new InlineCacheInstance("name".ToIntern());
-        static InlineCacheInstance CachePath = new InlineCacheInstance("path".ToIntern());
-        static InlineCacheInstance CacheMsg = new InlineCacheInstance("msg".ToIntern());
+        static PolyIC_Inst CacheName = new PolyIC_Inst("name".ToIntern());
+        static PolyIC_Inst CachePath = new PolyIC_Inst("path".ToIntern());
+        static PolyIC_Inst CacheMsg = new PolyIC_Inst("msg".ToIntern());
         public List<TrObject> __array__ { get; } = new List<TrObject>(4);
         public ImportError(string name, string path, string msg) : base(msg)
         {

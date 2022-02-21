@@ -62,22 +62,31 @@ namespace Traffy
         internal static Exception exc_wrap_frame(Exception e, Frame frame)
         {
             TrExceptionBase exc = exc_frombare(e);
-            exc.traceback = new TrTraceback(frame.func.fptr.metadata.codename, frame.func.fptr.metadata, frame.traceback.ToArray(), null);
+            if (exc.traceback == null)
+            {
+                exc.traceback = new TrTraceback();
+            }
+            exc.traceback.Record(
+                frame.func.fptr.metadata.codename,
+                frame.func.fptr.metadata,
+                frame.traceback.ToArray(),
+                null);
+            frame.err = null;
             return exc.AsException();
         }
 
-        internal static void arg_check_positional_only(BList<TrObject> args, int v)
+        public static void arg_check_positional_only(BList<TrObject> args, int v)
         {
             if (args.Count != v)
                 throw new ValueError($"requires {v} argument(s), got {args.Count}");
         }
-        internal static void arg_check_positional_atleast(BList<TrObject> args, int v)
+        public static void arg_check_positional_atleast(BList<TrObject> args, int v)
         {
             if (args.Count < v)
                 throw new ValueError($"requires atleast {v} argument(s), got {args.Count}");
         }
 
-        internal static void arg_check_positional_range(BList<TrObject> args, int least, int most)
+        public static void arg_check_positional_range(BList<TrObject> args, int least, int most)
         {
             var narg = args.Count;
             if (least <= narg && narg <= most) { }
@@ -85,7 +94,7 @@ namespace Traffy
                 throw new ValueError($"requires {least}-{most} argument(s), got {narg}");
         }
 
-        internal static List<TrObject> object_as_list(TrObject o)
+        public static List<TrObject> object_as_list(TrObject o)
         {
             if (o is TrList lst)
             {
@@ -99,7 +108,7 @@ namespace Traffy
             }
             return res;
         }
-        internal static List<TrObject> object_to_list(TrObject o)
+        public static List<TrObject> object_to_list(TrObject o)
         {
             if (o is TrList lst)
             {
@@ -114,7 +123,7 @@ namespace Traffy
             return res;
         }
 
-        internal static TrObject parse_int(string s)
+        public static TrObject parse_int(string s)
         {
             if (s.Length > 2)
             {
@@ -128,22 +137,22 @@ namespace Traffy
             }
             return MK.Int(long.Parse(s));
         }
-        internal static TrObject parse_float(string value) =>
+        public static TrObject parse_float(string value) =>
             MK.Float(float.Parse(value));
 
-        internal static Exception exc_unpack_toomuch(int length)
+        public static Exception exc_unpack_toomuch(int length)
         {
             throw new ValueError($"too many elements to unpack, requires exactly {length} one(s).");
         }
 
-        internal static TrObject object_from_list(List<TrObject> itr) => MK.List(itr);
+        public static TrObject object_from_list(List<TrObject> itr) => MK.List(itr);
 
-        internal static Exception exc_unpack_notenough(int nelts, int npatterns)
+        public static Exception exc_unpack_notenough(int nelts, int npatterns)
         {
             throw new ValueError($"not enough elements to unpack, requires exactly {npatterns} one(s), got {nelts}.");
         }
 
-        internal static System.Collections.Generic.IEnumerator<TrObject> object_getiter(TrObject o)
+        public static System.Collections.Generic.IEnumerator<TrObject> object_getiter(TrObject o)
         {
             return o.__iter__();
         }
@@ -167,26 +176,26 @@ namespace Traffy
             return MK.Bool(object.ReferenceEquals(arg1, arg2));
         }
 
-        internal static bool baredict_get_noerror(Dictionary<TrObject, TrObject> dict__, TrObject s, out TrObject found)
+        public static bool baredict_get_noerror(Dictionary<TrObject, TrObject> dict__, TrObject s, out TrObject found)
         {
             return dict__.TryGetValue(s, out found);
         }
 
-        internal static void baredict_set(Dictionary<TrObject, TrObject> dict__, TrObject s, TrObject value)
+        public static void baredict_set(Dictionary<TrObject, TrObject> dict__, TrObject s, TrObject value)
         {
             dict__[s] = value;
         }
 
-        internal static TrObject object_pos(TrObject arg) => arg.__pos__();
+        public static TrObject object_pos(TrObject arg) => arg.__pos__();
 
-        internal static TrObject object_neg(TrObject arg) => arg.__neg__();
+        public static TrObject object_neg(TrObject arg) => arg.__neg__();
 
-        internal static TrObject object_not(TrObject arg) => MK.Bool(!arg.__bool__());
+        public static TrObject object_not(TrObject arg) => MK.Bool(!arg.__bool__());
 
-        internal static TrObject object_inv(TrObject arg) => arg.__inv__();
+        public static TrObject object_inv(TrObject arg) => arg.__inv__();
 
 
-        internal static bool isinstanceof_impl(TrObject o, TrClass cls)
+        public static bool isinstanceof_impl(TrObject o, TrClass cls)
         {
             if (o.Class == cls)
             {
@@ -200,7 +209,7 @@ namespace Traffy
             return false;
         }
 
-        internal static bool isinstanceof(TrObject o, TrObject cls)
+        public static bool isinstanceof(TrObject o, TrObject cls)
         {
             if (cls is TrTuple tuple)
             {
@@ -213,7 +222,7 @@ namespace Traffy
             throw new TypeError($"{cls.__repr__()} is not a class or a tuple or classes");
         }
 
-        internal static TrObject[] object_as_array(TrObject trObject)
+        public static TrObject[] object_as_array(TrObject trObject)
         {
             if (trObject is TrTuple tuple)
             {
@@ -229,109 +238,103 @@ namespace Traffy
             return res.ToArray();
         }
 
-        internal static void init_class(TrClass cls, TrClass newCls, TrStr name, TrTuple bases, TrDict ns)
-        {
-            // TODO
-            throw new NotImplementedException();
-        }
-
-        internal static TrObject object_lshift(TrObject arg1, TrObject arg2)
+        public static TrObject object_lshift(TrObject arg1, TrObject arg2)
         {
             return arg1.__lshift__(arg2);
         }
 
-        internal static TrObject object_rshift(TrObject arg1, TrObject arg2)
+        public static TrObject object_rshift(TrObject arg1, TrObject arg2)
         {
             return arg1.__rshift__(arg2);
         }
 
-        internal static TrObject object_bitand(TrObject arg1, TrObject arg2)
+        public static TrObject object_bitand(TrObject arg1, TrObject arg2)
         {
             return arg1.__bitand__(arg2);
         }
 
-        internal static TrObject object_bitor(TrObject arg1, TrObject arg2)
+        public static TrObject object_bitor(TrObject arg1, TrObject arg2)
         {
             return arg1.__bitor__(arg2);
         }
 
-        internal static TrObject object_bitxor(TrObject arg1, TrObject arg2)
+        public static TrObject object_bitxor(TrObject arg1, TrObject arg2)
         {
             return arg1.__bitxor__(arg2);
         }
 
-        internal static TrObject object_matmul(TrObject arg1, TrObject arg2)
+        public static TrObject object_matmul(TrObject arg1, TrObject arg2)
         {
             return arg1.__matmul__(arg2);
         }
 
-        internal static TrObject object_mod(TrObject arg1, TrObject arg2)
+        public static TrObject object_mod(TrObject arg1, TrObject arg2)
         {
             return arg1.__mod__(arg2);
         }
 
-        internal static TrObject object_pow(TrObject arg1, TrObject arg2)
+        public static TrObject object_pow(TrObject arg1, TrObject arg2)
         {
             return arg1.__pow__(arg2);
         }
 
-        internal static TrObject object_floordiv(TrObject arg1, TrObject arg2)
+        public static TrObject object_floordiv(TrObject arg1, TrObject arg2)
         {
             return arg1.__floordiv__(arg2);
         }
 
-        internal static TrObject object_truediv(TrObject arg1, TrObject arg2)
+        public static TrObject object_truediv(TrObject arg1, TrObject arg2)
         {
             return arg1.__truediv__(arg2);
         }
 
-        internal static TrObject object_mul(TrObject arg1, TrObject arg2)
+        public static TrObject object_mul(TrObject arg1, TrObject arg2)
         {
             return arg1.__mul__(arg2);
         }
 
-        internal static TrObject object_sub(TrObject arg1, TrObject arg2)
+        public static TrObject object_sub(TrObject arg1, TrObject arg2)
         {
             return arg1.__sub__(arg2);
         }
 
-        internal static TrObject object_add(TrObject arg1, TrObject arg2)
+        public static TrObject object_add(TrObject arg1, TrObject arg2)
         {
             return arg1.__add__(arg2);
         }
 
-        internal static TrObject object_getitem(TrObject tos, TrObject item)
+        public static TrObject object_getitem(TrObject tos, TrObject item)
         {
             if (tos.__getitem__(item, out var found))
                 return found;
             throw new KeyError(item);
         }
 
-        internal static void object_setitem(TrObject tos, TrObject item, TrObject value)
+        public static void object_setitem(TrObject tos, TrObject item, TrObject value)
         {
             tos.__setitem__(item, value);
         }
 
-        internal static void object_delitem(TrObject tos, TrObject item)
+        public static void object_delitem(TrObject tos, TrObject item)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_getattr(TrObject tos, string attr)
+        public static TrObject object_getattr(TrObject tos, string attr)
         {
             return object_getattr(tos, MK.Str(attr));
         }
 
 
-        internal static void object_setic(TrObject tos, InlineCache.IC ic, TrObject value)
+        public static void object_setic(TrObject tos, InlineCache.IC ic, TrObject value)
         {
             tos.__setic__(ic, value);
         }
 
-        internal static TrObject object_getic(TrObject tos, InlineCache.IC ic)
+        public static TrObject object_getic(TrObject tos, InlineCache.IC ic)
         {
             if (!tos.Class.InstanceUseInlineCache)
-                return object_getattr(tos, ic.Name);
+                return object_getattr(tos, ic.Name.Value);
 
             if (tos.__getic__(ic, out var o))
             {
@@ -343,7 +346,7 @@ namespace Traffy
         }
 
 
-        internal static TrObject object_getattr(TrObject tos, TrObject attr)
+        public static TrObject object_getattr(TrObject tos, TrObject attr)
         {
             var found = new TrRef();
             var o = tos.__getattr__(attr, found);
@@ -352,64 +355,56 @@ namespace Traffy
             return found.value;
         }
 
-        internal static void object_setattr(TrObject tos, string attr, TrObject value)
+        public static void object_setattr(TrObject tos, string attr, TrObject value)
         {
             tos.__setattr__(MK.Str(attr), value);
         }
 
-        internal static void object_setattr(TrObject tos, TrObject attr, TrObject value)
+        public static void object_setattr(TrObject tos, TrObject attr, TrObject value)
         {
             tos.__setattr__(attr, value);
         }
 
-        internal static void object_delattr(TrObject tos, string attr)
+        public static void object_delattr(TrObject tos, string attr)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_call(TrObject f, BList<TrObject> args) => f.__call__(args, null);
+        public static TrObject object_call(TrObject f, BList<TrObject> args) => f.__call__(args, null);
 
-        internal static TrObject object_eq(TrObject l, TrObject r) => MK.Bool(l.__eq__(r));
+        public static TrObject object_eq(TrObject l, TrObject r) => MK.Bool(l.__eq__(r));
 
-        internal static TrObject object_ne(TrObject l, TrObject r)
-        {
-            return MK.Bool(!(l.__eq__(r)));
-        }
+        public static TrObject object_ne(TrObject l, TrObject r) => MK.Bool(!(l.__ne__(r)));
 
-        internal static TrObject object_lt(TrObject l, TrObject r) => MK.Bool(l.__lt__(r));
+        public static TrObject object_lt(TrObject l, TrObject r) => MK.Bool(l.__lt__(r));
 
-        internal static TrObject object_le(TrObject l, TrObject r)
-        {
-            if (l.__lt__(r) || l.__eq__(r))
-                return MK.Bool(true);
-            return MK.Bool(false);
-        }
+        public static TrObject object_le(TrObject l, TrObject r) => MK.Bool(l.__le__(r));
 
-        internal static TrObject object_gt(TrObject l, TrObject r) => object_le(r, l);
+        public static TrObject object_gt(TrObject l, TrObject r) => MK.Bool(l.__gt__(r));
 
-        internal static TrObject object_ge(TrObject l, TrObject r) => object_lt(r, l);
+        public static TrObject object_ge(TrObject l, TrObject r) => MK.Bool(l.__ge__(r));
 
-        internal static TrObject object_from_bool(bool v) => MK.Bool(v);
+        public static TrObject object_from_bool(bool v) => MK.Bool(v);
 
-        internal static bool object_contains(TrObject r, TrObject l) => r.__contains__(l);
+        public static bool object_contains(TrObject r, TrObject l) => r.__contains__(l);
 
-        internal static TrObject object_from_int(int v) => MK.Int(v);
-        internal static TrObject object_from_int(Int64 v) => MK.Int(v);
+        public static TrObject object_from_int(int v) => MK.Int(v);
+        public static TrObject object_from_int(Int64 v) => MK.Int(v);
 
-        internal static TrObject object_from_float(float v) => MK.Float(v);
-        internal static TrObject object_none => TrNone.Unique;
+        public static TrObject object_from_float(float v) => MK.Float(v);
+        public static TrObject object_none => TrNone.Unique;
 
-        internal static TrObject object_from_string(string result) => MK.Str(result);
+        public static TrObject object_from_string(string result) => MK.Str(result);
 
-        internal static TrObject tuple_construct(TrObject[] array) => MK.Tuple(array);
+        public static TrObject tuple_construct(TrObject[] array) => MK.Tuple(array);
 
         internal static bool object_bool(TrObject trObject)
         {
             return trObject.__bool__();
         }
 
-        public static IEqualityComparer<TrObject> DICT_COMPARE = new TraffyComparer();
-        internal static Dictionary<TrObject, TrObject> baredict_create() => new Dictionary<TrObject, TrObject>(DICT_COMPARE);
+        public static IEqualityComparer<TrObject> DICT_COMPARER = new TraffyComparer();
+        internal static Dictionary<TrObject, TrObject> baredict_create() => new Dictionary<TrObject, TrObject>(DICT_COMPARER);
 
         internal static void baredict_extend(Dictionary<TrObject, TrObject> dict, TrObject other)
         {
@@ -442,22 +437,22 @@ namespace Traffy
             }
         }
 
-        internal static void baredict_add(Dictionary<TrObject, TrObject> dict, TrObject rt_key, TrObject rt_value)
+        public static void baredict_add(Dictionary<TrObject, TrObject> dict, TrObject rt_key, TrObject rt_value)
         {
             dict.Add(rt_key, rt_value);
         }
 
-        internal static TrObject object_from_baredict(Dictionary<TrObject, TrObject> dict)
+        public static TrObject object_from_baredict(Dictionary<TrObject, TrObject> dict)
         {
             return MK.Dict(dict);
         }
 
-        internal static List<TrObject> barelist_create()
+        public static List<TrObject> barelist_create()
         {
             return new List<TrObject>();
         }
 
-        internal static void barelist_extend(List<TrObject> lst, TrObject rt_seq)
+        public static void barelist_extend(List<TrObject> lst, TrObject rt_seq)
         {
             var itr = rt_seq.__iter__();
             while (itr.MoveNext())
@@ -466,27 +461,27 @@ namespace Traffy
             }
         }
 
-        internal static void barelist_add(List<TrObject> lst, TrObject rt_each)
+        public static void barelist_add(List<TrObject> lst, TrObject rt_each)
         {
             lst.Add(rt_each);
         }
 
-        internal static TrObject object_from_barelist(List<TrObject> lst)
+        public static TrObject object_from_barelist(List<TrObject> lst)
         {
             return MK.List(lst);
         }
 
-        internal static TrObject object_from_barearray(TrObject[] trObjects)
+        public static TrObject object_from_barearray(TrObject[] trObjects)
         {
             return MK.Tuple(trObjects);
         }
 
-        internal static HashSet<TrObject> bareset_create()
+        public static HashSet<TrObject> bareset_create()
         {
-            return new HashSet<TrObject>(DICT_COMPARE);
+            return new HashSet<TrObject>(DICT_COMPARER);
         }
 
-        internal static void bareset_extend(HashSet<TrObject> set, TrObject rt_each)
+        public static void bareset_extend(HashSet<TrObject> set, TrObject rt_each)
         {
             var itr = rt_each.__iter__();
             while (itr.MoveNext())
@@ -495,17 +490,17 @@ namespace Traffy
             }
         }
 
-        internal static void bareset_add(HashSet<TrObject> set, TrObject rt_each)
+        public static void bareset_add(HashSet<TrObject> set, TrObject rt_each)
         {
             set.Add(rt_each);
         }
 
-        internal static TrObject object_from_bareset(HashSet<TrObject> set)
+        public static TrObject object_from_bareset(HashSet<TrObject> set)
         {
             return MK.Set(set);
         }
 
-        internal static bool exc_check_instance(Exception e, TrObject rt_exc)
+        public static bool exc_check_instance(Exception e, TrObject rt_exc)
         {
             if (e is TrObject obj)
             {
@@ -521,14 +516,14 @@ namespace Traffy
             }
         }
 
-        internal static TrExceptionBase exc_frombare(Exception e)
+        public static TrExceptionBase exc_frombare(Exception e)
         {
             if (e is TrExceptionBase o)
                 return o;
             return new NativeError(e);
         }
 
-        internal static Exception exc_tobare(TrObject rt_exc)
+        public static Exception exc_tobare(TrObject rt_exc)
         {
             if (rt_exc is NativeError native)
             {
@@ -550,7 +545,7 @@ namespace Traffy
             return TrNone.Unique;
         }
 
-        internal static MonoAsync<TrObject> coroutine_of_iter(IEnumerator<TrObject> o)
+        public static MonoAsync<TrObject> coroutine_of_iter(IEnumerator<TrObject> o)
         {
             if (o is TrCoroutine coro)
             {
@@ -558,13 +553,13 @@ namespace Traffy
             }
             return coroutine_of_object_mkCont0(o);
         }
-        internal static MonoAsync<TrObject> coroutine_of_object(TrObject rt_value)
+        public static MonoAsync<TrObject> coroutine_of_object(TrObject rt_value)
         {
             var o = rt_value.__iter__();
             return coroutine_of_iter(o);
         }
 
-        internal static TrClass class_new(string name, TrObject[] rt_bases, Dictionary<TrObject, TrObject> ns)
+        public static TrClass new_class(string name, TrObject[] rt_bases, Dictionary<TrObject, TrObject> ns)
         {
             var cls = TrClass.CreateClass(name, rt_bases.Select(x => (TrClass)x).ToArray());
             cls.Name = name;
@@ -579,20 +574,20 @@ namespace Traffy
             return cls;
         }
 
-        internal static TrObject object_of_coroutine(MonoAsync<TrObject> rt_value)
+        public static TrObject object_of_coroutine(MonoAsync<TrObject> rt_value)
         {
 
             return TrCoroutine.Create(rt_value);
         }
 
-        internal static TrObject object_of_iter(MonoAsync<TrObject> rt_value)
+        public static TrObject object_of_iter(MonoAsync<TrObject> rt_value)
         {
 
             return TrCoroutine.Create(rt_value);
         }
 
 
-        internal static TrObject object_call_ex(TrObject rt_func, BList<TrObject> rt_args, Dictionary<TrObject, TrObject> rt_kwargs)
+        public static TrObject object_call_ex(TrObject rt_func, BList<TrObject> rt_args, Dictionary<TrObject, TrObject> rt_kwargs)
         {
             return rt_func.__call__(rt_args, rt_kwargs);
         }
@@ -601,111 +596,108 @@ namespace Traffy
     public static class MK
     {
 
-        internal static TrBool Bool(bool v)
+        public static TrBool Bool(bool v)
         {
             if (v)
                 return TrBool.TrBool_True;
             return TrBool.TrBool_False;
         }
 
-        internal static TrDict Dict(Dictionary<TrObject, TrObject> v)
+        public static TrDict Dict(Dictionary<TrObject, TrObject> v)
         {
             return new TrDict { container = v };
         }
 
-        internal static TrDict Dict()
+        public static TrDict Dict()
         {
             return new TrDict { container = RTS.baredict_create() };
         }
 
-        internal static TrFloat Float(float v)
+        public static TrFloat Float(float v)
         {
             return new TrFloat { value = v };
         }
 
-        internal static TrInt Int(long p)
+        public static TrInt Int(long p)
         {
             return new TrInt { value = p };
         }
 
-        internal static TrInt Int(ulong p)
+        public static TrInt Int(ulong p)
         {
             return new TrInt { value = unchecked((long)p) };
         }
-        internal static TrInt Int(int p)
+        public static TrInt Int(int p)
         {
             return new TrInt { value = unchecked((long)p) };
         }
 
-        internal static TrInt Int(bool p)
+        public static TrInt Int(bool p)
         {
             return new TrInt { value = p ? 1L : 0L };
         }
 
-        internal static TrList List(List<TrObject> trObjects)
+        public static TrList List(List<TrObject> trObjects)
         {
             return new TrList { container = trObjects };
         }
 
-        internal static TrList List()
+        public static TrList List()
         {
             return new TrList { container = RTS.barelist_create() };
         }
 
-        internal static TrNone None()
+        public static TrNone None()
         {
             return TrNone.Unique;
         }
 
-        internal static TrRef Ref()
+        public static TrRef Ref()
         {
             return new TrRef { value = null };
         }
 
-        internal static TrRef Ref(TrObject v)
+        public static TrRef Ref(TrObject v)
         {
             return new TrRef { value = v };
         }
 
-        internal static TrSet Set()
+        public static TrSet Set()
         {
             return new TrSet { container = RTS.bareset_create() };
         }
 
-        internal static TrSet Set(HashSet<TrObject> hashset)
+        public static TrSet Set(HashSet<TrObject> hashset)
         {
             return new TrSet { container = hashset };
         }
 
-        internal static TrStr Str(string v)
-        {
-            return new TrStr { value = v };
-        }
+        public static TrStr Str(string v) => new TrStr { value = v };
 
-        internal static TrStr Str(InternedString v)
-        {
-            return new TrStr { value = v, isInterned = true };
-        }
+        public static TrStr Str(InternedString v) => new TrStr { value = v.Value, isInterned = true };
 
-        internal static TrStr IStr(string v)
-        {
-            return new TrStr { value = String.Intern(v), isInterned = true };
-        }
+        public static TrStr IStr(string v) => new TrStr { value = String.Intern(v), isInterned = true };
 
-        internal static TrTuple Tuple(TrObject[] trObjects)
+
+        static byte[] _zerobytes = new byte[0];
+
+        public static TrByteArray ByteArray(List<byte> v) => new TrByteArray { contents = v };
+        public static TrByteArray ByteArray() => new TrByteArray { contents = new List<byte>() };
+
+        public static TrBytes Bytes(byte[] v) => new TrBytes { contents = v };
+        public static TrBytes Bytes() => new TrBytes { contents = _zerobytes };
+
+        public static TrTuple Tuple(TrObject[] trObjects)
         {
             return new TrTuple { elts = trObjects };
         }
 
         static TrObject[] _zeroelts = new TrObject[0];
-        internal static TrTuple Tuple()
-        {
-            return new TrTuple { elts = _zeroelts };
-        }
+        public static TrTuple Tuple() => new TrTuple { elts = _zeroelts };
 
-        internal static TrObject Iter(IEnumerator<TrObject> v)
+        public static TrObject Iter(IEnumerator<TrObject> v)
         {
-            if(v is TrCoroutine coro)
+            if (v is TrCoroutine coro)
             {
                 return coro;
             }
@@ -717,77 +709,77 @@ namespace Traffy
         }
 
 
-        internal static TrObject object_imod(TrObject arg1, TrObject arg2)
+        public static TrObject object_imod(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_imatmul(TrObject arg1, TrObject arg2)
+        public static TrObject object_imatmul(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_ibitxor(TrObject arg1, TrObject arg2)
+        public static TrObject object_ibitxor(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_ibitor(TrObject arg1, TrObject arg2)
+        public static TrObject object_ibitor(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_ibitand(TrObject arg1, TrObject arg2)
+        public static TrObject object_ibitand(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_irshift(TrObject arg1, TrObject arg2)
+        public static TrObject object_irshift(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_ilshift(TrObject arg1, TrObject arg2)
+        public static TrObject object_ilshift(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_ipow(TrObject arg1, TrObject arg2)
+        public static TrObject object_ipow(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_ifloordiv(TrObject arg1, TrObject arg2)
+        public static TrObject object_ifloordiv(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_itruediv(TrObject arg1, TrObject arg2)
+        public static TrObject object_itruediv(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_imul(TrObject arg1, TrObject arg2)
+        public static TrObject object_imul(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_isub(TrObject arg1, TrObject arg2)
+        public static TrObject object_isub(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrObject object_iadd(TrObject arg1, TrObject arg2)
+        public static TrObject object_iadd(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
         }
 
-        internal static TrRawObject RawObject()
+        public static TrRawObject RawObject()
         {
             return new TrRawObject { };
         }
 
-        internal static TrUserObject UserObject(TrClass cls)
+        public static TrUserObject UserObject(TrClass cls)
         {
             return new TrUserObject(cls);
         }

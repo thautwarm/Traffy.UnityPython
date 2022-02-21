@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using InlineHelper;
 
 namespace Traffy.Objects
 {
@@ -30,6 +31,63 @@ namespace Traffy.Objects
             InternedString.Unsafe(this.value) :
             InternedString.FromString(value);
 
+        public int __hash__() => value.GetHashCode();
+
+        bool TrObject.__le__(TrObject other)
+        {
+            if (!(other is TrStr b))
+            {
+                throw new TypeError($"unsupported operand type(s) for <=: '{CLASS.Name}' and '{other.Class.Name}'");
+            }
+            return value.Inline().SeqLtE<FString, FString, char>(b.value, out var _);
+        }
+        bool TrObject.__lt__(TrObject other)
+        {
+            if (!(other is TrStr b))
+            {
+                throw new TypeError($"unsupported operand type(s) for <: '{CLASS.Name}' and '{other.Class.Name}'");
+            }
+            return value.Inline().SeqLt<FString, FString, char>(b.value);
+        }
+
+        bool  TrObject.__gt__(TrObject other)
+        {
+            if (!(other is TrStr b))
+            {
+                throw new TypeError($"unsupported operand type(s) for >: '{CLASS.Name}' and '{other.Class.Name}'");
+            }
+            return value.Inline().SeqGt<FString, FString, char>(b.value);
+        }
+
+
+        bool  TrObject.__ge__(TrObject other)
+        {
+            if (!(other is TrStr b))
+            {
+                throw new TypeError($"unsupported operand type(s) for >=: '{CLASS.Name}' and '{other.Class.Name}'");
+            }
+            return value.Inline().SeqLtE<FString, FString, char>(b.value, out var _);
+        }
+
+
+        bool  TrObject.__ne__(TrObject other)
+        {
+            if (!(other is TrStr b))
+            {
+                throw new TypeError($"unsupported operand type(s) for !=: '{CLASS.Name}' and '{other.Class.Name}'");
+            }
+            return value.Inline().SeqNe<FString, FString, char>(b.value);
+        }
+
+        bool TrObject.__eq__(TrObject other)
+        {
+            if (!(other is TrStr b))
+            {
+                throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
+            }
+            return value.Inline().SeqEq<FString, FString, char>(b.value);
+        }
+
         [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
@@ -53,8 +111,8 @@ namespace Traffy.Objects
 
         public TrObject __add__(TrObject other)
         {
-            if (other is TrStr)
-                return MK.Str(value + ((TrStr)other).value);
+            if (other is TrStr s)
+                return MK.Str(value + s.value);
             throw new TypeError($"unsupported operand type(s) for +: '{CLASS.Name}' and '{other.Class.Name}'");
         }
 
@@ -67,20 +125,8 @@ namespace Traffy.Objects
                     : s.value == value);
         }
 
-        public bool __lt__(TrObject other)
-        {
-            return other is TrStr s && value.SequenceLessThan(s.value);
-        }
 
-        public bool __le__(TrObject other)
-        {
-            return other is TrStr s && value.SequenceLessEqualThan(s.value);
-        }
 
-        public int __hash__()
-        {
-            return value.GetHashCode();
-        }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

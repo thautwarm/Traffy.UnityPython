@@ -130,9 +130,12 @@ class TrTuple(object):
 class TrBool(object):
     value: bool
 
+@dataclass
+class TrBytes(object):
+    value: str
 
 if typing.TYPE_CHECKING:
-    TrObject = typing.Union[TrInt, TrFloat, TrStr, TrTuple, TrNone, TrBool]
+    TrObject = typing.Union[TrInt, TrFloat, TrStr, TrTuple, TrNone, TrBool, TrBytes]
 else:
     TrObject = (TrInt, TrFloat, TrStr, TrTuple, TrNone)
 

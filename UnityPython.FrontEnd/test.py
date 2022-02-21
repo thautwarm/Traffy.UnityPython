@@ -1,4 +1,6 @@
 import cProfile, pstats, io
+from functools import total_ordering
+from typing import SupportsRound, Type, TypeGuard, TypeVar
 pr = cProfile.Profile()
 pr.enable()
 
@@ -28,3 +30,13 @@ ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
 ps.print_stats()
 with open("report.txt", 'w', encoding='utf-8') as file:
     file.write(s.getvalue())
+@total_ordering
+class S:
+    def __le__(self, a):
+        return False
+    def __eq__(self, __o: object):
+        pass
+
+a = S()
+a <= 5
+

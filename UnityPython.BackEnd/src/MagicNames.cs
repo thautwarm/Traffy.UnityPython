@@ -36,8 +36,13 @@ namespace Traffy
         public static TrStr s_setattr = MK.Str("__setattr__");
         public static TrStr s_iter = MK.Str("__iter__");
         public static TrStr s_len = MK.Str("__len__");
+
         public static TrStr s_eq = MK.Str("__eq__");
+        public static TrStr s_ne = MK.Str("__ne__");
         public static TrStr s_lt = MK.Str("__lt__");
+        public static TrStr s_le = MK.Str("__le__");
+        public static TrStr s_gt = MK.Str("__gt__");
+        public static TrStr s_ge = MK.Str("__ge__");
 
         public static InternedString i___init__ = InternedString.FromString("__init__");
         public static InternedString i___new__ = InternedString.FromString("__new__");
@@ -71,58 +76,14 @@ namespace Traffy
         public static InternedString i___iter__ = InternedString.FromString("__iter__");
         public static InternedString i___len__ = InternedString.FromString("__len__");
         public static InternedString i___eq__ = InternedString.FromString("__eq__");
+        // Since Python 3.7, '__ne__' delegates automatically to __eq__.
+        public static InternedString i___ne__ = InternedString.FromString("__ne__");
         public static InternedString i___lt__ = InternedString.FromString("__lt__");
+        public static InternedString i___le__ = InternedString.FromString("__le__");
+        public static InternedString i___gt__ = InternedString.FromString("__gt__");
+        public static InternedString i___ge__ = InternedString.FromString("__ge__");
 
         public static InternedString i___init_subclass__ = InternedString.FromString("__init_subclass__");
-
-        // a collection of all 'i__xxx__'
-        public static readonly InternedString[] istr_magic_names = new InternedString[] {
-              i___init__,
-              i___new__,
-              i___neg__,
-              i___inv__,
-              i___pos__,
-              i___bool__,
-              i___str__,
-              i___repr__,
-              i___floordiv__,
-              i___add__,
-              i___next__,
-              i___sub__,
-              i___mul__,
-              i___matmul__,
-              i___truediv__,
-              i___pow__,
-              i___mod__,
-              i___bitand__,
-              i___bitor__,
-              i___bitxor__,
-              i___lshift__,
-              i___rshift__,
-              i___hash__,
-              i___contains__,
-              i___call__,
-              i___getitem__,
-              i___setitem__,
-              i___getattr__,
-              i___setattr__,
-              i___iter__,
-              i___len__,
-              i___eq__,
-              i___lt__,
-          };
-
-        // index of the first 'i__xxx__'
-        public static int
-            slot__init = 0, slot__new = 1, slot__neg = 2, slot__inv = 3, slot__pos = 4, slot__bool = 5,
-            slot__str = 6, slot__repr = 7, slot__floordiv = 8, slot__add = 9, slot__next = 10,
-            slot__sub = 11, slot__mul = 12, slot__matmul = 13, slot__truediv = 14, slot__pow = 15,
-            slot__mod = 16, slot__bitand = 17, slot__bitor = 18, slot__bitxor = 19, slot__lshift = 20,
-            slot__rshift = 21, slot__hash = 22, slot__contains = 23, slot__call = 24, slot__getitem = 25,
-            slot__setitem = 26, slot__getattr = 27, slot__setattr = 28, slot__iter = 29, slot__len = 30,
-            slot__eq = 31, slot__lt = 32;
-
-
 
     }
 }

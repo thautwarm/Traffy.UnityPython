@@ -88,16 +88,57 @@ z = c.send(None, x := ref())
 # print(co.send(None))
 # co.send(3)
 
-class S:
-    def __init__(self, x: int, y: int):
-        self.x = x
-        self.y = y
-    def __repr__(self):
-        return "S" + "(" + str(self.x) + ", " + str(self.y) + ")"
-
-a = S(1, 2)
-
-print(a)
+def __init__(self, x: int, y: int):
+    self.x = x
+    self.y = y
+def __repr__(self):
+    return "S" + "(" + str(self.x) + ", " + str(self.y) + ")"
 
 
-z = 1.0 == 2.0
+
+objs = []
+
+S = type("S", (object,), {"__init__": __init__, "__repr__": __repr__})
+# objs.append(S(i, i * 2))
+
+
+def bench(o):
+    i = 0
+    k = 0
+    while i < 10000000:
+        k = o.x
+        k = o.y
+        k = o.x
+        k = o.y
+        i += 1
+    return k
+
+a = time()
+xs = test2()
+print("value", xs)
+print("time1", time() - a)
+
+a = time()
+k = bench(S(1, 2))
+print("value", k)
+print("time1", time() - a)
+
+a = time()
+k = bench(S(1, 2))
+print("value", k)
+print("time1", time() - a)
+
+
+# a = time()
+# xs = test2()
+# print("value", xs)
+# print("time1", time() - a)
+
+
+
+# print(a)
+
+# MyCls = type("MyCls", (object,), {})
+# print(MyCls())
+
+
