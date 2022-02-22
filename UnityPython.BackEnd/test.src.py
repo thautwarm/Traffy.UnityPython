@@ -183,3 +183,9 @@ print("time1", time() - a)
 # print(MyCls())
 
 
+print([1, 2, 3].__str__())
+print(str([1, 2, 3]))
+print(str([]))
+print([1, 2, 3])
+print(list().__repr__())
+print([1, 2, 3].__repr__())
