@@ -21,7 +21,7 @@ namespace Traffy
                 case 2:
                     return MK.Iter(mkrange(args[0].AsInt(),  args[1].AsInt(), 1));
                 case 3:
-                    return MK.Iter(mkrange(args[0].AsInt(),  args[1].AsInt(), args[1].AsInt()));
+                    return MK.Iter(mkrange(args[0].AsInt(),  args[1].AsInt(), args[2].AsInt()));
                 default:
                     throw new TypeError($"range() takes 1 to 3 positional argument(s) but {narg} were given");
             }
