@@ -64,11 +64,6 @@ public static class Utils
         return xs;
     }
 
-    public static Cmp Compare<T>(this T a, T b) where T : IComparable<T>
-    {
-        return a.CompareTo(b) < 0 ? Cmp.LT : a.CompareTo(b) > 0 ? Cmp.GT : Cmp.EQ;
-    }
-
     public static int ByteSequenceHash<TList>(this TList xs, int seed, int primSeed) where TList : IList<byte>
     {
         unchecked

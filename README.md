@@ -36,3 +36,37 @@ Basic development workflow:
 3. `dotnet restore`
 4. `unitypython.exe test.src.py --includesrc && dotnet run`
 5. edit code and run `unitypython.exe test.src.py --includesrc && dotnet run` again
+
+### How to add a method to datatypes?
+
+For example, if we want to implement `append` for `list`,
+- we firstly get to `UnityPython.BackEnd/src/Traffy.Objects/List.cs`
+- then we find the method annotated with `[Mark(Initialization.TokenClassInit)]`
+- see the code
+
+  ```c#
+    public static TrObject append(TrObject self, TrObject value)
+    {
+        ((TrList)self).container.Add(value);
+        return RTS.object_none; // RTS = runtime support
+    }
+
+   [Mark(Initialization.TokenClassInit)]
+    static void _Init()
+    {
+        CLASS = TrClass.FromPrototype<TrList>();
+        CLASS.Name = "list";
+        CLASS.InitInlineCacheForMagicMethods();
+        CLASS[CLASS.ic__new] = TrStaticMethod.Bind("list.__new__", TrList.datanew);
+
+        // 1. 'TrSharpFunc.FromFunc' converts a CSharp function to UnityPython 'builtin_function'
+        // 2. 'CLASS["somemethod".ToIntern()] = python-object' is equal to something like
+        //      class list:
+        //         somemethod = expr
+        CLASS["append".ToIntern()] = TrSharpFunc.FromFunc("list.append", TrList.append);
+        ...
+    }
+  ```
+
+  `TrSharpFunc.FromFunc` creates a method, `TrStaticMethod.Bind` creates a `staticmethod`, `TrClassMethod.Bind` creates a class method,
+  `TrProperty.Create(getter=null, setter=null)` creates a property.
