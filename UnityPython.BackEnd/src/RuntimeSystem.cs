@@ -713,6 +713,11 @@ namespace Traffy
             return new TrMapObject(func, iter);
         }
 
+        public static TrObject Filter(TrObject func, IEnumerator<TrObject> iter)
+        {
+            return new TrFilter(func, iter);
+        }
+
         public static TrObject object_imod(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();
