@@ -20,6 +20,8 @@ namespace Traffy.Objects
 
     public partial interface TrObject : IEquatable<TrObject>, IComparable<TrObject>
     {
+        public static TrObject[] EmptyObjectArray = new TrObject[0];
+
         bool IEquatable<TrObject>.Equals(TrObject other)
         {
             return __eq__(other);
@@ -32,7 +34,7 @@ namespace Traffy.Objects
         }
         public TrClass AsClass => (TrClass)this;
         public bool IsClass => false;
-        public List<TrObject> __array__ { get; }
+        public List<TrObject> __array__ => null;
         public object Native => this;
         public TrClass Class { get; }
         Exception unsupported(string op) =>
@@ -285,8 +287,6 @@ namespace Traffy.Objects
         internal static TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
-
         [Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
@@ -322,7 +322,6 @@ namespace Traffy.Objects
         TrClass TrObject.Class => CLASS;
 
         List<TrObject> TrObject.__array__ { get; } = new List<TrObject>();
-
         public TrUserObject(TrClass cls)
         {
             CLASS = cls;

@@ -7,10 +7,9 @@ import dataclasses
 import typing
 
 
-
-
 if typing.TYPE_CHECKING:
     import typing_extensions
+
     class TraffyIR(typing_extensions.Protocol):
         hasCont: bool
 
@@ -105,6 +104,7 @@ class OpBin(IntEnum):
 class TrInt(object):
     value: int
 
+
 @dataclass
 class TrFloat(object):
     value: float
@@ -130,12 +130,15 @@ class TrTuple(object):
 class TrBool(object):
     value: bool
 
+
 @dataclass
 class TrBytes(object):
     value: str
 
+
 if typing.TYPE_CHECKING:
-    TrObject = typing.Union[TrInt, TrFloat, TrStr, TrTuple, TrNone, TrBool, TrBytes]
+    TrObject = typing.Union[TrInt, TrFloat,
+                            TrStr, TrTuple, TrNone, TrBool, TrBytes]
 else:
     TrObject = (TrInt, TrFloat, TrStr, TrTuple, TrNone)
 
@@ -203,6 +206,7 @@ class ForIn(TraffyIR):
 class IfClause(object):
     cond: TraffyIR
     body: TraffyIR
+
 
 @dataclass
 class DefClass(object):
@@ -467,6 +471,13 @@ class LocalVar(TraffyIR):
 
 
 @dataclass
+class FreeVar(TraffyIR):
+    position: int
+    slot: int
+    hasCont = False
+
+
+@dataclass
 class GlobalVar(TraffyIR):
     position: int
     name: TrObject
@@ -491,6 +502,12 @@ class StoreList(TraffyLHS):
 
 @dataclass
 class StoreLocal(TraffyLHS):
+    slot: int
+    hasCont = False
+
+
+@dataclass
+class StoreFree(TraffyLHS):
     slot: int
     hasCont = False
 
@@ -549,6 +566,7 @@ class Span(object):
     def empty() -> Span:
         return Span(Position(1, 0), Position(1, 0))
 
+
 @dataclass
 class Metadata(object):
     localnames: list[str]
@@ -561,7 +579,7 @@ class Metadata(object):
     positions: InitVar[list[tuple[int, int]]] = []
     spanPointers: InitVar[list[tuple[int, int]]] = []
     def __post_init__(self, positions: list[tuple[int, int]], span_pointers: list
-    [tuple[int, int]]):
+                      [tuple[int, int]]):
         # print(list(map(tuple, positions)))
         self.compressedPositions = encode_int(positions)
         # print(self.compressedPositions)
@@ -570,9 +588,10 @@ class Metadata(object):
         # assert decode_int(self.compressedSpanPointers, lambda x, y: (x, y)) == span_pointers
 
 
-__cache_type_dict = { }
+__cache_type_dict = {}
 __prim_types = (int, float, str, bool, type(None))
 __seq_types = (list, tuple, set, frozenset)
+
 
 def fast_asdict(o):
     if isinstance(o, __seq_types):
@@ -585,8 +604,10 @@ def fast_asdict(o):
         pass
     else:
         cls = o.__class__
-        assert dataclasses.is_dataclass(cls), f"cannot serialize {cls} object: not a dataclass."
-        lookuptype = cls.__name__, [field.name for field in dataclasses.fields(cls) ]
+        assert dataclasses.is_dataclass(
+            cls), f"cannot serialize {cls} object: not a dataclass."
+        lookuptype = cls.__name__, [
+            field.name for field in dataclasses.fields(cls)]
         __cache_type_dict[cls] = lookuptype
     tname, fields = lookuptype
     res = {"$type": tname}

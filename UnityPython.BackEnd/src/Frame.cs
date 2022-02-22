@@ -242,16 +242,20 @@ namespace Traffy
     }
     public class Frame
     {
+        public STATUS CONT;
+        int __pad;
         public TrFunc func;
         public Exception err;
         public Variable[] localvars;
-        public STATUS CONT;
+        public Variable[] freevars;
         public TrObject retval;
         public Stack<int> traceback;
         public Stack<int> marked;
 
-        public static Frame UnsafeMake() => new Frame
+        public static Frame UnsafeMake(TrFunc func) => new Frame
         {
+            func = func,
+            freevars = func.freevars,
             retval = RTS.object_none,
             traceback = new Stack<int>(),
             marked = new Stack<int>()
@@ -260,6 +264,7 @@ namespace Traffy
         public static Frame Make(TrFunc func, Variable[] localvars) => new Frame
         {
             func = func,
+            freevars = func.freevars,
             localvars = localvars,
             retval = RTS.object_none,
             traceback = new Stack<int>(),
@@ -279,23 +284,28 @@ namespace Traffy
             throw new NotImplementedException();
         }
 
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         internal void store_local(int operand, TrObject o)
         {
-            if (operand < 0)
-            {
-                func.freevars[-operand - 1].Value = o;
-                return;
-            }
             localvars[operand].Value = o;
         }
 
+        [MethodImpl(MethodImplOptionsCompat.Best)]
+        internal void store_free(int operand, TrObject o)
+        {
+            freevars[operand].Value = o;
+        }
+
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         internal TrObject load_local(int operand)
         {
-            if (operand < 0)
-            {
-                return func.freevars[-operand - 1].Value;
-            }
             return localvars[operand].Value;
+        }
+
+        [MethodImpl(MethodImplOptionsCompat.Best)]
+        internal TrObject load_free(int operand)
+        {
+            return freevars[operand].Value;
         }
 
         internal void delete_global(TrObject v)

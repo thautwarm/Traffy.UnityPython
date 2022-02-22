@@ -326,12 +326,12 @@ namespace Traffy
         }
 
 
-        public static void object_setic(TrObject tos, InlineCache.IC ic, TrObject value)
+        public static void object_setic(TrObject tos, InlineCache.PolyIC ic, TrObject value)
         {
             tos.__setic__(ic, value);
         }
 
-        public static TrObject object_getic(TrObject tos, InlineCache.IC ic)
+        public static TrObject object_getic(TrObject tos, InlineCache.PolyIC ic)
         {
             if (!tos.Class.InstanceUseInlineCache)
                 return object_getattr(tos, ic.Name.Value);

@@ -585,7 +585,7 @@ namespace Traffy.Asm
                 throw new InvalidOperationException("class body must be a user function");
             }
             var localnames = ufunc.fptr.metadata.localnames;
-            var subframe = Frame.UnsafeMake();
+            var subframe = Frame.UnsafeMake(ufunc);
             ufunc.Execute(new BList<TrObject>(), null, subframe);
             var ns = RTS.baredict_create();
             for(int i = 0; i < localnames.Length; i++)
@@ -611,7 +611,7 @@ namespace Traffy.Asm
                 throw new InvalidOperationException("class body must be a user function");
             }
             var localnames = ufunc.fptr.metadata.localnames;
-            var subframe = Frame.UnsafeMake();
+            var subframe = Frame.UnsafeMake(ufunc);
             ufunc.Execute(new BList<TrObject>(), null, subframe);
             var ns = RTS.baredict_create();
             for (int i = 0; i < localnames.Length; i++)

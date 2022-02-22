@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Traffy.InlineCache;
 
 namespace Traffy.Objects
@@ -6,7 +9,7 @@ namespace Traffy.Objects
     public partial interface TrObject
     {
 
-        public TrObject this[IC ic]
+        public TrObject this[PolyIC ic]
         {
             get => __getic__(ic, out var ob) ? ob : null;
             set => __setic__(ic, value);
@@ -17,16 +20,16 @@ namespace Traffy.Objects
             set => __setic__(s, value);
         }
 
-        public bool __getic__(IC ic, out TrObject found) =>
+        public bool __getic__(PolyIC ic, out TrObject found) =>
             ic.ReadInst(this, out found);
-        public void __setic__(IC ic, TrObject value) =>
+        public void __setic__(PolyIC ic, TrObject value) =>
             ic.WriteInst(this, value);
 
         public bool __getic__(string s, out TrObject found) =>
-            IC.ReadInst(this, s, out found);
+            PolyIC.ReadInst(this, s, out found);
 
         public void __setic__(string s, TrObject value) =>
-            IC.WriteInst(this, s, value);
+            PolyIC.WriteInst(this, s, value);
 
 
         public TrObject GetInstField(int FieldIndex, string name)
@@ -35,20 +38,68 @@ namespace Traffy.Objects
                 throw new AttributeError(this, MK.Str(name), $"{Class.Name} has no attribute {name}");
             return __array__[FieldIndex];
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetInstField(int FieldIndex, string name, TrObject value)
         {
-            if (__array__ == null)
+            var array = __array__;
+            if (null == (object)array)
                 throw new AttributeError(this, MK.Str(name), $"object {Class.Name} has no attribute {name}");
 
-            if (FieldIndex < __array__.Count)
+            if (FieldIndex < array.Count)
             {
-                __array__[FieldIndex] = value;
+                array[FieldIndex] = value;
             }
             else
             {
-                for (int j = __array__.Count; j < FieldIndex + 1; j++)
-                    __array__.Add(null);
-                __array__[FieldIndex] = value;
+                for (int j = array.Count; j < FieldIndex + 1; j++)
+                    array.Add(null);
+                array[FieldIndex] = value;
+            }
+        }
+
+
+        [MethodImpl(MethodImplOptionsCompat.Best)]
+        public bool ReadInst(Shape shape, out TrObject ob)
+        {
+            switch (shape.Kind)
+            {
+                case AttributeKind.InstField:
+                    {
+
+                        List<TrObject> array = __array__;
+#if DEBUG
+                        Debug.Assert(array != null);
+#endif
+                        if (shape.FieldIndex < array.Count
+                            && null != (object)(ob = array[shape.FieldIndex]))
+                        {
+                            return true;
+                        }
+                        ob = null;
+                        return false;
+                    }
+
+                case AttributeKind.Property:
+                    ob = shape.Property.Get(this);
+                    return true;
+                case AttributeKind.Method:
+                    {
+                        var func = shape.MethodOrClassFieldOrClassMethod;
+                        ob = TrSharpMethod.Bind(func, this);
+                        return true;
+                    }
+                case AttributeKind.ClassField:
+                    ob = shape.MethodOrClassFieldOrClassMethod;
+                    return true;
+                case AttributeKind.ClassMethod:
+                    {
+                        var func = shape.MethodOrClassFieldOrClassMethod;
+                        ob = TrSharpMethod.Bind(func, Class);
+                        return true;
+                    }
+                default:
+                    throw new System.Exception("unexpected kind");
             }
         }
     }

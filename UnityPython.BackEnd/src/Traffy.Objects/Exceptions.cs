@@ -182,8 +182,8 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ { get; } = new List<TrObject>(3);
 
-        static InlineCache.PolyIC_Inst CacheName = new InlineCache.PolyIC_Inst("name".ToIntern());
-        static InlineCache.PolyIC_Inst CacheObj = new InlineCache.PolyIC_Inst("obj".ToIntern());
+        static InlineCache.PolyIC CacheName = new InlineCache.PolyIC("name".ToIntern());
+        static InlineCache.PolyIC CacheObj = new InlineCache.PolyIC("obj".ToIntern());
         public void Init(TrObject obj, TrObject attr, string msg)
         {
 
@@ -232,7 +232,7 @@ namespace Traffy.Objects
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
-        static InlineCache.PolyIC_Inst CacheName = new InlineCache.PolyIC_Inst("name".ToIntern());
+        static InlineCache.PolyIC CacheName = new InlineCache.PolyIC("name".ToIntern());
 
         // __array__
         public List<TrObject> __array__ { get; } = new List<TrObject>(2);
@@ -375,7 +375,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        static InlineCache.PolyIC_Inst CacheValue = new InlineCache.PolyIC_Inst("value".ToIntern());
+        static InlineCache.PolyIC CacheValue = new InlineCache.PolyIC("value".ToIntern());
         public List<TrObject> __array__ { get; } = new List<TrObject>(2);
         public StopIteration(TrObject value) : base()
         {
@@ -595,9 +595,9 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        static PolyIC_Inst CacheName = new PolyIC_Inst("name".ToIntern());
-        static PolyIC_Inst CachePath = new PolyIC_Inst("path".ToIntern());
-        static PolyIC_Inst CacheMsg = new PolyIC_Inst("msg".ToIntern());
+        static PolyIC CacheName = new PolyIC("name".ToIntern());
+        static PolyIC CachePath = new PolyIC("path".ToIntern());
+        static PolyIC CacheMsg = new PolyIC("msg".ToIntern());
         public List<TrObject> __array__ { get; } = new List<TrObject>(4);
         public ImportError(string name, string path, string msg) : base(msg)
         {

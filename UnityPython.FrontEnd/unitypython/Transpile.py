@@ -178,7 +178,7 @@ class Transpiler:
             return ir.LocalVar(slot=i, position=self.pos_ind)
         elif id in self.scope.freevars:
             i = self.scope.freevars.order(id)
-            return ir.LocalVar(slot=-i - 1, position=self.pos_ind)
+            return ir.FreeVar(slot=i, position=self.pos_ind)
         else:
             return ir.GlobalVar(name=const_to_variant(id), position=self.pos_ind)
 
@@ -189,7 +189,7 @@ class Transpiler:
             return ir.StoreLocal(slot=i)
         elif id in self.scope.freevars:
             i = self.scope.freevars.order(id)
-            return ir.StoreLocal(slot=-i - 1)
+            return ir.StoreFree(slot=i)
         else:
             return ir.StoreGlobal(name=const_to_variant(id))
 

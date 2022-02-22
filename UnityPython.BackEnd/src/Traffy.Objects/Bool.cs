@@ -36,8 +36,6 @@ namespace Traffy.Objects
         public static TrClass CLASS = null;
         TrClass TrObject.Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
-
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             TrObject clsobj = args[0];

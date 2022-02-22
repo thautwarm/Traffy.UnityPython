@@ -6,6 +6,8 @@ namespace Traffy.Objects
     public interface TrUserObjectBase : TrObject
     {
         object TrObject.Native => this;
+
+
         string TrObject.__str__()
         {
             var self_str = this[Class.ic__str];

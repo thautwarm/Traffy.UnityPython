@@ -617,6 +617,28 @@ namespace Traffy.Asm
             return localval;
         }
     }
+
+    [Serializable]
+    public class FreeVar : TraffyAsm
+    {
+        public int slot;
+        public int position;
+        public bool hasCont => false;
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidProgramException("variables shall not produce coroutines");
+        }
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var localval = frame.load_local(slot);
+            frame.traceback.Pop();
+            return localval;
+        }
+    }
+
     [Serializable]
     public class GlobalVar : TraffyAsm
     {

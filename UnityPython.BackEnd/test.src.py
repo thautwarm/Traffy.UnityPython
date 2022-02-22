@@ -91,6 +91,40 @@ z = c.send(None, x := ref())
 def __init__(self, x: int, y: int):
     self.x = x
     self.y = y
+    self.z = x + y
+    self.w = x * y
+    # 1-7
+    self.u1 = x + y
+    self.u2 = x + y
+    self.u3 = x + y
+    self.u4 = x + y
+    self.u5 = x + y
+    self.u6 = x + y
+    self.u7 = x + y
+    # 8 - 20
+    self.v1 = x + y
+    self.v2 = x + y
+    self.v3 = x + y
+    self.v4 = x + y
+    self.v5 = x + y
+    self.v6 = x + y
+    self.v7 = x + y
+    self.v8 = x + y
+    self.v9 = x + y
+    # 21 - 35
+    
+    self.w9 = 10
+    self.w1 = x + y
+    self.w2 = x + y
+    self.w3 = x + y
+    self.w4 = x + y
+    self.w5 = x + y
+    self.w6 = x + y
+    self.w7 = x + y
+    self.w8 = x + y
+    self.z = 0
+
+
 def __repr__(self):
     return "S" + "(" + str(self.x) + ", " + str(self.y) + ")"
 
@@ -105,11 +139,11 @@ S = type("S", (object,), {"__init__": __init__, "__repr__": __repr__})
 def bench(o):
     i = 0
     k = 0
-    while i < 10000000:
-        k = o.x
-        k = o.y
-        k = o.x
-        k = o.y
+    for i in range(10000000):
+        k = o.w9
+        k = o.z
+        k = o.w9
+        k = o.z
         i += 1
     return k
 
@@ -127,6 +161,7 @@ a = time()
 k = bench(S(1, 2))
 print("value", k)
 print("time1", time() - a)
+
 
 
 # a = time()

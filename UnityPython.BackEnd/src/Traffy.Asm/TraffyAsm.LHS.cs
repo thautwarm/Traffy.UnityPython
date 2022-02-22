@@ -181,6 +181,41 @@ namespace Traffy.Asm
             throw new InvalidProgramException("augassign is invalid for left-hand side list/tuple(s)");
         }
     }
+
+    [Serializable]
+    public class StoreFree : TraffyLHS
+    {
+        public int slot;
+        public bool hasCont => false;
+        public void exec(Frame frame, TrObject o)
+        {
+            frame.store_free(slot, o);
+        }
+
+        public void execOp(Frame frame, binary_func op, TraffyAsm rhs)
+        {
+
+            var rt_rhs = rhs.exec(frame);
+            var localval = frame.load_free(slot);
+            localval = op(localval, rt_rhs);
+            frame.store_free(slot, localval);
+        }
+
+        public MonoAsync<TrObject> cont(Frame frame, TrObject o)
+        {
+            throw new InvalidProgramException("augassign is invalid for left-hand side local");
+        }
+
+
+        public async MonoAsync<TrObject> contOp(Frame frame, binary_func op, TraffyAsm rhs)
+        {
+            var rt_rhs = rhs.hasCont ? await rhs.cont(frame) : rhs.exec(frame);
+            var localval = frame.load_free(slot);
+            localval = op(localval, rt_rhs);
+            frame.store_free(slot, localval);
+            return RTS.object_none;
+        }
+    }
     [Serializable]
     public class StoreLocal : TraffyLHS
     {

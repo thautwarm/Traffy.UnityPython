@@ -1,14 +1,16 @@
 using System;
+using System.Runtime.CompilerServices;
 using Traffy.Objects;
 namespace Traffy.InlineCache
 {
-    public abstract partial class IC
+    public partial class PolyIC
     {
         public bool Read(TrObject self, out TrObject ob)
         {
-            if (self is TrClass cls)
-                return ReadClass(cls, out ob);
-            return ReadInst(self, out ob);
+            var cls = self as TrClass;
+            if (null == (object)cls)
+                return ReadInst(self, out ob);
+            return ReadClass(cls, out ob);
         }
 
 
@@ -33,6 +35,12 @@ namespace Traffy.InlineCache
         }
         public static bool ReadClass(TrClass Class, Shape shape, out TrObject value)
         {
+            if ((object)shape == null)
+            {
+                value = null;
+                return false;
+            }
+
             switch (shape.Kind)
             {
                 case AttributeKind.InstField:
@@ -142,7 +150,7 @@ namespace Traffy.InlineCache
                 ob = null;
                 return false;
             }
-            return ReadInst(self, shape, out ob);
+            return self.ReadInst(shape, out ob);
         }
 
         public static void WriteInst(TrObject self, string s, TrObject value)
@@ -159,93 +167,12 @@ namespace Traffy.InlineCache
             self.SetInstField(index, s, value);
         }
 
-        public static bool ReadInst(TrObject self, Shape shape, out TrObject ob)
-        {
-            switch (shape.Kind)
-            {
-                case AttributeKind.InstField:
-                    if (self.__array__ == null)
-                    {
-                        ob = null;
-                        return false;
-                    }
-                    if (shape.FieldIndex < self.__array__.Count)
-                    {
-                        ob = self.__array__[shape.FieldIndex];
-                        if (ob == null)
-                            return false;
-                        return true;
-                    }
-                    else
-                    {
-                        ob = null;
-                        return false;
-                    }
-                case AttributeKind.Property:
-                    ob = shape.Property.Get(self);
-                    return true;
-                case AttributeKind.Method:
-                    {
-                        var func = shape.MethodOrClassFieldOrClassMethod;
-                        ob = TrSharpMethod.Bind(func, self);
-                        return true;
-                    }
-                case AttributeKind.ClassField:
-                    ob = shape.MethodOrClassFieldOrClassMethod;
-                    return true;
-                case AttributeKind.ClassMethod:
-                    {
-                        var func = shape.MethodOrClassFieldOrClassMethod;
-                        ob = TrSharpMethod.Bind(func, self.Class);
-                        return true;
-                    }
-                default:
-                    throw new System.Exception("unexpected kind");
-            }
-        }
-
         public static void WriteInst(TrObject self, Shape shape, TrObject value)
         {
             if (self.__array__ == null || self.Class.IsFixed)
                 throw new AttributeError(self, MK.Str(shape.Name), $"object {self.Class.Name} has no attribute {shape.Name}");
             self.SetInstField(shape.FieldIndex, shape.Name.Value, value);
         }
-        public bool ReadInst(TrObject self, out TrObject ob)
-        {
-            var receiver = InstReadProto(self.Class);
-            var ad = receiver.shape;
-            if (ad == null)
-            {
-                ob = null;
-                return false;
-            }
-            return ReadInst(self, ad, out ob);
-        }
 
-        public void WriteInst(TrObject self, TrObject value)
-        {
-            var receiver = InstWriteProto(self.Class);
-            var shape = receiver.shape;
-            if (shape.Kind != AttributeKind.InstField)
-                throw new InvalidProgramException($"instance IC is writing a non-field {this.Name} ({self.Class.Name}).");
-            WriteInst(self, shape, value);
-        }
-
-        public bool ReadClass(TrClass Class, out TrObject ob)
-        {
-            var receiver = ClassReadProto(Class);
-            var shape = receiver.shape;
-            if (shape == null)
-            {
-                ob = null;
-                return false;
-            }
-            return ReadClass(Class, shape, out ob);
-        }
-
-        public void WriteClass(TrClass Class, TrObject value)
-        {
-            WriteClass(Class, Name.Value, value);
-        }
     }
 }

@@ -31,7 +31,6 @@ namespace Traffy.Objects
 
         string TrObject.__repr__() => contents.Select(x => $"\\x{x:X}").Prepend("b'").Append("'").By(String.Concat);
         bool TrObject.__bool__() => contents.Length != 0;
-        List<TrObject> TrObject.__array__ => null;
         static TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
