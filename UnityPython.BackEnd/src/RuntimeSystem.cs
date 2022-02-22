@@ -307,7 +307,7 @@ namespace Traffy
         {
             if (tos.__getitem__(item, out var found))
                 return found;
-            throw new KeyError(item);
+            throw new LookupError("key " + item.__repr__() + " not found");
         }
 
         public static void object_setitem(TrObject tos, TrObject item, TrObject value)

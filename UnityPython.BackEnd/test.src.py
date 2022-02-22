@@ -132,20 +132,26 @@ def __repr__(self):
 
 objs = []
 
-S = type("S", (object,), {"__init__": __init__, "__repr__": __repr__})
+S = type("S", (object,), {"__init__": __init__, "__repr__": __repr__, "U": 3})
 # objs.append(S(i, i * 2))
 
 
-def bench(o):
-    i = 0
+def bench(o1, o2, o3, o4):
     k = 0
+    os = [o1, o2, o3, o4]
     for i in range(10000000):
-        k = o.w9
-        k = o.z
-        k = o.w9
-        k = o.z
-        i += 1
+        k = os[i % 4].U
     return k
+
+class M:
+    U = 5
+
+class N:
+    U = 30
+
+class LL:
+    U = 30
+
 
 a = time()
 xs = test2()
@@ -153,12 +159,12 @@ print("value", xs)
 print("time1", time() - a)
 
 a = time()
-k = bench(S(1, 2))
+k = bench(S, M, LL, N)
 print("value", k)
 print("time1", time() - a)
 
 a = time()
-k = bench(S(1, 2))
+k = bench(S, M, M, M)
 print("value", k)
 print("time1", time() - a)
 

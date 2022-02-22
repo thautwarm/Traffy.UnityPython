@@ -2,6 +2,7 @@ from __future__ import annotations
 from ast import (
     AST,
     For,
+    Index,
     stmt,
     expr,
     NodeVisitor,
@@ -254,6 +255,9 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
 class ScoperRHS(ExprNodeVisitorInlineCache):
     def __init__(self, scoper: ScoperStmt):
         self.scoper = scoper
+
+    def visit_Index(self, node: Index) -> Any:
+        return self.visit(getattr(node, "value"))
 
     def visit_BoolOp(self, node: BoolOp) -> Any:
         for each in node.values:

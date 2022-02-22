@@ -6,8 +6,6 @@ namespace Traffy.Objects
     {
         public List<TrObject> container;
 
-        public Dictionary<TrObject, TrObject> __dict__ => null;
-
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
@@ -58,6 +56,38 @@ namespace Traffy.Objects
         }
 
         public TrObject __len__() => MK.Int(container.Count);
+
+        bool TrObject.__getitem__(TrObject item, TrRef found)
+        {
+            var oitem = item as TrInt;
+            if ((object) oitem != null)
+            {
+                var i = oitem.value;
+                if (i < 0)
+                    i += container.Count;
+                if (i < 0 || i >= container.Count)
+                    return false;
+                found.value = container[unchecked((int)i)];
+                return true;
+            }
+            return false;
+        }
+
+        void TrObject.__setitem__(TrObject item, TrObject value)
+        {
+            var oitem = item as TrInt;
+            if ((object) oitem != null)
+            {
+                var i = oitem.value;
+                if (i < 0)
+                    i += container.Count;
+                if (i < 0 || i >= container.Count)
+                    throw new IndexError($"list assignment index out of range");
+                container[unchecked((int)i)] = value;
+                return;
+            }
+            throw new TypeError($"list indices must be integers, not {item.Class.Name}");
+        }
     }
 
 }

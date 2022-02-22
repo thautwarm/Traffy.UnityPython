@@ -10,7 +10,6 @@ namespace Traffy.InlineCache
         public TrClass cls;
         public object Token;
         public Shape shape = null;
-        public const int MaxPolymorphicInlineCacheStore = 5;
     }
 
 
@@ -20,20 +19,23 @@ namespace Traffy.InlineCache
 
         public InternedString s_name;
         int LastReceiver;
-        InlineCacheReceiver[] receivers = new InlineCacheReceiver[InlineCacheReceiver.MaxPolymorphicInlineCacheStore];
+        InlineCacheReceiver[] Receivers;
+        int MaxReceiverCount;
 
         public void AddReceiver(InlineCacheReceiver receiver)
         {
-            receivers[(LastReceiver++) % InlineCacheReceiver.MaxPolymorphicInlineCacheStore] = receiver;
-            LastReceiver %= InlineCacheReceiver.MaxPolymorphicInlineCacheStore;
+            Receivers[(LastReceiver++) % MaxReceiverCount] = receiver;
+            LastReceiver %= MaxReceiverCount;
         }
 
-        public PolyIC_Inst(InternedString name)
+        public PolyIC_Inst(InternedString name, int maxReceiverCount = 5)
         {
-            for (int i = 0; i < receivers.Length; i++)
+            MaxReceiverCount = maxReceiverCount;
+            Receivers = new InlineCacheReceiver[maxReceiverCount];
+            for (int i = 0; i < Receivers.Length; i++)
             {
-                receivers[i] = new InlineCacheReceiver();
-                receivers[i].cls = null;
+                Receivers[i] = new InlineCacheReceiver();
+                Receivers[i].cls = null;
             }
             LastReceiver = 0;
             this.s_name = name;
@@ -44,9 +46,9 @@ namespace Traffy.InlineCache
         {
             InlineCacheReceiver receiver;
             TrClass cls = obj.Class;
-            for (int i = 0; i < InlineCacheReceiver.MaxPolymorphicInlineCacheStore; i++)
+            for (int i = 0; i < MaxReceiverCount; i++)
             {
-                receiver = receivers[i];
+                receiver = Receivers[i];
                 if (object.ReferenceEquals(receiver.cls, cls))
                 {
                     if (object.ReferenceEquals(receiver.Token, cls.Token))
@@ -82,9 +84,9 @@ namespace Traffy.InlineCache
         {
             InlineCacheReceiver receiver;
             TrClass cls = obj.Class;
-            for (int i = 0; i < InlineCacheReceiver.MaxPolymorphicInlineCacheStore; i++)
+            for (int i = 0; i < MaxReceiverCount; i++)
             {
-                receiver = receivers[i];
+                receiver = Receivers[i];
                 if (object.ReferenceEquals(receiver.cls, cls))
                 {
                     if (receiver.Token == cls.Token)
