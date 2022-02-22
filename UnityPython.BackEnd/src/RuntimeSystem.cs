@@ -708,7 +708,7 @@ namespace Traffy
             return new TrIter(v);
         }
 
-        public static TrObject Map(TrObject func, BList<IEnumerator<TrObject>> iter)
+        public static TrObject Map(TrObject func, List<IEnumerator<TrObject>> iter)
         {
             return new TrMapObject(func, iter);
         }

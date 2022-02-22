@@ -109,13 +109,12 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
         TrObject func;
-        BList<IEnumerator<TrObject>> items;
-        BList<TrObject> curr;
+        IEnumerator<TrObject> gen;
 
-        public TrMapObject(TrObject func, BList<IEnumerator<TrObject>> items)
+        public TrMapObject(TrObject func, List<IEnumerator<TrObject>> items)
         {
             this.func = func;
-            this.items = items;
+            this.gen = generator(func, items);
         }
 
         [Mark(Initialization.TokenClassInit)]
@@ -145,7 +144,7 @@ namespace Traffy.Objects
                 throw new TypeError("map() must have at least two arguments.");
             }
 
-            var list = new BList<IEnumerator<TrObject>>();
+            var list = new List<IEnumerator<TrObject>>();
             TrObject func = args[0];
             int index = 0;
             foreach (var item in args)
@@ -160,66 +159,49 @@ namespace Traffy.Objects
             return MK.Map(func, list);
         }
 
+        static IEnumerator<TrObject> generator(TrObject func, List<IEnumerator<TrObject>> items)
+        {
+            while (true)
+            {
+                BList<TrObject> curr = new BList<TrObject> { };
+                foreach (var it in items)
+                {
+                    if (!it.MoveNext())
+                    {
+                        yield break;
+                    }
+
+                    curr.Add(it.Current);
+                }
+                yield return func.__call__(curr, null);
+            }
+        }
+
         public string __str__() => $"{__repr__()}";
 
         public string __repr__() => $"<map as {this}>";
 
-        public TrObject __next__()
-        {
-            if (curr == null)
-            {
-                throw new InvalidProgramException("curr is null");
-            }
-            if (!this.MoveNext())
-            {
-                throw new InvalidProgramException("iter is ended");
-            }
-            return func.__call__(curr, null);
-        }
+        public TrObject __next__() => gen.MoveNext() ? gen.Current : throw new StopIteration();
 
-        public IEnumerator<TrObject> __iter__()
-        {
-            return this;
-        }
+        public IEnumerator<TrObject> __iter__() => gen;
 
-        public TrObject Current => func.__call__(curr, null);
+        public TrObject Current => gen.Current;
 
         object IEnumerator.Current => this.Current;
 
         public bool MoveNext()
         {
-            BList<TrObject> args = new BList<TrObject> { };
-            foreach (var it in items)
-            {
-                if (it.MoveNext())
-                {
-                    args.Add(it.Current);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            curr = args;
-            return true;
+            return gen.MoveNext();
         }
 
         public void Reset()
         {
-            curr = new BList<TrObject> { };
-            foreach(var it in items)
-            {
-                it.Reset();
-            }
+            gen.Reset();
         }
 
         public void Dispose()
         {
-            curr = null;
-            foreach (var it in items)
-            {
-                it.Dispose();
-            }
+            gen.Dispose();
         }
     }
 }
