@@ -68,8 +68,8 @@ For example, if we want to implement `append` for `list`,
     }
   ```
 
-  NOTE:
+  PS:
   - `TrSharpFunc.FromFunc` creates a method
   - `TrStaticMethod.Bind` creates a `staticmethod`
-  - `TrClassMethod.Bind` creates a class method
-  - `TrProperty.Create(getter=null, setter=null)` creates a property
+  - `TrClassMethod.Bind` creates a `classmethod`
+  - `TrProperty.Create(getter=null, setter=null)` creates a `property`
