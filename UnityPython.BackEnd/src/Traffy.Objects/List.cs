@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace Traffy.Objects
 {
@@ -56,6 +58,10 @@ namespace Traffy.Objects
         }
 
         public TrObject __len__() => MK.Int(container.Count);
+
+        public string __repr__() => "[" + String.Join(",", container.Select((i) => i.__str__())) + "]";
+
+        public string __str__() => __repr__();
 
         bool TrObject.__getitem__(TrObject item, TrRef found)
         {
