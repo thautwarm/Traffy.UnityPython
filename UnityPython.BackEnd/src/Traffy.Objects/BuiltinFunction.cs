@@ -58,6 +58,18 @@ namespace Traffy.Objects
             return new TrSharpFunc(name, func);
         }
 
+        public static TrSharpFunc FromFunc(string name, Func<TrClass, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
+        {
+            if (func == null)
+                throw new InvalidProgramException("func is null");
+            TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+            {
+                TrClass cls = (TrClass) args[0];
+                args.RemoveAt(0);
+                return func(cls, args, kwargs);
+            }
+            return new TrSharpFunc(name, call);
+        }
 
         public static TrSharpFunc FromFunc(string name, Func<TrObject> func)
         {

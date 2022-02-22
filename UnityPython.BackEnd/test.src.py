@@ -189,3 +189,21 @@ print(str([]))
 print([1, 2, 3])
 print(list().__repr__())
 print([1, 2, 3].__repr__())
+print(list.__new__)
+print(map.__new__)
+
+def acc(i):
+    return i + 1;
+
+# print(list(map(acc, [1, 2, 3])))
+
+print(acc(100))
+
+for i in map(acc, [1, 2, 3]):
+    print(i)
+
+def add(i, c):
+    return i + c;
+
+for _sum in map(add, [1, 2, 3], [4, 5, 6]):
+    print(_sum)
