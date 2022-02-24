@@ -708,6 +708,15 @@ namespace Traffy
             return new TrIter(v);
         }
 
+        public static TrObject Map(TrObject func, IEnumerator<TrObject>[] iter)
+        {
+            return new TrMapObject(func, iter);
+        }
+
+        public static TrObject Filter(TrObject func, IEnumerator<TrObject> iter)
+        {
+            return new TrFilter(func, iter);
+        }
 
         public static TrObject object_imod(TrObject arg1, TrObject arg2)
         {

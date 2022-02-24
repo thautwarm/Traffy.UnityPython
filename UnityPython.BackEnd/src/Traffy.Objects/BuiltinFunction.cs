@@ -58,7 +58,6 @@ namespace Traffy.Objects
             return new TrSharpFunc(name, func);
         }
 
-
         public static TrSharpFunc FromFunc(string name, Func<TrObject> func)
         {
 
