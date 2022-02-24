@@ -53,12 +53,6 @@ namespace Traffy.Objects
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
-        public TrObject __add__(TrObject other)
-        {
-            append(this, other);
-            return this;
-        }
-
         public IEnumerator<TrObject> __iter__()
         {
             return container.GetEnumerator();
@@ -111,7 +105,7 @@ namespace Traffy.Objects
         TrObject func;
         IEnumerator<TrObject> gen;
 
-        public TrMapObject(TrObject func, List<IEnumerator<TrObject>> items)
+        public TrMapObject(TrObject func, IEnumerator<TrObject>[] items)
         {
             this.func = func;
             this.gen = generator(func, items);
@@ -135,8 +129,7 @@ namespace Traffy.Objects
             CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
         }
-
-        public static TrObject datanew(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public static TrObject datanew(TrObject cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             int len = args.Count;
             if (len < 2)
@@ -144,34 +137,31 @@ namespace Traffy.Objects
                 throw new TypeError("map() must have at least two arguments.");
             }
 
-            var list = new List<IEnumerator<TrObject>>();
+            var items = new IEnumerator<TrObject>[args.Count - 1];
             TrObject func = args[0];
-            int index = 0;
-            foreach (var item in args)
+            for(int i = 1; i < args.Count; i++)
             {
-                if (index != 0)
-                {
-                    IEnumerator<TrObject> it = item.__iter__();
-                    list.Add(it);
-                }
-                index += 1;
+                items[i - 1] = args[i].__iter__();
             }
-            return MK.Map(func, list);
+            return MK.Map(func, items);
         }
 
-        static IEnumerator<TrObject> generator(TrObject func, List<IEnumerator<TrObject>> items)
+        static IEnumerator<TrObject> generator(TrObject func, IEnumerator<TrObject>[] items)
         {
+            BList<TrObject> curr = new BList<TrObject>();
+            for(int i = 0; i < items.Length; i++)
+            {
+                curr.Add(null);
+            }
             while (true)
             {
-                BList<TrObject> curr = new BList<TrObject> { };
-                foreach (var it in items)
+                for (int i = 0; i < items.Length; i++)
                 {
-                    if (!it.MoveNext())
+                    if (!items[i].MoveNext())
                     {
                         yield break;
                     }
-
-                    curr.Add(it.Current);
+                    curr[i] = items[i].Current;
                 }
                 yield return func.__call__(curr, null);
             }
@@ -239,7 +229,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public static TrObject datanew(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public static TrObject datanew(TrObject cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             int len = args.Count;
             if (len != 2)
@@ -249,13 +239,15 @@ namespace Traffy.Objects
 
         static IEnumerator<TrObject> generator(TrObject func, IEnumerator<TrObject> items)
         {
+            var curr = new BList<TrObject> { null };
             while (true)
             {
                 if (!items.MoveNext())
                 {
                     yield break;
                 }
-                var cur = func.__call__(new BList<TrObject> { items.Current }, null);
+                curr[0] = items.Current;
+                var cur = func.__call__(curr, null);
                 if (cur.__bool__())
                 {
                     yield return items.Current;

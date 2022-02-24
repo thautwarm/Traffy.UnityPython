@@ -193,7 +193,7 @@ print(list.__new__)
 print(map.__new__)
 
 def acc(i):
-    return i + 1;
+    return i + 1
 
 # print(list(map(acc, [1, 2, 3])))
 
@@ -203,7 +203,7 @@ for i in map(acc, [1, 2, 3]):
     print(i)
 
 def add(i, c):
-    return i + c;
+    return i + c
 
 for _sum in map(add, [1, 2, 3], [4, 5, 6]):
     print(_sum)
@@ -212,7 +212,7 @@ print(list(map(acc, [2, 3, 5])))
 
 
 def lt2(i):
-    return i > 2;
+    return i > 2
 
 for i in filter(lt2, [1, 2, 3]):
     print(i)

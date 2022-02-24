@@ -50,7 +50,7 @@ namespace Traffy.Objects
         {
             return new TrStaticMethod { func = TrSharpFunc.FromFunc(name, func) };
         }
-        public static TrStaticMethod Bind(string name, Func<TrClass, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
+        public static TrStaticMethod Bind(string name, Func<TrObject, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
         {
             return new TrStaticMethod { func = TrSharpFunc.FromFunc(name, func) };
         }
