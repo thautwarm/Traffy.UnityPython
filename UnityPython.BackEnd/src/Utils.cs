@@ -110,7 +110,7 @@ public static class Utils
         for (int i = 0; i < commonLen; i++)
         {
             cmp = seq1[i].CompareTo(seq2[i]);
-            if (cmp == -1)
+            if (cmp < 0)
             {
                 seqIsEqual = false;
                 return true;
@@ -151,7 +151,7 @@ public static class Utils
         for (int i = 0; i < commonLen; i++)
         {
             var cmp = seq1[i].CompareTo(seq2[i]);
-            if (cmp == 1)
+            if (cmp > 0)
             {
                 seqIsEqual = false;
                 return true;

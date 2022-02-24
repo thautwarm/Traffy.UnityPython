@@ -268,9 +268,9 @@ namespace Traffy.Objects
         public TrObject __neg__() => TrObject.__raw_neg__(this);
 
         // default '__inv__'
-        public static TrObject __raw_inv__(TrObject self) =>
-            throw self.unsupported(nameof(__inv__));
-        public TrObject __inv__() => TrObject.__raw_inv__(this);
+        public static TrObject __raw_invert__(TrObject self) =>
+            throw self.unsupported(nameof(__invert__));
+        public TrObject __invert__() => TrObject.__raw_invert__(this);
 
         // default '__pos__'
         public static TrObject __raw_pos__(TrObject self) =>
@@ -280,6 +280,11 @@ namespace Traffy.Objects
         // default '__bool__'
         public static bool __raw_bool__(TrObject self) => true;
         public bool __bool__() => TrObject.__raw_bool__(this);
+
+        public static TrObject __raw_abs__(TrObject self) =>
+            throw self.unsupported(nameof(__abs__));
+        public TrObject __abs__() => TrObject.__raw_abs__(this);
+
     }
 
     public class TrRawObject : TrUserObjectBase

@@ -316,14 +316,14 @@ namespace Traffy.Objects
             return TrObject.__raw_neg__(this);
         }
 
-        TrObject TrObject.__inv__()
+        TrObject TrObject.__invert__()
         {
             var self_inv = this[Class.ic__inv];
             if (self_inv != null)
             {
                 return self_inv.Call();
             }
-            return TrObject.__raw_inv__(this);
+            return TrObject.__raw_invert__(this);
         }
 
         TrObject TrObject.__pos__()

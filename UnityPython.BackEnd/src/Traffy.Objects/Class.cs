@@ -276,7 +276,7 @@ namespace Traffy.Objects
                 cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"{cls.Name}.__gt__", (a, b) => ((T)a).__gt__(b));
                 cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"{cls.Name}.__ge__", (a, b) => ((T)a).__ge__(b));
                 cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"{cls.Name}.__neg__", a => ((T)a).__neg__());
-                cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"{cls.Name}.__inv__", a => ((T)a).__inv__());
+                cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"{cls.Name}.__inv__", a => ((T)a).__invert__());
                 cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"{cls.Name}.__pos__", a => ((T)a).__pos__());
                 cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc($"{cls.Name}.__bool__", a => ((T)a).__bool__());
             }
@@ -332,7 +332,7 @@ namespace Traffy.Objects
                 cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"object.__gt__", TrObject.__raw_gt__);
                 cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"object.__ge__", TrObject.__raw_ge__);
                 cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"object.__neg__", TrObject.__raw_neg__);
-                cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"object.__inv__", TrObject.__raw_inv__);
+                cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"object.__inv__", TrObject.__raw_invert__);
                 cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"object.__pos__", TrObject.__raw_pos__);
                 cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc($"object.__bool__", TrObject.__raw_bool__);
             }

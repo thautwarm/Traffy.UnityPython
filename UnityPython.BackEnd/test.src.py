@@ -217,3 +217,9 @@ def lt2(i):
 for i in filter(lt2, [1, 2, 3]):
     print(i)
 
+# xs = [1, 2, 3].map(lambda x: x + 1)
+
+print(1.0 == 1)
+
+print("-2")
+print("-2" <= "-5")

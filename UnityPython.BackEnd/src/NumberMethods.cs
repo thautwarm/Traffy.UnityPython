@@ -301,11 +301,33 @@ using static UnityEngine.Mathf;
             }
         }
 
+        public static bool float_t_lt(TrFloat self, TrObject other)
+        {
+            switch (other)
+            {
+                case TrFloat v: return self.value < v.value;
+                case TrInt v: return self.value < v.value;
+                default:
+                    throw unsupported_ops(self, "<", other);
+            }
+        }
+
         public static bool int_t_le(TrInt self, TrObject other)
         {
             switch (other)
             {
                 case TrFloat v: return (float) self.value <= v.value;
+                case TrInt v: return self.value <= v.value;
+                default:
+                    throw unsupported_ops(self, "<=", other);
+            }
+        }
+
+        public static bool float_t_le(TrFloat self, TrObject other)
+        {
+            switch (other)
+            {
+                case TrFloat v: return self.value <= v.value;
                 case TrInt v: return self.value <= v.value;
                 default:
                     throw unsupported_ops(self, "<=", other);
@@ -323,6 +345,17 @@ using static UnityEngine.Mathf;
             }
         }
 
+        public static bool float_t_gt(TrFloat self, TrObject other)
+        {
+            switch (other)
+            {
+                case TrFloat v: return self.value > v.value;
+                case TrInt v: return self.value > v.value;
+                default:
+                    throw unsupported_ops(self, ">", other);
+            }
+        }
+
         public static bool int_t_ge(TrInt self, TrObject other)
         {
             switch (other)
@@ -334,7 +367,29 @@ using static UnityEngine.Mathf;
             }
         }
 
+        public static bool float_t_ge(TrFloat self, TrObject other)
+        {
+            switch (other)
+            {
+                case TrFloat v: return self.value >= v.value;
+                case TrInt v: return self.value >= v.value;
+                default:
+                    throw unsupported_ops(self, ">=", other);
+            }
+        }
+
         public static bool int_t_eq(TrInt self, TrObject other)
+        {
+            switch (other)
+            {
+                case TrFloat v: return self.value == v.value;
+                case TrInt v: return self.value == v.value;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool float_t_eq(TrFloat self, TrObject other)
         {
             switch (other)
             {
@@ -355,28 +410,50 @@ using static UnityEngine.Mathf;
                     return true;
             }
         }
+
+        public static bool float_t_ne(TrFloat self, TrObject other)
+        {
+            switch (other)
+            {
+                case TrFloat v: return self.value != v.value;
+                case TrInt v: return self.value != v.value;
+                default:
+                    return true;
+            }
+        }
     }
 
     public partial class TrFloat
     {
         public TrObject __add__(TrObject o) => NumberMethods.float_add(this, o);
         public TrObject __sub__(TrObject o) => NumberMethods.float_sub(this, o);
-
         public TrObject __mul__(TrObject o) => NumberMethods.float_mul(this, o);
-
         public TrObject __floordiv__(TrObject o) => NumberMethods.float_floordiv(this, o);
         public TrObject __truediv__(TrObject o) => NumberMethods.float_truediv(this, o);
 
         public TrObject __mod__(TrObject o) => NumberMethods.float_mod(this, o);
 
         public TrObject __pow__(TrObject o) => NumberMethods.float_pow(this, o);
+
+        public bool __eq__(TrObject o) => NumberMethods.float_t_eq(this, o);
+
+        public bool __ne__(TrObject o) => NumberMethods.float_t_ne(this, o);
+
+        public bool __lt__(TrObject o) => NumberMethods.float_t_lt(this, o);
+
+        public bool __gt__(TrObject o) => NumberMethods.float_t_gt(this, o);
+
+        public bool __le__(TrObject o) => NumberMethods.float_t_le(this, o);
+
+        public bool __ge__(TrObject o) => NumberMethods.float_t_ge(this, o);
+        public TrObject __neg__() => MK.Float(-value);
+        public TrObject __pos__() => this;
     }
 
     public partial class TrInt
     {
         public TrObject __add__(TrObject o) => NumberMethods.int_t_add(this, o);
         public TrObject __sub__(TrObject o) => NumberMethods.int_t_sub(this, o);
-
         public TrObject __mul__(TrObject o) => NumberMethods.int_t_mul(this, o);
 
         public TrObject __floordiv__(TrObject o) => NumberMethods.int_t_floordiv(this, o);
@@ -405,5 +482,9 @@ using static UnityEngine.Mathf;
         public TrObject __bitand__(TrObject o) => NumberMethods.int_t_bitand(this, o);
         public TrObject __bitor__(TrObject o) => NumberMethods.int_t_bitor(this, o);
         public TrObject __bitxor__(TrObject o) => NumberMethods.int_t_bitxor(this, o);
+
+        public TrObject __neg__() => MK.Int(-value);
+        public TrObject __pos__() => this;
+        public TrObject __invert__() => MK.Int(~value);
     }
 }

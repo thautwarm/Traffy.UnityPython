@@ -1,3 +1,4 @@
+**.py.json
 BenchmarkDotNet.Artifacts/
 **/UnityEngine.dll
 /cross-editor-highlighter/

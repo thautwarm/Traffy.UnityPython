@@ -192,7 +192,7 @@ namespace Traffy
 
         public static TrObject object_not(TrObject arg) => MK.Bool(!arg.__bool__());
 
-        public static TrObject object_inv(TrObject arg) => arg.__inv__();
+        public static TrObject object_inv(TrObject arg) => arg.__invert__();
 
 
         public static bool isinstanceof_impl(TrObject o, TrClass cls)
