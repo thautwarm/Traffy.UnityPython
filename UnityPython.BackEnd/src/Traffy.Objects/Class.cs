@@ -71,12 +71,12 @@ namespace Traffy.Objects
         public TrClass[] __base;
         public TrClass[] __mro;
 
-        public bool __getattr__(TrObject name, TrRef found) => this.__getic__(name.AsString(), out found.value);
+        public bool __getattr__(TrObject name, TrRef found) => this.__getic__(name.AsStr(), out found.value);
         public void __setattr__(TrObject name, TrObject value)
         {
             if (IsFixed)
                 throw new TypeError($"can't set attribute '{name}' on {this}");
-            this.__setic__(name.AsString(), value);
+            this.__setic__(name.AsStr(), value);
         }
         public string Name;
         public bool __subclasscheck__(TrClass @class)
@@ -141,7 +141,7 @@ namespace Traffy.Objects
             {
                 if (args.Count != 4)
                     throw new TypeError($"calling 'type' requires 4 arguments");
-                var name = args[1].AsString();
+                var name = args[1].AsStr();
                 var bases = (TrTuple)args[2];
                 var ns = (TrDict)args[3];
                 var newCls = RTS.new_class(name, bases.elts, ns.container);
@@ -165,7 +165,7 @@ namespace Traffy.Objects
 
         public bool __getic__(TrObject s, TrRef found)
         {
-            var istr = s.AsString().ToIntern();
+            var istr = s.AsStr().ToIntern();
             var o = this[istr];
             return false;
             // throw new AttributeError($"attribute {s.__repr__()} not found.");
@@ -276,7 +276,7 @@ namespace Traffy.Objects
                 cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"{cls.Name}.__gt__", (a, b) => ((T)a).__gt__(b));
                 cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"{cls.Name}.__ge__", (a, b) => ((T)a).__ge__(b));
                 cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"{cls.Name}.__neg__", a => ((T)a).__neg__());
-                cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"{cls.Name}.__inv__", a => ((T)a).__invert__());
+                cls[MagicNames.i___invert__] = TrSharpFunc.FromFunc($"{cls.Name}.__inv__", a => ((T)a).__invert__());
                 cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"{cls.Name}.__pos__", a => ((T)a).__pos__());
                 cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc($"{cls.Name}.__bool__", a => ((T)a).__bool__());
             }
@@ -332,7 +332,7 @@ namespace Traffy.Objects
                 cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"object.__gt__", TrObject.__raw_gt__);
                 cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"object.__ge__", TrObject.__raw_ge__);
                 cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"object.__neg__", TrObject.__raw_neg__);
-                cls[MagicNames.i___inv__] = TrSharpFunc.FromFunc($"object.__inv__", TrObject.__raw_invert__);
+                cls[MagicNames.i___invert__] = TrSharpFunc.FromFunc($"object.__inv__", TrObject.__raw_invert__);
                 cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"object.__pos__", TrObject.__raw_pos__);
                 cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc($"object.__bool__", TrObject.__raw_bool__);
             }
@@ -462,12 +462,19 @@ namespace Traffy.Objects
 
             if (this[ic__neg] == null && cp_kwargs != null && cp_kwargs.TryPop(s_neg, out var o_neg))
                 this[MagicNames.i___neg__] = o_neg;
-            if (this[ic__inv] == null && cp_kwargs != null && cp_kwargs.TryPop(s_inv, out var o_inv))
-                this[MagicNames.i___inv__] = o_inv;
+            if (this[ic__invert] == null && cp_kwargs != null && cp_kwargs.TryPop(s_invert, out var o_inv))
+                this[MagicNames.i___invert__] = o_inv;
             if (this[ic__pos] == null && cp_kwargs != null && cp_kwargs.TryPop(s_pos, out var o_pos))
                 this[MagicNames.i___pos__] = o_pos;
             if (this[ic__bool] == null && cp_kwargs != null && cp_kwargs.TryPop(s_bool, out var o_bool))
                 this[MagicNames.i___bool__] = o_bool;
+            if (this[ic__abs] == null && cp_kwargs != null && cp_kwargs.TryPop(s_abs, out var o_abs))
+                this[MagicNames.i___abs__] = o_abs;
+
+            if (this[ic__enter] == null && cp_kwargs != null && cp_kwargs.TryPop(s_enter, out var o_enter))
+                this[MagicNames.i___enter__] = o_enter;
+            if (this[ic__exit] == null && cp_kwargs != null && cp_kwargs.TryPop(s_exit, out var o_exit))
+                this[MagicNames.i___exit__] = o_exit;
 
 
             if (cp_kwargs != null)

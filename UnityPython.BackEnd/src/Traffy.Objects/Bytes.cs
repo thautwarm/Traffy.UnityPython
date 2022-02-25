@@ -25,7 +25,7 @@ namespace Traffy.Objects
                     return isEqual ? 0 : -1;
                 return 1;
             }
-            throw new TypeError($"unsupported operand type(s) for <: '{CLASS.Name}' and '{other.Class.Name}'");
+            throw new TypeError($"unsupported comparison for '{CLASS.Name}' and '{other.Class.Name}'");
         }
 
 
@@ -105,11 +105,11 @@ namespace Traffy.Objects
 
 
         bool __eq__(TrObject other) =>
-                (other is TrBytes b)
-                ? contents.Inline().SeqEq<FArray<byte>, FArray<byte>, byte>(b.contents)
-                : (other is TrByteArray byteArray)
-                ? contents.Inline().SeqEq<FArray<byte>, FList<byte>, byte>(byteArray.contents)
-                : throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
+            (other is TrBytes b)
+            ? contents.Inline().SeqEq<FArray<byte>, FArray<byte>, byte>(b.contents)
+            : (other is TrByteArray byteArray)
+            ? contents.Inline().SeqEq<FArray<byte>, FList<byte>, byte>(byteArray.contents)
+            : throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
         int TrObject.__hash__()

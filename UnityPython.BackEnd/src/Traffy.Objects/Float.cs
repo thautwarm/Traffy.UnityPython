@@ -14,6 +14,7 @@ namespace Traffy.Objects
         public object Native => value;
 
         public List<TrObject> __array__ => null;
+        public bool __bool__() => value != 0.0f;
 
         string TrObject.__repr__() => value.ToString();
 

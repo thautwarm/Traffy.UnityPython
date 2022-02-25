@@ -214,12 +214,12 @@ namespace Traffy.Objects
 
         public static bool __raw_getattr__(TrObject self, TrObject name, TrRef found)
         {
-            return self.__getic__(name.AsString(), out found.value);
+            return self.__getic__(name.AsStr(), out found.value);
         }
 
         public static void __raw_setattr__(TrObject self, TrObject name, TrObject value)
         {
-            self.__setic__(name.AsString(), value);
+            self.__setic__(name.AsStr(), value);
         }
 
         public bool __getattr__(TrObject name, TrRef found) => __raw_getattr__(this, name, found);
@@ -284,6 +284,16 @@ namespace Traffy.Objects
         public static TrObject __raw_abs__(TrObject self) =>
             throw self.unsupported(nameof(__abs__));
         public TrObject __abs__() => TrObject.__raw_abs__(this);
+
+        public static TrObject __raw_enter__(TrObject self) =>
+            throw self.unsupported(nameof(__enter__));
+
+        public TrObject __enter__() => TrObject.__raw_enter__(this);
+
+        public static TrObject __raw_exit__(TrObject self, TrObject exc_type, TrObject exc_value, TrObject traceback) =>
+            throw self.unsupported(nameof(__exit__));
+
+        public TrObject __exit__(TrObject exc_type, TrObject exc_value, TrObject traceback) => TrObject.__raw_exit__(this, exc_type, exc_value, traceback);
 
     }
 

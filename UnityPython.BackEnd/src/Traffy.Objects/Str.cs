@@ -8,7 +8,7 @@ namespace Traffy.Objects
     {
         public static TrStr ToTr(this string self) => MK.Str(self);
 
-        public static string AsString(this TrObject self) => ((TrStr)self).value;
+        public static string AsStr(this TrObject self) => ((TrStr)self).value;
 
         public static bool IsStr(this TrObject self) => self is TrStr;
     }
@@ -18,6 +18,16 @@ namespace Traffy.Objects
     {
         public string value;
         public bool isInterned = false;
+
+        int IComparable<TrObject>.CompareTo(TrObject other)
+        {
+            if (other is TrStr s)
+            {
+                return value.CompareTo(s.value);
+            }
+            throw new TypeError($"unsupported comparison for '{CLASS.Name}' and '{other.Class.Name}'");
+        }
+
         public string __repr__() => value.Escape();
         public string __str__() => value;
         public bool __bool__() => value.Length != 0;
@@ -32,6 +42,8 @@ namespace Traffy.Objects
             InternedString.FromString(value);
 
         public int __hash__() => value.GetHashCode();
+
+        public bool __contains__(TrObject other) => value.Contains(other.AsStr());
 
         bool TrObject.__le__(TrObject other)
         {

@@ -14,7 +14,7 @@ namespace Traffy.Objects
             if (self_str != null)
             {
                 var ret = self_str.Call();
-                return ret.AsString();
+                return ret.AsStr();
             }
             return TrObject.__raw_str__(this);
         }
@@ -24,7 +24,7 @@ namespace Traffy.Objects
             if (self_repr != null)
             {
                 var ret = self_repr.Call();
-                return ret.AsString();
+                return ret.AsStr();
             }
             return TrObject.__raw_repr__(this);
         }
@@ -318,7 +318,7 @@ namespace Traffy.Objects
 
         TrObject TrObject.__invert__()
         {
-            var self_inv = this[Class.ic__inv];
+            var self_inv = this[Class.ic__invert];
             if (self_inv != null)
             {
                 return self_inv.Call();
@@ -344,6 +344,36 @@ namespace Traffy.Objects
                 return self_bool.Call().AsBool();
             }
             return TrObject.__raw_bool__(this);
+        }
+
+        TrObject TrObject.__abs__()
+        {
+            var self_abs = this[Class.ic__abs];
+            if (self_abs != null)
+            {
+                return self_abs.Call();
+            }
+            return TrObject.__raw_abs__(this);
+        }
+
+        TrObject TrObject.__enter__()
+        {
+            var self_enter = this[Class.ic__enter];
+            if (self_enter != null)
+            {
+                return self_enter.Call();
+            }
+            return TrObject.__raw_enter__(this);
+        }
+
+        TrObject TrObject.__exit__(TrObject type, TrObject value, TrObject traceback)
+        {
+            var self_exit = this[Class.ic__exit];
+            if (self_exit != null)
+            {
+                return self_exit.Call(type, value, traceback);
+            }
+            return TrObject.__raw_exit__(this, type, value, traceback);
         }
     }
 }

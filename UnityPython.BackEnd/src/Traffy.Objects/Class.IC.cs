@@ -109,11 +109,12 @@ namespace Traffy.Objects
         public PolyIC
             ic__init, ic__new, ic__str, ic__repr, ic__next, ic__add, ic__sub,
             ic__mul, ic__matmul, ic__floordiv, ic__truediv, ic__mod, ic__pow,
-            ic__bitand, ic__bitor, ic__bitxor, ic__lshift, ic__rshift, ic__hash,
-            ic__call, ic__contains, ic__getitem, ic__setitem, ic__iter, ic__len,
+            ic__bitand, ic__bitor, ic__bitxor, ic__lshift, ic__rshift,
+            ic__hash, ic__call, ic__contains, ic__getattr, ic__setattr, ic__getitem, ic__setitem, ic__iter, ic__len,
             ic__eq, ic__ne, ic__lt, ic__le, ic__gt, ic__ge,
-            ic__neg, ic__inv, ic__pos, ic__bool, ic__init_subclass,
-            ic__getattr, ic__setattr;
+            ic__neg, ic__invert, ic__pos, ic__bool, ic__abs,
+            ic__enter, ic__exit,
+            ic__init_subclass;
 
         public void InitInlineCacheForMagicMethods()
         {
@@ -135,7 +136,6 @@ namespace Traffy.Objects
             ic__bitand = new PolyIC(MagicNames.i___bitand__);
             ic__bitor = new PolyIC(MagicNames.i___bitor__);
             ic__bitxor = new PolyIC(MagicNames.i___bitxor__);
-
             ic__lshift = new PolyIC(MagicNames.i___lshift__);
             ic__rshift = new PolyIC(MagicNames.i___rshift__);
 
@@ -157,9 +157,13 @@ namespace Traffy.Objects
             ic__ge = new PolyIC(MagicNames.i___ge__);
 
             ic__neg = new PolyIC(MagicNames.i___neg__);
-            ic__inv = new PolyIC(MagicNames.i___inv__);
+            ic__invert = new PolyIC(MagicNames.i___invert__);
             ic__pos = new PolyIC(MagicNames.i___pos__);
             ic__bool = new PolyIC(MagicNames.i___bool__);
+            ic__abs = new PolyIC(MagicNames.i___abs__);
+
+            ic__enter = new PolyIC(MagicNames.i___enter__);
+            ic__exit = new PolyIC(MagicNames.i___exit__);
 
 
             ic__init_subclass = new PolyIC(MagicNames.i___init_subclass__);

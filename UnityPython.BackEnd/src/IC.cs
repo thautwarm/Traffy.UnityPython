@@ -224,7 +224,7 @@ namespace Traffy.InlineCache
         public TrStr attribute;
         public PolyIC(TrStr name)
         {
-            s_name = name.AsString().ToIntern();
+            s_name = name.AsStr().ToIntern();
             ICClass = new PolyIC_Class(s_name);
             ICInstance = new PolyIC_Inst(s_name);
             if (!name.isInterned)

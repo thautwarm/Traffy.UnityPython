@@ -7,7 +7,7 @@ namespace Traffy
         public static TrStr s_init = MK.Str("__init__");
         public static TrStr s_new = MK.Str("__new__");
         public static TrStr s_neg = MK.Str("__neg__");
-        public static TrStr s_inv = MK.Str("__inv__");
+        public static TrStr s_invert = MK.Str("__invert__");
         public static TrStr s_pos = MK.Str("__pos__");
         public static TrStr s_bool = MK.Str("__bool__");
         public static TrStr s_str = MK.Str("__str__");
@@ -43,11 +43,15 @@ namespace Traffy
         public static TrStr s_le = MK.Str("__le__");
         public static TrStr s_gt = MK.Str("__gt__");
         public static TrStr s_ge = MK.Str("__ge__");
+        public static TrStr s_abs = MK.Str("__abs__");
+        public static TrStr s_enter = MK.Str("__enter__");
+        public static TrStr s_exit = MK.Str("__exit__");
+
 
         public static InternedString i___init__ = InternedString.FromString("__init__");
         public static InternedString i___new__ = InternedString.FromString("__new__");
         public static InternedString i___neg__ = InternedString.FromString("__neg__");
-        public static InternedString i___inv__ = InternedString.FromString("__inv__");
+        public static InternedString i___invert__ = InternedString.FromString("__invert__");
         public static InternedString i___pos__ = InternedString.FromString("__pos__");
         public static InternedString i___bool__ = InternedString.FromString("__bool__");
         public static InternedString i___str__ = InternedString.FromString("__str__");
@@ -82,6 +86,9 @@ namespace Traffy
         public static InternedString i___le__ = InternedString.FromString("__le__");
         public static InternedString i___gt__ = InternedString.FromString("__gt__");
         public static InternedString i___ge__ = InternedString.FromString("__ge__");
+        public static InternedString i___abs__ = InternedString.FromString("__abs__");
+        public static InternedString i___enter__ = InternedString.FromString("__enter__");
+        public static InternedString i___exit__ = InternedString.FromString("__exit__");
 
         public static InternedString i___init_subclass__ = InternedString.FromString("__init_subclass__");
 

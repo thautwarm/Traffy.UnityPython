@@ -45,7 +45,7 @@ namespace Traffy.Objects
 
         public bool __getattr__(TrObject s, TrRef found)
         {
-            var attr = s.AsString();
+            var attr = s.AsStr();
             switch (attr)
             {
                 case "setter":
