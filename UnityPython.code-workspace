@@ -5,7 +5,10 @@
 		},
 		{
 			"path": "UnityPython.FrontEnd"
-		}
+		},
+		{
+			"path": "UnityPython.BackEnd.CodeGen"
+		},
 	],
 	"settings": {}
 }

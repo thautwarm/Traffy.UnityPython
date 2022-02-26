@@ -89,7 +89,6 @@ namespace Traffy
         public static InternedString i___abs__ = InternedString.FromString("__abs__");
         public static InternedString i___enter__ = InternedString.FromString("__enter__");
         public static InternedString i___exit__ = InternedString.FromString("__exit__");
-
         public static InternedString i___init_subclass__ = InternedString.FromString("__init_subclass__");
 
     }
