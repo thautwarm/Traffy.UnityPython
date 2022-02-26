@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "UnityPython.BackEnd"
+		},
+		{
+			"path": "UnityPython.FrontEnd"
+		},
+		{
+			"path": "UnityPython.BackEnd.CodeGen"
+		},
+	],
+	"settings": {}
+}

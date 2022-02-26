@@ -1,3 +1,9 @@
+!UnityPython.BackEnd/.vscode/settings.json
+*/.vscode/launch.json
+*/.vscode/tasks.json
+*/.vscode/extensions.json
+
+
 **.py.json
 BenchmarkDotNet.Artifacts/
 **/UnityEngine.dll
@@ -30,7 +36,7 @@ sphinx-docs/
 **.mlfso
 **.mlfsa
 **.mlfsf
-.vscode/
+# .vscode/
 obj/
 
 
@@ -446,12 +452,13 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
+
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
+
+# *.code-workspace
 
 # Local History for Visual Studio Code
 .history/
@@ -496,7 +503,7 @@ Temporary Items
 .apdisk
 
 ### VisualStudioCode ###
-!.vscode/*.code-snippets
+# !.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 
