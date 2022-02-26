@@ -13,7 +13,7 @@ namespace PrettyDoc
         public static Doc Indent(this int self, Doc doc) => new Doc_Indent(self, doc);
         public static Doc Indent(this Doc doc, int i) => new Doc_Indent(i, doc);
         public static Doc Empty = new Doc_Empty();
-        public static Doc Comma = ",".Doc();
+        public static Doc Comma = ", ".Doc();
         public static Doc Space = " ".Doc();
         public static (Doc, Doc) Parens = ("(".Doc(), ")".Doc());
         public static (Doc, Doc) Brace = ("{".Doc(), "}".Doc());
@@ -69,6 +69,17 @@ namespace PrettyDoc
         {
             var sentences = Compile();
             PDoc.Render(opts, sentences, write);
+        }
+
+        public override string ToString()
+        {
+            var sb = new System.Text.StringBuilder();
+            void write(string s)
+            {
+                sb.Append(s);
+            }
+            Render(write);
+            return sb.ToString();
         }
         public PDoc[][] Compile()
         {
@@ -145,8 +156,9 @@ namespace PrettyDoc
                 return;
             }
 
-            foreach(var segments in sentences)
+            for(int i = 0; i < sentences.Length; i++)
             {
+                var segments = sentences[i];
                 int col = 0;
                 bool initialized = false;
 
@@ -185,7 +197,8 @@ namespace PrettyDoc
                             throw new InvalidCastException($"unexpected segment {seg}");
                     }
                 }
-                write("\n");
+                if (i != sentences.Length - 1)
+                    write("\n");
             }
         }
     }

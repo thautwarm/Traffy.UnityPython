@@ -35,5 +35,6 @@ public class Gen_MagicNames : HasNamespace
                 ).Indent(4),
             "}".Doc()
         ).Render(write);
+        write("\n");
     }
 }

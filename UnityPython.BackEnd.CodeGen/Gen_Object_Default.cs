@@ -21,7 +21,6 @@ public class Gen_ObjectDefault : HasNamespace
     void HasNamespace.Generate(Action<string> write)
     {
         var entry = typeof(Traffy.Objects.TrObject);
-        entry.Namespace?.By(((HasNamespace)this).AddNamepace);
 
         List<Doc> defs = new List<Doc>();
         foreach (var meth in magicMethods)
@@ -57,15 +56,20 @@ public class Gen_ObjectDefault : HasNamespace
             defs.Add(GenerateMethod(meth.ReturnType.RefGen(this), meth.Name.Doc(), sig_Args, body));
         }
 
+        RequiredNamespace.Remove(entry.Namespace);
         RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
-        write($"namespace {entry.Namespace}");
-        write("{");
-        var x = "public partial interface".Doc() + entry.Name.Doc() + VSep(
-            "{".Doc(),
-            defs.Join(NewLine).Indent(4),
-            "}".Doc()
+        var x = VSep(
+            VSep(
+                $"namespace {entry.Namespace}".Doc(),
+                "{".Doc(),
+                "public partial interface".Doc() + entry.Name.Doc(),
+                "{".Doc(),
+                defs.Join(NewLine).Indent(4),
+                "}".Doc()
+            ).Indent(4),
+        "}".Doc()
         );
         x.Render(write);
-        write("}");
+        write("\n");
     }
 }

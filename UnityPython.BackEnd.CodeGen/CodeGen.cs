@@ -50,6 +50,14 @@ public static class ExtCodeGen
             VSep(body).Indent(4),
         "}".Doc());
     }
+
+    public static Doc GenerateInterfaceMethod(Doc interfaceName, Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body)
+    {
+        var head = retype + interfaceName * ".".Doc() * name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
+        return head * NewLine * VSep("{".Doc(),
+            VSep(body).Indent(4),
+        "}".Doc());
+    }
 }
 public interface HasNamespace
 {
