@@ -25,8 +25,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrTuple>();
-            CLASS.Name = "tuple";
+            CLASS = TrClass.FromPrototype<TrTuple>("tuple");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("tuple.__new__", TrTuple.datanew);
             CLASS.IsSealed = true;

@@ -18,8 +18,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrRef>();
-            CLASS.Name = "ref";
+            CLASS = TrClass.FromPrototype<TrRef>("ref");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ref.__new__", TrRef.datanew);
             CLASS.InstanceUseInlineCache = false;

@@ -63,8 +63,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrBool>();
-            CLASS.Name = "bool";
+            CLASS = TrClass.FromPrototype<TrBool>("bool");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("bool.__new__", TrBool.datanew));
             TrClass.TypeDict[typeof(TrBool)] = CLASS;

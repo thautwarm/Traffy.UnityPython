@@ -31,8 +31,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrFunc>();
-            CLASS.Name = "function";
+            CLASS = TrClass.FromPrototype<TrFunc>("function");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("function.__new__", TrFunc.datanew);
             CLASS.IsSealed = true;

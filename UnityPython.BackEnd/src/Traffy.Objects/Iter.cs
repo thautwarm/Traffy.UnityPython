@@ -44,8 +44,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrIter>();
-            CLASS.Name = "iter";
+            CLASS = TrClass.FromPrototype<TrIter>("iter");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("iter.__new__", TrIter.datanew));
             TrClass.TypeDict[typeof(TrIter)] = CLASS;

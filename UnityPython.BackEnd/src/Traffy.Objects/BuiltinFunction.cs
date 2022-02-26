@@ -19,8 +19,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrSharpFunc>();
-            CLASS.Name = "builtin_function";
+            CLASS = TrClass.FromPrototype<TrSharpFunc>("builtin_function");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("builtin_function.__new__", TrSharpFunc.datanew));
             TrClass.TypeDict[typeof(TrSharpFunc)] = CLASS;

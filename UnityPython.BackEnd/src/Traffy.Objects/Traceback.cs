@@ -55,8 +55,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrTraceback>();
-            CLASS.Name = "Traceback";
+            CLASS = TrClass.FromPrototype<TrTraceback>("Traceback");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("Traceback.__new__", TrTraceback.datanew);
             CLASS.IsSealed = true;

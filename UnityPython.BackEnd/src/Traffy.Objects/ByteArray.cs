@@ -65,8 +65,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrByteArray>();
-            CLASS.Name = "bytearray";
+            CLASS = TrClass.FromPrototype<TrByteArray>("bytearray");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("bytearray", TrByteArray.datanew);
             CLASS.IsSealed = true;

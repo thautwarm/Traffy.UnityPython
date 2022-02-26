@@ -14,8 +14,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrSet>();
-            CLASS.Name = "set";
+            CLASS = TrClass.FromPrototype<TrSet>("set");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("set.__new__", TrSet.datanew);
             CLASS.IsSealed = true;

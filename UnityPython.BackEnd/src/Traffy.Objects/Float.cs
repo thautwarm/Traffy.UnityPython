@@ -43,8 +43,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrFloat>();
-            CLASS.Name = "float";
+            CLASS = TrClass.FromPrototype<TrFloat>("float");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("float.__new__", TrFloat.datanew);
             CLASS.IsSealed = true;

@@ -14,8 +14,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrClassMethod>();
-            CLASS.Name = "classmethod";
+            CLASS = TrClass.FromPrototype<TrClassMethod>("classmethod");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("classmethod.__new__", TrClassMethod.datanew));
             CLASS.IsSealed = true;

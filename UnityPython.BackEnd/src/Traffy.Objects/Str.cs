@@ -103,8 +103,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrStr>();
-            CLASS.Name = "str";
+            CLASS = TrClass.FromPrototype<TrStr>("str");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("str.__new__", TrStr.datanew);
             CLASS.IsSealed = true;

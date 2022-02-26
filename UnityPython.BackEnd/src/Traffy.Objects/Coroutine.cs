@@ -117,8 +117,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrCoroutine>();
-            CLASS.Name = "generator";
+            CLASS = TrClass.FromPrototype<TrCoroutine>("generator");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("generator.__new__", TrCoroutine.datanew));
             CLASS.AddMethod("send", _obj__send__);

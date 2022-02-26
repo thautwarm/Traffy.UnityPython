@@ -44,8 +44,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrSlice>();
-            CLASS.Name = "slice";
+            CLASS = TrClass.FromPrototype<TrSlice>("slice");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("slice.__new__", TrSlice.datanew);
             CLASS.IsSealed = true;

@@ -31,7 +31,6 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.CreateClass("dict");
-            CLASS.Name = "dict";
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("dict.__new__", TrDict.datanew));
             CLASS[CLASS.ic__bool] = TrSharpFunc.FromFunc("dict.__new__", o => ((TrDict)o).__bool__());

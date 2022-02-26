@@ -37,8 +37,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrBytes>();
-            CLASS.Name = "bytes";
+            CLASS = TrClass.FromPrototype<TrBytes>("bytes");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("bytes.__new__", TrBytes.datanew);
             CLASS.IsSealed = true;

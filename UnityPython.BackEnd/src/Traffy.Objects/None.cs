@@ -20,8 +20,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.FromPrototype<TrNone>();
-            CLASS.Name = "NoneType";
+            CLASS = TrClass.FromPrototype<TrNone>("NoneType");
             CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NoneType.__new__", TrNone.datanew);
             CLASS.IsSealed = true;
@@ -32,7 +31,6 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            Initialization.Prelude(CLASS);
         }
 
         [OnDeserialized]
