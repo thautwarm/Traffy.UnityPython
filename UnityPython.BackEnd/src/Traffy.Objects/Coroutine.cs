@@ -89,13 +89,13 @@ namespace Traffy.Objects
 
         public static TrObject __send__(TrObject _self, TrObject v)
         {
-            var self = (TrCoroutine) _self;
+            var self = (TrCoroutine)_self;
             return self.__send__(v);
         }
 
         public static TrObject __send__(TrObject _self, TrObject v, TrRef found)
         {
-            var self = (TrCoroutine) _self;
+            var self = (TrCoroutine)_self;
             return self.__send__(v, found);
         }
 
@@ -107,7 +107,7 @@ namespace Traffy.Objects
                 return __send__(args[0], args[1]);
             if (args.Count == 3)
             {
-                return __send__(args[0], args[1], (TrRef) args[2]);
+                return __send__(args[0], args[1], (TrRef)args[2]);
             }
             throw new ValueError("generator.send() takes 1 or 2 arguments");
         }
@@ -118,7 +118,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrCoroutine>("generator");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("generator.__new__", TrCoroutine.datanew));
             CLASS.AddMethod("send", _obj__send__);
             TrClass.TypeDict[typeof(TrCoroutine)] = CLASS;
@@ -137,6 +137,6 @@ namespace Traffy.Objects
             return m_generator.MoveNext();
         }
 
-        public void Dispose(){ }
+        public void Dispose() { }
     }
 }

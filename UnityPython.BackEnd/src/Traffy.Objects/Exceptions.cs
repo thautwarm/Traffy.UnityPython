@@ -112,7 +112,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("BaseException");
             CLASS.Name = "BaseException";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__repr] = TrSharpFunc.FromFunc("BaseException.__repr__", TrExceptionBase.TrException_repr);
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("BaseException.__new__", TrExceptionExt.datanew<TrBaseException>);
             _IndexArgs = CLASS.AddField("args");
@@ -156,7 +156,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("Exception", TrBaseException.CLASS);
             CLASS.Name = "Exception";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("Exception.__new__", TrExceptionExt.datanew<TrException>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -210,7 +210,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("AttributeError", TrException.CLASS);
             CLASS.Name = "AttributeError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AttributeError.__new__", TrExceptionExt.datanew<AttributeError>);
@@ -261,7 +261,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("NameError", TrException.CLASS);
             CLASS.Name = "NameError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NameError.__new__", TrExceptionExt.datanew<NameError>);
@@ -303,7 +303,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("TypeError", TrException.CLASS);
             CLASS.Name = "TypeError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("TypeError.__new__", TrExceptionExt.datanew<TypeError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -347,7 +347,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("ValueError", TrException.CLASS);
             CLASS.Name = "ValueError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ValueError.__new__", TrExceptionExt.datanew<ValueError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -397,7 +397,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("StopIteration", TrException.CLASS);
             CLASS.Name = "StopIteration";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("StopIteration.__new__", TrExceptionExt.datanew<StopIteration>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -439,7 +439,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("LookupError", TrException.CLASS);
             CLASS.Name = "LookupError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("LookupError.__new__", TrExceptionExt.datanew<LookupError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -482,7 +482,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("KeyError", LookupError.CLASS);
             CLASS.Name = "KeyError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("KeyError.__new__", TrExceptionExt.datanew<KeyError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -526,7 +526,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("IndexError", LookupError.CLASS);
             CLASS.Name = "IndexError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("IndexError.__new__", TrExceptionExt.datanew<IndexError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -568,7 +568,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("AssertionError", TrException.CLASS);
             CLASS.Name = "AssertionError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AssertionError.__new__", TrExceptionExt.datanew<AssertionError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -627,7 +627,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("ImportError", TrException.CLASS);
             CLASS.Name = "ImportError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ImportError.__new__", TrExceptionExt.datanew<ImportError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -669,7 +669,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("RuntimeError", TrException.CLASS);
             CLASS.Name = "RuntimeError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("RuntimeError.__new__", TrExceptionExt.datanew<RuntimeError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -713,7 +713,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("NotImplementError", RuntimeError.CLASS);
             CLASS.Name = "NotImplementError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NotImplementError.__new__", TrExceptionExt.datanew<NotImplementError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
@@ -768,7 +768,7 @@ namespace Traffy.Objects
         {
             CLASS = TrClass.CreateClass("NativeError", TrException.CLASS);
             CLASS.Name = "NativeError";
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NativeError.__new__", NativeError.datanew);
             CLASS[CLASS.ic__eq] = TrSharpFunc.FromFunc("NativeError.__eq__", (o, r) => ((NativeError)o).__eq__(r));
             _IndexArgs = CLASS.AddField("args");

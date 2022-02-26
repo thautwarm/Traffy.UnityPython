@@ -318,7 +318,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.RawObjectClassObject();
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS.Name = "object";
             CLASS[CLASS.ic__new] = TrSharpFunc.FromFunc("object.__new__", TrRawObject.datanew);
             TrClass.TypeDict[typeof(TrRawObject)] = CLASS;

@@ -66,7 +66,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrByteArray>("bytearray");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("bytearray", TrByteArray.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrByteArray)] = CLASS;

@@ -19,7 +19,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrStaticMethod>("staticmethod");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("staticmethod.__new__", TrStaticMethod.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrStaticMethod)] = CLASS;

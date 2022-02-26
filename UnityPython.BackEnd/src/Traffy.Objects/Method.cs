@@ -16,11 +16,13 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
+        string TrObject.__repr__() => $"<bound method {func.__repr__()} at {self.__repr__()}>";
+
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSharpMethod>("method");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("method.__new__", TrSharpMethod.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrSharpMethod)] = CLASS;
@@ -49,13 +51,10 @@ namespace Traffy.Objects
             return new TrSharpMethod { func = func, self = self };
         }
 
-        public static TrObject BindOrUnwrap(TrObject func, TrObject self)
-        {
-            return new TrSharpMethod { func = func, self = self };
-        }
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             RTS.arg_check_positional_only(args, 3);
+            Console.WriteLine(args[0].__repr__());
             return Bind(args[1], args[2]);
         }
     }

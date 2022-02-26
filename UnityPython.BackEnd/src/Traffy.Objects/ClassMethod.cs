@@ -15,7 +15,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrClassMethod>("classmethod");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("classmethod.__new__", TrClassMethod.datanew));
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrClassMethod)] = CLASS;

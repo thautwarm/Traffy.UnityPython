@@ -24,7 +24,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrMapObject>("map");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("map.__new__", TrMapObject.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrMapObject)] = CLASS;
@@ -47,7 +47,7 @@ namespace Traffy.Objects
 
             var items = new IEnumerator<TrObject>[args.Count - 1];
             TrObject func = args[0];
-            for(int i = 1; i < args.Count; i++)
+            for (int i = 1; i < args.Count; i++)
             {
                 items[i - 1] = args[i].__iter__();
             }
@@ -57,7 +57,7 @@ namespace Traffy.Objects
         static IEnumerator<TrObject> generator(TrObject func, IEnumerator<TrObject>[] items)
         {
             BList<TrObject> curr = new BList<TrObject>();
-            for(int i = 0; i < items.Length; i++)
+            for (int i = 0; i < items.Length; i++)
             {
                 curr.Add(null);
             }

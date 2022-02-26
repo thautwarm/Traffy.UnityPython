@@ -15,7 +15,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSet>("set");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("set.__new__", TrSet.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrSet)] = CLASS;

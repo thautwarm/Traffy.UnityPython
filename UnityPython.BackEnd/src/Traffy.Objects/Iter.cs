@@ -8,8 +8,8 @@ namespace Traffy.Objects
     [Serializable]
     public class TrIter : TrObject, IEnumerator<TrObject>
     {
-        public IEnumerator<TrObject>  iter;
-        public IEnumerator<TrObject>  __iter__ => this;
+        public IEnumerator<TrObject> iter;
+        public IEnumerator<TrObject> __iter__ => this;
         public object Native => iter;
 
         public TrIter(IEnumerator<TrObject> itr)
@@ -45,7 +45,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrIter>("iter");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("iter.__new__", TrIter.datanew));
             TrClass.TypeDict[typeof(TrIter)] = CLASS;
         }

@@ -32,7 +32,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFunc>("function");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("function.__new__", TrFunc.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrFunc)] = CLASS;

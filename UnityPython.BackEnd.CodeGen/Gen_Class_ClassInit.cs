@@ -6,6 +6,7 @@ using System.Text;
 using PrettyDoc;
 using Traffy;
 using Traffy.Annotations;
+using Traffy.InlineCache;
 using Traffy.Objects;
 using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
@@ -22,6 +23,16 @@ public class Gen_Class_ClassInit : HasNamespace
     void HasNamespace.Generate(Action<string> write)
     {
         var entry = typeof(Traffy.Objects.TrClass);
+        RequiredNamespace.Add(typeof(PolyIC).Namespace);
+
+        IEnumerable<Doc> raw_init_ic_fields()
+        {
+            foreach (var each in magicMethods.Select(x => x.Name.Substring(2, x.Name.Length - 4)))
+            {
+                yield return $"public {nameof(PolyIC)} ic__{each} = new {nameof(PolyIC)}({nameof(MagicNames)}.i___{each}__);".Doc();
+            }
+        }
+
         IEnumerable<Doc> raw_init_generator()
         {
             foreach (var meth in magicMethods)
@@ -48,6 +59,14 @@ public class Gen_Class_ClassInit : HasNamespace
             }
         }
 
+        IEnumerable<Doc> init_ic()
+        {
+            foreach (var each in magicMethods.Select(x => x.Name.Substring(2, x.Name.Length - 4)))
+            {
+                yield return $"ic__{each} = new {nameof(PolyIC)}({nameof(MagicNames)}.i___{each}__);".Doc();
+            }
+        }
+
         RequiredNamespace.Remove(entry.Namespace);
         RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
         var x = VSep(
@@ -58,6 +77,7 @@ public class Gen_Class_ClassInit : HasNamespace
                     "public partial class".Doc() + entry.Name.Doc(),
                     "{".Doc(),
                         VSep(
+                            VSep(raw_init_ic_fields().ToArray()),
                             "static void RawClassInit(TrClass cls)".Doc(),
                             "{".Doc(),
                             VSep(raw_init_generator().ToArray()).Indent(4),
@@ -66,6 +86,10 @@ public class Gen_Class_ClassInit : HasNamespace
                             "static void BuiltinClassInit<T>(TrClass cls) where T : TrObject".Doc(),
                             "{".Doc(),
                             VSep(builtin_class_init_generator().ToArray()).Indent(4),
+                            "}".Doc(),
+                            "public void InitInlineCacheForMagicMethods()".Doc(),
+                            "{".Doc(),
+                            VSep(init_ic().ToArray()).Indent(4),
                             "}".Doc()
                         ).Indent(4),
                     "}".Doc()

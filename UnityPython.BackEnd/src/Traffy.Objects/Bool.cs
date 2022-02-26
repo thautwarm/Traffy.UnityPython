@@ -64,7 +64,6 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrBool>("bool");
-            CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("bool.__new__", TrBool.datanew));
             TrClass.TypeDict[typeof(TrBool)] = CLASS;
         }

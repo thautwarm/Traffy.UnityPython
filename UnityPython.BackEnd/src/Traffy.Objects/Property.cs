@@ -28,7 +28,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrProperty>("property");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("property.__new__", datanew);
             CLASS.InstanceUseInlineCache = false;
             CLASS.IsSealed = true;

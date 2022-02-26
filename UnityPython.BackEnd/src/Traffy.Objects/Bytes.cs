@@ -38,7 +38,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrBytes>("bytes");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("bytes.__new__", TrBytes.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrBytes)] = CLASS;

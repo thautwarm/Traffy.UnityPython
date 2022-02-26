@@ -17,7 +17,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrList>("list");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("list.__new__", TrList.datanew);
             CLASS["append".ToIntern()] = TrSharpFunc.FromFunc("list.append", TrList.append);
             CLASS.IsSealed = true;
@@ -65,7 +65,7 @@ namespace Traffy.Objects
         bool TrObject.__getitem__(TrObject item, TrRef found)
         {
             var oitem = item as TrInt;
-            if ((object) oitem != null)
+            if ((object)oitem != null)
             {
                 var i = oitem.value;
                 if (i < 0)
@@ -81,7 +81,7 @@ namespace Traffy.Objects
         void TrObject.__setitem__(TrObject item, TrObject value)
         {
             var oitem = item as TrInt;
-            if ((object) oitem != null)
+            if ((object)oitem != null)
             {
                 var i = oitem.value;
                 if (i < 0)

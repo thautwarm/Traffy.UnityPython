@@ -21,7 +21,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrNone>("NoneType");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NoneType.__new__", TrNone.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrNone)] = CLASS;

@@ -62,7 +62,7 @@ namespace Traffy.Objects
             return value.Inline().SeqLt<FString, FString, char>(b.value);
         }
 
-        bool  TrObject.__gt__(TrObject other)
+        bool TrObject.__gt__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -72,7 +72,7 @@ namespace Traffy.Objects
         }
 
 
-        bool  TrObject.__ge__(TrObject other)
+        bool TrObject.__ge__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -82,7 +82,7 @@ namespace Traffy.Objects
         }
 
 
-        bool  TrObject.__ne__(TrObject other)
+        bool TrObject.__ne__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -104,7 +104,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrStr>("str");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("str.__new__", TrStr.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrStr)] = CLASS;

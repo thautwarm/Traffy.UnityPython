@@ -44,7 +44,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFloat>("float");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("float.__new__", TrFloat.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrFloat)] = CLASS;

@@ -39,7 +39,6 @@ namespace Traffy.Objects
 
     public partial class TrClass : TrObject
     {
-        public static object AllClassLock = new object();
         public bool InstanceUseInlineCache = true;
         public bool IsClass => true;
         static IdComparer idComparer = new IdComparer();
@@ -90,9 +89,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            MetaClass = CreateClass("type");
-            MetaClass.Class = MetaClass;
-            MetaClass.InitInlineCacheForMagicMethods();
+            MetaClass = CreateMetaClass("type");
             MetaClass[MetaClass.ic__call] = TrClassMethod.Bind(TrSharpFunc.FromFunc("type.__call__", typecall));
             MetaClass[MetaClass.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("type.__new__", typenew));
             MetaClass.Name = "type";
@@ -229,8 +226,27 @@ namespace Traffy.Objects
                 __mro = new TrClass[0],
                 __base = bases,
             };
+            cls.InitInlineCacheForMagicMethods();
             return cls;
         }
+
+        static bool isMetaClassInitialized = false;
+        internal static TrClass CreateMetaClass(string name, params TrClass[] bases)
+        {
+            if (isMetaClassInitialized)
+                throw new TypeError("MetaClass is already initialized.");
+            // XXX: builtin types cannot be inherited, or methods report incompatible errors
+            var cls = new TrClass
+            {
+                Name = name,
+                __mro = new TrClass[0],
+                __base = bases,
+            };
+            cls.InitInlineCacheForMagicMethods();
+            cls.Class = cls;
+            return cls;
+        }
+
 
         // use for sealed classes which shall not be inherited
         internal static TrClass FromPrototype<T>(string name, params TrClass[] bases) where T : TrObject
@@ -242,6 +258,7 @@ namespace Traffy.Objects
                 __mro = new TrClass[0],
                 __base = bases,
             };
+            cls.InitInlineCacheForMagicMethods();
             BuiltinClassInit<T>(cls);
             cls.IsSealed = true;
             return cls;
@@ -261,6 +278,7 @@ namespace Traffy.Objects
                 __mro = new TrClass[0],
                 __base = new TrClass[0],
             };
+            cls.InitInlineCacheForMagicMethods();
             RawClassInit(cls);
             cls.IsSealed = true;
             return cls;

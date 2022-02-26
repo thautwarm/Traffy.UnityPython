@@ -351,7 +351,7 @@ namespace Traffy
             var found = new TrRef();
             var o = tos.__getattr__(attr, found);
             if (!o)
-                throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr.__str__()}'.");
+                throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr.__str__()}'");
             return found.value;
         }
 
@@ -563,7 +563,6 @@ namespace Traffy
         {
             var cls = TrClass.CreateClass(name, rt_bases.Select(x => (TrClass)x).ToArray());
             cls.Name = name;
-            cls.InitInlineCacheForMagicMethods();
             TrObject new_inst(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 var o = MK.UserObject(cls);

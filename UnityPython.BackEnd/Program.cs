@@ -45,6 +45,11 @@ public class App
         d[MK.Str("time")] = TrSharpFunc.FromFunc("time", time);
         d[MK.Str("len")] = TrSharpFunc.FromFunc("len", x => x.__len__());
         Initialization.Populate(d);
+
+        var cls = (TrObject) RTS.new_class("S", new TrObject[0], null);
+        TrUserObjectBase res = (TrUserObjectBase) cls.Call();
+        // Console.WriteLine("res " + res.__repr__());
+
         try
         {
             x.Exec(d);

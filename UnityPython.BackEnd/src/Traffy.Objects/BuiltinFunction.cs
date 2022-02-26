@@ -20,7 +20,6 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSharpFunc>("builtin_function");
-            CLASS.InitInlineCacheForMagicMethods();
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("builtin_function.__new__", TrSharpFunc.datanew));
             TrClass.TypeDict[typeof(TrSharpFunc)] = CLASS;
         }

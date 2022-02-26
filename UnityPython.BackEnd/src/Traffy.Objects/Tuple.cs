@@ -26,7 +26,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrTuple>("tuple");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("tuple.__new__", TrTuple.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrTuple)] = CLASS;

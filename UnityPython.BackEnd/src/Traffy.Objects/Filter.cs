@@ -24,7 +24,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFilter>("filter");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("filter.__new__", TrFilter.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrFilter)] = CLASS;

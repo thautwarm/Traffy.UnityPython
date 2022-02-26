@@ -31,12 +31,12 @@ namespace Traffy.Objects
         }
     }
 
-    public class TrTraceback: TrObject
+    public class TrTraceback : TrObject
     {
         public List<FrameRecord> frameRecords = new List<FrameRecord>();
         public TrExceptionBase cause = null;
 
-        public TrTraceback(){ }
+        public TrTraceback() { }
         public void Record(string codename, Metadata metadata, int[] mini_traceback, TrExceptionBase cause)
         {
             var record = new FrameRecord
@@ -56,7 +56,7 @@ namespace Traffy.Objects
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrTraceback>("Traceback");
-            CLASS.InitInlineCacheForMagicMethods();
+
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("Traceback.__new__", TrTraceback.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrTraceback)] = CLASS;
