@@ -9,6 +9,10 @@ public static class ExtCodeGen
 {
     public static Doc RefGen(this Type t, HasNamespace ctx)
     {
+        if (t == typeof(void))
+        {
+            return "void".Doc();
+        }
         t.Namespace?.By(ctx.AddNamepace);
         var eltype = t.GetElementType();
         if (eltype != null)
@@ -39,9 +43,9 @@ public static class ExtCodeGen
         return $"{dt.Name}.{t.Name}".Doc();
     }
 
-    public static Doc GenerateMethod(Doc name, (Doc name, Doc type)[] arguments, Doc[] body)
+    public static Doc GenerateMethod(Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body)
     {
-        var head = "public static ".Doc() + name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
+        var head = "public".Doc() + retype + name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
         return head * NewLine * VSep("{".Doc(),
             VSep(body).Indent(4),
         "}".Doc());

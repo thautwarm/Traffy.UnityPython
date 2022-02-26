@@ -7,14 +7,7 @@ namespace Traffy.Annotations
 {
     public class MagicMethod: Attribute
     {
-        public bool Instance = false;
-
-        public static void Call()
-        {
-            typeof(Traffy.Objects.TrObject)
-                .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .ForEach(Console.WriteLine);
-        }
+        public bool NonInstance = false;
     }
 
     public class Mark : Attribute

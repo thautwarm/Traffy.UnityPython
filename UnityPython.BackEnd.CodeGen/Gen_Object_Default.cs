@@ -12,21 +12,16 @@ using static PrettyDoc.ExtPrettyDoc;
 [CodeGen(Path = "Traffy.Objects/Object.cs")]
 public class Gen_ObjectDefault : HasNamespace
 {
-    MethodInfo[] magicMethods;
-    public HashSet<string> RequiredNamespace {get; } = new HashSet<string>();
+    public static MethodInfo[] magicMethods = CodeGenConfig.MagicMethods;
+    public HashSet<string> RequiredNamespace { get; } = new HashSet<string>();
     public Gen_ObjectDefault()
     {
-        magicMethods =
-            typeof(Traffy.Objects.TrObject)
-            .GetMethods(BindingFlags.Static | BindingFlags.Public)
-            .Where(m => m.GetCustomAttribute<MagicMethod>() != null)
-            .ToArray();
     }
 
     void HasNamespace.Generate(Action<string> write)
     {
         var entry = typeof(Traffy.Objects.TrObject);
-        entry.Namespace?.By(((HasNamespace )this).AddNamepace);
+        entry.Namespace?.By(((HasNamespace)this).AddNamepace);
 
         List<Doc> defs = new List<Doc>();
         foreach (var meth in magicMethods)
@@ -34,7 +29,11 @@ public class Gen_ObjectDefault : HasNamespace
             var o = meth.GetParameters().First();
             if (o.ParameterType != typeof(TrObject))
             {
-                throw new Exception($"Magic method {meth.Name} must take a TrObject as first parameter, got {o.ParameterType}");
+                if (o.ParameterType == typeof(TrClass) && meth.GetCustomAttribute<MagicMethod>().NonInstance)
+                {
+                    continue;
+                }
+                throw new Exception($"Magic method {meth.Name} either takes a TrObject as first parameter, but got {o.ParameterType}; otherwise, it takes a TrClass as first parameter, and must be marked with [MagicMethod(NonInstance = true)]..");
             }
             var args = meth.GetParameters().Skip(1);
 
@@ -44,9 +43,10 @@ public class Gen_ObjectDefault : HasNamespace
                     var parName = x.Name ?? $"__arg{i}";
                     return (parName.Doc(), x.ParameterType.RefGen(this));
                 }).ToArray();
+
             var body = new Doc[]
             {
-                "return".Doc() +
+                (meth.ReturnType == typeof(void) ? Empty : "return ".Doc()) *
                     meth.RefGen(this)
                         * sig_Args.Select(x =>  x.name)
                                   .Prepend("this".Doc())
@@ -54,7 +54,7 @@ public class Gen_ObjectDefault : HasNamespace
                                   .SurroundedBy(Parens)
                         * ";".Doc(),
             };
-            defs.Add(GenerateMethod(meth.Name.Doc(), sig_Args, body));
+            defs.Add(GenerateMethod(meth.ReturnType.RefGen(this), meth.Name.Doc(), sig_Args, body));
         }
 
         RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
