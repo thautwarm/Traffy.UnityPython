@@ -1,0 +1,8 @@
+{
+    "python.formatting.provider": "black",
+    "python.analysis.autoImportCompletions": false,
+    "python.analysis.autoSearchPaths": false,
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.analysis.stubPath": "traffy-types"
+    // "python.analysis.typeshedPaths": ["traffy-types"]
+}
