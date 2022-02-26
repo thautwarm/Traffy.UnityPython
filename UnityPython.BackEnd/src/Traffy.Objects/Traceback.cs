@@ -15,19 +15,21 @@ namespace Traffy.Objects
         public string GetStackTrace()
         {
             return mini_traceback
+                .Reverse()
                 .Select(pointer =>
                     {
                         var span = metadata.FindSpan(pointer);
                         var sourceSpan = metadata.FindSourceSpan(pointer);
-                        sourceSpan = " ".Repeat(span.start.col) + sourceSpan;
-                        if (span.start.line != span.end.line)
-                            sourceSpan = "\n" + sourceSpan + "\n\n";
-                        else
-                            sourceSpan += "\n";
-                        return $"---- file {metadata.filename}, {codename}: {span}\n{sourceSpan}";
+                        if (sourceSpan != "")
+                        {
+                            sourceSpan = " ".Repeat(span.start.col) + sourceSpan;
+                            if (span.start.line != span.end.line)
+                                sourceSpan = "\n" + sourceSpan + "\n";
+                        }
+                        return $"  -- file {metadata.filename}, {span}\n{sourceSpan}";
                     }
                 )
-                .By(seq => String.Join("", seq));
+                .By(seq => String.Join("\n", seq.Prepend($"  at {codename}")));
         }
     }
 
@@ -37,13 +39,24 @@ namespace Traffy.Objects
         public TrExceptionBase cause = null;
 
         public TrTraceback() { }
-        public void Record(string codename, Metadata metadata, int[] mini_traceback, TrExceptionBase cause)
+        public void Record(string codename, Metadata metadata, int[] mini_traceback)
         {
             var record = new FrameRecord
             {
                 codename = codename,
                 metadata = metadata,
                 mini_traceback = mini_traceback
+            };
+            frameRecords.Add(record);
+        }
+
+        public void Record(string builtinFuncname)
+        {
+            var record = new FrameRecord
+            {
+                codename = builtinFuncname,
+                metadata = null,
+                mini_traceback = new int[0]
             };
             frameRecords.Add(record);
         }

@@ -6,5 +6,5 @@ class S:
     def __init__(self, x):
         pass
 
-print(S(1).__init__)
+print(list(map(lambda x: x // 0, [1, 2, 3])))
 # print(S())

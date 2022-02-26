@@ -18,7 +18,7 @@ namespace Traffy.Objects
     }
 
     [Serializable]
-    public partial class TrBool : TrObject
+    public sealed partial class TrBool : TrObject
     {
         public bool value;
 

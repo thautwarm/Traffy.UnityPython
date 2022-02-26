@@ -33,7 +33,15 @@ namespace Traffy.Objects
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
-            return func(args, kwargs);
+            try
+            {
+                return func(args, kwargs);
+            }
+            catch (Exception e)
+            {
+                var exc = RTS.exc_wrap_builtin(e, name);
+                throw exc;
+            }
         }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

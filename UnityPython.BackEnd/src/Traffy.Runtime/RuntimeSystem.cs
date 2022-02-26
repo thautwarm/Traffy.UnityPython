@@ -69,9 +69,19 @@ namespace Traffy
             exc.traceback.Record(
                 frame.func.fptr.metadata.codename,
                 frame.func.fptr.metadata,
-                frame.traceback.ToArray(),
-                null);
+                frame.traceback.ToArray());
             frame.err = null;
+            return exc.AsException();
+        }
+
+        internal static Exception exc_wrap_builtin(Exception e, string caller_name)
+        {
+            TrExceptionBase exc = exc_frombare(e);
+            if (exc.traceback == null)
+            {
+                exc.traceback = new TrTraceback();
+            }
+            exc.traceback.Record(caller_name);
             return exc.AsException();
         }
 
@@ -525,10 +535,6 @@ namespace Traffy
 
         public static Exception exc_tobare(TrObject rt_exc)
         {
-            if (rt_exc is NativeError native)
-            {
-                return native.Error;
-            }
             if (rt_exc is Exception o)
             {
                 return o;

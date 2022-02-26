@@ -47,11 +47,16 @@ namespace Traffy.Objects
             return $"{self.Class.Name}({String.Join(", ", ((TrExceptionBase)self).args.Select(x => x.__repr__()))})";
         }
 
+        public static string TrException_str(TrObject self)
+        {
+            return String.Join(", ", ((TrExceptionBase)self).args.Select(x => x.__str__()));
+        }
+
         string TrObject.__repr__() => TrException_repr(this);
 
         public string GetStackTrace()
         {
-            return $"{traceback?.GetStackTrace()}\n{__repr__()}";
+            return $"Traceback (most recent call last):\n{traceback?.GetStackTrace()}\n{Class.Name}: {__str__()}";
         }
     }
 

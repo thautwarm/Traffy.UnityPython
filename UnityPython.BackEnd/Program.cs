@@ -15,12 +15,12 @@ public class App
         return MK.Int(System.DateTime.Now.Ticks);
     }
 
-    public static void Main(string[] argv)
+    public static int Main(string[] argv)
     {
         if (argv.Length != 1)
         {
             Console.WriteLine("Usage: traffy <filepath> (takes only 1 argument as input path)");
-            return;
+            return 1;
         }
         Initialization.InitRuntime();
         var o = System.IO.File.ReadAllText(argv[0]);
@@ -58,8 +58,8 @@ public class App
         {
             var exc = RTS.exc_frombare(e);
             Console.WriteLine(exc.GetStackTrace());
-            throw e;
+            return 1;
         }
-
+        return 0;
     }
 }
