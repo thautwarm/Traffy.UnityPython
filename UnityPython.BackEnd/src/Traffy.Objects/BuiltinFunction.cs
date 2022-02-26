@@ -150,6 +150,25 @@ namespace Traffy.Objects
             }
             return new TrSharpFunc(name, call);
         }
+
+        public static TrSharpFunc FromFunc(string name, Func<TrClass, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
+        {
+
+            if (func == null)
+                throw new InvalidProgramException("func is null");
+            TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+            {
+                RTS.arg_check_positional_atleast(args, 1);
+                var clsobj = args.PopLeft();
+                var cls = clsobj as TrClass;
+                if (cls == null)
+                    throw new TypeError($"{cls.Class.Name} object is not a class");
+                var o = func(cls, args, kwargs);
+                args.AddLeft(cls);
+                return o;
+            }
+            return new TrSharpFunc(name, call);
+        }
         public static TrSharpFunc FromFunc(string name, Func<TrObject, string> func)
         {
 
@@ -227,7 +246,6 @@ namespace Traffy.Objects
             {
                 RTS.arg_check_positional_only(args, 2);
                 return MK.Bool(func(args[0], args[1]));
-
             }
             return new TrSharpFunc(name, call);
         }

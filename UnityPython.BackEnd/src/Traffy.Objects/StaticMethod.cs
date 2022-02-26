@@ -54,6 +54,11 @@ namespace Traffy.Objects
         {
             return new TrStaticMethod { func = TrSharpFunc.FromFunc(name, func) };
         }
+
+        public static TrStaticMethod Bind(string name, Func<TrClass, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func)
+        {
+            return new TrStaticMethod { func = TrSharpFunc.FromFunc(name, func) };
+        }
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             RTS.arg_check_positional_only(args, 2);
