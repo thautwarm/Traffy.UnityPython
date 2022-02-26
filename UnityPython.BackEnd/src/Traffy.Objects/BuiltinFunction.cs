@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
+
 namespace Traffy.Objects
 {
     public class TrSharpFunc : TrObject
@@ -15,7 +16,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
         public List<TrObject> __array__ => null;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSharpFunc>();
@@ -25,7 +26,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrSharpFunc)] = CLASS;
         }
 
-        [Mark(typeof(TrSharpFunc))]
+        [Traffy.Annotations.Mark(typeof(TrSharpFunc))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

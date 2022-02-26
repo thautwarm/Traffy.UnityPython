@@ -14,7 +14,7 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrList>();
@@ -32,7 +32,7 @@ namespace Traffy.Objects
             return RTS.object_none;
         }
 
-        [Mark(typeof(TrList))]
+        [Traffy.Annotations.Mark(typeof(TrList))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -111,7 +111,7 @@ namespace Traffy.Objects
             this.gen = generator(func, items);
         }
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrMapObject>();
@@ -122,7 +122,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrMapObject)] = CLASS;
         }
 
-        [Mark(typeof(TrMapObject))]
+        [Traffy.Annotations.Mark(typeof(TrMapObject))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -210,7 +210,7 @@ namespace Traffy.Objects
             this.gen = generator(func, items);
         }
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFilter>();
@@ -221,7 +221,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrFilter)] = CLASS;
         }
 
-        [Mark(typeof(TrFilter))]
+        [Traffy.Annotations.Mark(typeof(TrFilter))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

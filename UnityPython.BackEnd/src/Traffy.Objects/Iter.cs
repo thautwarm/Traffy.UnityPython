@@ -41,7 +41,7 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrIter>();
@@ -51,7 +51,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrIter)] = CLASS;
         }
 
-        [Mark(typeof(TrIter))]
+        [Traffy.Annotations.Mark(typeof(TrIter))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

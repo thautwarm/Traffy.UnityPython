@@ -40,10 +40,10 @@ namespace Traffy
         static Dictionary<string, TrObject> m_Prelude = new Dictionary<string, TrObject>();
         public static void InitRuntime()
         {
-            Mark.Query(typeof(TrObject), x => x is string s && s == TokenClassInit).ToList().ForEach(
+            Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenClassInit).ToList().ForEach(
                 f => f.method()
             );
-            var triples = Mark.Query(typeof(TrObject), x => x is Type t && typeof(TrObject).IsAssignableFrom(t)).ToArray();
+            var triples = Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is Type t && typeof(TrObject).IsAssignableFrom(t)).ToArray();
 #if DEBUG
             Console.WriteLine($"Found {triples.Length} classes");
 #endif
@@ -59,7 +59,7 @@ namespace Traffy
                 }
             }
             triples
-                .Select(((Type t, Mark attr, Action f) x) =>
+                .Select(((Type t, Traffy.Annotations.Mark attr, Action f) x) =>
                     new SetupSortPair
                     {
                         f = x.f,
@@ -70,7 +70,7 @@ namespace Traffy
                 .ForEach(x => x.f());
 
 
-            Mark.Query(typeof(TrObject), x => x is string s && s == TokenBuiltinInit).ToList().ForEach(
+            Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenBuiltinInit).ToList().ForEach(
                 f => f.method()
             );
         }

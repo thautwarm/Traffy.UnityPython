@@ -41,7 +41,7 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSlice>();
@@ -52,7 +52,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrSlice)] = CLASS;
         }
 
-        [Mark(typeof(TrSlice))]
+        [Traffy.Annotations.Mark(typeof(TrSlice))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

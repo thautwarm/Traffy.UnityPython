@@ -17,7 +17,7 @@ namespace Traffy.Objects
         public static TrNone Unique = new TrNone();
         public static bool unique_set = false;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrNone>();
@@ -27,7 +27,7 @@ namespace Traffy.Objects
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrNone)] = CLASS;
         }
-        [Mark(typeof(TrNone))]
+        [Traffy.Annotations.Mark(typeof(TrNone))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

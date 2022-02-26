@@ -40,7 +40,7 @@ namespace Traffy.Objects
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrFloat>();
@@ -50,7 +50,7 @@ namespace Traffy.Objects
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrFloat)] = CLASS;
         }
-        [Mark(typeof(TrFloat))]
+        [Traffy.Annotations.Mark(typeof(TrFloat))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

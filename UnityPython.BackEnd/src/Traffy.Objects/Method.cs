@@ -16,7 +16,7 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSharpMethod>();
@@ -27,7 +27,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrSharpMethod)] = CLASS;
         }
 
-        [Mark(typeof(TrSharpMethod))]
+        [Traffy.Annotations.Mark(typeof(TrSharpMethod))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

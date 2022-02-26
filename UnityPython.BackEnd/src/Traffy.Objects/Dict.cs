@@ -27,7 +27,7 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("dict");
@@ -39,7 +39,7 @@ namespace Traffy.Objects
             // TODO: __init_subclass__
         }
 
-        [Mark(typeof(TrDict))]
+        [Traffy.Annotations.Mark(typeof(TrDict))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

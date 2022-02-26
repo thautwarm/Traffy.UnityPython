@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using static Traffy.Objects.ExtMonoAsyn;
+
 
 namespace Traffy.Objects
 {
@@ -114,7 +114,7 @@ namespace Traffy.Objects
 
         public static TrObject _obj__send__ = TrSharpFunc.FromFunc("generator.send", _overloaded_send);
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrCoroutine>();
@@ -124,7 +124,7 @@ namespace Traffy.Objects
             CLASS.AddMethod("send", _obj__send__);
             TrClass.TypeDict[typeof(TrCoroutine)] = CLASS;
         }
-        [Mark(typeof(TrCoroutine))]
+        [Traffy.Annotations.Mark(typeof(TrCoroutine))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

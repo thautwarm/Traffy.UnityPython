@@ -52,7 +52,7 @@ namespace Traffy.Objects
         static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrTraceback>();
@@ -63,7 +63,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrTraceback)] = CLASS;
         }
 
-        [Mark(typeof(TrTraceback))]
+        [Traffy.Annotations.Mark(typeof(TrTraceback))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

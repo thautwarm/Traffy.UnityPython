@@ -27,7 +27,7 @@ namespace Traffy
             }
         }
 
-        [Mark(Initialization.TokenBuiltinInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenBuiltinInit)]
         public static void InitRuntime()
         {
             TrObject stacktrace(TrObject exception)

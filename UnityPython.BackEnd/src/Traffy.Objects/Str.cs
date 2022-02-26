@@ -100,7 +100,7 @@ namespace Traffy.Objects
             return value.Inline().SeqEq<FString, FString, char>(b.value);
         }
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrStr>();
@@ -111,7 +111,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrStr)] = CLASS;
         }
 
-        [Mark(typeof(TrStr))]
+        [Traffy.Annotations.Mark(typeof(TrStr))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

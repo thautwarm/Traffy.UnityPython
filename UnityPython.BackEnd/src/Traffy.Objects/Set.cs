@@ -11,7 +11,7 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrSet>();
@@ -21,7 +21,7 @@ namespace Traffy.Objects
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrSet)] = CLASS;
         }
-        [Mark(typeof(TrSet))]
+        [Traffy.Annotations.Mark(typeof(TrSet))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

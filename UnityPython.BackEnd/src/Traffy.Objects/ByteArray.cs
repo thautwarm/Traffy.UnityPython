@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using InlineHelper;
-using System.Runtime.CompilerServices;
+
 
 namespace Traffy.Objects
 {
@@ -62,7 +62,7 @@ namespace Traffy.Objects
             ? contents.SeqEq<FList<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrByteArray>();
@@ -73,7 +73,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrByteArray)] = CLASS;
         }
 
-        [Mark(typeof(TrByteArray))]
+        [Traffy.Annotations.Mark(typeof(TrByteArray))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

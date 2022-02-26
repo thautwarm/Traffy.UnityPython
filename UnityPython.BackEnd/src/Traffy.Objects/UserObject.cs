@@ -16,7 +16,7 @@ namespace Traffy.Objects
                 var ret = self_str.Call();
                 return ret.AsStr();
             }
-            return TrObject.__raw_str__(this);
+            return TrObject.__str__(this);
         }
         string TrObject.__repr__()
         {
@@ -26,7 +26,7 @@ namespace Traffy.Objects
                 var ret = self_repr.Call();
                 return ret.AsStr();
             }
-            return TrObject.__raw_repr__(this);
+            return TrObject.__repr__(this);
         }
         TrObject TrObject.__next__()
         {
@@ -36,7 +36,7 @@ namespace Traffy.Objects
                 var ret = self_next.Call();
                 return ret;
             }
-            return TrObject.__raw_next__(this);
+            return TrObject.__next__(this);
         }
 
         // Arithmetic ops
@@ -48,7 +48,7 @@ namespace Traffy.Objects
                 var ret = self_add.Call(a);
                 return ret;
             }
-            return TrObject.__raw_add__(this, a);
+            return TrObject.__add__(this, a);
         }
         TrObject TrObject.__sub__(TrObject a)
         {
@@ -58,7 +58,7 @@ namespace Traffy.Objects
                 var ret = self_sub.Call(a);
                 return ret;
             }
-            return TrObject.__raw_sub__(this, a);
+            return TrObject.__sub__(this, a);
         }
 
         TrObject TrObject.__mul__(TrObject a)
@@ -69,7 +69,7 @@ namespace Traffy.Objects
                 var ret = self_mul.Call(a);
                 return ret;
             }
-            return TrObject.__raw_mul__(this, a);
+            return TrObject.__mul__(this, a);
         }
 
         TrObject TrObject.__matmul__(TrObject a)
@@ -80,7 +80,7 @@ namespace Traffy.Objects
                 var ret = self_matmul.Call(a);
                 return ret;
             }
-            return TrObject.__raw_matmul__(this, a);
+            return TrObject.__matmul__(this, a);
         }
 
         TrObject TrObject.__floordiv__(TrObject a)
@@ -91,7 +91,7 @@ namespace Traffy.Objects
                 var ret = self_floordiv.Call(a);
                 return ret;
             }
-            return TrObject.__raw_floordiv__(this, a);
+            return TrObject.__floordiv__(this, a);
         }
 
         TrObject TrObject.__truediv__(TrObject a)
@@ -102,7 +102,7 @@ namespace Traffy.Objects
                 var ret = self_truediv.Call(a);
                 return ret;
             }
-            return TrObject.__raw_truediv__(this, a);
+            return TrObject.__truediv__(this, a);
         }
 
         TrObject TrObject.__mod__(TrObject a)
@@ -113,7 +113,7 @@ namespace Traffy.Objects
                 var ret = self_mod.Call(a);
                 return ret;
             }
-            return TrObject.__raw_mod__(this, a);
+            return TrObject.__mod__(this, a);
         }
 
         TrObject TrObject.__pow__(TrObject a)
@@ -124,7 +124,7 @@ namespace Traffy.Objects
                 var ret = self_pow.Call(a);
                 return ret;
             }
-            return TrObject.__raw_pow__(this, a);
+            return TrObject.__pow__(this, a);
         }
 
         // Bitwise logic operations
@@ -137,7 +137,7 @@ namespace Traffy.Objects
                 var ret = self_bitand.Call(a);
                 return ret;
             }
-            return TrObject.__raw_bitand__(this, a);
+            return TrObject.__bitand__(this, a);
         }
 
         TrObject TrObject.__bitor__(TrObject a)
@@ -148,7 +148,7 @@ namespace Traffy.Objects
                 var ret = self_bitor.Call(a);
                 return ret;
             }
-            return TrObject.__raw_bitor__(this, a);
+            return TrObject.__bitor__(this, a);
         }
 
         TrObject TrObject.__bitxor__(TrObject a)
@@ -159,7 +159,7 @@ namespace Traffy.Objects
                 var ret = self_bitxor.Call(a);
                 return ret;
             }
-            return TrObject.__raw_bitxor__(this, a);
+            return TrObject.__bitxor__(this, a);
         }
 
         // bit shift
@@ -171,7 +171,7 @@ namespace Traffy.Objects
                 var ret = self_lshift.Call(a);
                 return ret;
             }
-            return TrObject.__raw_lshift__(this, a);
+            return TrObject.__lshift__(this, a);
         }
 
         TrObject TrObject.__rshift__(TrObject a)
@@ -182,7 +182,7 @@ namespace Traffy.Objects
                 var ret = self_rshift.Call(a);
                 return ret;
             }
-            return TrObject.__raw_rshift__(this, a);
+            return TrObject.__rshift__(this, a);
         }
 
         // Object protocol
@@ -194,7 +194,7 @@ namespace Traffy.Objects
                 var ret = self_hash.Call();
                 return ret.AsInt();
             }
-            return TrObject.__raw_hash__(this);
+            return TrObject.__hash__(this);
         }
 
         TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -207,7 +207,7 @@ namespace Traffy.Objects
                 args.PopLeft();
                 return ret;
             }
-            return TrObject.__raw_call__(this, args, kwargs);
+            return TrObject.__call__(this, args, kwargs);
         }
 
         bool TrObject.__contains__(TrObject a)
@@ -218,7 +218,7 @@ namespace Traffy.Objects
                 var ret = self_contains.Call(a);
                 return ret.AsBool();
             }
-            return TrObject.__raw_contains__(this, a);
+            return TrObject.__contains__(this, a);
         }
 
 
@@ -229,7 +229,7 @@ namespace Traffy.Objects
             {
                 return self_getitem.Call(item, found).AsBool();
             }
-            return TrObject.__raw_getitem__(this, item, found);
+            return TrObject.__getitem__(this, item, found);
         }
 
         void TrObject.__setitem__(TrObject key, TrObject value)
@@ -240,7 +240,7 @@ namespace Traffy.Objects
                 self_setitem.Call(key, value);
                 return;
             }
-            TrObject.__raw_setitem__(this, key, value);
+            TrObject.__setitem__(this, key, value);
         }
         bool TrObject.__getattr__(TrObject s, TrRef found)
         {
@@ -249,7 +249,7 @@ namespace Traffy.Objects
             {
                 return self_getattr.Call(s, found).AsBool();
             }
-            return TrObject.__raw_getattr__(this, s, found);
+            return TrObject.__getattr__(this, s, found);
         }
 
         void TrObject.__setattr__(TrObject s, TrObject value)
@@ -260,7 +260,7 @@ namespace Traffy.Objects
                 self_setattr.Call(s, value);
                 return;
             }
-            TrObject.__raw_setattr__(this, s, value);
+            TrObject.__setattr__(this, s, value);
         }
 
         IEnumerator<TrObject> TrObject.__iter__()
@@ -270,7 +270,7 @@ namespace Traffy.Objects
             {
                 return self_iter.Call().__iter__();
             }
-            return TrObject.__raw_iter__(this);
+            return TrObject.__iter__(this);
         }
 
         TrObject TrObject.__len__()
@@ -280,7 +280,7 @@ namespace Traffy.Objects
             {
                 return self_len.Call();
             }
-            return TrObject.__raw_len__(this);
+            return TrObject.__len__(this);
         }
 
         // Comparators
@@ -291,7 +291,7 @@ namespace Traffy.Objects
             {
                 return self_eq.Call(o).AsBool();
             }
-            return TrObject.__raw_eq__(this, o);
+            return TrObject.__eq__(this, o);
         }
 
         bool TrObject.__lt__(TrObject o)
@@ -301,7 +301,7 @@ namespace Traffy.Objects
             {
                 return self_lt.Call(o).AsBool();
             }
-            return TrObject.__raw_lt__(this, o);
+            return TrObject.__lt__(this, o);
         }
 
 
@@ -313,7 +313,7 @@ namespace Traffy.Objects
             {
                 return self_neg.Call();
             }
-            return TrObject.__raw_neg__(this);
+            return TrObject.__neg__(this);
         }
 
         TrObject TrObject.__invert__()
@@ -323,7 +323,7 @@ namespace Traffy.Objects
             {
                 return self_inv.Call();
             }
-            return TrObject.__raw_invert__(this);
+            return TrObject.__invert__(this);
         }
 
         TrObject TrObject.__pos__()
@@ -333,7 +333,7 @@ namespace Traffy.Objects
             {
                 return self_pos.Call();
             }
-            return TrObject.__raw_pos__(this);
+            return TrObject.__pos__(this);
         }
 
         bool TrObject.__bool__()
@@ -343,7 +343,7 @@ namespace Traffy.Objects
             {
                 return self_bool.Call().AsBool();
             }
-            return TrObject.__raw_bool__(this);
+            return TrObject.__bool__(this);
         }
 
         TrObject TrObject.__abs__()
@@ -353,7 +353,7 @@ namespace Traffy.Objects
             {
                 return self_abs.Call();
             }
-            return TrObject.__raw_abs__(this);
+            return TrObject.__abs__(this);
         }
 
         TrObject TrObject.__enter__()
@@ -363,7 +363,7 @@ namespace Traffy.Objects
             {
                 return self_enter.Call();
             }
-            return TrObject.__raw_enter__(this);
+            return TrObject.__enter__(this);
         }
 
         TrObject TrObject.__exit__(TrObject type, TrObject value, TrObject traceback)
@@ -373,7 +373,7 @@ namespace Traffy.Objects
             {
                 return self_exit.Call(type, value, traceback);
             }
-            return TrObject.__raw_exit__(this, type, value, traceback);
+            return TrObject.__exit__(this, type, value, traceback);
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
@@ -40,112 +41,127 @@ namespace Traffy.Objects
         Exception unsupported(string op) =>
             throw new TypeError($"{Class.Name} has no {op} method");
 
-        public static TrObject __raw_init__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        // public static TrObject __new__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        // {
+        //     RTS.arg_check_positional_atleast(args, 1);
+        //     if (args[0] is TrClass cls)
+        //     {
+        //         var cls_new = cls[cls.ic__new];
+        //         if (cls_new == null)
+        //             throw new TypeError($"Fatal: {cls.Name} has no __new__ method");
+        //         var res = cls_new.__call__(args, kwargs);
+        //         return res;
+        //     }
+        //     throw new TypeError($"object.__new__(X): X is not a type object ({args[0].Class.Name})");
+        // }
+
+        [MagicMethod]
+        public static TrObject __init__(TrObject self, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         { return RTS.object_none; }
 
-        public static TrObject __raw_new__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            RTS.arg_check_positional_atleast(args, 1);
-            if (args[0] is TrClass cls)
-            {
-                var cls_new = cls[cls.ic__new];
-                if (cls_new == null)
-                    throw new TypeError($"Fatal: {cls.Name} has no __new__ method");
-                var res = cls_new.__call__(args, kwargs);
-                return res;
-            }
-            throw new TypeError($"object.__new__(X): X is not a type object ({args[0].Class.Name})");
-        }
 
-        // default '__str__'
-        public static string __raw_str__(TrObject self) => self.__repr__();
-        public string __str__() => __raw_str__(this);
+        [MagicMethod]
+        public static string __str__(TrObject self) => self.__repr__();
 
-        // default '__repr__'
-        public static string __raw_repr__(TrObject self) => $"<{self.Class.Name} object>";
-        public string __repr__() => __raw_repr__(this);
 
-        // default '__next__'
-        public static TrObject __raw_next__(TrObject self) =>
+        public string __str__() => __str__(this);
+
+        [MagicMethod]
+        public static string __repr__(TrObject self) => $"<{self.Class.Name} object>";
+
+        public string __repr__() => __repr__(this);
+
+        [MagicMethod]
+        public static TrObject __next__(TrObject self) =>
             throw self.unsupported(nameof(__next__));
-        public TrObject __next__() => TrObject.__raw_next__(this);
 
-        // Arithmetic ops
-        // default '__add__'
-        public static TrObject __raw_add__(TrObject self, TrObject a) =>
+
+        public TrObject __next__() => TrObject.__next__(this);
+
+        [MagicMethod]
+        public static TrObject __add__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__add__));
-        public TrObject __add__(TrObject a) => TrObject.__raw_add__(this, a);
-        // default '__sub__'
-        public static TrObject __raw_sub__(TrObject self, TrObject a) =>
+
+
+        public TrObject __add__(TrObject a) => TrObject.__add__(this, a);
+
+        [MagicMethod]
+        public static TrObject __sub__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__sub__));
-        public TrObject __sub__(TrObject a) => TrObject.__raw_sub__(this, a);
 
-        // default '__mul__'
-        public static TrObject __raw_mul__(TrObject self, TrObject a) =>
+        public TrObject __sub__(TrObject a) => TrObject.__sub__(this, a);
+
+        [MagicMethod]
+        public static TrObject __mul__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__mul__));
-        public TrObject __mul__(TrObject a) => TrObject.__raw_mul__(this, a);
 
-        // default '__matmul__'
-        public static TrObject __raw_matmul__(TrObject self, TrObject a) =>
+        public TrObject __mul__(TrObject a) => TrObject.__mul__(this, a);
+
+        [MagicMethod]
+        public static TrObject __matmul__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__matmul__));
-        public TrObject __matmul__(TrObject a) => TrObject.__raw_matmul__(this, a);
+        public TrObject __matmul__(TrObject a) => TrObject.__matmul__(this, a);
 
-        // default '__floordiv__'
-        public static TrObject __raw_floordiv__(TrObject self, TrObject a) =>
+        [MagicMethod]
+        public static TrObject __floordiv__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__floordiv__));
-        public TrObject __floordiv__(TrObject a) => TrObject.__raw_floordiv__(this, a);
 
-        // default '__truediv__'
-        public static TrObject __raw_truediv__(TrObject self, TrObject a) =>
+        public TrObject __floordiv__(TrObject a) => TrObject.__floordiv__(this, a);
+
+        [MagicMethod]
+        public static TrObject __truediv__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__truediv__));
-        public TrObject __truediv__(TrObject a) => TrObject.__raw_truediv__(this, a);
 
-        // default '__mod__'
-        public static TrObject __raw_mod__(TrObject self, TrObject a) =>
+
+        public TrObject __truediv__(TrObject a) => TrObject.__truediv__(this, a);
+
+        [MagicMethod]
+        public static TrObject __mod__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__mod__));
 
-        public TrObject __mod__(TrObject a) => TrObject.__raw_mod__(this, a);
 
-        // default '__pow__'
-        public static TrObject __raw_pow__(TrObject self, TrObject a) =>
+        public TrObject __mod__(TrObject a) => TrObject.__mod__(this, a);
+
+        [MagicMethod]
+        public static TrObject __pow__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__pow__));
-        public TrObject __pow__(TrObject a) => TrObject.__raw_pow__(this, a);
+        public TrObject __pow__(TrObject a) => TrObject.__pow__(this, a);
 
         // Bitwise logic operations
-        // default '__bitand__'
-        public static TrObject __raw_bitand__(TrObject self, TrObject a) =>
+        [MagicMethod]
+        public static TrObject __bitand__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__bitand__));
-        public TrObject __bitand__(TrObject a) => TrObject.__raw_bitand__(this, a);
+        public TrObject __bitand__(TrObject a) => TrObject.__bitand__(this, a);
 
-        // default '__bitor__'
-        public static TrObject __raw_bitor__(TrObject self, TrObject a) =>
+        [MagicMethod]
+        public static TrObject __bitor__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__bitor__));
-        public TrObject __bitor__(TrObject a) => TrObject.__raw_bitor__(this, a);
+        public TrObject __bitor__(TrObject a) => TrObject.__bitor__(this, a);
 
 
-        // default '__bitxor__'
-        public static TrObject __raw_bitxor__(TrObject self, TrObject a) =>
+        [MagicMethod]
+        public static TrObject __bitxor__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__bitxor__));
-        public TrObject __bitxor__(TrObject a) => TrObject.__raw_bitxor__(this, a);
+        public TrObject __bitxor__(TrObject a) => TrObject.__bitxor__(this, a);
 
 
 
         // bit shift
-        // default '__lshift__'
-        public static TrObject __raw_lshift__(TrObject self, TrObject a) =>
+        [MagicMethod]
+        public static TrObject __lshift__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__lshift__));
-        public TrObject __lshift__(TrObject a) => TrObject.__raw_lshift__(this, a);
+        public TrObject __lshift__(TrObject a) => TrObject.__lshift__(this, a);
 
-        // default '__rshift__'
-        public static TrObject __raw_rshift__(TrObject self, TrObject a) =>
+        [MagicMethod]
+        public static TrObject __rshift__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__rshift__));
-        public TrObject __rshift__(TrObject a) => TrObject.__raw_rshift__(this, a);
+        public TrObject __rshift__(TrObject a) => TrObject.__rshift__(this, a);
 
         // Object protocol
 
-        // default '__hash__'
-        public static int __raw_hash__(TrObject self) => self.Native.GetHashCode();
-        public int __hash__() => TrObject.__raw_hash__(this);
+        [MagicMethod]
+        public static int __hash__(TrObject self) => self.Native.GetHashCode();
+        public int __hash__() => TrObject.__hash__(this);
 
         public TrObject Call(params TrObject[] objs)
         {
@@ -186,15 +202,16 @@ namespace Traffy.Objects
             var xs = new BList<TrObject> { a1, a2, a3, a4 };
             return __call__(xs, null);
         }
-        // default '__call__'
-        public static TrObject __raw_call__(TrObject self, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) =>
-            throw self.unsupported(nameof(__call__));
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) => TrObject.__raw_call__(this, args, kwargs);
 
-        // default '__contains__'
-        public static bool __raw_contains__(TrObject self, TrObject a) =>
+        [MagicMethod]
+        public static TrObject __call__(TrObject self, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) =>
+            throw self.unsupported(nameof(__call__));
+        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) => TrObject.__call__(this, args, kwargs);
+
+        [MagicMethod]
+        public static bool __contains__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__contains__));
-        public bool __contains__(TrObject a) => TrObject.__raw_contains__(this, a);
+        public bool __contains__(TrObject a) => TrObject.__contains__(this, a);
         public bool __getitem__(TrObject item, out TrObject found)
         {
             var reference = MK.Ref();
@@ -202,98 +219,115 @@ namespace Traffy.Objects
             found = reference.value;
             return res;
         }
-        // default '__getitem__'
-        public static bool __raw_getitem__(TrObject self, TrObject item, TrRef found) =>
+
+        [MagicMethod]
+        public static bool __getitem__(TrObject self, TrObject item, TrRef found) =>
             throw self.unsupported(nameof(__getitem__));
-        public bool __getitem__(TrObject item, TrRef found) => TrObject.__raw_getitem__(this, item, found);
+        public bool __getitem__(TrObject item, TrRef found) => TrObject.__getitem__(this, item, found);
 
-        // default '__setitem__'
-        public static void __raw_setitem__(TrObject self, TrObject key, TrObject value) =>
+
+        [MagicMethod]
+        public static void __setitem__(TrObject self, TrObject key, TrObject value) =>
             throw self.unsupported(nameof(__setitem__));
-        public void __setitem__(TrObject key, TrObject value) => TrObject.__raw_setitem__(this, key, value);
+        public void __setitem__(TrObject key, TrObject value) => TrObject.__setitem__(this, key, value);
 
-        public static bool __raw_getattr__(TrObject self, TrObject name, TrRef found)
+        [MagicMethod]
+        public static bool __getattr__(TrObject self, TrObject name, TrRef found)
         {
             return self.__getic__(name.AsStr(), out found.value);
         }
 
-        public static void __raw_setattr__(TrObject self, TrObject name, TrObject value)
+
+        [MagicMethod]
+        public static void __setattr__(TrObject self, TrObject name, TrObject value)
         {
             self.__setic__(name.AsStr(), value);
         }
 
-        public bool __getattr__(TrObject name, TrRef found) => __raw_getattr__(this, name, found);
-        public void __setattr__(TrObject name, TrObject value) => __raw_setattr__(this, name, value);
+        public bool __getattr__(TrObject name, TrRef found) => __getattr__(this, name, found);
+        public void __setattr__(TrObject name, TrObject value) => __setattr__(this, name, value);
 
         // default '__iter__'
-        public static IEnumerator<TrObject> __raw_iter__(TrObject self) =>
+        [MagicMethod]
+        public static IEnumerator<TrObject> __iter__(TrObject self) =>
             throw self.unsupported(nameof(__iter__));
-        public IEnumerator<TrObject> __iter__() => TrObject.__raw_iter__(this);
+        public IEnumerator<TrObject> __iter__() => TrObject.__iter__(this);
 
 
-        // default '__len__'
-        public static TrObject __raw_len__(TrObject self) =>
+        [MagicMethod]
+        public static TrObject __len__(TrObject self) =>
             throw self.unsupported(nameof(__len__));
-        public TrObject __len__() => TrObject.__raw_len__(this);
+        public TrObject __len__() => TrObject.__len__(this);
 
         // Comparators
-        public static bool __raw_eq__(TrObject self, TrObject other) =>
+        [MagicMethod]
+        public static bool __eq__(TrObject self, TrObject other) =>
             self.Native == other.Native;
-        public bool __eq__(TrObject other) => TrObject.__raw_eq__(this, other);
+        public bool __eq__(TrObject other) => TrObject.__eq__(this, other);
 
-        public static bool __raw_ne__(TrObject self, TrObject other) =>
+
+        [MagicMethod]
+        public static bool __ne__(TrObject self, TrObject other) =>
             self.Native != other.Native;
-        public bool __ne__(TrObject other) => TrObject.__raw_ne__(this, other);
+        public bool __ne__(TrObject other) => TrObject.__ne__(this, other);
 
-        public static bool __raw_lt__(TrObject self, TrObject other) =>
+        [MagicMethod]
+        public static bool __lt__(TrObject self, TrObject other) =>
             throw self.unsupported(nameof(__lt__));
-        public bool __lt__(TrObject other) => TrObject.__raw_lt__(this, other);
-        public static bool __raw_le__(TrObject self, TrObject other) =>
-            throw self.unsupported(nameof(__le__));
-        public bool __le__(TrObject other) => TrObject.__raw_le__(this, other);
+        public bool __lt__(TrObject other) => TrObject.__lt__(this, other);
 
-        public static bool __raw_gt__(TrObject self, TrObject other) =>
+        [MagicMethod]
+        public static bool __le__(TrObject self, TrObject other) =>
+            throw self.unsupported(nameof(__le__));
+        public bool __le__(TrObject other) => TrObject.__le__(this, other);
+
+        [MagicMethod]
+        public static bool __gt__(TrObject self, TrObject other) =>
             throw self.unsupported(nameof(__gt__));
 
-        public bool __gt__(TrObject other) => TrObject.__raw_gt__(this, other);
+        public bool __gt__(TrObject other) => TrObject.__gt__(this, other);
 
-        public static bool __raw_ge__(TrObject self, TrObject other) =>
+
+        [MagicMethod]
+        public static bool __ge__(TrObject self, TrObject other) =>
             throw self.unsupported(nameof(__ge__));
-        public bool __ge__(TrObject other) => TrObject.__raw_ge__(this, other);
+        public bool __ge__(TrObject other) => TrObject.__ge__(this, other);
 
         // Unary ops
-        // default '__neg__'
-        public static TrObject __raw_neg__(TrObject self) =>
+        [MagicMethod]
+        public static TrObject __neg__(TrObject self) =>
             throw self.unsupported(nameof(__neg__));
-        public TrObject __neg__() => TrObject.__raw_neg__(this);
+        public TrObject __neg__() => TrObject.__neg__(this);
 
-        // default '__inv__'
-        public static TrObject __raw_invert__(TrObject self) =>
+        [MagicMethod]
+        public static TrObject __invert__(TrObject self) =>
             throw self.unsupported(nameof(__invert__));
-        public TrObject __invert__() => TrObject.__raw_invert__(this);
+        public TrObject __invert__() => TrObject.__invert__(this);
 
-        // default '__pos__'
-        public static TrObject __raw_pos__(TrObject self) =>
+        [MagicMethod]
+        public static TrObject __pos__(TrObject self) =>
             throw self.unsupported(nameof(__pos__));
-        public TrObject __pos__() => TrObject.__raw_pos__(this);
+        public TrObject __pos__() => TrObject.__pos__(this);
 
-        // default '__bool__'
-        public static bool __raw_bool__(TrObject self) => true;
-        public bool __bool__() => TrObject.__raw_bool__(this);
+        [MagicMethod]
+        public static bool __bool__(TrObject self) => true;
+        public bool __bool__() => TrObject.__bool__(this);
 
-        public static TrObject __raw_abs__(TrObject self) =>
+        [MagicMethod]
+        public static TrObject __abs__(TrObject self) =>
             throw self.unsupported(nameof(__abs__));
-        public TrObject __abs__() => TrObject.__raw_abs__(this);
+        public TrObject __abs__() => TrObject.__abs__(this);
 
-        public static TrObject __raw_enter__(TrObject self) =>
+        [MagicMethod]
+        public static TrObject __enter__(TrObject self) =>
             throw self.unsupported(nameof(__enter__));
+        public TrObject __enter__() => TrObject.__enter__(this);
 
-        public TrObject __enter__() => TrObject.__raw_enter__(this);
-
-        public static TrObject __raw_exit__(TrObject self, TrObject exc_type, TrObject exc_value, TrObject traceback) =>
+        [MagicMethod]
+        public static TrObject __exit__(TrObject self, TrObject exc_type, TrObject exc_value, TrObject traceback) =>
             throw self.unsupported(nameof(__exit__));
 
-        public TrObject __exit__(TrObject exc_type, TrObject exc_value, TrObject traceback) => TrObject.__raw_exit__(this, exc_type, exc_value, traceback);
+        public TrObject __exit__(TrObject exc_type, TrObject exc_value, TrObject traceback) => TrObject.__exit__(this, exc_type, exc_value, traceback);
 
     }
 
@@ -302,7 +336,7 @@ namespace Traffy.Objects
         internal static TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.RawObjectClassObject();
@@ -311,7 +345,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrSharpFunc.FromFunc("object.__new__", TrRawObject.datanew);
             TrClass.TypeDict[typeof(TrRawObject)] = CLASS;
         }
-        [Mark(typeof(TrRawObject))]
+        [Traffy.Annotations.Mark(typeof(TrRawObject))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

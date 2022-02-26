@@ -697,7 +697,7 @@ namespace SimpleJSON
                         }
                         Token.Append(aJSON[i]);
                         break;
-                    case '\uFEFF': // remove / ignore BOM (Byte Order Mark)
+                    case '\uFEFF': // remove / ignore BOM (Byte Order Traffy.Annotations.Mark)
                         break;
 
                     default:

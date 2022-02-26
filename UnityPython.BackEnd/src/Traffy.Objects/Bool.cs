@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace Traffy.Objects
 {
     public static class TrObjectFromBool
@@ -59,7 +60,7 @@ namespace Traffy.Objects
         }
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrBool>();
@@ -69,7 +70,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrBool)] = CLASS;
         }
 
-        [Mark(typeof(TrBool))]
+        [Traffy.Annotations.Mark(typeof(TrBool))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

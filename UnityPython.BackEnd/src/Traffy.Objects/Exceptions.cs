@@ -107,7 +107,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("BaseException");
@@ -120,7 +120,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrBaseException)] = CLASS;
         }
 
-        [Mark(typeof(TrBaseException))]
+        [Traffy.Annotations.Mark(typeof(TrBaseException))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -151,7 +151,7 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ { get; } = new List<TrObject>(1);
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("Exception", TrBaseException.CLASS);
@@ -162,7 +162,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(TrException)] = CLASS;
         }
-        [Mark(typeof(TrException))]
+        [Traffy.Annotations.Mark(typeof(TrException))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -205,7 +205,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("AttributeError", TrException.CLASS);
@@ -216,7 +216,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AttributeError.__new__", TrExceptionExt.datanew<AttributeError>);
             TrClass.TypeDict[typeof(AttributeError)] = CLASS;
         }
-        [Mark(typeof(AttributeError))]
+        [Traffy.Annotations.Mark(typeof(AttributeError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -256,7 +256,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("NameError", TrException.CLASS);
@@ -267,7 +267,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NameError.__new__", TrExceptionExt.datanew<NameError>);
             TrClass.TypeDict[typeof(NameError)] = CLASS;
         }
-        [Mark(typeof(NameError))]
+        [Traffy.Annotations.Mark(typeof(NameError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -298,7 +298,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("TypeError", TrException.CLASS);
@@ -310,7 +310,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TypeError)] = CLASS;
         }
 
-        [Mark(typeof(TypeError))]
+        [Traffy.Annotations.Mark(typeof(TypeError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -342,7 +342,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("ValueError", TrException.CLASS);
@@ -353,7 +353,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(ValueError)] = CLASS;
         }
-        [Mark(typeof(ValueError))]
+        [Traffy.Annotations.Mark(typeof(ValueError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -392,7 +392,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("StopIteration", TrException.CLASS);
@@ -404,7 +404,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(StopIteration)] = CLASS;
         }
 
-        [Mark(typeof(StopIteration))]
+        [Traffy.Annotations.Mark(typeof(StopIteration))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -434,7 +434,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("LookupError", TrException.CLASS);
@@ -445,7 +445,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(LookupError)] = CLASS;
         }
-        [Mark(typeof(LookupError))]
+        [Traffy.Annotations.Mark(typeof(LookupError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -477,7 +477,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("KeyError", LookupError.CLASS);
@@ -489,7 +489,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(KeyError)] = CLASS;
         }
 
-        [Mark(typeof(KeyError))]
+        [Traffy.Annotations.Mark(typeof(KeyError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -521,7 +521,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("IndexError", LookupError.CLASS);
@@ -532,7 +532,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(IndexError)] = CLASS;
         }
-        [Mark(typeof(IndexError))]
+        [Traffy.Annotations.Mark(typeof(IndexError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -563,7 +563,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("AssertionError", TrException.CLASS);
@@ -574,7 +574,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(AssertionError)] = CLASS;
         }
-        [Mark(typeof(AssertionError))]
+        [Traffy.Annotations.Mark(typeof(AssertionError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -622,7 +622,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("ImportError", TrException.CLASS);
@@ -633,7 +633,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(ImportError)] = CLASS;
         }
-        [Mark(typeof(ImportError))]
+        [Traffy.Annotations.Mark(typeof(ImportError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -664,7 +664,7 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("RuntimeError", TrException.CLASS);
@@ -675,7 +675,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(RuntimeError)] = CLASS;
         }
-        [Mark(typeof(RuntimeError))]
+        [Traffy.Annotations.Mark(typeof(RuntimeError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -708,7 +708,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("NotImplementError", RuntimeError.CLASS);
@@ -719,7 +719,7 @@ namespace Traffy.Objects
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             TrClass.TypeDict[typeof(NotImplementError)] = CLASS;
         }
-        [Mark(typeof(NotImplementError))]
+        [Traffy.Annotations.Mark(typeof(NotImplementError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
@@ -763,7 +763,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.CreateClass("NativeError", TrException.CLASS);
@@ -779,7 +779,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(NativeError)] = CLASS;
         }
 
-        [Mark(typeof(NativeError))]
+        [Traffy.Annotations.Mark(typeof(NativeError))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+
 using InlineHelper;
 
 namespace Traffy.Objects
@@ -34,7 +34,7 @@ namespace Traffy.Objects
         static TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrBytes>();
@@ -45,7 +45,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrBytes)] = CLASS;
         }
 
-        [Mark(typeof(TrBytes))]
+        [Traffy.Annotations.Mark(typeof(TrBytes))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

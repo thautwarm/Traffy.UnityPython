@@ -22,7 +22,7 @@ namespace Traffy.Objects
 
         public List<TrObject> __array__ => null;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrTuple>();
@@ -33,7 +33,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrTuple)] = CLASS;
         }
 
-        [Mark(typeof(TrTuple))]
+        [Traffy.Annotations.Mark(typeof(TrTuple))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();

@@ -6,6 +6,7 @@ using Traffy.InlineCache;
 using Traffy.Objects;
 using static Traffy.MagicNames;
 
+
 namespace Traffy.Objects
 {
 
@@ -86,7 +87,7 @@ namespace Traffy.Objects
         }
         public TrObject AsObject => this as TrObject;
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             MetaClass = CreateClass("type");
@@ -98,7 +99,7 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrClass)] = MetaClass;
         }
 
-        [Mark(typeof(TrClass))]
+        [Traffy.Annotations.Mark(typeof(TrClass))]
         static void _SetupClasses()
         {
             MetaClass.SetupClass();
@@ -300,41 +301,41 @@ namespace Traffy.Objects
                 __base = new TrClass[0],
             };
             { // repr methods
-                cls[MagicNames.i___str__] = TrSharpFunc.FromFunc($"object.__str__", TrObject.__raw_str__);
-                cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc($"object.__repr__", TrObject.__raw_repr__);
-                cls[MagicNames.i___add__] = TrSharpFunc.FromFunc($"object.__add__", TrObject.__raw_add__);
-                cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc($"object.__sub__", TrObject.__raw_sub__);
-                cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc($"object.__mul__", TrObject.__raw_mul__);
-                cls[MagicNames.i___matmul__] = TrSharpFunc.FromFunc($"object.__matmul__", TrObject.__raw_matmul__);
-                cls[MagicNames.i___floordiv__] = TrSharpFunc.FromFunc($"object.__div__", TrObject.__raw_floordiv__);
-                cls[MagicNames.i___truediv__] = TrSharpFunc.FromFunc($"object.__truediv__", TrObject.__raw_truediv__);
-                cls[MagicNames.i___mod__] = TrSharpFunc.FromFunc($"object.__mod__", TrObject.__raw_mod__);
-                cls[MagicNames.i___pow__] = TrSharpFunc.FromFunc($"object.__pow__", TrObject.__raw_pow__);
-                cls[MagicNames.i___bitand__] = TrSharpFunc.FromFunc($"object.__bitand__", TrObject.__raw_bitand__);
-                cls[MagicNames.i___bitor__] = TrSharpFunc.FromFunc($"object.__bitor__", TrObject.__raw_bitor__);
-                cls[MagicNames.i___bitxor__] = TrSharpFunc.FromFunc($"object.__bitxor__", TrObject.__raw_bitxor__);
-                cls[MagicNames.i___lshift__] = TrSharpFunc.FromFunc($"object.__lshift__", TrObject.__raw_lshift__);
-                cls[MagicNames.i___rshift__] = TrSharpFunc.FromFunc($"object.__rshift__", TrObject.__raw_rshift__);
-                cls[MagicNames.i___next__] = TrSharpFunc.FromFunc($"object.__next__", TrObject.__raw_next__);
-                cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"object.__hash__", TrObject.__raw_hash__);
-                cls[MagicNames.i___call__] = TrSharpFunc.FromFunc($"object.__call__", TrObject.__raw_call__);
-                cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc($"object.__contains__", TrObject.__raw_contains__);
-                cls[MagicNames.i___getattr__] = TrSharpFunc.FromFunc($"object.__getattr__", TrObject.__raw_getattr__);
-                cls[MagicNames.i___setattr__] = TrSharpFunc.FromFunc($"object.__setattr__", TrObject.__raw_setattr__);
-                cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc($"object.__getitem__", TrObject.__raw_getitem__);
-                cls[MagicNames.i___setitem__] = TrSharpFunc.FromFunc($"object.__setitem__", TrObject.__raw_setitem__);
-                cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc($"object.__iter__", TrObject.__raw_iter__);
-                cls[MagicNames.i___len__] = TrSharpFunc.FromFunc($"object.__len__", TrObject.__raw_len__);
-                cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc($"object.__eq__", TrObject.__raw_eq__);
-                cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc($"object.__ne__", TrObject.__raw_ne__);
-                cls[MagicNames.i___lt__] = TrSharpFunc.FromFunc($"object.__lt__", TrObject.__raw_lt__);
-                cls[MagicNames.i___le__] = TrSharpFunc.FromFunc($"object.__le__", TrObject.__raw_le__);
-                cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"object.__gt__", TrObject.__raw_gt__);
-                cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"object.__ge__", TrObject.__raw_ge__);
-                cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"object.__neg__", TrObject.__raw_neg__);
-                cls[MagicNames.i___invert__] = TrSharpFunc.FromFunc($"object.__inv__", TrObject.__raw_invert__);
-                cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"object.__pos__", TrObject.__raw_pos__);
-                cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc($"object.__bool__", TrObject.__raw_bool__);
+                cls[MagicNames.i___str__] = TrSharpFunc.FromFunc($"object.__str__", TrObject.__str__);
+                cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc($"object.__repr__", TrObject.__repr__);
+                cls[MagicNames.i___add__] = TrSharpFunc.FromFunc($"object.__add__", TrObject.__add__);
+                cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc($"object.__sub__", TrObject.__sub__);
+                cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc($"object.__mul__", TrObject.__mul__);
+                cls[MagicNames.i___matmul__] = TrSharpFunc.FromFunc($"object.__matmul__", TrObject.__matmul__);
+                cls[MagicNames.i___floordiv__] = TrSharpFunc.FromFunc($"object.__div__", TrObject.__floordiv__);
+                cls[MagicNames.i___truediv__] = TrSharpFunc.FromFunc($"object.__truediv__", TrObject.__truediv__);
+                cls[MagicNames.i___mod__] = TrSharpFunc.FromFunc($"object.__mod__", TrObject.__mod__);
+                cls[MagicNames.i___pow__] = TrSharpFunc.FromFunc($"object.__pow__", TrObject.__pow__);
+                cls[MagicNames.i___bitand__] = TrSharpFunc.FromFunc($"object.__bitand__", TrObject.__bitand__);
+                cls[MagicNames.i___bitor__] = TrSharpFunc.FromFunc($"object.__bitor__", TrObject.__bitor__);
+                cls[MagicNames.i___bitxor__] = TrSharpFunc.FromFunc($"object.__bitxor__", TrObject.__bitxor__);
+                cls[MagicNames.i___lshift__] = TrSharpFunc.FromFunc($"object.__lshift__", TrObject.__lshift__);
+                cls[MagicNames.i___rshift__] = TrSharpFunc.FromFunc($"object.__rshift__", TrObject.__rshift__);
+                cls[MagicNames.i___next__] = TrSharpFunc.FromFunc($"object.__next__", TrObject.__next__);
+                cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"object.__hash__", TrObject.__hash__);
+                cls[MagicNames.i___call__] = TrSharpFunc.FromFunc($"object.__call__", TrObject.__call__);
+                cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc($"object.__contains__", TrObject.__contains__);
+                cls[MagicNames.i___getattr__] = TrSharpFunc.FromFunc($"object.__getattr__", TrObject.__getattr__);
+                cls[MagicNames.i___setattr__] = TrSharpFunc.FromFunc($"object.__setattr__", TrObject.__setattr__);
+                cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc($"object.__getitem__", TrObject.__getitem__);
+                cls[MagicNames.i___setitem__] = TrSharpFunc.FromFunc($"object.__setitem__", TrObject.__setitem__);
+                cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc($"object.__iter__", TrObject.__iter__);
+                cls[MagicNames.i___len__] = TrSharpFunc.FromFunc($"object.__len__", TrObject.__len__);
+                cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc($"object.__eq__", TrObject.__eq__);
+                cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc($"object.__ne__", TrObject.__ne__);
+                cls[MagicNames.i___lt__] = TrSharpFunc.FromFunc($"object.__lt__", TrObject.__lt__);
+                cls[MagicNames.i___le__] = TrSharpFunc.FromFunc($"object.__le__", TrObject.__le__);
+                cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"object.__gt__", TrObject.__gt__);
+                cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"object.__ge__", TrObject.__ge__);
+                cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc($"object.__neg__", TrObject.__neg__);
+                cls[MagicNames.i___invert__] = TrSharpFunc.FromFunc($"object.__inv__", TrObject.__invert__);
+                cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc($"object.__pos__", TrObject.__pos__);
+                cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc($"object.__bool__", TrObject.__bool__);
             }
             cls.IsSealed = true;
             return cls;

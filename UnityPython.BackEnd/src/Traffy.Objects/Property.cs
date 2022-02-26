@@ -24,7 +24,7 @@ namespace Traffy.Objects
             return this;
         }
 
-        [Mark(Initialization.TokenClassInit)]
+        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrProperty>();
@@ -35,7 +35,7 @@ namespace Traffy.Objects
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrProperty)] = CLASS;
         }
-        [Mark(typeof(TrProperty))]
+        [Traffy.Annotations.Mark(typeof(TrProperty))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
