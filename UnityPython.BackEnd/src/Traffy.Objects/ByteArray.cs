@@ -84,7 +84,6 @@ namespace Traffy.Objects
 
         public TrObject __add__(TrObject other)
         {
-            // TODO: allow 'bytearray'
             if (other is TrBytes b)
             {
                 var res = new List<byte>(contents);

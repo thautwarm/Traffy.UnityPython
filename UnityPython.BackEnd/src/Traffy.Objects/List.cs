@@ -62,7 +62,21 @@ namespace Traffy.Objects
 
         public string __str__() => __repr__();
 
-        bool TrObject.__getitem__(TrObject item, TrRef found)
+        TrObject TrObject.__getitem__(TrObject item)
+        {
+            var oitem = item as TrInt;
+            if ((object)oitem != null)
+            {
+                var i = oitem.value;
+                if (i < 0)
+                    i += container.Count;
+                if (i < 0 || i >= container.Count)
+                    throw new IndexError($"list index out of range");
+                return container[unchecked((int)i)];
+            }
+            throw new TypeError($"list indices must be integers, not {item.Class.Name}");
+        }
+        bool TrObject.__finditem__(TrObject item, TrRef found)
         {
             var oitem = item as TrInt;
             if ((object)oitem != null)

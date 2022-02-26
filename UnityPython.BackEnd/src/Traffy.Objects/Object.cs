@@ -55,11 +55,11 @@ namespace Traffy.Objects
         //     throw new TypeError($"object.__new__(X): X is not a type object ({args[0].Class.Name})");
         // }
 
-        [MagicMethod(NonInstance = true)]
+        [MagicMethod(NonInstance = true, Default = true)]
         public static TrObject __new__(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         { return RTS.object_none; }
 
-        [MagicMethod(NonInstance = true)]
+        [MagicMethod(NonInstance = true, Default = true)]
         public static TrObject __init_subclass__(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         { return RTS.object_none; }
 
@@ -68,10 +68,10 @@ namespace Traffy.Objects
         { return RTS.object_none; }
 
 
-        [MagicMethod]
+        [MagicMethod(Default = true)]
         public static string __str__(TrObject self) => self.__repr__();
 
-        [MagicMethod]
+        [MagicMethod(Default = true)]
         public static string __repr__(TrObject self) => $"<{self.Class.Name} object>";
 
         [MagicMethod]
@@ -144,7 +144,7 @@ namespace Traffy.Objects
 
         // Object protocol
 
-        [MagicMethod]
+        [MagicMethod(Default = true)]
         public static int __hash__(TrObject self) => self.Native.GetHashCode();
 
 
@@ -197,16 +197,20 @@ namespace Traffy.Objects
         public static bool __contains__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__contains__));
 
-        public bool __getitem__(TrObject item, out TrObject found)
+        public bool __finditem__(TrObject item, out TrObject found)
         {
             var reference = MK.Ref();
-            var res = __getitem__(item, reference);
+            var res = __finditem__(item, reference);
             found = reference.value;
             return res;
         }
 
         [MagicMethod]
-        public static bool __getitem__(TrObject self, TrObject item, TrRef found) =>
+        public static bool __finditem__(TrObject self, TrObject item, TrRef found) =>
+            throw self.unsupported(nameof(__finditem__));
+
+        [MagicMethod]
+        public static TrObject __getitem__(TrObject self, TrObject item) =>
             throw self.unsupported(nameof(__getitem__));
 
 
@@ -215,14 +219,24 @@ namespace Traffy.Objects
             throw self.unsupported(nameof(__setitem__));
 
 
-        [MagicMethod]
-        public static bool __getattr__(TrObject self, TrObject name, TrRef found)
+        [MagicMethod(Default = true)]
+        public static bool __findattr__(TrObject self, TrObject name, TrRef found)
         {
             return self.__getic__(name.AsStr(), out found.value);
         }
 
+        [MagicMethod(Default = true)]
+        public static TrObject __getattr__(TrObject self, TrObject name)
+        {
+            if (self.__getic__(name.AsStr(), out var found))
+            {
+                return found;
+            }
+            throw new AttributeError(self, name, $"{self.Class.Name} has no attribute {name}");
+        }
 
-        [MagicMethod]
+
+        [MagicMethod(Default = true)]
         public static void __setattr__(TrObject self, TrObject name, TrObject value)
         {
             self.__setic__(name.AsStr(), value);
@@ -240,13 +254,13 @@ namespace Traffy.Objects
             throw self.unsupported(nameof(__len__));
 
         // Comparators
-        [MagicMethod]
+        [MagicMethod(Default = true)]
         public static bool __eq__(TrObject self, TrObject other) =>
             self.Native == other.Native;
 
 
 
-        [MagicMethod]
+        [MagicMethod(Default = true)]
         public static bool __ne__(TrObject self, TrObject other) =>
             self.Native != other.Native;
 

@@ -37,7 +37,12 @@ public class Gen_Class_ClassInit : HasNamespace
         {
             foreach (var meth in magicMethods)
             {
-                if (meth.GetCustomAttribute<MagicMethod>().NonInstance)
+                var mm = meth.GetCustomAttribute<MagicMethod>();
+                if (!mm.Default)
+                {
+                    continue;
+                }
+                if (mm.NonInstance)
                 {
                     yield return $"cls[{nameof(MagicNames)}.i_{meth.Name}] = {nameof(TrStaticMethod)}.Bind(\"object.{meth.Name}\", {nameof(TrObject)}.{meth.Name});".Doc();
                     continue;

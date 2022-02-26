@@ -7,6 +7,7 @@ namespace Traffy.Annotations
 {
     public class MagicMethod: Attribute
     {
+        public bool Default = false;
         public bool NonInstance = false;
     }
 

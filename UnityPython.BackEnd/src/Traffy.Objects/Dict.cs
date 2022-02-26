@@ -35,7 +35,6 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("dict.__new__", TrDict.datanew));
             CLASS[CLASS.ic__bool] = TrSharpFunc.FromFunc("dict.__new__", o => ((TrDict)o).__bool__());
             TrClass.TypeDict[typeof(TrDict)] = CLASS;
-            // TODO: __init_subclass__
         }
 
         [Traffy.Annotations.Mark(typeof(TrDict))]

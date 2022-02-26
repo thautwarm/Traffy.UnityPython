@@ -84,17 +84,25 @@ using System;
         {
             return TrObject.__contains__(this, a);
         }
-        public Boolean __getitem__(TrObject item, TrRef found)
+        public Boolean __finditem__(TrObject item, TrRef found)
         {
-            return TrObject.__getitem__(this, item, found);
+            return TrObject.__finditem__(this, item, found);
+        }
+        public TrObject __getitem__(TrObject item)
+        {
+            return TrObject.__getitem__(this, item);
         }
         public void __setitem__(TrObject key, TrObject value)
         {
             TrObject.__setitem__(this, key, value);
         }
-        public Boolean __getattr__(TrObject name, TrRef found)
+        public Boolean __findattr__(TrObject name, TrRef found)
         {
-            return TrObject.__getattr__(this, name, found);
+            return TrObject.__findattr__(this, name, found);
+        }
+        public TrObject __getattr__(TrObject name)
+        {
+            return TrObject.__getattr__(this, name);
         }
         public void __setattr__(TrObject name, TrObject value)
         {

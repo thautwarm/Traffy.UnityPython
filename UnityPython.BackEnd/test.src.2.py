@@ -6,5 +6,8 @@ class S:
     def __init__(self, x):
         pass
 
-print(list(map(lambda x: x // 0, [1, 2, 3])))
+# print(list(map(lambda x: x // 0, [1, 2, 3])))
+print(S(1))
+x = "asda"
+print([1, 2, 3][2])
 # print(S())

@@ -350,6 +350,34 @@ namespace Traffy.Objects
                 this[MagicNames.i___ne__] = TrSharpFunc.FromFunc($"{Class.Name}.__ne__", ne);
             }
 
+            if (this[ic__finditem] != null && this[ic__getitem] == null)
+            {
+                var finditem = this[ic__finditem];
+                TrObject _getitem(TrObject self, TrObject key)
+                {
+                    TrRef v = new TrRef();
+                    var item = finditem.Call(self, key, v).__bool__();
+                    if (item)
+                        return v.value;
+                    throw new LookupError($"{self.Class.Name} does not have a key '{key.__str__()}'");
+                }
+                this[MagicNames.i___getitem__] = TrSharpFunc.FromFunc($"{Class.Name}.__getitem__", _getitem);
+            }
+
+            if (this[ic__findattr] != null && this[ic__getattr] == null)
+            {
+                var findattr = this[ic__findattr];
+                TrObject _getattr(TrObject self, TrObject key)
+                {
+                    TrRef v = new TrRef();
+                    var item = findattr.Call(self, key, v).__bool__();
+                    if (item)
+                        return v.value;
+                    throw new LookupError($"{self.Class.Name} does not have a key '{key.__str__()}'");
+                }
+                this[MagicNames.i___getattr__] = TrSharpFunc.FromFunc($"{Class.Name}.__getattr__", _getattr);
+            }
+
             if (cp_kwargs != null)
                 foreach (var kv in cp_kwargs)
                 {

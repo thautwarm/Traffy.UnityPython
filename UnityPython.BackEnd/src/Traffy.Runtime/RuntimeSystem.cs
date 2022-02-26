@@ -35,7 +35,7 @@ namespace Traffy
             RTS.object_notin,
         };
         internal static Func<TrObject, TrObject, TrObject>[] InplaceOOOFuncs = new Func<TrObject, TrObject, TrObject>[]{
-            // TODO
+            // TODO: inplace
             RTS.object_add,
             RTS.object_sub,
             RTS.object_mul,
@@ -315,9 +315,7 @@ namespace Traffy
 
         public static TrObject object_getitem(TrObject tos, TrObject item)
         {
-            if (tos.__getitem__(item, out var found))
-                return found;
-            throw new LookupError("key " + item.__repr__() + " not found");
+            return tos.__getitem__(item);
         }
 
         public static void object_setitem(TrObject tos, TrObject item, TrObject value)
@@ -359,7 +357,7 @@ namespace Traffy
         public static TrObject object_getattr(TrObject tos, TrObject attr)
         {
             var found = new TrRef();
-            var o = tos.__getattr__(attr, found);
+            var o = tos.__findattr__(attr, found);
             if (!o)
                 throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr.__str__()}'");
             return found.value;
