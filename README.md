@@ -37,7 +37,36 @@ Basic development workflow:
 4. `unitypython.exe test.src.py --includesrc && dotnet run`
 5. edit code and run `unitypython.exe test.src.py --includesrc && dotnet run` again
 
-### How to add a method to datatypes?
+### How to add a method to datatypes? (concise way)
+
+`[PyBind]` can be used to bind Python methods. You can bin a Python `staticmethod` or instance method through the following the steps:
+
+1. implement an instacne/static method
+
+    ```c#
+    [PyBind]
+    public TrObject append(TrObject elt)
+    {
+        container.Add(elt);
+        return MK.None();
+    }
+    ```
+
+2. build an DLL for `UnityPython.BackEnd`
+
+   `dotnet public -c Release`
+
+3. codegen using `UnityPython.BackEnd.CodeGen`
+
+   `dotnet run --project ../UnityPython.BackEnd.CodeGen/UnityPython.BackEnd.CodeGen.csproj`
+
+Then `append` is bound.
+
+`[PyBind]` works for static methods and properties as well.
+
+**NOTE**: functions annotated by `[PyBind]` must take a return value!!!
+
+### How to add a method to datatypes? (verbose way)
 
 For example, if we want to implement `append` for `list`,
 - we firstly get to [UnityPython.BackEnd/src/Traffy.Objects/List.cs](https://github.com/thautwarm/Traffy.UnityPython/blob/main/UnityPython.BackEnd/src/Traffy.Objects/List.cs)
@@ -45,6 +74,7 @@ For example, if we want to implement `append` for `list`,
 - see the code
 
   ```c#
+
     public static TrObject append(TrObject self, TrObject value)
     {
         ((TrList)self).container.Add(value);
