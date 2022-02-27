@@ -10,4 +10,11 @@ class S:
 print(S(1))
 x = "asda"
 print([1, 2, 3][2])
+x = [1, 2]
+x.append(1)
+print(x)
+x.append(5)
+print(x)
+
+print(int.from_bytes(b'\x00\x01\x00\x01\x00\x00\x00\x01', 'little'))
 # print(S())

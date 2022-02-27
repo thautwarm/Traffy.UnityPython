@@ -197,18 +197,6 @@ namespace Traffy.Objects
         public static bool __contains__(TrObject self, TrObject a) =>
             throw self.unsupported(nameof(__contains__));
 
-        public bool __finditem__(TrObject item, out TrObject found)
-        {
-            var reference = MK.Ref();
-            var res = __finditem__(item, reference);
-            found = reference.value;
-            return res;
-        }
-
-        [MagicMethod]
-        public static bool __finditem__(TrObject self, TrObject item, TrRef found) =>
-            throw self.unsupported(nameof(__finditem__));
-
         [MagicMethod]
         public static TrObject __getitem__(TrObject self, TrObject item) =>
             throw self.unsupported(nameof(__getitem__));

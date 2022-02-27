@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
-    public partial class TrList : TrObject
+    public sealed partial class TrList : TrObject
     {
         public List<TrObject> container;
 
@@ -19,15 +20,8 @@ namespace Traffy.Objects
             CLASS = TrClass.FromPrototype<TrList>("list");
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("list.__new__", TrList.datanew);
-            CLASS["append".ToIntern()] = TrSharpFunc.FromFunc("list.append", TrList.append);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrList)] = CLASS;
-        }
-
-        public static TrObject append(TrObject self, TrObject value)
-        {
-            ((TrList)self).container.Add(value);
-            return RTS.object_none;
         }
 
         [Traffy.Annotations.Mark(typeof(TrList))]
@@ -76,21 +70,22 @@ namespace Traffy.Objects
             }
             throw new TypeError($"list indices must be integers, not {item.Class.Name}");
         }
-        bool TrObject.__finditem__(TrObject item, TrRef found)
-        {
-            var oitem = item as TrInt;
-            if ((object)oitem != null)
-            {
-                var i = oitem.value;
-                if (i < 0)
-                    i += container.Count;
-                if (i < 0 || i >= container.Count)
-                    return false;
-                found.value = container[unchecked((int)i)];
-                return true;
-            }
-            return false;
-        }
+
+        // bool TrObject.__finditem__(TrObject item, TrRef found)
+        // {
+        //     var oitem = item as TrInt;
+        //     if ((object)oitem != null)
+        //     {
+        //         var i = oitem.value;
+        //         if (i < 0)
+        //             i += container.Count;
+        //         if (i < 0 || i >= container.Count)
+        //             return false;
+        //         found.value = container[unchecked((int)i)];
+        //         return true;
+        //     }
+        //     throw new TypeError($"list indices must be integers, not {item.Class.Name}");
+        // }
 
         void TrObject.__setitem__(TrObject item, TrObject value)
         {
@@ -106,6 +101,13 @@ namespace Traffy.Objects
                 return;
             }
             throw new TypeError($"list indices must be integers, not {item.Class.Name}");
+        }
+
+        [PyBind]
+        public TrObject append(TrObject elt)
+        {
+            container.Add(elt);
+            return MK.None();
         }
     }
 

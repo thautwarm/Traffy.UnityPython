@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
@@ -61,5 +62,33 @@ namespace Traffy.Objects
             CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
         }
+
+        [PyBind]
+        public static TrObject from_bytes(byte[] bytes, string byteorder)
+        {
+            long x = 0;
+            switch (byteorder)
+            {
+                case "little":
+                    {
+                        for (int i = 0, j = 0; i < bytes.Length; i++, j += 8)
+                        {
+                            x |= (long)bytes[i] << j;
+                        }
+                        return MK.Int(x);
+                    }
+                case "big":
+                    {
+                        for (int i = 0, j = 8 * (bytes.Length - 1); i < bytes.Length; i++, j -= 8)
+                        {
+                            x |= (long)bytes[i] << j;
+                        }
+                        return MK.Int(x);
+                    }
+                default:
+                    throw new ValueError($"invalid byteorder: {byteorder}");
+            }
+        }
+
     }
 }

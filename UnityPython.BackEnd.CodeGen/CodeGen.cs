@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using PrettyDoc;
+using Traffy.Objects;
 using static PrettyDoc.ExtPrettyDoc;
 public static class ExtCodeGen
 {
@@ -32,6 +33,18 @@ public static class ExtCodeGen
         return t.Name.Doc();
     }
 
+    public static string DefaultValueToStr(this object t)
+    {
+        if (t is string s)
+        {
+            return s.Escape();
+        }
+        if (t is char c)
+            throw new NotImplementedException("char default value is not implemented yet");
+        if (t is bool b)
+            return b ? "true" : "false";
+        return t.ToString();
+    }
     public static Doc RefGen(this MethodInfo t, HasNamespace ctx)
     {
         var dt = t.DeclaringType;
@@ -43,9 +56,9 @@ public static class ExtCodeGen
         return $"{dt.Name}.{t.Name}".Doc();
     }
 
-    public static Doc GenerateMethod(Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body)
+    public static Doc GenerateMethod(Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body, bool Public = false)
     {
-        var head = "public".Doc() + retype + name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
+        var head = (Public ? "public".Doc() : Empty) + retype + name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
         return head * NewLine * VSep("{".Doc(),
             VSep(body).Indent(4),
         "}".Doc());
@@ -76,6 +89,13 @@ public class CodeGen : Attribute
     public static void GenerateAll()
     {
 
+        var py_classes =
+            Assembly
+            .GetAssembly(typeof(TrObject))
+            .GetTypes()
+            .Where(x => x.IsClass && !x.IsAbstract && x.IsAssignableTo(typeof(TrObject)))
+            .ToArray();
+
         Assembly
         .GetAssembly(typeof(CodeGen))
         .GetTypes()
@@ -83,23 +103,52 @@ public class CodeGen : Attribute
         .ForEach(cls =>
         {
             var attr_CodeGen = cls.GetCustomAttribute<CodeGen>();
-            var o = (HasNamespace)System.Activator.CreateInstance(cls);
-            var path =
-                System.IO.Path.Join(
-                    CodeGenConfig.RootDir,
-                    attr_CodeGen.Path ?? cls.Name.ToLowerInvariant() + ".cs"
-                );
-
-            var dirPath = System.IO.Path.GetDirectoryName(path); // c# getdirectoryname is actually getting a path
-            if (!System.IO.Directory.Exists(dirPath))
+            var ctors = cls.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+            ConstructorInfo ctor;
+            List<Func<(string Path, HasNamespace CodeGenerator)>> makers = new List<Func<(string, HasNamespace)>>();
+            for (int i = 0; i < ctors.Length; i++)
             {
-                System.IO.Directory.CreateDirectory(dirPath);
-            }
-            using (var file = System.IO.File.Open(path, System.IO.FileMode.Create))
-            {
-                using (var writer = new System.IO.StreamWriter(file))
+                ctor = ctors[i];
+                if (ctor.GetParameters().Length == 0)
                 {
-                    o.Generate(writer.Write);
+                    var path = System.IO.Path.Join(
+                        CodeGenConfig.RootDir,
+                        attr_CodeGen.Path ?? cls.Name.ToLowerInvariant() + ".cs"
+                    );
+                    makers.Add(() => (path, (HasNamespace)ctor.Invoke(null)));
+                    goto codegen;
+                }
+                if (ctor.GetParameters().Length == 1 && ctor.GetParameters()[0].ParameterType == typeof(Type))
+                {
+                    foreach (var t in py_classes)
+                    {
+                        var t_ = t;
+                        var path = System.IO.Path.Join(
+                            CodeGenConfig.RootDir,
+                            attr_CodeGen.Path ?? "Parametric",
+                            t.Name + ".cs"
+                        );
+                        makers.Add(() => (path, (HasNamespace)ctor.Invoke(new object[] { t_ })));
+                    }
+                    goto codegen;
+                }
+            }
+            return;
+        codegen:
+            foreach (var maker in makers)
+            {
+                var (path, o) = maker();
+                var dirPath = System.IO.Path.GetDirectoryName(path); // c# getdirectoryname is actually getting a path
+                if (!System.IO.Directory.Exists(dirPath))
+                {
+                    System.IO.Directory.CreateDirectory(dirPath);
+                }
+                using (var file = System.IO.File.Open(path, System.IO.FileMode.Create))
+                {
+                    using (var writer = new System.IO.StreamWriter(file))
+                    {
+                        o.Generate(writer.Write);
+                    }
                 }
             }
         });

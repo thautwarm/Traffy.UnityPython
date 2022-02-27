@@ -13,7 +13,7 @@ namespace PrettyDoc
         public static Doc Indent(this int self, Doc doc) => new Doc_Indent(self, doc);
         public static Doc Indent(this Doc doc, int i) => new Doc_Indent(i, doc);
         public static Doc Empty = new Doc_Empty();
-        public static Doc Comma = ", ".Doc();
+        public static Doc Comma = ",".Doc();
         public static Doc Space = " ".Doc();
         public static (Doc, Doc) Parens = ("(".Doc(), ")".Doc());
         public static (Doc, Doc) Brace = ("{".Doc(), "}".Doc());

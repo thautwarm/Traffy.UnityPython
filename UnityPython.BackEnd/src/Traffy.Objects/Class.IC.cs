@@ -57,8 +57,6 @@ namespace Traffy.Objects
             for (int i = 0; i < __mro.Length; i++)
             {
                 var other_cls = __mro[i];
-                // if (other_cls == TrRawObject.CLASS)
-                //     continue;
                 if (other_cls.__prototype__.TryGetValue(name, out ad))
                 {
                     if (ad.Kind == AttributeKind.InstField)
@@ -100,6 +98,12 @@ namespace Traffy.Objects
         {
             get => __getic__(s.Value, out var value) ? value : null;
             set => __setic__(s.Value, value);
+        }
+
+        public TrObject this[string s]
+        {
+            get => __getic__(s, out var value) ? value : null;
+            set => __setic__(s, value);
         }
 
         public TrObject this[PolyIC ic]

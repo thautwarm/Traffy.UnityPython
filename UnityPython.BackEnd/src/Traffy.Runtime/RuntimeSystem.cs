@@ -621,6 +621,11 @@ namespace Traffy
             return new TrFloat { value = v };
         }
 
+        public static TrFloat Float(double v)
+        {
+            return new TrFloat { value = (float) v };
+        }
+
         public static TrInt Int(long p)
         {
             return new TrInt { value = p };

@@ -11,6 +11,10 @@ namespace Traffy.Annotations
         public bool NonInstance = false;
     }
 
+    public class PyBind: Attribute
+    {
+        public string Name;
+    }
     public class Mark : Attribute
     {
         public object Token;

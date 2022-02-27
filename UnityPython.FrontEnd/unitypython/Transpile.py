@@ -78,7 +78,7 @@ def _const_to_variant(v):
     elif isinstance(v, tuple):
         return ir.TrTuple(elts=list(map(const_to_variant, v)))
     elif isinstance(v, bytes):
-        return ir.TrBytes(value=v.decode('ascii'))
+        return ir.TrBytes(contents=v.decode('ascii'))
     else:
         raise TypeError(v)
 

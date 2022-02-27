@@ -144,12 +144,12 @@ namespace Traffy.Objects
                 return TrObject.__contains__(this, a);
             return self_contains.Call(a).AsBool();
         }
-        Boolean TrObject.__finditem__(TrObject item, TrRef found)
+        TrObject TrObject.__getitem__(TrObject item)
         {
             var self_getitem = this[Class.ic__getitem];
             if ((object)self_getitem == null)
-                return TrObject.__finditem__(this, item, found);
-            return self_getitem.Call(item, found).AsBool();
+                return TrObject.__getitem__(this, item);
+            return self_getitem.Call(item);
         }
         void TrObject.__setitem__(TrObject key, TrObject value)
         {

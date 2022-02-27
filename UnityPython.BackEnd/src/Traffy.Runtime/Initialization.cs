@@ -35,7 +35,6 @@ namespace Traffy
         }
         internal const int OBJECT_SHAPE_MAX_FIELD = 255;
         internal const string TokenClassInit = "Traffy.ClassInit";
-
         internal const string TokenBuiltinInit = "Traffy.BuiltinInit";
         static Dictionary<string, TrObject> m_Prelude = new Dictionary<string, TrObject>();
         public static void InitRuntime()
@@ -58,6 +57,11 @@ namespace Traffy
                     throw new Exception($"typedict not registered for {t.Name}");
                 }
             }
+
+            Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenBuiltinInit).ToList().ForEach(
+                f => f.method()
+            );
+
             triples
                 .Select(((Type t, Traffy.Annotations.Mark attr, Action f) x) =>
                     new SetupSortPair
@@ -68,11 +72,6 @@ namespace Traffy
                 .OrderBy(x => x, new MroComparer())
                 .ToList()
                 .ForEach(x => x.f());
-
-
-            Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenBuiltinInit).ToList().ForEach(
-                f => f.method()
-            );
         }
         public static void Prelude(string name, TrObject o)
         {

@@ -50,8 +50,6 @@ namespace Traffy.Objects
                 this[MagicNames.i___call__] = o_call;
             if (this[ic__contains] == null && cp_kwargs.TryPop(MagicNames.s_contains, out var o_contains))
                 this[MagicNames.i___contains__] = o_contains;
-            if (this[ic__finditem] == null && cp_kwargs.TryPop(MagicNames.s_finditem, out var o_finditem))
-                this[MagicNames.i___finditem__] = o_finditem;
             if (this[ic__getitem] == null && cp_kwargs.TryPop(MagicNames.s_getitem, out var o_getitem))
                 this[MagicNames.i___getitem__] = o_getitem;
             if (this[ic__setitem] == null && cp_kwargs.TryPop(MagicNames.s_setitem, out var o_setitem))

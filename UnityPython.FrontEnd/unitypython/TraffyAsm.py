@@ -133,7 +133,7 @@ class TrBool(object):
 
 @dataclass
 class TrBytes(object):
-    value: str
+    contents: str
 
 
 if typing.TYPE_CHECKING:
