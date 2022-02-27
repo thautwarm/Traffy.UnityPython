@@ -17,4 +17,23 @@ x.append(5)
 print(x)
 
 print(int.from_bytes(b'\x00\x01\x00\x01\x00\x00\x00\x01', 'little'))
+
+class X:
+    def __enter__(self):
+        print("__enter__")
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print("__exit__")
+
+with X():
+    pass
+
+def f():
+    try:
+        return 1
+    finally:
+        print("final 1")
+        print("final 2")
+    print("after final")
+
+print(f())
 # print(S())

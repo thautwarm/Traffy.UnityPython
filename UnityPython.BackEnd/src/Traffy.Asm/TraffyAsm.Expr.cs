@@ -994,4 +994,34 @@ namespace Traffy.Asm
             return await rt_co;
         }
     }
+
+    [Serializable]
+    public class WithItem: TraffyAsm
+    {
+        public bool hasCont { get; set; }
+        public int position;
+
+        public TraffyAsm context;
+        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyLHS bind;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_context = context.exec(frame);
+            var rt_entered = RTS.object_enter(rt_context);
+            bind?.exec(frame, rt_entered);
+            frame.traceback.Pop();
+            return rt_context;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_context = context.hasCont ? await context.cont(frame) : context.exec(frame);
+            var rt_entered = RTS.object_enter(rt_context);
+            bind?.exec(frame, rt_entered);
+            frame.traceback.Pop();
+            return rt_context;
+        }
+    }
 }

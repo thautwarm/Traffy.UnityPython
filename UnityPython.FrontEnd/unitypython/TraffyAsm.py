@@ -250,6 +250,18 @@ class Try(TraffyIR):
     orelse: TraffyIR | None
     final: TraffyIR | None
 
+@dataclass
+class WithItem(TraffyIR):
+    position: int
+    hasCont: bool
+    context: TraffyIR
+    bind: TraffyLHS | None
+
+@dataclass
+class With(TraffyIR):
+    hasCont: bool
+    contexts: list[WithItem]
+    body: TraffyIR
 
 @dataclass
 class Raise(TraffyIR):

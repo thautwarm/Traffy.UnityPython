@@ -18,6 +18,7 @@ from ast import (
     Nonlocal,
     Expr,
     If,
+    With,
     Pass,
     Break,
     Continue,
@@ -149,6 +150,14 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
     def solve(self):
         solved = self.symtable_builder.solve()
         return solved
+
+    def visit_With(self, node: With) -> Any:
+        for each in node.items:
+            self.rhs_scoper.visit(each.context_expr)
+            if each.optional_vars:
+                self.lhs_scoper.visit(each.optional_vars)
+        for each in node.body:
+            self.visit(each)
 
     def visit_For(self, node: For) -> Any:
         self.rhs_scoper.visit(node.iter)

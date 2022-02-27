@@ -84,7 +84,7 @@ public class Gen_PyBind : HasNamespace
             var arguments = meth.GetParameters().Select((x, i) => Unbox.Call(THint(x.ParameterType), args[i + 1])).ToArray();
             var self = args[0].Cast(entry);
             var cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
-                    new Case(n, self[meth.Name].Call(arguments.Take(n).ToArray()))).ToArray();
+                    new Case(n + 1, self[meth.Name].Call(arguments.Take(n).ToArray()))).ToArray();
             var localBindName = "__bind_" + methName;
             var cm = CSMethod.PyMethod(localBindName, retType,
                     args["Count"].Switch(

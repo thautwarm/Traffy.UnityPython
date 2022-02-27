@@ -458,7 +458,10 @@ namespace Traffy.Asm
             {
                 if (final != null)
                 {
-                    final.exec(frame);
+                    using (frame.suppress_control_flow())
+                    {
+                        final.exec(frame);
+                    }
                 }
             }
             frame.traceback.Pop();
@@ -512,7 +515,10 @@ namespace Traffy.Asm
             {
                 if (final != null)
                 {
-                    final.exec(frame);
+                    using (frame.suppress_control_flow())
+                    {
+                        var _ = final.hasCont ? await final.cont(frame) : final.exec(frame);
+                    }
                 }
             }
             frame.traceback.Pop();
@@ -622,6 +628,121 @@ namespace Traffy.Asm
             }
             var rt_cls = RTS.new_class(ufunc.fptr.metadata.codename, rt_bases, ns);
             return rt_cls;
+        }
+    }
+
+    [Serializable]
+    public class With: TraffyAsm
+    {
+        public bool hasCont { get; set; }
+        public TraffyAsm body;
+        public WithItem[] contexts;
+        public TrObject exec(Frame frame)
+        {
+            Exception e = null;
+            TrObject exc = null;
+            Stack<TrObject> context_vars = new Stack<TrObject>();
+            try
+            {
+                for (int i = 0; i < contexts.Length; i++)
+                {
+                    context_vars.Push(contexts[i].exec(frame));
+                }
+                body.exec(frame);
+            }
+            catch (Exception ev)
+            {
+                e = ev;
+                exc = RTS.exc_frombare(e);
+                while (context_vars.Count > 0)
+                {
+                    var v = context_vars.Pop();
+                    try
+                    {
+                        v.__exit__(exc.Class, exc, RTS.object_none);
+                    }
+                    catch (Exception ev_)
+                    {
+                        // TODO: keep cause
+                        e = ev_;
+                    }
+                }
+                throw e;
+            }
+
+            var none = RTS.object_none;
+            while (context_vars.Count > 0)
+            {
+                var v = context_vars.Pop();
+                try
+                {
+                    v.__exit__(none, none, none);
+                }
+                catch (Exception ev_)
+                {
+                    // TODO: keep cause
+                    e = ev_;
+                }
+            }
+
+            if (e != null)
+            {
+                throw e;
+            }
+            return RTS.object_none;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            Exception e = null;
+            TrExceptionBase exc = null;
+            Stack<TrObject> context_vars = new Stack<TrObject>();
+            try
+            {
+                for (int i = 0; i < contexts.Length; i++)
+                {
+                    context_vars.Push(contexts[i].hasCont ? await contexts[i].cont(frame) : contexts[i].exec(frame));
+                }
+                var _ = body.hasCont ? await body.cont(frame) : body.exec(frame);
+            }
+            catch (Exception ev)
+            {
+                e = ev;
+                exc = RTS.exc_frombare(e);
+                while (context_vars.Count > 0)
+                {
+                    var v = context_vars.Pop();
+                    try
+                    {
+                        v.__exit__(exc.Class, exc, RTS.object_none);
+                    }
+                    catch (Exception ev_)
+                    {
+                        e = ev_;
+                    }
+                }
+                throw e;
+            }
+            var none = RTS.object_none;
+            while (context_vars.Count > 0)
+            {
+                var v = context_vars.Pop();
+                try
+                {
+                    v.__exit__(none, none, none);
+                }
+                catch (Exception ev_)
+                {
+                    // TODO: keep cause
+                    e = ev_;
+                }
+            }
+
+            if (e != null)
+            {
+                throw e;
+            }
+            return RTS.object_none;
         }
     }
 }

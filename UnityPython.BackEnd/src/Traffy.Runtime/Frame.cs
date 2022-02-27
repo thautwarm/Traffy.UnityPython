@@ -375,5 +375,28 @@ namespace Traffy
                 traceback.Pop();
             }
         }
+
+        [MethodImpl(MethodImplOptionsCompat.Best)]
+        internal SuppressControlFlow suppress_control_flow()
+        {
+            return new SuppressControlFlow(this);
+        }
+    }
+
+    public struct SuppressControlFlow: IDisposable
+    {
+        public STATUS CONT;
+        public Frame Frame;
+        public SuppressControlFlow(Frame frame)
+        {
+            CONT = frame.CONT;
+            Frame = frame;
+            Frame.CONT = STATUS.NORMAL;
+        }
+
+        public void Dispose()
+        {
+            Frame.CONT = CONT;
+        }
     }
 }

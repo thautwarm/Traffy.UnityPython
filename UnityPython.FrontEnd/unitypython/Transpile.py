@@ -986,8 +986,8 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             hasCont=hasCont,
             body=body,
             handlers=handlers,
-            orelse=None,
-            final=None,
+            orelse=orelse,
+            final=final,
         )
 
     def visit_Raise(self, node: Raise) -> ir.TraffyIR:
@@ -999,6 +999,28 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             exc = self.root.rhs_transpiler.visit(node.exc)
             return ir.Raise(position=position, hasCont=ir.hasCont(exc), exc=exc)
         return ir.Raise(position=position, hasCont=False, exc=None)
+
+    def visit_With(self, node: With) -> Any:
+        with_items: list[ir.WithItem] = []
+        for item in node.items:
+            self.root.cur_pos = extract_pos(item.context_expr)
+            position = self.root.pos_ind
+            ctx = self.root.rhs_transpiler.visit(item.context_expr)
+            hasCont = ctx.hasCont
+            bind = None
+            if item.optional_vars:
+                bind = self.root.lhs_transpiler.visit(item.optional_vars)
+                hasCont = hasCont or bind.hasCont
+            with_items.append(
+                ir.WithItem(
+                    position,
+                    hasCont,
+                    ctx, bind
+                )
+            )
+        body = self.visit_many(node.body)
+        hasCont = ir.hasCont(with_items) or ir.hasCont(body)
+        return ir.With(hasCont, with_items, body)
 
 
 def compile_module(

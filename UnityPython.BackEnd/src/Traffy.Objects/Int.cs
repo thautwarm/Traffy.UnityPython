@@ -13,7 +13,7 @@ namespace Traffy.Objects
         public static int AsIntUnchecked(this TrObject self) => unchecked((int)((TrInt)self).value);
     }
     [Serializable]
-    public partial class TrInt : TrObject
+    public sealed partial class TrInt : TrObject
     {
         public Int64 value;
         object TrObject.Native => value;

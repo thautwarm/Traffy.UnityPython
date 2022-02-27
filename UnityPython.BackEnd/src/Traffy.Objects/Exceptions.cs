@@ -797,6 +797,10 @@ namespace Traffy.Objects
             // just report error
             throw new TypeError("cannot create native error manually");
         }
+        string TrExceptionBase.GetStackTrace()
+        {
+            return $"Traceback (most recent call last):\n{traceback?.GetStackTrace()}\n{Class.Name}: {this.Base().__str__()}\n{Error.StackTrace}";
+        }
     }
 
 }

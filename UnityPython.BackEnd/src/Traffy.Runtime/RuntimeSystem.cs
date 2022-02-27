@@ -594,6 +594,8 @@ namespace Traffy
         {
             return rt_func.__call__(rt_args, rt_kwargs);
         }
+
+        internal static TrObject object_enter(TrObject rt_context) => rt_context.__enter__();
     }
 
     public static class MK
