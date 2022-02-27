@@ -41,7 +41,7 @@ Basic development workflow:
 
 `[PyBind]` can be used to bind Python methods. You can bin a Python `staticmethod` or instance method through the following the steps:
 
-1. implement an instacne/static method
+1. implement an instacne/static method/instance property
 
     ```c#
     [PyBind]
