@@ -62,7 +62,7 @@ Basic development workflow:
 
 Then `append` is bound.
 
-`[PyBind]` works for static methods and properties as well.
+`[PyBind]` works for static methods and properties as well. Default arguments work.
 
 **NOTE**: functions annotated by `[PyBind]` must take a return value!!!
 

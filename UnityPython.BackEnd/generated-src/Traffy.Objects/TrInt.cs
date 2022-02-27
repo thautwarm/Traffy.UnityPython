@@ -12,8 +12,6 @@ namespace Traffy.Objects
                 return Box.Apply(__args.Count switch
                 {
                     2 => Traffy.Objects.TrInt.from_bytes(Unbox.Apply(THint<System.Byte[]>.Unique,__args[0]),Unbox.Apply(THint<string>.Unique,__args[1])),
-                    3 => Traffy.Objects.TrInt.from_bytes(Unbox.Apply(THint<System.Byte[]>.Unique,__args[0]),Unbox.Apply(THint<string>.Unique,__args[1])),
-                    4 => Traffy.Objects.TrInt.from_bytes(Unbox.Apply(THint<System.Byte[]>.Unique,__args[0]),Unbox.Apply(THint<string>.Unique,__args[1])),
                     _ => throw new ValueError("requires 2 argument(s), got " + __args.Count)
                 }) ;
             }
