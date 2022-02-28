@@ -19,12 +19,15 @@ print(x)
 print(int.from_bytes(b'\x00\x01\x00\x01\x00\x00\x00\x01', 'little'))
 
 class X:
+    def __init__(self, x):
+        self.x = x
     def __enter__(self):
-        print("__enter__")
+        print("__enter__", self.x)
+        return self.x
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print("__exit__")
+        print("__exit__", self.x)
 
-with X():
+with X(2):
     pass
 
 def f():
@@ -35,5 +38,7 @@ def f():
         print("final 2")
     print("after final")
 
-print(f())
+with X(2) as a, X(3) as b:
+    print(a == 2, b == 3)
+
 # print(S())

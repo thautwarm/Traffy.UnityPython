@@ -288,6 +288,33 @@ namespace Traffy.Objects
         {
             SetupClass(null);
         }
+
+        bool IsSet(InternedString name)
+        {
+            return IsSet(name.Value);
+        }
+        bool IsSet(string name)
+        {
+            return IsSet(name, out _);
+        }
+
+        bool IsSet(InternedString name, out TrObject o)
+        {
+            return IsSet(name.Value, out o);
+        }
+
+        bool IsSet(string name, out TrObject o)
+        {
+            if(__prototype__.TryGetValue(name, out Shape shape))
+            {
+                if (PolyIC.ReadClass(this, shape, out o))
+                {
+                    return true;
+                }
+            }
+            o = null;
+            return false;
+        }
         public void SetupClass(Dictionary<TrObject, TrObject> kwargs)
         {
             Class = MetaClass;
@@ -307,12 +334,11 @@ namespace Traffy.Objects
 
             if (cp_kwargs != null)
                 BindMethodsFromDict(cp_kwargs);
-            if (this[ic__setattr] != null)
-                InstanceUseInlineCache = false;
-            if (this[ic__getattr] != null)
+
+            if (this.IsSet(i___setattr__) || this.IsSet(i___getattr__))
                 InstanceUseInlineCache = false;
 
-            if (this[ic__eq] != null && this[ic__hash] == null)
+            if (this.IsSet(i___eq__) && !this.IsSet(i___hash__))
             {
                 TrObject unhashable(TrObject self)
                 {
@@ -320,7 +346,7 @@ namespace Traffy.Objects
                 }
                 this[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"{Class.Name}.__hash__", unhashable);
             }
-            if (this[ic__ne] != null && this[ic__hash] == null)
+            if (this.IsSet(i___ne__) && !this.IsSet(i___hash__))
             {
                 TrObject unhashable(TrObject self)
                 {
@@ -328,31 +354,9 @@ namespace Traffy.Objects
                 }
                 this[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"{Class.Name}.__hash__", unhashable);
             }
-            if (this[ic__eq] == null)
-            {
-                if (this[ic__ne] != null)
-                {
-                    // define '__eq__' using '__ne__'
-                    TrObject eq(TrObject self, TrObject other)
-                    {
-                        return MK.Bool(!self.__ne__(other));
-                    }
-                    this[MagicNames.i___eq__] = TrSharpFunc.FromFunc($"{Class.Name}.__eq__", eq);
-                }
-            }
-            else if (this[ic__ne] == null)
-            {
-                // define '__ne__' using '__eq__'
-                TrObject ne(TrObject self, TrObject other)
-                {
-                    return MK.Bool(!self.__eq__(other));
-                }
-                this[MagicNames.i___ne__] = TrSharpFunc.FromFunc($"{Class.Name}.__ne__", ne);
-            }
 
-            if (this[ic__findattr] != null && this[ic__getattr] == null)
+            if (this.IsSet(i___findattr__, out var findattr) && !this.IsSet(i___getattr__))
             {
-                var findattr = this[ic__findattr];
                 TrObject _getattr(TrObject self, TrObject key)
                 {
                     TrRef v = new TrRef();

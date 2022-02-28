@@ -235,11 +235,12 @@ namespace Traffy
     }
     public enum STATUS
     {
-        NORMAL,
-        RETURN,
-        BREAK,
-        CONTINUE,
+        NORMAL = 0,
+        CONTINUE = 1,
+        BREAK = 2,
+        RETURN = 3,
     }
+
     public class Frame
     {
         public STATUS CONT;
@@ -387,6 +388,12 @@ namespace Traffy
     {
         public STATUS CONT;
         public Frame Frame;
+
+        public static STATUS MostSevere(STATUS a, STATUS b)
+        {
+            if (a > b) return a;
+            return b;
+        }
         public SuppressControlFlow(Frame frame)
         {
             CONT = frame.CONT;
@@ -396,7 +403,7 @@ namespace Traffy
 
         public void Dispose()
         {
-            Frame.CONT = CONT;
+            Frame.CONT =  MostSevere(Frame.CONT, CONT);
         }
     }
 }

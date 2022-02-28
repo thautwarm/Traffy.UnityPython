@@ -15,7 +15,6 @@ namespace Traffy.Objects
         public string GetStackTrace()
         {
             return mini_traceback
-                .Reverse()
                 .Select(pointer =>
                     {
                         var span = metadata.FindSpan(pointer);
