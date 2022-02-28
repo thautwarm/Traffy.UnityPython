@@ -39,7 +39,7 @@ Basic development workflow:
 
 ### How to add a method to datatypes? (concise way)
 
-`[PyBind]` can be used to bind Python methods. You can bin a Python `staticmethod` or instance method through the following the steps:
+`[PyBind]` can be used to bind Python methods. You can bind a Python `staticmethod` or instance method through the following the steps:
 
 1. implement an instacne/static method/instance property
 
