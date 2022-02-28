@@ -996,7 +996,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class WithItem: TraffyAsm
+    public class WithItem : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -1026,7 +1026,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class FormattedValue: TraffyAsm
+    public class FormattedValue : TraffyAsm
     {
         public bool hasCont { get; set; }
         public bool convStr;
@@ -1060,7 +1060,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class JoinedStr: TraffyAsm
+    public class JoinedStr : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
