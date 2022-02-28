@@ -6,9 +6,6 @@ using System.Runtime.Serialization;
 
 namespace Traffy.Objects
 {
-    using static JsonExt;
-
-
     // runtime
     public record TrFunc(
         Variable[] freevars,

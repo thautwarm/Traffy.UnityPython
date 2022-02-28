@@ -15,6 +15,7 @@ if typing.TYPE_CHECKING:
 
     class TraffyLHS(typing_extensions.Protocol):
         hasCont: bool
+
 else:
     TraffyIR = object
     TraffyLHS = object
@@ -62,7 +63,9 @@ class OpU(IntEnum):
     POS = 3  # positive
 
 
-def hasCont(head: TraffyLHS | TraffyIR | list[TraffyLHS | TraffyIR], *xs: TraffyLHS | TraffyIR) -> bool:
+def hasCont(
+    head: TraffyLHS | TraffyIR | list[TraffyLHS | TraffyIR], *xs: TraffyLHS | TraffyIR
+) -> bool:
     if isinstance(head, list):
         test_head = bool(head) and any(x.hasCont for x in head)
         if test_head:
@@ -137,8 +140,7 @@ class TrBytes(object):
 
 
 if typing.TYPE_CHECKING:
-    TrObject = typing.Union[TrInt, TrFloat,
-                            TrStr, TrTuple, TrNone, TrBool, TrBytes]
+    TrObject = typing.Union[TrInt, TrFloat, TrStr, TrTuple, TrNone, TrBool, TrBytes]
 else:
     TrObject = (TrInt, TrFloat, TrStr, TrTuple, TrNone)
 
@@ -250,6 +252,7 @@ class Try(TraffyIR):
     orelse: TraffyIR | None
     final: TraffyIR | None
 
+
 @dataclass
 class WithItem(TraffyIR):
     position: int
@@ -257,11 +260,13 @@ class WithItem(TraffyIR):
     context: TraffyIR
     bind: TraffyLHS | None
 
+
 @dataclass
 class With(TraffyIR):
     hasCont: bool
     contexts: list[WithItem]
     body: TraffyIR
+
 
 @dataclass
 class Raise(TraffyIR):
@@ -584,20 +589,37 @@ class Metadata(object):
     localnames: list[str]
     freenames: list[str]
     codename: str
-    filename: str
-    sourceCode: str | None
+    # the following two fields are assigned to
+    # strings when deserialized in .NET
+    filename: None  # makes it type safe in Python
+    sourceCode: None  # makes it type safe in Python
     compressedSpanPointers: list[int] = dataclasses.field(default_factory=list)
     compressedPositions: list[int] = dataclasses.field(default_factory=list)
     positions: InitVar[list[tuple[int, int]]] = []
     spanPointers: InitVar[list[tuple[int, int]]] = []
-    def __post_init__(self, positions: list[tuple[int, int]], span_pointers: list
-                      [tuple[int, int]]):
+
+    def __post_init__(
+        self, positions: list[tuple[int, int]], span_pointers: list[tuple[int, int]]
+    ):
         # print(list(map(tuple, positions)))
         self.compressedPositions = encode_int(positions)
         # print(self.compressedPositions)
         # assert decode_int(self.compressedPositions, lambda x, y: (x, y)) == positions
         self.compressedSpanPointers = encode_int(span_pointers)
         # assert decode_int(self.compressedSpanPointers, lambda x, y: (x, y)) == span_pointers
+
+
+@dataclass
+class ModuleSharingContext:
+    modulename: str
+    filename: str
+    sourceCode: str
+
+
+@dataclass
+class ModuleSpec:
+    msc: ModuleSharingContext
+    fptr: TrFuncPointer
 
 
 __cache_type_dict = {}
@@ -617,9 +639,9 @@ def fast_asdict(o):
     else:
         cls = o.__class__
         assert dataclasses.is_dataclass(
-            cls), f"cannot serialize {cls} object: not a dataclass."
-        lookuptype = cls.__name__, [
-            field.name for field in dataclasses.fields(cls)]
+            cls
+        ), f"cannot serialize {cls} object: not a dataclass."
+        lookuptype = cls.__name__, [field.name for field in dataclasses.fields(cls)]
         __cache_type_dict[cls] = lookuptype
     tname, fields = lookuptype
     res = {"$type": tname}

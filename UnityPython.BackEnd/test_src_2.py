@@ -41,4 +41,10 @@ def f():
 with X(2) as a, X(3) as b:
     print(a == 2, b == 3)
 
+
+try:
+    1//0
+except:
+    print("except")
+    raise
 # print(S())

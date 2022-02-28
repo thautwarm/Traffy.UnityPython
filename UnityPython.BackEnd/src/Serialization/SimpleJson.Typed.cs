@@ -6,11 +6,8 @@ using System.Runtime.Serialization;
 
 namespace SimpleJSON
 {
-
-
     public static partial class JSON
     {
-
         public const string VariantKey = "$type";
 
         static Type GetTypeConstructor(this Type self)
@@ -63,17 +60,16 @@ namespace SimpleJSON
 
 
         static Dictionary<Type, Dictionary<string, Type>> interfaces = new Dictionary<Type, Dictionary<string, Type>>();
-
-        static Dictionary<Type, DeserializationAction> deserializationActions = new Dictionary<Type, DeserializationAction>();
-
         // public Dictionary<Type, HashSet<string>>
-        public class DeserializationAction
+        public class DeserializationSpecifier<Ctx>
         {
             public (string, Type, Action<object, object>)[] fields;
-            public Func<object, object> onDeserialized;
+            public Func<Ctx, object, object> onDeserialized;
+
+            public static Dictionary<Type, DeserializationSpecifier<Ctx>> deserializationActions = new Dictionary<Type, DeserializationSpecifier<Ctx>>();
         }
 
-        public static DeserializationAction ScanSetters_impl(Type typeobject)
+        public static DeserializationSpecifier<Ctx> ScanSetters_impl<Ctx>(Type typeobject)
         {
             var res = new List<(string, Type, Action<object, object>)>();
             foreach (var prop in typeobject.GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -92,25 +88,38 @@ namespace SimpleJSON
             }
 
 
-            Func<object, object> onDeserialized = null;
+            Func<Ctx, object, object> onDeserialized = null;
             foreach (var meth in typeobject.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 if (meth.GetCustomAttribute<OnDeserializedAttribute>() != null)
                 {
-                    object call(object self)
+                    if (meth.GetParameters().Length == 0)
                     {
-                        return meth.Invoke(self, null);
-                    };
+                        object call_no_ctx(Ctx ctx, object self)
+                        {
+                            return meth.Invoke(self, null);
+                        };
 
-                    onDeserialized = call;
+                        onDeserialized = call_no_ctx;
+                    }
+                    else if (meth.GetParameters().Length == 1 && meth.GetParameters()[0].ParameterType == typeof(Ctx))
+                    {
+                        object call_ctx(Ctx ctx, object self)
+                        {
+                            object [] args = { ctx };
+                            return meth.Invoke(self, args);
+                        };
+
+                        onDeserialized = call_ctx;
+                    }
                     break;
                 }
             }
-            return new DeserializationAction { fields = res.ToArray(), onDeserialized = onDeserialized };
+            return new DeserializationSpecifier<Ctx> { fields = res.ToArray(), onDeserialized = onDeserialized };
         }
-        public static DeserializationAction ScanSettersForConcreteClass(Type typeobject)
+        public static DeserializationSpecifier<Ctx> ScanSettersForConcreteClass<Ctx>(Type typeobject)
         {
-            if (deserializationActions.TryGetValue(typeobject, out var ret))
+            if (DeserializationSpecifier<Ctx>.deserializationActions.TryGetValue(typeobject, out var ret))
             {
                 return ret;
             }
@@ -118,8 +127,8 @@ namespace SimpleJSON
             {
                 throw new InvalidCastException($"cannot deserialize {typeobject}: not marked as [Serializable].");
             }
-            ret = ScanSetters_impl(typeobject);
-            deserializationActions[typeobject] = ret;
+            ret = ScanSetters_impl<Ctx>(typeobject);
+            DeserializationSpecifier<Ctx>.deserializationActions[typeobject] = ret;
             return ret;
         }
         static Type TCons_Dictionary = typeof(Dictionary<object, object>).GetGenericTypeDefinition();
@@ -141,7 +150,7 @@ namespace SimpleJSON
                 throw new InvalidCastException($"expect {t}, got {typeof(T).Name}");
             }
         }
-        public static object Deserialize_concreteclass(JSONNode node, Type t)
+        public static object Deserialize_concreteclass<Ctx>(JSONNode node, Type t, Ctx context)
         {
             switch (node.Tag)
             {
@@ -154,7 +163,7 @@ namespace SimpleJSON
                             var array = Array.CreateInstance(eltype, jarray.Count);
                             for (int i = 0; i < jarray.Count; i++)
                             {
-                                array.SetValue(Deserialize(jarray[i], eltype), i);
+                                array.SetValue(Deserialize(jarray[i], eltype, context), i);
                             }
                             return array;
                         }
@@ -166,7 +175,7 @@ namespace SimpleJSON
                             object[] args = new object[1];
                             foreach (var each in jarray)
                             {
-                                args[0] = Deserialize(each, eltype);
+                                args[0] = Deserialize(each, eltype, context);
                                 Add(lst, args);
                             }
                             return lst;
@@ -179,7 +188,7 @@ namespace SimpleJSON
                             var telts = t.GenericTypeArguments;
                             for(int i = 0; i < telts.Length; i++)
                             {
-                                args[i] = Deserialize(jarray[i], telts[i]);
+                                args[i] = Deserialize(jarray[i], telts[i], context);
                             }
                             return Activator.CreateInstance(t, args);
                         }
@@ -214,12 +223,12 @@ namespace SimpleJSON
 #if DEBUG
                                 Console.WriteLine(node.Tag + " ." + kv.Key + " -> " + t_value.Name);
 #endif
-                                args[1] = Deserialize(kv.Value, t_value);
+                                args[1] = Deserialize(kv.Value, t_value, context);
                                 Add(dict, args);
                             }
                             return dict;
                         }
-                        var action = ScanSettersForConcreteClass(t);
+                        var action = ScanSettersForConcreteClass<Ctx>(t);
                         var obj = t.MakeInstance();
                         foreach (var (name_field, t_field, setter) in action.fields)
                         {
@@ -228,12 +237,12 @@ namespace SimpleJSON
                                 Console.WriteLine(node.Tag + " ." + name_field + " -> " + t_field.Name);
 #endif
 
-                            var value = Deserialize(jattr, t_field);
+                            var value = Deserialize(jattr, t_field, context);
                             setter(obj, value);
                         }
                         if (action.onDeserialized != null)
                         {
-                            obj = action.onDeserialized(obj);
+                            obj = action.onDeserialized(context, obj);
                         }
                         return obj;
                     }
@@ -300,7 +309,7 @@ namespace SimpleJSON
         }
 
 
-        public static object Deserialize_concreteclass(JSONNode node, Type t, Dictionary<string, Type> types)
+        public static object Deserialize_concreteclass<Ctx>(JSONNode node, Type t, Dictionary<string, Type> types, Ctx context)
         {
             if (node.Tag == JSONNodeType.NullValue)
             {
@@ -319,14 +328,14 @@ namespace SimpleJSON
 #if DEBUG
                     Console.WriteLine(node.Tag + $" ({t.Name}) is {typename}");
 #endif
-                    return Deserialize_concreteclass(node, t_variant);
+                    return Deserialize_concreteclass<Ctx>(node, t_variant, context);
                 }
                 var valid_typenames = String.Join(",", types.Keys);
                 throw new InvalidCastException($"unknown variant type {t}; not in [{valid_typenames}]");
             }
             throw new InvalidCastException($"invalid cast from json {node.Tag} to {t}");
         }
-        public static object Deserialize(JSONNode node, Type typeobject)
+        public static object Deserialize<Ctx>(JSONNode node, Type typeobject, Ctx context)
         {
             if (typeobject.IsInterface || typeobject.IsAbstract)
             {
@@ -342,14 +351,21 @@ namespace SimpleJSON
                     }
                     interfaces[typeobject] = concreteClasses;
                 }
-                return Deserialize_concreteclass(node, typeobject, concreteClasses);
+                return Deserialize_concreteclass(node, typeobject, concreteClasses, context);
             }
-            return Deserialize_concreteclass(node, typeobject);
+            return Deserialize_concreteclass(node, typeobject, context);
+        }
+
+        public static T Deserialize<T, Ctx>(string s) where Ctx: new()
+        {
+            var context = new Ctx();
+            return (T)Deserialize(Parse(s), typeof(T), context);
         }
 
         public static T Deserialize<T>(string s)
         {
-            return (T)Deserialize(Parse(s), typeof(T));
+            object context = null;
+            return (T)Deserialize<object>(Parse(s), typeof(T), context);
         }
 
     }

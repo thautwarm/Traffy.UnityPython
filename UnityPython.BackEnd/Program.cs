@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static JsonExt;
 using Traffy;
 using Traffy.Objects;
 using System.Diagnostics;
@@ -24,7 +23,7 @@ public class App
         }
         Initialization.InitRuntime();
         var o = System.IO.File.ReadAllText(argv[0]);
-        var x = JsonParse<TrFuncPointer>(o);
+        var x =  ModuleSpec.Parse(o);
         var d = RTS.baredict_create();
         d[MK.Str("print")] = TrSharpFunc.FromFunc("print", (BList<TrObject> xs, Dictionary<TrObject, TrObject> kwargs) => {
             var itr = xs.GetEnumerator();

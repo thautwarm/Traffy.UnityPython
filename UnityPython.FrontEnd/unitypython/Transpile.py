@@ -78,7 +78,7 @@ def _const_to_variant(v):
     elif isinstance(v, tuple):
         return ir.TrTuple(elts=list(map(const_to_variant, v)))
     elif isinstance(v, bytes):
-        return ir.TrBytes(contents=v.decode('ascii'))
+        return ir.TrBytes(contents=v.decode("ascii"))
     else:
         raise TypeError(v)
 
@@ -172,7 +172,9 @@ class Transpiler:
 
     def load_name_(self, id: str) -> ir.TraffyIR:
         if id in self.scope.unknown_vars:
-            return ir.GuessVar(name=ir.TrStr(value=id, isInterned=False), position=self.pos_ind)
+            return ir.GuessVar(
+                name=ir.TrStr(value=id, isInterned=False), position=self.pos_ind
+            )
         if id in self.scope.localvars:
             i = self.scope.localvars.order(id)
             return ir.LocalVar(slot=i, position=self.pos_ind)
@@ -200,11 +202,11 @@ class Transpiler:
         metadata = ir.Metadata(
             positions=list(self.positions),
             spanPointers=list(self.spans),
-            sourceCode=self.source_code,
+            sourceCode=None,
             localnames=list(self.scope.localvars),
             freenames=list(self.scope.freevars),
             codename=name,
-            filename=self.filename,
+            filename=None,
         )
         hasvararg = bool(self.vararg)
         haskwarg = bool(self.kwarg)
@@ -724,8 +726,14 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             hasCont = hasCont or ir.hasCont(orelse)
         else:
             orelse = None
-        return ir.ForIn(position=position, hasCont=hasCont, itr=iterable, target=target, body=body, orelse=orelse)
-
+        return ir.ForIn(
+            position=position,
+            hasCont=hasCont,
+            itr=iterable,
+            target=target,
+            body=body,
+            orelse=orelse,
+        )
 
     def visit_Return(self, node: Return) -> Any:
         self.root.cur_pos = extract_pos(node)
@@ -760,10 +768,7 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             freeslots=freeslots,
         )
         func_body = ir.DefClass(
-            position=position,
-            hasCont=ir.hasCont(bases),
-            bases = bases,
-            body = func_body
+            position=position, hasCont=ir.hasCont(bases), bases=bases, body=func_body
         )
 
         if decorator_list:
@@ -773,10 +778,12 @@ class TranspileStmt(IRStmtTransformerInlineCache):
                     hasCont=ir.hasCont(each, func_body),
                     func=each,
                     args=[ir.SequenceElement(False, func_body)],
-                    kwargs=[]
+                    kwargs=[],
                 )
         lhs = self.root.store_name_(node.name)
-        return ir.Assign(position=position, hasCont=func_body.hasCont, lhs=lhs, rhs=func_body)
+        return ir.Assign(
+            position=position, hasCont=func_body.hasCont, lhs=lhs, rhs=func_body
+        )
 
     def visit_FunctionDef(self, node: FunctionDef) -> ir.TraffyIR:
         self.root.cur_pos = extract_pos(node)
@@ -829,10 +836,15 @@ class TranspileStmt(IRStmtTransformerInlineCache):
                     hasCont=ir.hasCont(each, func_body),
                     func=each,
                     args=[ir.SequenceElement(False, func_body)],
-                    kwargs=[]
+                    kwargs=[],
                 )
         lhs = self.root.store_name_(node.name)
-        return ir.Assign(position=position, hasCont=hasCont or func_body.hasCont, lhs=lhs, rhs=func_body)
+        return ir.Assign(
+            position=position,
+            hasCont=hasCont or func_body.hasCont,
+            lhs=lhs,
+            rhs=func_body,
+        )
 
     def visit_Assign(self, node: Assign) -> ir.TraffyIR:
         self.root.cur_pos = extract_pos(node)
@@ -1011,23 +1023,19 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             if item.optional_vars:
                 bind = self.root.lhs_transpiler.visit(item.optional_vars)
                 hasCont = hasCont or bind.hasCont
-            with_items.append(
-                ir.WithItem(
-                    position,
-                    hasCont,
-                    ctx, bind
-                )
-            )
+            with_items.append(ir.WithItem(position, hasCont, ctx, bind))
         body = self.visit_many(node.body)
         hasCont = ir.hasCont(with_items) or ir.hasCont(body)
         return ir.With(hasCont, with_items, body)
 
 
-def compile_module(
-    filename: str, src: str, ignore_src: bool = False
-) -> ir.TrFuncPointer:
+def compile_module(filename: str,  modulename: str, src: str, ignore_src: bool = False) -> ir.ModuleSpec:
     node: Module = parse(src, filename=filename)
     top = Transpiler(filename, None if ignore_src else src, ir.Span.empty(), None)
     top.before_visit(node)
     block = top.stmt_transpiler.visit_block(node.body)
-    return top.create_fptr_builder(block, "<module>")
+    msc = ir.ModuleSharingContext(
+        modulename=modulename, filename=filename, sourceCode=src
+    )
+    fptr = top.create_fptr_builder(block, "<module>")
+    return ir.ModuleSpec(msc, fptr)

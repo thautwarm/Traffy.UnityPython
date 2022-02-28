@@ -6,77 +6,6 @@ using System.Runtime.Serialization;
 
 namespace Traffy
 {
-    public static class ListExt
-    {
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-        public static void Push(this List<TrObject> self, TrObject o)
-        {
-            self.Add(o);
-        }
-
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-
-        public static TrObject Peek(this List<TrObject> self)
-        {
-            return self[self.Count - 1];
-        }
-
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-        public static TrObject Pop(this List<TrObject> self)
-        {
-            var i = self.Count - 1;
-            var a = self[i];
-            self.RemoveAt(i);
-            return a;
-        }
-
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-        public static (TrObject, TrObject) Pop2(this List<TrObject> self)
-        {
-            var i = self.Count - 1;
-            var a = self[i - 1];
-            var b = self[i];
-            self.RemoveAt(i);
-            self.RemoveAt(i - 1);
-            return (a, b);
-        }
-
-
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-        public static void PopN(this List<TrObject> self, List<TrObject> other, int n)
-        {
-            int c = self.Count;
-            for (int i = c - n; i < c; i++)
-            {
-                other.Add(self[i]);
-            }
-            self.RemoveRange(c - n, n);
-            return;
-        }
-
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-        public static void PopN(this List<TrObject> self, TrObject[] other, int n)
-        {
-            int c = self.Count;
-            self.CopyTo(c - n, other, 0, n);
-            self.RemoveRange(c - n, n);
-            return;
-        }
-
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-        public static void PopN(this List<TrObject> self, Dictionary<TrObject, TrObject> other, int n)
-        {
-            int c = self.Count;
-            int start = c - n - n;
-            for (int i = start; i < c; i += 2)
-            {
-                other[self[i]] = self[i + 1];
-            }
-            self.RemoveRange(start, n + n);
-            return;
-        }
-    }
-
     public class Variable
     {
         public TrObject Value;
@@ -160,8 +89,10 @@ namespace Traffy
         private (int start, int end)[] _spanPointers;
 
         [OnDeserialized]
-        public Metadata OnDeserialized()
+        public Metadata OnDeserialized(ModuleSharingContext msc)
         {
+            sourceCode = msc.sourceCode;
+            filename = msc.filename;
             // Positions.Select(x => x.ToString()).By(x => String.Join(",", x)).By(Console.WriteLine);
             return this;
         }
@@ -221,18 +152,51 @@ namespace Traffy
         public Dictionary<int, TrObject> kwindices;
         public Traffy.Asm.TraffyAsm code;
         public Metadata metadata;
+    }
+
+    [Serializable]
+    public class ModuleSharingContext
+    {
+        public string modulename; // a.b.c
+        public string filename; // a/b/c.py or a/b/c/__init__.py
+        public string sourceCode;
+
+        [OnDeserialized]
+        public ModuleSharingContext OnDeserialized(ModuleSharingContext msc)
+        {
+            msc.filename = filename;
+            msc.sourceCode = sourceCode;
+            return this;
+        }
+    }
+
+    [Serializable]
+    public class ModuleSpec
+    {
+        public ModuleSharingContext msc;
+        public TrFuncPointer fptr;
+        public string modulename => msc.modulename;
+        public string filename => msc.filename;
+        public string sourceCode => msc.sourceCode;
+
+        public static ModuleSpec Parse(string s)
+        {
+            return SimpleJSON.JSON.Deserialize<ModuleSpec, ModuleSharingContext>(s);
+        }
+
         static Variable[] empty_freevars = new Variable[0];
         static (int, TrObject)[] empty_default_args = new (int, TrObject)[0];
         public void Exec(Dictionary<TrObject, TrObject> globals)
         {
-            if (code.hasCont)
+            if (fptr.code.hasCont)
             {
                 throw new InvalidOperationException("cannot eval the code that has continuations");
             }
-            var func = new TrFunc(empty_freevars, globals, empty_default_args, this);
+            var func = new TrFunc(empty_freevars, globals, empty_default_args, fptr);
             ((TrObject)func).Call();
         }
     }
+
     public enum STATUS
     {
         NORMAL = 0,

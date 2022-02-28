@@ -4,14 +4,6 @@ using System.Reflection;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-public static partial class JsonExt
-{
-    public static T JsonParse<T>(string s)
-    {
-        return SimpleJSON.JSON.Deserialize<T>(s);
-    }
-}
-
 public static class Utils
 {
 
