@@ -34,23 +34,23 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public bool __getattr__(TrObject s, TrRef found)
+        TrObject TrObject.__getattr__(TrObject s)
         {
             TrStr attr = (TrStr)s;
             if (attr.isInterned && object.ReferenceEquals(attr.value, s_attrValue))
             {
-                found.value = value;
-                return true;
+                if (value == null)
+                    value = RTS.object_none;
+                return value;
             }
             switch (attr.value)
             {
                 case "value":
                     if (value == null)
                         value = RTS.object_none;
-                    found.value = value;
-                    return true;
+                    return value;
                 default:
-                    return false;
+                    throw new AttributeError(this, attr, $"{Class.Name} has no attribute {attr}");
             }
         }
 

@@ -237,7 +237,7 @@ namespace Traffy.InlineCache
             s_name = name;
             ICClass = new PolyIC_Class(s_name);
             ICInstance = new PolyIC_Inst(s_name);
-            this.attribute = MK.Str(name);
+            this.attribute = MK.IStr(name);
         }
 
         public bool ReadClass(TrClass Class, out TrObject ob)

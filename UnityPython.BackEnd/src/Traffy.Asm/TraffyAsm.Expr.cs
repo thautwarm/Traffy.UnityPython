@@ -1024,4 +1024,81 @@ namespace Traffy.Asm
             return rt_context;
         }
     }
+
+    [Serializable]
+    public class FormattedValue: TraffyAsm
+    {
+        public bool hasCont { get; set; }
+        public bool convStr;
+        public bool convRepr;
+        public int position;
+        public TraffyAsm value;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_value = value.exec(frame);
+            if (convStr)
+                rt_value = RTS.object_str(rt_value);
+            if (convRepr)
+                rt_value = RTS.object_repr(rt_value);
+            frame.traceback.Pop();
+            return rt_value;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            if (convStr)
+                rt_value = RTS.object_str(rt_value);
+            if (convRepr)
+                rt_value = RTS.object_repr(rt_value);
+            frame.traceback.Pop();
+            return rt_value;
+        }
+    }
+
+    [Serializable]
+    public class JoinedStr: TraffyAsm
+    {
+        public bool hasCont { get; set; }
+        public int position;
+
+        public TraffyAsm[] values;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var strings = new string[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                var rt_s = values[i].exec(frame);
+                if (rt_s is TrStr str)
+                    strings[i] = str.value;
+                else
+                    strings[i] = rt_s.__str__();
+            }
+            var rt_joined = MK.Str(String.Concat(strings));
+            frame.traceback.Pop();
+            return rt_joined;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var strings = new string[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                var rt_s = values[i].hasCont ? await values[i].cont(frame) : values[i].exec(frame);
+                if (rt_s is TrStr str)
+                    strings[i] = str.value;
+                else
+                    strings[i] = rt_s.__str__();
+            }
+            var rt_joined = MK.Str(String.Concat(strings));
+            frame.traceback.Pop();
+            return rt_joined;
+        }
+    }
 }

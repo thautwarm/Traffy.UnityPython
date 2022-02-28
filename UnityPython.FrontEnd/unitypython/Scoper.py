@@ -47,6 +47,8 @@ from ast import (
     Name,
     List,
     Tuple,
+    JoinedStr,
+    FormattedValue
 )
 import typing
 from .Symtable import Symtable, ConciseSymtable
@@ -264,6 +266,13 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
 class ScoperRHS(ExprNodeVisitorInlineCache):
     def __init__(self, scoper: ScoperStmt):
         self.scoper = scoper
+
+    def visit_JoinedStr(self, node: JoinedStr) -> Any:
+        for each in node.values:
+            self.visit(each)
+
+    def visit_FormattedValue(self, node: FormattedValue) -> Any:
+        self.visit(node.value)
 
     def visit_Index(self, node: Index) -> Any:
         return self.visit(getattr(node, "value"))

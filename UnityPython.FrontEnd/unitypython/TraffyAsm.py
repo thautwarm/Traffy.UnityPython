@@ -401,6 +401,21 @@ class Constant(TraffyIR):
     o: TrObject
     hasCont = False
 
+@dataclass
+class FormattedValue(TraffyIR):
+    value: TraffyIR
+    position: int
+    hasCont: bool
+    convStr: bool = False
+    convRepr: bool = False
+
+
+@dataclass
+class JoinedStr(TraffyIR):
+    position: int
+    hasCont: bool
+    values: list[TraffyIR]
+
 
 @dataclass
 class DictEntry(object):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ast import *
+import warnings
 from unitypython.Collections import OrderedSet, OrderedDict
 from . import TraffyAsm as ir
 from .JSON import dump_json
@@ -630,6 +631,51 @@ class TranspilerRHS(IRExprTransformerInlineCache):
         position = self.root.pos_ind
         value = self.visit(node.value)
         return ir.YieldFrom(position=position, value=value)
+
+
+    def visit_FormattedValue(self, node: FormattedValue) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        value = self.visit(node.value)
+        conv = node.conversion
+        fv = ir.FormattedValue(position=position, hasCont=value.hasCont, value=value)
+
+        # https://docs.python.org/3/library/ast.html#ast.FormattedValue
+        if conv == -1:
+            fv.convStr = True
+        elif conv == 115:
+            fv.convStr = True
+        elif conv == 114:
+            fv.convRepr = True
+        elif conv == 97:
+            warn = UserWarning(
+                "ascii conversion is not supported, use __str__ for conversion {:a}."
+            )
+            warnings.warn(warn)
+            fv.convStr = True
+        else:
+            raise ValueError(f"Unknown conversion: {conv}")
+        if node.format_spec:
+            warn = UserWarning(
+                "Format specifier not supported, please report a bug."
+            )
+            warnings.warn(warn)
+        return fv
+
+    def visit_JoinedStr(self, node: JoinedStr) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        hasCont = False
+        args: list[ir.TraffyIR] = []
+        for each in node.values:
+            if isinstance(each, FormattedValue):
+                arg = self.visit(each)
+                args.append(arg)
+            else:
+                arg = self.visit(each)
+                args.append(arg)
+            hasCont = hasCont or ir.hasCont(arg)
+        return ir.JoinedStr(position=position, hasCont=hasCont, values=args)
 
 
 class TranspilerLHS(LHSTransformerInlineCache):

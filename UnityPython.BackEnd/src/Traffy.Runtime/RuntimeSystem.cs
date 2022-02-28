@@ -328,39 +328,36 @@ namespace Traffy
             throw new NotImplementedException();
         }
 
-        public static TrObject object_getattr(TrObject tos, string attr)
-        {
-            return object_getattr(tos, MK.Str(attr));
-        }
-
-
         public static void object_setic(TrObject tos, InlineCache.PolyIC ic, TrObject value)
         {
+            if (!tos.Class.InstanceUseInlineCache)
+            {
+                object_setattr(tos, ic.attribute, value);
+                return;
+            }
             tos.__setic__(ic, value);
         }
 
         public static TrObject object_getic(TrObject tos, InlineCache.PolyIC ic)
         {
             if (!tos.Class.InstanceUseInlineCache)
-                return object_getattr(tos, ic.Name.Value);
+            {
+                return object_getattr(tos, ic.attribute);
+            }
 
             if (tos.__getic__(ic, out var o))
             {
                 return o;
             }
             if (tos is TrClass cls)
-                throw new AttributeError(tos, MK.Str(ic.Name), $"class {cls.Name} has no attribute {ic.Name}");
-            throw new AttributeError(tos, MK.Str(ic.Name), $"{tos.Class.Name} object has no attribute {ic.Name}");
+                throw new AttributeError(tos, MK.IStr(ic.Name), $"class {cls.Name} has no attribute {ic.Name}");
+            throw new AttributeError(tos, MK.IStr(ic.Name), $"{tos.Class.Name} object has no attribute {ic.Name}");
         }
 
 
         public static TrObject object_getattr(TrObject tos, TrObject attr)
         {
-            var found = new TrRef();
-            var o = tos.__findattr__(attr, found);
-            if (!o)
-                throw new AttributeError(tos, attr, $" '{tos.Class.AsObject.__repr__()}' object has no attribute '{attr.__str__()}'");
-            return found.value;
+            return tos.__getattr__(attr);
         }
 
         public static void object_setattr(TrObject tos, string attr, TrObject value)
@@ -596,6 +593,16 @@ namespace Traffy
         }
 
         internal static TrObject object_enter(TrObject rt_context) => rt_context.__enter__();
+
+        internal static TrObject object_str(TrObject rt_value)
+        {
+            return MK.Str(rt_value.__str__());
+        }
+
+        internal static TrObject object_repr(TrObject rt_value)
+        {
+            return MK.Str(rt_value.__repr__());
+        }
     }
 
     public static class MK
@@ -684,7 +691,7 @@ namespace Traffy
 
         public static TrStr Str(string v) => new TrStr { value = v };
 
-        public static TrStr Str(InternedString v) => new TrStr { value = v.Value, isInterned = true };
+        public static TrStr IStr(InternedString v) => new TrStr { value = v.Value, isInterned = true };
 
         public static TrStr IStr(string v) => new TrStr { value = String.Intern(v), isInterned = true };
 

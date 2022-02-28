@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Traffy.InlineCache;
 namespace Traffy.Objects
 {
@@ -28,7 +29,6 @@ namespace Traffy.Objects
             ad = null;
             return false;
         }
-
 
         public bool LoadCachedShape_ReadInst(string name, out Shape ad)
         {

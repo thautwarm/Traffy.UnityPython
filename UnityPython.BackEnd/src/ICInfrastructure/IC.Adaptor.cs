@@ -5,6 +5,7 @@ namespace Traffy.InlineCache
 {
     public partial class PolyIC
     {
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public bool Read(TrObject self, out TrObject ob)
         {
             var cls = self as TrClass;
@@ -170,7 +171,7 @@ namespace Traffy.InlineCache
         public static void WriteInst(TrObject self, Shape shape, TrObject value)
         {
             if (self.__array__ == null || self.Class.IsFixed)
-                throw new AttributeError(self, MK.Str(shape.Name), $"object {self.Class.Name} has no attribute {shape.Name}");
+                throw new AttributeError(self, MK.IStr(shape.Name), $"object {self.Class.Name} has no attribute {shape.Name}");
             self.SetInstField(shape.FieldIndex, shape.Name.Value, value);
         }
 
