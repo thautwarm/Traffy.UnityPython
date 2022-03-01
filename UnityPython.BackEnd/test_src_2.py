@@ -67,10 +67,31 @@ print((f"{a} {'c'!r}").__repr__())
 #     for i in range(1000000):
 #         z = x
 
-# def testfunc(f):
-#     a = time()
-#     f()
-#     print(time() - a)
+def testfunc(f):
+    a = time()
+    print("res", f())
+    print(time() - a)
 
 # testfunc(test1)
 # testfunc(test2)
+
+def _test1():
+    x = 0
+    for i in range(10000000):
+        x += 1
+        yield x
+
+def test1():
+    x = list(_test1())
+    print(x[50])
+    return len(x)
+
+def test2():
+    x = 0
+    while x < 10000000:
+        x += 1
+    return x
+
+print(None)
+testfunc(test1)
+testfunc(test2)

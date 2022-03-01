@@ -10,6 +10,7 @@ from ast import (
     ClassDef,
     Return,
     FunctionDef,
+    AsyncFunctionDef,
     Assign,
     AnnAssign,
     AugAssign,
@@ -28,6 +29,7 @@ from ast import (
     Raise,
     Yield,
     YieldFrom,
+    Await,
 
     BoolOp,
     NamedExpr,
@@ -173,13 +175,16 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
         if node.value:
             self.rhs_scoper.visit(node.value)
 
-    def visit_FunctionDef(self, node: FunctionDef) -> Any:
+    def visit_FunctionDef(self, node: FunctionDef | AsyncFunctionDef) -> Any:
         self.symtable_builder.mut_var(node.name)
         for each in node.args.defaults:
             self.rhs_scoper.visit(each)
         for each in node.args.kw_defaults:
             if each:
                 self.rhs_scoper.visit(each)
+
+    def visit_AsyncFunctionDef(self, node: AsyncFunctionDef) -> Any:
+        self.visit_FunctionDef(node)
 
     def visit_Assign(self, node: Assign) -> Any:
         for each in node.targets:
@@ -356,13 +361,15 @@ class ScoperRHS(ExprNodeVisitorInlineCache):
         for each in node.elts:
             self.visit(each)
 
-    def visit_Yield(self, node: Yield) -> Any:
+    def visit_Yield(self, node: Yield | Await) -> Any:
         if node.value:
             self.visit(node.value)
 
     def visit_YieldFrom(self, node: YieldFrom) -> Any:
         self.visit(node.value)
 
+    def visit_Await(self, node: Await) -> Any:
+        self.visit_Yield(node)
 
 class ScoperLHS(ExprNodeVisitorInlineCache):
     def __init__(self, scoper: ScoperStmt):

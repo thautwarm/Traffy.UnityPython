@@ -376,6 +376,7 @@ namespace Traffy.Asm
         {
 
             Variable[] freevars;
+            (int, TrObject)[] rt_default_args;
             if (freeslots.Length != 0)
             {
                 freevars = new Variable[freeslots.Length];
@@ -388,8 +389,6 @@ namespace Traffy.Asm
             {
                 freevars = empty_freevars;
             }
-
-            (int, TrObject)[] rt_default_args;
             if (default_args.Length != 0)
             {
                 rt_default_args = new (int, TrObject)[default_args.Length];
@@ -415,6 +414,7 @@ namespace Traffy.Asm
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             Variable[] freevars;
+            (int, TrObject)[] rt_default_args;
             if (freeslots.Length != 0)
             {
                 freevars = new Variable[freeslots.Length];
@@ -427,8 +427,6 @@ namespace Traffy.Asm
             {
                 freevars = empty_freevars;
             }
-
-            (int, TrObject)[] rt_default_args;
             if (default_args.Length != 0)
             {
                 rt_default_args = new (int, TrObject)[default_args.Length];
@@ -990,7 +988,7 @@ namespace Traffy.Asm
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
-            MonoAsync<TrObject> rt_co = RTS.coroutine_of_object(rt_value);
+            Awaitable<TrObject> rt_co = RTS.coroutine_of_object(rt_value);
             return await rt_co;
         }
     }

@@ -5,6 +5,7 @@ using Traffy;
 using Traffy.Objects;
 using System.Diagnostics;
 using System.Threading;
+using static Traffy.Objects.ExtMonoAsyn;
 
 public class App
 {
@@ -14,6 +15,51 @@ public class App
         return MK.Int(System.DateTime.Now.Ticks);
     }
 
+    // public static void Main()
+    // {
+    //     async MonoAsync<int> simple0(int n)
+    //     {
+    //         for(int i = 0; i < n; i++)
+    //         {
+    //             await Yield(i + 10);
+    //         }
+    //         return 9;
+    //     }
+    //     async MonoAsync<int> simple(int n)
+    //     {
+    //         await simple0(n);
+    //         for(int i = 0; i < n; i++)
+    //         {
+    //             await Yield(i + 10);
+    //         }
+    //         return 9;
+    //     }
+    //     async MonoAsync<int> f(int n)
+    //     {
+    //         await Enumerable.Range(32, 10).YieldFrom();
+    //         await simple(5);
+    //         for(int i = 0; i < n; i++)
+    //         {
+    //             await Yield(i + 10);
+    //         }
+    //         return 1;
+    //     }
+
+    //     async MonoAsync<int> uu()
+    //     {
+    //         Console.WriteLine("simple = " + await simple(20));
+    //         Console.WriteLine("f = " + await f(8));
+    //         return 50;
+    //     }
+    //     var k = uu();
+    //     int n = 0;
+    //     while (k.MoveNext())
+    //     {
+    //         Console.WriteLine(k.m_Result + " <<" + n);
+    //         k.m_Result = 5;
+    //         n++;
+    //     }
+    // }
     public static int Main(string[] argv)
     {
         if (argv.Length != 1)

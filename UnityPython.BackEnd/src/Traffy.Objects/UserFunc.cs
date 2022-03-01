@@ -175,7 +175,7 @@ namespace Traffy.Objects
                 return frame.retval;
             }
             var coroutine = fptr.code.cont(frame);
-            return TrCoroutine.Create(coroutine, frame);
+            return TrGenerator.Create(coroutine, frame);
         }
     }
 

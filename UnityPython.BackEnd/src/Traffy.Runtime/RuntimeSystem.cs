@@ -546,15 +546,16 @@ namespace Traffy
             return TrNone.Unique;
         }
 
-        public static MonoAsync<TrObject> coroutine_of_iter(IEnumerator<TrObject> o)
+        public static Awaitable<TrObject> coroutine_of_iter(IEnumerator<TrObject> o)
         {
-            if (o is TrCoroutine coro)
-            {
-                return coro.m_generator;
-            }
-            return coroutine_of_object_mkCont0(o);
+            return o.YieldFrom();
+            // if (o is TrGenerator coro)
+            // {
+            //     return coro.m_Generator;
+            // }
+            // return coroutine_of_object_mkCont0(o);
         }
-        public static MonoAsync<TrObject> coroutine_of_object(TrObject rt_value)
+        public static Awaitable<TrObject> coroutine_of_object(TrObject rt_value)
         {
             var o = rt_value.__iter__();
             return coroutine_of_iter(o);
@@ -577,13 +578,13 @@ namespace Traffy
         public static TrObject object_of_coroutine(MonoAsync<TrObject> rt_value)
         {
 
-            return TrCoroutine.Create(rt_value);
+            return TrGenerator.Create(rt_value);
         }
 
         public static TrObject object_of_iter(MonoAsync<TrObject> rt_value)
         {
 
-            return TrCoroutine.Create(rt_value);
+            return TrGenerator.Create(rt_value);
         }
 
 
@@ -714,7 +715,7 @@ namespace Traffy
 
         public static TrObject Iter(IEnumerator<TrObject> v)
         {
-            if (v is TrCoroutine coro)
+            if (v is TrGenerator coro)
             {
                 return coro;
             }
