@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ast import comprehension
 from enum import IntEnum
 from turtle import position
 from .IntEncode import encode as encode_int, decode as decode_int
@@ -19,42 +20,6 @@ if typing.TYPE_CHECKING:
 else:
     TraffyIR = object
     TraffyLHS = object
-
-# else:
-#     TraffyIR = (
-#         Block,
-#         AugAssign,
-#         Return,
-#         Assign,
-#         While,
-#         ForIn,
-#         Dict,
-#         List,
-#         Tuple,
-#         Set,
-#         Attribute,
-#         Subscript,
-#         Constant,
-#         Yield,
-#         YieldFrom,
-#         LocalVar,
-#         GlobalVar,
-#         CmpOp,
-#         Try,
-#         Raise,
-#         Continue,
-#         Break,
-#     )
-#     TraffyLHS = (
-#         StoreListEx,
-#         StoreList,
-#         StoreLocal,
-#         StoreGlobal,
-#         StoreItem,
-#         StoreAttr,
-#         MultiAssign,
-#     )
-
 
 class OpU(IntEnum):
     INV = 0
@@ -460,6 +425,43 @@ class Set(TraffyIR):
     position: int
     hasCont: bool
     elements: list[SequenceElement]
+
+@dataclass
+class Comprehension:
+    hasCont: bool
+    target: TraffyLHS
+    itr: TraffyIR
+    ifs: list[TraffyIR] | None
+    next: Comprehension | None
+
+@dataclass
+class ListComp(TraffyIR):
+    position: int
+    hasCont: bool
+    elt: TraffyIR
+    comprehension: Comprehension
+
+@dataclass
+class SetComp(TraffyIR):
+    position: int
+    hasCont: bool
+    elt: TraffyIR
+    comprehension: Comprehension
+
+@dataclass
+class DictComp(TraffyIR):
+    position: int
+    hasCont: bool
+    key: TraffyIR
+    value: TraffyIR
+    comprehension: Comprehension
+
+@dataclass
+class GeneratorComp(TraffyIR):
+    position: int
+    elt: TraffyIR
+    comprehension: Comprehension
+    hasCont = True
 
 
 @dataclass

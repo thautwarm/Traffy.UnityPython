@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ast import *
 from cmath import isinf
+import functools
 import warnings
 from unitypython.Collections import OrderedSet, OrderedDict
 from . import TraffyAsm as ir
@@ -99,6 +100,10 @@ def extract_pos(node: AST) -> ir.Span:
     return ir.Span(start, end)
 
 
+_FunctionAST_Types = (FunctionDef, Lambda, AsyncFunctionDef)
+_ComprehensionAST_Types = (ListComp, SetComp, DictComp, GeneratorExp)
+_Comprehension_ArgName = ".0"
+
 class Transpiler:
     def __init__(
         self,
@@ -172,7 +177,7 @@ class Transpiler:
         else:
             raise NameError(f"{id} is not a local/free variable")
 
-    def load_name_(self, id: str) -> ir.TraffyIR:
+    def load_name_(self, id: str) -> ir.LocalVar | ir.GuessVar | ir.GlobalVar | ir.FreeVar :
         if id in self.scope.unknown_vars:
             return ir.GuessVar(
                 name=ir.TrStr(value=id, isInterned=False), position=self.pos_ind
@@ -224,7 +229,7 @@ class Transpiler:
             metadata=metadata,
         )
 
-    def before_visit(self, node: Module | FunctionDef | Lambda | ClassDef | AsyncFunctionDef):
+    def before_visit(self, node: Module | FunctionDef | Lambda | ClassDef | AsyncFunctionDef | ListComp | SetComp | DictComp | GeneratorExp):
         if isinstance(node, Module):
             self.scope = ConciseSymtable.new(self.parent_scope)
         elif isinstance(node, ClassDef):
@@ -232,7 +237,7 @@ class Transpiler:
             for each in node.body:
                 scoper.visit(each)
             self.scope = scoper.solve()
-        elif isinstance(node, (FunctionDef, Lambda, AsyncFunctionDef)):
+        elif isinstance(node, _FunctionAST_Types):
             scoper = ScoperStmt(self.filename, self.parent_scope)
             allargcount = 0
             for arg in node.args.args:
@@ -270,6 +275,24 @@ class Transpiler:
                 scoper.rhs_scoper.visit(node.body)
             scope = scoper.solve()
             self.scope = scope
+        elif isinstance(node, _ComprehensionAST_Types):
+            scoper = ScoperStmt(self.filename, self.parent_scope)
+            scoper.symtable_builder.add_arg(_Comprehension_ArgName)
+            self.posargcount = 1
+            self.allargcount = 1
+            rhs_scoper = scoper.rhs_scoper
+            lhs_scoper = scoper.lhs_scoper
+            for i, each in enumerate(node.generators):
+                if i != 0:
+                    rhs_scoper.visit(each.iter)
+                lhs_scoper.visit(each.target)
+            if not isinstance(node, DictComp):
+                rhs_scoper.visit(node.elt)
+            else:
+                rhs_scoper.visit(node.key)
+                rhs_scoper.visit(node.value)
+            scope = scoper.solve()
+            self.scope = scope
         else:
             raise TypeError(node)
 
@@ -283,6 +306,9 @@ class TranspilerRHS(IRExprTransformerInlineCache):
 
     def __lshift__(self, o: ir.TraffyIR):
         self.root.instructions.append(o)
+
+    def visit_many(self, xs: list[expr]):
+        return list(map(self.visit, xs))
 
     def instr_offset(self):
         return len(self.root.instructions)
@@ -683,6 +709,102 @@ class TranspilerRHS(IRExprTransformerInlineCache):
             hasCont = hasCont or ir.hasCont(arg)
         return ir.JoinedStr(position=position, hasCont=hasCont, values=args)
 
+
+    def visit_Comp(self, node: ListComp | GeneratorExp | SetComp | DictComp, create_comp):
+        topmost_itr = self.visit(node.generators[0].iter)
+        transpiler = Transpiler(
+            self.root.filename,
+            self.root.source_code,
+            extract_pos(node),
+            self.root.scope,
+        )
+        position = transpiler.pos_ind
+        transpiler.before_visit(node)
+        transpiler.cur_pos = extract_pos(node.generators[0].iter)
+        topmost_pos = transpiler.pos_ind
+        comprehensions: list[tuple[ir.TraffyLHS, ir.TraffyIR, list[ir.TraffyIR] | None]] = []
+        for i, gen in enumerate(node.generators):
+            lhs = transpiler.lhs_transpiler.visit(gen.target)
+            ifs = transpiler.rhs_transpiler.visit_many(gen.ifs)
+            if not ifs:
+                ifs = None
+            if i == 0:
+                load = transpiler.load_name_(_Comprehension_ArgName)
+                load.position = topmost_pos
+                load.position
+                comprehensions.append((lhs, load, ifs))
+            else:
+                rhs = transpiler.rhs_transpiler.visit(gen.iter)
+                comprehensions.append((lhs, rhs, ifs))
+
+        do_yield_from, inner_expr = create_comp(transpiler, position, comprehensions, node)
+        fptr = transpiler.create_fptr_builder(inner_expr, "<generator>")
+        freeslots = [self.root.load_derefence(id) for id in transpiler.scope.freevars]
+        func = ir.Lambda(hasCont=False, fptr=fptr, default_args=[], freeslots=freeslots)
+        call = ir.CallEx(
+                position,
+                hasCont=topmost_itr.hasCont,
+                func=func,
+                args=[ir.SequenceElement(unpack=False, value=topmost_itr)],
+                kwargs=[]
+            )
+        if not do_yield_from:
+            return call
+        else:
+            return ir.YieldFrom(position=position, value=call)
+
+    @staticmethod
+    def create_listcomp_yield(transpiler: Transpiler, position: int, comprehensions: list[tuple[ir.TraffyLHS, ir.TraffyIR, list[ir.TraffyIR] | None]], node: ListComp) -> tuple[bool, ir.TraffyIR]:
+        elt = transpiler.rhs_transpiler.visit(node.elt)
+        lhs, rhs, ifs = comprehensions[-1]
+        last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, None)
+        for lhs, rhs, ifs in comprehensions[:-1]:
+            last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, last)
+        inner_expr = ir.ListComp(position, last.hasCont or elt.hasCont, elt, last)
+        return inner_expr.hasCont, ir.Return(position, inner_expr.hasCont, inner_expr)
+
+    @staticmethod
+    def create_setcomp_yield(transpiler: Transpiler, position: int, comprehensions: list[tuple[ir.TraffyLHS, ir.TraffyIR, list[ir.TraffyIR] | None]], node: SetComp) -> tuple[bool, ir.TraffyIR]:
+        elt = transpiler.rhs_transpiler.visit(node.elt)
+        lhs, rhs, ifs = comprehensions[-1]
+        last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, None)
+        for lhs, rhs, ifs in comprehensions[:-1]:
+            last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, last)
+        inner_expr = ir.SetComp(position, last.hasCont or elt.hasCont, elt, last)
+        return inner_expr.hasCont, ir.Return(position, inner_expr.hasCont, inner_expr)
+
+    @staticmethod
+    def create_generator_yield(transpiler: Transpiler, position: int, comprehensions: list[tuple[ir.TraffyLHS, ir.TraffyIR, list[ir.TraffyIR] | None]], node: SetComp) -> tuple[bool, ir.TraffyIR]:
+        elt = transpiler.rhs_transpiler.visit(node.elt)
+        lhs, rhs, ifs = comprehensions[-1]
+        last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, None)
+        for lhs, rhs, ifs in comprehensions[:-1]:
+            last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, last)
+        inner_expr = ir.GeneratorComp(position, elt, last)
+        return (last.hasCont or elt.hasCont), ir.Return(position, inner_expr.hasCont, inner_expr)
+
+    @staticmethod
+    def create_dictcomp_yield(transpiler: Transpiler, position: int, comprehensions: list[tuple[ir.TraffyLHS, ir.TraffyIR, list[ir.TraffyIR] | None]], node: DictComp) -> tuple[bool, ir.TraffyIR]:
+        key = transpiler.rhs_transpiler.visit(node.key)
+        value = transpiler.rhs_transpiler.visit(node.value)
+        lhs, rhs, ifs = comprehensions[-1]
+        last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, None)
+        for lhs, rhs, ifs in comprehensions[:-1]:
+            last = ir.Comprehension(lhs.hasCont or rhs.hasCont or (bool(ifs) and ir.hasCont(ifs)), lhs, rhs, ifs, last)
+        inner_expr = ir.DictComp(position, last.hasCont or ir.hasCont(key, value), key, value, last)
+        return inner_expr.hasCont, ir.Return(position, inner_expr.hasCont, inner_expr)
+
+    def visit_ListComp(self, node: ListComp) -> Any:
+        return self.visit_Comp(node, self.create_listcomp_yield)
+
+    def visit_SetComp(self, node: SetComp) -> Any:
+        return self.visit_Comp(node, self.create_setcomp_yield)
+
+    def visit_DictComp(self, node: DictComp) -> Any:
+        return self.visit_Comp(node, self.create_dictcomp_yield)
+
+    def visit_GeneratorExp(self, node: GeneratorExp) -> Any:
+        return self.visit_Comp(node, self.create_generator_yield)
 
 class TranspilerLHS(LHSTransformerInlineCache):
     def __init__(self, root: Transpiler):

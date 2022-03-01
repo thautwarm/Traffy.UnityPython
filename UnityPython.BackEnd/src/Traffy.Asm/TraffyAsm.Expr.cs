@@ -1118,4 +1118,185 @@ namespace Traffy.Asm
             return rt_joined;
         }
     }
+
+    [Serializable]
+    public class ListComp : TraffyAsm
+    {
+        public bool hasCont { set; get; }
+        public int position;
+        public TraffyAsm elt;
+        public Comprehension comprehension;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_seq = RTS.barelist_create();
+            void step()
+            {
+                var rt_elt = elt.exec(frame);
+                RTS.barelist_add(rt_seq, rt_elt);
+            }
+            comprehension.exec(frame, step);
+            frame.traceback.Pop();
+            return RTS.object_from_barelist(rt_seq);
+        }
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_seq = RTS.barelist_create();
+            if (elt.hasCont)
+            {
+                async MonoAsync<TrObject> step_cont()
+                {
+                    var rt_elt = await elt.cont(frame);
+                    RTS.barelist_add(rt_seq, rt_elt);
+                    return RTS.object_none;
+                }
+                await comprehension.contYield(frame, step_cont);
+            }
+            else
+            {
+                void step_exec()
+                {
+                    var rt_elt = elt.exec(frame);
+                    RTS.barelist_add(rt_seq, rt_elt);
+                }
+                await comprehension.cont(frame, step_exec);
+            }
+            frame.traceback.Pop();
+            return RTS.object_from_barelist(rt_seq);
+        }
+    }
+
+    [Serializable]
+    public class SetComp : TraffyAsm
+    {
+        public bool hasCont { set; get; }
+        public int position;
+        public TraffyAsm elt;
+        public Comprehension comprehension;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_seq = RTS.bareset_create();
+            void step()
+            {
+                var rt_elt = elt.exec(frame);
+                RTS.bareset_add(rt_seq, rt_elt);
+            }
+            comprehension.exec(frame, step);
+            frame.traceback.Pop();
+            return RTS.object_from_bareset(rt_seq);
+        }
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_seq = RTS.bareset_create();
+            if (elt.hasCont)
+            {
+                async MonoAsync<TrObject> step_cont()
+                {
+                    var rt_elt = await elt.cont(frame);
+                    RTS.bareset_add(rt_seq, rt_elt);
+                    return RTS.object_none;
+                }
+                await comprehension.contYield(frame, step_cont);
+            }
+            else
+            {
+                void step_exec()
+                {
+                    var rt_elt = elt.exec(frame);
+                    RTS.bareset_add(rt_seq, rt_elt);
+                }
+                await comprehension.cont(frame, step_exec);
+            }
+            frame.traceback.Pop();
+            return RTS.object_from_bareset(rt_seq);
+        }
+    }
+
+    [Serializable]
+    public class DictComp : TraffyAsm
+    {
+        public bool hasCont { set; get; }
+        public int position;
+        public TraffyAsm key;
+        public TraffyAsm value;
+        public Comprehension comprehension;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_seq = RTS.baredict_create();
+            void step()
+            {
+                var rt_key = key.exec(frame);
+                var rt_value = value.exec(frame);
+                RTS.baredict_add(rt_seq, rt_key, rt_value);
+            }
+            comprehension.exec(frame, step);
+            frame.traceback.Pop();
+            return RTS.object_from_baredict(rt_seq);
+        }
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_seq = RTS.baredict_create();
+            if (key.hasCont || value.hasCont)
+            {
+                async MonoAsync<TrObject> step_cont()
+                {
+                    var rt_key = key.hasCont ? await key.cont(frame) : key.exec(frame);
+                    var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+                    RTS.baredict_add(rt_seq, rt_key, rt_value);
+                    return RTS.object_none;
+                }
+                await comprehension.contYield(frame, step_cont);
+            }
+            else
+            {
+                void step_exec()
+                {
+                    var rt_key = key.exec(frame);
+                    var rt_value = value.exec(frame);
+                    RTS.baredict_add(rt_seq, rt_key, rt_value);
+                }
+                await comprehension.cont(frame, step_exec);
+            }
+            frame.traceback.Pop();
+            return RTS.object_from_baredict(rt_seq);
+        }
+    }
+
+    [Serializable]
+    public class GeneratorComp : TraffyAsm
+    {
+        public bool hasCont => true;
+        public int position;
+        public TraffyAsm elt;
+        public Comprehension comprehension;
+
+        public TrObject exec(Frame frame)
+        {
+            throw new InvalidProgramException("GeneratorComp.exec");
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            async MonoAsync<TrObject> step()
+            {
+                var rt_elt = elt.exec(frame);
+                await ExtMonoAsyn.Yield(rt_elt);
+                return RTS.object_none;
+            }
+            await comprehension.contYield(frame, step);
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+    }
+
+
 }

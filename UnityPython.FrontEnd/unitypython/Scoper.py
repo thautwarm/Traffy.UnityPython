@@ -3,6 +3,7 @@ from ast import (
     AST,
     For,
     Index,
+    SetComp,
     stmt,
     expr,
     NodeVisitor,
@@ -50,7 +51,11 @@ from ast import (
     List,
     Tuple,
     JoinedStr,
-    FormattedValue
+    FormattedValue,
+    ListComp,
+    SetComp,
+    DictComp,
+    GeneratorExp,
 )
 import typing
 from .Symtable import Symtable, ConciseSymtable
@@ -370,6 +375,18 @@ class ScoperRHS(ExprNodeVisitorInlineCache):
 
     def visit_Await(self, node: Await) -> Any:
         self.visit_YieldFrom(node)
+
+    def visit_ListComp(self, node: ListComp) -> Any:
+        self.visit(node.generators[0].iter)
+
+    def visit_SetComp(self, node: SetComp) -> Any:
+        self.visit(node.generators[0].iter)
+
+    def visit_DictComp(self, node: DictComp) -> Any:
+        self.visit(node.generators[0].iter)
+
+    def visit_GeneratorExp(self, node: GeneratorExp) -> Any:
+        self.visit(node.generators[0].iter)
 
 
 class ScoperLHS(ExprNodeVisitorInlineCache):

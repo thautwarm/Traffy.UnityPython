@@ -100,6 +100,7 @@ print(None)
 def a0():
     yield 1
     yield 2
+    return 8
 
 async def a1():
     await a0()
@@ -112,3 +113,28 @@ def a2():
 
 
 print(list(a2()))
+
+x = 5
+print([x for x in range(10)])
+print(x)
+
+print(list(i for i in range(15) if i % 2 == 0 if i > 4))
+
+print({a: b for a in range(7) if a > 3 for b in [a + 1]})
+
+def f(x: int):
+    yield 1 + x
+    yield 2 + x
+    return 3 + x
+
+async def make():
+    x = {await f(i * 10)  for i in range(10)}
+    print("xx", x)
+    return x
+
+def k():
+    (yield from make())
+
+
+for e in k():
+    print(e)

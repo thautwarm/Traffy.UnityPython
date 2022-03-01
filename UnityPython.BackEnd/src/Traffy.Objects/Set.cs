@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Traffy.Objects
 {
@@ -10,6 +11,10 @@ namespace Traffy.Objects
         public TrClass Class => CLASS;
 
         public List<TrObject> __array__ => null;
+        IEnumerator<TrObject> TrObject.__iter__() => container.GetEnumerator();
+
+        string TrObject.__repr__() => "{" + string.Join(", ", container.Select(x => x.__repr__())) + "}";
+
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
