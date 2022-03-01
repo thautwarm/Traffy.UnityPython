@@ -235,7 +235,9 @@ namespace Traffy.Objects
         public static IEnumerator<TrObject> __iter__(TrObject self) =>
             throw self.unsupported(nameof(__iter__));
 
-
+        [MagicMethod]
+        public static Awaitable<TrObject> __await__(TrObject self) =>
+            throw self.unsupported(nameof(__await__));
 
         [MagicMethod]
         public static TrObject __len__(TrObject self) =>

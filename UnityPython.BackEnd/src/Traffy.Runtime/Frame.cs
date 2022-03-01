@@ -208,7 +208,6 @@ namespace Traffy
     public class Frame
     {
         public STATUS CONT;
-        int __pad;
         public TrFunc func;
         public Exception err;
         public Variable[] localvars;

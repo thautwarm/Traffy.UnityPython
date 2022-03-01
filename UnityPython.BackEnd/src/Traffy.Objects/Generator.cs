@@ -12,7 +12,7 @@ namespace Traffy.Objects
         // at the end of such generator, result is set.
         public Awaitable<TrObject> m_Generator;
 
-        private TrGenerator(MonoAsync<TrObject> generator)
+        private TrGenerator(Awaitable<TrObject> generator)
         {
             m_Generator = generator;
         }
@@ -32,7 +32,7 @@ namespace Traffy.Objects
 
         // check exceptions
 
-        public static TrGenerator Create(MonoAsync<TrObject> gen)
+        public static TrGenerator Create(Awaitable<TrObject> gen)
         {
             return new TrGenerator(gen);
         }
@@ -43,7 +43,8 @@ namespace Traffy.Objects
             {
                 try
                 {
-                    return await gen;
+                    await gen;
+                    return frame.retval;
                 }
                 catch (Exception e)
                 {
@@ -63,7 +64,8 @@ namespace Traffy.Objects
             throw new NotSupportedException("cannot reset Traffy coroutines");
         }
 
-        public IEnumerator<TrObject> __iter__() => this;
+        Awaitable<TrObject> TrObject.__await__() => this.m_Generator;
+        IEnumerator<TrObject> TrObject.__iter__() => this;
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
         public TrObject __next__()

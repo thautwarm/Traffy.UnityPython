@@ -150,6 +150,11 @@ class Block(TraffyIR):
     hasCont: bool
     suite: list[TraffyIR]
 
+@dataclass
+class AsyncBlock(TraffyIR):
+    hasCont = True
+    suite: list[TraffyIR]
+
 
 @dataclass
 class AugAssign(TraffyIR):
@@ -484,7 +489,13 @@ class Yield(TraffyIR):
 class YieldFrom(TraffyIR):
     position: int
     value: TraffyIR
+    hasCont = True
+
+
+@dataclass
+class AwaitValue(TraffyIR):
     position: int
+    value: TraffyIR
     hasCont = True
 
 

@@ -60,7 +60,7 @@ namespace Traffy.Objects
             m_async.m_Nested = awaiter;
             if (!awaiter.MoveNext(ref m_async.m_Result)) // end
             {
-                // m_async.m_Nested = null;
+                m_async.m_Nested = null;
                 m_async.StateMachine.MoveNext();
             }
         }

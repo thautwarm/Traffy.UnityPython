@@ -31,6 +31,7 @@ namespace Traffy.Objects
         public PolyIC ic__getattr = new PolyIC(MagicNames.i___getattr__);
         public PolyIC ic__setattr = new PolyIC(MagicNames.i___setattr__);
         public PolyIC ic__iter = new PolyIC(MagicNames.i___iter__);
+        public PolyIC ic__await = new PolyIC(MagicNames.i___await__);
         public PolyIC ic__len = new PolyIC(MagicNames.i___len__);
         public PolyIC ic__eq = new PolyIC(MagicNames.i___eq__);
         public PolyIC ic__ne = new PolyIC(MagicNames.i___ne__);
@@ -88,6 +89,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___getattr__] = TrSharpFunc.FromFunc(cls.Name + ".__getattr__", (self,arg0) => ((T)self).__getattr__(arg0));
             cls[MagicNames.i___setattr__] = TrSharpFunc.FromFunc(cls.Name + ".__setattr__", (self,arg0,arg1) => ((T)self).__setattr__(arg0,arg1));
             cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((T)self).__iter__());
+            cls[MagicNames.i___await__] = TrSharpFunc.FromFunc(cls.Name + ".__await__", (self) => ((T)self).__await__());
             cls[MagicNames.i___len__] = TrSharpFunc.FromFunc(cls.Name + ".__len__", (self) => ((T)self).__len__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((T)self).__eq__(arg0));
             cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc(cls.Name + ".__ne__", (self,arg0) => ((T)self).__ne__(arg0));
@@ -133,6 +135,7 @@ namespace Traffy.Objects
             ic__getattr = new PolyIC(MagicNames.i___getattr__);
             ic__setattr = new PolyIC(MagicNames.i___setattr__);
             ic__iter = new PolyIC(MagicNames.i___iter__);
+            ic__await = new PolyIC(MagicNames.i___await__);
             ic__len = new PolyIC(MagicNames.i___len__);
             ic__eq = new PolyIC(MagicNames.i___eq__);
             ic__ne = new PolyIC(MagicNames.i___ne__);

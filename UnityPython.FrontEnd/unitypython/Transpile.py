@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ast import *
+from cmath import isinf
 import warnings
 from unitypython.Collections import OrderedSet, OrderedDict
 from . import TraffyAsm as ir
@@ -223,7 +224,7 @@ class Transpiler:
             metadata=metadata,
         )
 
-    def before_visit(self, node: Module | FunctionDef | Lambda | ClassDef):
+    def before_visit(self, node: Module | FunctionDef | Lambda | ClassDef | AsyncFunctionDef):
         if isinstance(node, Module):
             self.scope = ConciseSymtable.new(self.parent_scope)
         elif isinstance(node, ClassDef):
@@ -231,7 +232,7 @@ class Transpiler:
             for each in node.body:
                 scoper.visit(each)
             self.scope = scoper.solve()
-        elif isinstance(node, (FunctionDef, Lambda)):
+        elif isinstance(node, (FunctionDef, Lambda, AsyncFunctionDef)):
             scoper = ScoperStmt(self.filename, self.parent_scope)
             allargcount = 0
             for arg in node.args.args:
@@ -831,7 +832,10 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             position=position, hasCont=func_body.hasCont, lhs=lhs, rhs=func_body
         )
 
-    def visit_FunctionDef(self, node: FunctionDef) -> ir.TraffyIR:
+    def visit_AsyncFunctionDef(self, node: AsyncFunctionDef) -> Any:
+        return self.visit_FunctionDef(node)
+
+    def visit_FunctionDef(self, node: FunctionDef | AsyncFunctionDef) -> ir.TraffyIR:
         self.root.cur_pos = extract_pos(node)
         rhs_transpiler = self.root.rhs_transpiler
         decorator_list = list(map(rhs_transpiler.visit, node.decorator_list))
@@ -846,7 +850,10 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         transpiler.before_visit(node)
         position = transpiler.pos_ind
         suite = [transpiler.stmt_transpiler.visit(stmt) for stmt in node.body]
-        block = ir.Block(hasCont=ir.hasCont(suite), suite=suite)
+        if isinstance(node, AsyncFunctionDef):
+            block = ir.AsyncBlock(suite=suite)
+        else:
+            block = ir.Block(hasCont=ir.hasCont(suite), suite=suite)
 
         hasCont = False
         default_arg_entries: list[ir.DefaultArgEntry] = []

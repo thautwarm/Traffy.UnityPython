@@ -31,6 +31,7 @@ namespace Traffy
         public static TrStr s_getattr = MK.Str("__getattr__");
         public static TrStr s_setattr = MK.Str("__setattr__");
         public static TrStr s_iter = MK.Str("__iter__");
+        public static TrStr s_await = MK.Str("__await__");
         public static TrStr s_len = MK.Str("__len__");
         public static TrStr s_eq = MK.Str("__eq__");
         public static TrStr s_ne = MK.Str("__ne__");
@@ -73,6 +74,7 @@ namespace Traffy
         public static InternedString i___getattr__ = InternedString.FromString("__getattr__");
         public static InternedString i___setattr__ = InternedString.FromString("__setattr__");
         public static InternedString i___iter__ = InternedString.FromString("__iter__");
+        public static InternedString i___await__ = InternedString.FromString("__await__");
         public static InternedString i___len__ = InternedString.FromString("__len__");
         public static InternedString i___eq__ = InternedString.FromString("__eq__");
         public static InternedString i___ne__ = InternedString.FromString("__ne__");

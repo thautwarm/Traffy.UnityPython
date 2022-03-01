@@ -17,20 +17,22 @@ public class App
 
     // public static void Main()
     // {
-    //     async MonoAsync<int> simple0(int n)
+    //     async MonoAsync<int> myyield0(int n)
     //     {
-    //         for(int i = 0; i < n; i++)
-    //         {
-    //             await Yield(i + 10);
-    //         }
-    //         return 9;
+    //         await Yield(n);
+    //         return n;
+    //     }
+    //     async MonoAsync<int> myyield(int n)
+    //     {
+    //         await Yield(n);
+    //         return await myyield0(n);
     //     }
     //     async MonoAsync<int> simple(int n)
     //     {
-    //         await simple0(n);
     //         for(int i = 0; i < n; i++)
     //         {
-    //             await Yield(i + 10);
+    //             await Yield(await(myyield(i)));
+
     //         }
     //         return 9;
     //     }
@@ -38,17 +40,17 @@ public class App
     //     {
     //         await Enumerable.Range(32, 10).YieldFrom();
     //         await simple(5);
-    //         for(int i = 0; i < n; i++)
-    //         {
-    //             await Yield(i + 10);
-    //         }
+    //         // for(int i = 0; i < n; i++)
+    //         // {
+    //         //     await Yield(i + 10);
+    //         // }
     //         return 1;
     //     }
 
     //     async MonoAsync<int> uu()
     //     {
     //         Console.WriteLine("simple = " + await simple(20));
-    //         Console.WriteLine("f = " + await f(8));
+    //         // Console.WriteLine("f = " + await f(8));
     //         return 50;
     //     }
     //     var k = uu();

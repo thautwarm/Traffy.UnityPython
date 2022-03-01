@@ -988,8 +988,27 @@ namespace Traffy.Asm
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
-            Awaitable<TrObject> rt_co = RTS.coroutine_of_object(rt_value);
-            return await rt_co;
+            var x = await RTS.object_yield_from(rt_value);
+            return x;
+        }
+    }
+
+    [Serializable]
+    public class AwaitValue : TraffyAsm
+    {
+        public bool hasCont => true;
+        public int position;
+        public TraffyAsm value;
+
+        public TrObject exec(Frame frame)
+        {
+            throw new InvalidProgramException("yield from statements cannot be executed in non-generator contexts.");
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            return await RTS.object_await(rt_value);
         }
     }
 

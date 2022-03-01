@@ -97,7 +97,7 @@ namespace Traffy.Objects
         public override bool IsCompleted => m_IsCompleted;
         public override bool MoveNext(ref T value)
         {
-            if (m_MoveNext())
+            if (m_Enumerator.MoveNext())
             {
                 value = m_Enumerator.Current;
                 return true;
@@ -108,13 +108,7 @@ namespace Traffy.Objects
                 return false;
             }
         }
-
-        [MethodImpl(MethodImplOptionsCompat.Best)]
-        bool m_MoveNext() => m_Enumerator.MoveNext();
     }
-
-
-
 
 
     [AsyncMethodBuilder(typeof(MonoAsyncBuilder<>))]
@@ -136,9 +130,17 @@ namespace Traffy.Objects
             if (m_IsCompleted)
                 return false;
 
-            if ((object)m_Nested != null && m_Nested.MoveNext(ref value))
+            if ((object)m_Nested != null)
             {
-                return true;
+                if (m_Nested.MoveNext(ref value))
+                {
+                    m_Result = value;
+                    return true;
+                }
+                else
+                {
+                    m_Nested = null;
+                }
             }
             StateMachine.MoveNext();
             if (m_IsCompleted)
@@ -165,7 +167,7 @@ namespace Traffy.Objects
         public bool MoveNext(TElement value)
         {
             m_Result = value;
-            return MoveNext(ref value);
+            return MoveNext();
         }
 
         public void Reset()

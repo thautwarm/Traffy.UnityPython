@@ -44,6 +44,35 @@ namespace Traffy.Asm
             return RTS.object_none;
         }
     }
+
+    [Serializable]
+    public class AsyncBlock : TraffyAsm
+    {
+        public bool hasCont => true;
+        public TraffyAsm[] suite;
+        public TrObject exec(Frame frame)
+        {
+            throw new InvalidProgramException("AsyncBlock is not supposed to be executed in non-async context");
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            for (int i = 0; i < suite.Length; i++)
+            {
+                if (suite[i].hasCont)
+                    await suite[i].cont(frame);
+                else
+                    suite[i].exec(frame);
+
+                if (frame.CONT != STATUS.NORMAL)
+                {
+                    break;
+                }
+            }
+            return RTS.object_none;
+        }
+    }
+
     [Serializable]
     public class AugAssign : TraffyAsm
     {

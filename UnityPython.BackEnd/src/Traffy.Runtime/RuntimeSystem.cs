@@ -537,28 +537,24 @@ namespace Traffy
             throw new ValueError($"{rt_exc.__repr__()} is not an exception");
         }
 
-        static async MonoAsync<TrObject> coroutine_of_object_mkCont0(IEnumerator<TrObject> itr)
+        public static Awaitable<TrObject> generator_of_iter(IEnumerator<TrObject> o)
         {
-            while (itr.MoveNext())
+            if (o is TrGenerator coro)
             {
-                await Objects.ExtMonoAsyn.Yield(itr.Current);
+                return coro.m_Generator;
             }
-            return TrNone.Unique;
+            return o.YieldFrom();
         }
 
-        public static Awaitable<TrObject> coroutine_of_iter(IEnumerator<TrObject> o)
-        {
-            return o.YieldFrom();
-            // if (o is TrGenerator coro)
-            // {
-            //     return coro.m_Generator;
-            // }
-            // return coroutine_of_object_mkCont0(o);
-        }
-        public static Awaitable<TrObject> coroutine_of_object(TrObject rt_value)
+        public static Awaitable<TrObject> object_yield_from(TrObject rt_value)
         {
             var o = rt_value.__iter__();
-            return coroutine_of_iter(o);
+            return generator_of_iter(o);
+        }
+
+        public static Awaitable<TrObject> object_await(TrObject rt_value)
+        {
+            return rt_value.__await__();
         }
 
         public static TrClass new_class(string name, TrObject[] rt_bases, Dictionary<TrObject, TrObject> ns)

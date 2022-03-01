@@ -62,6 +62,8 @@ namespace Traffy.Objects
                 this[MagicNames.i___setattr__] = o_setattr;
             if (!this.IsSet(MagicNames.i___iter__) && cp_kwargs.TryPop(MagicNames.s_iter, out var o_iter))
                 this[MagicNames.i___iter__] = o_iter;
+            if (!this.IsSet(MagicNames.i___await__) && cp_kwargs.TryPop(MagicNames.s_await, out var o_await))
+                this[MagicNames.i___await__] = o_await;
             if (!this.IsSet(MagicNames.i___len__) && cp_kwargs.TryPop(MagicNames.s_len, out var o_len))
                 this[MagicNames.i___len__] = o_len;
             if (!this.IsSet(MagicNames.i___eq__) && cp_kwargs.TryPop(MagicNames.s_eq, out var o_eq))

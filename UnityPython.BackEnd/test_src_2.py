@@ -93,5 +93,17 @@ def test2():
     return x
 
 print(None)
-testfunc(test1)
-testfunc(test2)
+# testfunc(test1)
+# testfunc(test2)
+
+
+async def a1():
+    print("x", (yield 3))
+    return 1
+
+def a2():
+    x = yield from a1()
+    print(x)
+
+
+print(list(a2()))

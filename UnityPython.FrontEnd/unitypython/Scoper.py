@@ -361,15 +361,16 @@ class ScoperRHS(ExprNodeVisitorInlineCache):
         for each in node.elts:
             self.visit(each)
 
-    def visit_Yield(self, node: Yield | Await) -> Any:
+    def visit_Yield(self, node: Yield) -> Any:
         if node.value:
             self.visit(node.value)
 
-    def visit_YieldFrom(self, node: YieldFrom) -> Any:
+    def visit_YieldFrom(self, node: YieldFrom | Await) -> Any:
         self.visit(node.value)
 
     def visit_Await(self, node: Await) -> Any:
-        self.visit_Yield(node)
+        self.visit_YieldFrom(node)
+
 
 class ScoperLHS(ExprNodeVisitorInlineCache):
     def __init__(self, scoper: ScoperStmt):

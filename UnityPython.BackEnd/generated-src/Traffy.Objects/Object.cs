@@ -108,6 +108,10 @@ using System;
         {
             return TrObject.__iter__(this);
         }
+         Awaitable<TrObject> __await__()
+        {
+            return TrObject.__await__(this);
+        }
          TrObject __len__()
         {
             return TrObject.__len__(this);
