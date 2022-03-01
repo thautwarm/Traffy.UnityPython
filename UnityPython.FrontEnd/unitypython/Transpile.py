@@ -633,6 +633,11 @@ class TranspilerRHS(IRExprTransformerInlineCache):
         value = self.visit(node.value)
         return ir.YieldFrom(position=position, value=value)
 
+    def visit_Await(self, node: Await) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        value = self.visit(node.value)
+        return ir.AwaitValue(position=position, value=value)
 
     def visit_FormattedValue(self, node: FormattedValue) -> Any:
         self.root.cur_pos = extract_pos(node)

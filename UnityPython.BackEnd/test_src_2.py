@@ -97,7 +97,12 @@ print(None)
 # testfunc(test2)
 
 
+def a0():
+    yield 1
+    yield 2
+
 async def a1():
+    await a0()
     print("x", (yield 3))
     return 1
 
