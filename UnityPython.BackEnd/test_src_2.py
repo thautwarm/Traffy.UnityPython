@@ -135,6 +135,5 @@ async def make():
 def k():
     (yield from make())
 
-
 for e in k():
     print(e)
