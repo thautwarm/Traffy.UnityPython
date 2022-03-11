@@ -1,7 +1,6 @@
 from __future__ import annotations
 from ast import comprehension
 from enum import IntEnum
-from turtle import position
 from .IntEncode import encode as encode_int, decode as decode_int
 from dataclasses import InitVar, dataclass
 import dataclasses
