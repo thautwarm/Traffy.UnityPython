@@ -23,34 +23,25 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
-        public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+
+        [PyBind]
+        public static TrObject __new__(TrObject clsobj, TrObject value)
         {
-            TrObject clsobj = args[0];
-            var narg = args.Count;
-            if (narg == 1)
-                return MK.Int(0L);
-            if (narg == 2 && kwargs == null)
+            switch (value)
             {
-                var arg = args[1];
-                switch (arg)
-                {
-                    case TrInt _: return arg;
-                    case TrFloat v: return MK.Int((int)v.value);
-                    case TrStr v: return RTS.parse_int(v.value);
-                    case TrBool v: return MK.Int(v.value ? 1L : 0L);
-                    default:
-                        throw new InvalidCastException($"cannot cast {arg.Class.Name} objects to {clsobj.AsClass.Name}");
-                }
+                case TrInt _: return value;
+                case TrFloat v: return MK.Int((int)v.value);
+                case TrStr v: return RTS.parse_int(v.value);
+                case TrBool v: return MK.Int(v.value ? 1L : 0L);
+                default:
+                    throw new InvalidCastException($"cannot cast {value.Class.Name} objects to {clsobj.AsClass.Name}");
             }
-            throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrInt>("int");
-
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("int.__new__", TrInt.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrInt)] = CLASS;
         }

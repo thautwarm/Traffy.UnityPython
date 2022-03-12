@@ -695,6 +695,9 @@ namespace Traffy
             return TrBool.TrBool_False;
         }
 
+        public static TrBool True => TrBool.TrBool_True;
+        public static TrBool False => TrBool.TrBool_False;
+
         public static TrDict Dict(Dictionary<TrObject, TrObject> v)
         {
             return new TrDict { container = v };

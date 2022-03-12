@@ -162,3 +162,5 @@ if xs.__next__(xr := ref()):
     a = xr.value
     print(a)
 
+print(int("0b111"))
+print(chr(49))

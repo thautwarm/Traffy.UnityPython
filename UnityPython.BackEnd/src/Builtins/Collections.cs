@@ -100,6 +100,44 @@ namespace Traffy
             }
         }
 
+        [PyBuiltin]
+        static TrObject all(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            if (args.Count != 1)
+                throw new TypeError($"all() takes exactly 1 argument ({args.Count} given)");
+            var iter = args[0].__iter__();
+            while (true)
+            {
+                if (!iter.MoveNext())
+                {
+                    return MK.True;
+                }
+                if (!iter.Current.__bool__())
+                {
+                    return MK.False;
+                }
+            }
+        }
+
+        [PyBuiltin]
+        static TrObject any(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            if (args.Count != 1)
+                throw new TypeError($"any() takes exactly 1 argument ({args.Count} given)");
+            var iter = args[0].__iter__();
+            while (true)
+            {
+                if (!iter.MoveNext())
+                {
+                    return MK.False;
+                }
+                if (iter.Current.__bool__())
+                {
+                    return MK.True;
+                }
+            }
+        }
+
     }
 
 }
