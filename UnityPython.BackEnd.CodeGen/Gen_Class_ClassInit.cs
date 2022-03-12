@@ -19,7 +19,6 @@ public class Gen_Class_ClassInit : HasNamespace
     public Gen_Class_ClassInit()
     {
     }
-
     void HasNamespace.Generate(Action<string> write)
     {
         var entry = typeof(Traffy.Objects.TrClass);
@@ -60,7 +59,8 @@ public class Gen_Class_ClassInit : HasNamespace
                     continue;
                 }
                 var args = Enumerable.Range(0, meth.GetParameters().Length - 1).Select(x => $"arg{x}".Doc()).ToArray();
-                yield return $"cls[MagicNames.i_{meth.Name}] = {nameof(TrSharpFunc)}.FromFunc(cls.Name + \".{meth.Name}\", ({args.Prepend("self".Doc()).Join(Comma)}) => ((T)self).{meth.Name}({args.Join(Comma)}));".Doc();
+                yield return $"if (typeof(T).IsDefinedInCurrentClass(\"{meth.Name}\"))".Doc();
+                yield return $"cls[MagicNames.i_{meth.Name}] = {nameof(TrSharpFunc)}.FromFunc(cls.Name + \".{meth.Name}\", ({args.Prepend("self".Doc()).Join(Comma)}) => ((T)self).{meth.Name}({args.Join(Comma)}));".Doc() >> 4;
             }
         }
 

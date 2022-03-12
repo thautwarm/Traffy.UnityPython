@@ -15,6 +15,10 @@ namespace Traffy.Annotations
     {
         public string Name;
     }
+
+    public class PyBuiltin: Attribute
+    {
+    }
     public class Mark : Attribute
     {
         public object Token;

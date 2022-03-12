@@ -7,6 +7,16 @@ using System.Runtime.CompilerServices;
 public static class Utils
 {
 
+    internal static bool IsDefinedInCurrentClass(this MethodInfo method)
+    {
+        return method.DeclaringType == method.ReflectedType;
+    }
+
+    internal static bool IsDefinedInCurrentClass(this Type t, string name)
+    {
+        return t.GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).IsDefinedInCurrentClass();
+    }
+
     public static List<T> ToList<T>(this IEnumerator<T> self)
     {
         var lst = new List<T>();
