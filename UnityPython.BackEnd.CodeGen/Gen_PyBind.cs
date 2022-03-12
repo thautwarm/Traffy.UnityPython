@@ -64,7 +64,7 @@ public class Gen_PyBind : HasNamespace
                     ).By(x => Box.Call(x))
                 );
             defs.Add(cm.Doc());
-            defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind({methName.Escape()}, {localBindName});".Doc());
+            defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, {localBindName});".Doc());
         }
 
 

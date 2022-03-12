@@ -15,7 +15,7 @@ namespace Traffy.Objects
                     _ => throw new ValueError("requires 2 argument(s), got " + __args.Count)
                 }) ;
             }
-            CLASS["from_bytes"] = TrStaticMethod.Bind("from_bytes", __bind_from_bytes);
+            CLASS["from_bytes"] = TrStaticMethod.Bind(CLASS.Name + "." + "from_bytes", __bind_from_bytes);
         }
     }
 }

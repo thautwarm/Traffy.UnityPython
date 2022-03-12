@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
 
     [Serializable]
-    public class TrIter : TrObject, IEnumerator<TrObject>
+    public sealed partial class TrIter : TrObject, IEnumerator<TrObject>
     {
         public IEnumerator<TrObject> iter;
         public IEnumerator<TrObject> __iter__ => this;
@@ -28,25 +29,18 @@ namespace Traffy.Objects
 
         object IEnumerator.Current => ((IEnumerator)iter).Current;
 
-        public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        [PyBind]
+        public static TrObject __new__(TrObject _ /* class */, TrObject obj)
         {
-            TrObject clsobj = args[0];
-            var narg = args.Count;
-            if (narg == 2 && kwargs == null)
-            {
-                var arg = args[1];
-                return MK.Iter(arg.__iter__());
-            }
-            throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 2 positional argument(s) but {narg} were given");
+            return new TrIter(obj.__iter__());
         }
+
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrIter>("iter");
-
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("iter.__new__", TrIter.datanew));
             TrClass.TypeDict[typeof(TrIter)] = CLASS;
         }
 

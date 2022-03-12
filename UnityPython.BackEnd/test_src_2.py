@@ -154,3 +154,5 @@ x = {1: 2, 3: 4}
 z = {**x}
 del z[1], z[2], z[3]
 print(z)
+
+print(list(iter([1, 2, 3])))
