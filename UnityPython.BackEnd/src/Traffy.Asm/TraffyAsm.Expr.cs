@@ -9,7 +9,7 @@ namespace Traffy.Asm
     using unary_func = Func<TrObject, TrObject>;
 
     [Serializable]
-    public class BoolAnd2 : TraffyAsm
+    public sealed class BoolAnd2 : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -50,7 +50,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class BoolOr2 : TraffyAsm
+    public sealed class BoolOr2 : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -88,7 +88,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class BoolAnd : TraffyAsm
+    public sealed class BoolAnd : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -141,7 +141,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class BoolOr : TraffyAsm
+    public sealed class BoolOr : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -191,7 +191,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class NamedExpr : TraffyAsm
+    public sealed class NamedExpr : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -221,7 +221,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class CmpOp : TraffyAsm
+    public sealed class CmpOp : TraffyAsm
     {
         public bool hasCont => op < 0; // save memory usage and no performance penalty
         public int op;
@@ -281,7 +281,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class BinOp : TraffyAsm
+    public sealed class BinOp : TraffyAsm
     {
         public bool hasCont => op < 0;
         public int op;
@@ -319,7 +319,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class UnaryOp : TraffyAsm
+    public sealed class UnaryOp : TraffyAsm
     {
         public bool hasCont => op < 0;
         public int op;
@@ -362,7 +362,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Lambda : TraffyAsm
+    public sealed class Lambda : TraffyAsm
     {
         private static Variable[] empty_freevars = new Variable[0];
         private static (int, TrObject)[] empty_default_args = new (int, TrObject)[0];
@@ -456,7 +456,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class CallEx : TraffyAsm
+    public sealed class CallEx : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -557,7 +557,7 @@ namespace Traffy.Asm
 
 
     [Serializable]
-    public class GuessVar : TraffyAsm // used for CPython class semantics
+    public sealed class GuessVar : TraffyAsm // used for CPython class semantics
     {
         public TrStr name;
         public int position;
@@ -596,7 +596,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class LocalVar : TraffyAsm
+    public sealed class LocalVar : TraffyAsm
     {
         public int slot;
         public int position;
@@ -617,7 +617,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class FreeVar : TraffyAsm
+    public sealed class FreeVar : TraffyAsm
     {
         public int slot;
         public int position;
@@ -638,7 +638,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class GlobalVar : TraffyAsm
+    public sealed class GlobalVar : TraffyAsm
     {
         public TrObject name;
         public int position;
@@ -658,7 +658,7 @@ namespace Traffy.Asm
         }
     }
     [Serializable]
-    public class Constant : TraffyAsm
+    public sealed class Constant : TraffyAsm
     {
         public TrObject o;
 
@@ -682,7 +682,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Dict : TraffyAsm
+    public sealed class Dict : TraffyAsm
     {
 
         public bool hasCont { get; set; }
@@ -747,7 +747,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class List : TraffyAsm
+    public sealed class List : TraffyAsm
     {
 
         public bool hasCont { get; set; }
@@ -792,7 +792,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Tuple : TraffyAsm
+    public sealed class Tuple : TraffyAsm
     {
 
         public bool hasCont { get; set; }
@@ -839,7 +839,7 @@ namespace Traffy.Asm
 
 
     [Serializable]
-    public class Set : TraffyAsm
+    public sealed class Set : TraffyAsm
     {
 
         public bool hasCont { get; set; }
@@ -884,7 +884,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Attribute : TraffyAsm
+    public sealed class Attribute : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -926,7 +926,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Subscript : TraffyAsm
+    public sealed class Subscript : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -956,7 +956,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Yield : TraffyAsm
+    public sealed class Yield : TraffyAsm
     {
         public bool hasCont => true;
         public int position;
@@ -973,7 +973,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class YieldFrom : TraffyAsm
+    public sealed class YieldFrom : TraffyAsm
     {
         public bool hasCont => true;
         public int position;
@@ -994,7 +994,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class AwaitValue : TraffyAsm
+    public sealed class AwaitValue : TraffyAsm
     {
         public bool hasCont => true;
         public int position;
@@ -1013,7 +1013,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class WithItem : TraffyAsm
+    public sealed class WithItem : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -1043,7 +1043,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class FormattedValue : TraffyAsm
+    public sealed class FormattedValue : TraffyAsm
     {
         public bool hasCont { get; set; }
         public bool convStr;
@@ -1077,7 +1077,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class JoinedStr : TraffyAsm
+    public sealed class JoinedStr : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -1120,7 +1120,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class ListComp : TraffyAsm
+    public sealed class ListComp : TraffyAsm
     {
         public bool hasCont { set; get; }
         public int position;
@@ -1169,7 +1169,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class SetComp : TraffyAsm
+    public sealed class SetComp : TraffyAsm
     {
         public bool hasCont { set; get; }
         public int position;
@@ -1218,7 +1218,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class DictComp : TraffyAsm
+    public sealed class DictComp : TraffyAsm
     {
         public bool hasCont { set; get; }
         public int position;
@@ -1271,7 +1271,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class GeneratorComp : TraffyAsm
+    public sealed class GeneratorComp : TraffyAsm
     {
         public bool hasCont => true;
         public int position;

@@ -5,7 +5,7 @@ namespace Traffy.Asm
 {
 
     [Serializable]
-    public class Comprehension
+    public sealed class Comprehension
     {
         public bool hasCont;
         public TraffyLHS target;

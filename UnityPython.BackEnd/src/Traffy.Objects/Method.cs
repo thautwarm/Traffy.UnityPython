@@ -54,7 +54,6 @@ namespace Traffy.Objects
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             RTS.arg_check_positional_only(args, 3);
-            Console.WriteLine(args[0].__repr__());
             return Bind(args[1], args[2]);
         }
     }

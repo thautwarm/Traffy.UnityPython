@@ -27,17 +27,17 @@ class OpU(IntEnum):
     POS = 3  # positive
 
 
-def hasCont(
-    head: TraffyLHS | TraffyIR | list[TraffyLHS | TraffyIR], *xs: TraffyLHS | TraffyIR
-) -> bool:
-    if isinstance(head, list):
-        test_head = bool(head) and any(x.hasCont for x in head)
-        if test_head:
-            return True
-    else:
-        if head.hasCont:
-            return True
-    return bool(xs) and any(x.hasCont for x in xs)
+def hasCont(*args: list[TraffyLHS] | TraffyLHS | TraffyIR) -> bool:
+    if not args:
+        return False
+    for each in args:
+        if isinstance(each, list):
+            if each and any(hasCont(x) for x in each):
+                return True
+        else:
+            if each.hasCont:
+                return True
+    return False
 
 
 class OpBin(IntEnum):
@@ -113,6 +113,24 @@ else:
 class Block(TraffyIR):
     hasCont: bool
     suite: list[TraffyIR]
+
+
+@dataclass
+class Import(TraffyIR):
+    position: int
+    level: int
+    module: str | None
+    names: list[str]
+    hasCont = False
+
+@dataclass
+class ImportStar(TraffyIR):
+    position: int
+    level: int
+    module: str
+    hasCont = False
+
+
 
 @dataclass
 class AsyncBlock(TraffyIR):

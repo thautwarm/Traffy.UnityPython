@@ -80,6 +80,7 @@ namespace Traffy
 
         public static void Prelude(TrSharpFunc o)
         {
+            Console.WriteLine($"Prelude {o.name}");
             m_Prelude[o.name] = o;
         }
 

@@ -2,6 +2,7 @@ from wisepy2 import wise
 from unitypython.Transpile import compile_module
 from unitypython.TraffyAsm import fast_asdict
 from unitypython.JSON import dump_json
+from pathlib import Path
 
 
 def valid_parts(parts: tuple[str, ...]):
@@ -11,32 +12,39 @@ def valid_parts(parts: tuple[str, ...]):
             raise IOError(f"invalid module name {n}")
 
 
-def pipeline(filename: str, rootdir: str = ".", includesrc: bool = False):
+def pipeline(filename: Path, rootdir: Path = Path("."), includesrc: bool = False, recursive: bool = False):
     """
-    :param filename: input python file
+    :param filename: input python file or the directory containing python files
     :param includesrc: compile to traffy asm with source code included in the metadata for debugging.
                        this is not recommended for production as everyone can see the source code.
     """
-    with open(filename, "r", encoding="utf-8") as file:
+    
+    if filename.is_dir():
+        for each in filename.iterdir():
+            if each.suffix == '.py':
+                pipeline(each, rootdir, includesrc, recursive)
+            elif recursive and each.is_dir():
+                pipeline(each, rootdir, includesrc, recursive)
+        return
+    
+    with filename.open("r", encoding="utf-8") as file:
         src = file.read()
-    from pathlib import Path
 
     parts = (
-        Path(filename)
+        filename
         .absolute()
-        .relative_to(Path(rootdir).absolute())
+        .relative_to(rootdir.absolute())
         .with_suffix("")
         .parts
     )
     valid_parts(parts)
     modulename = ".".join(parts)
     module_spec = compile_module(
-        filename=filename, modulename=modulename, src=src, ignore_src=not includesrc
+        filename=str(filename), modulename=modulename, src=src, ignore_src=not includesrc
     )
     dict_data = fast_asdict(module_spec)
-    with open(f"{filename}.json", "w", encoding="utf-8") as file:
+    with filename.with_suffix(".py.json").open("w", encoding="utf-8") as file:
         file.write(dump_json(dict_data))
-
 
 def main():
     wise(pipeline)()  # type: ignore

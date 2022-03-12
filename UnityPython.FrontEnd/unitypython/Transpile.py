@@ -1208,7 +1208,47 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         hasCont = ir.hasCont(with_items) or ir.hasCont(body)
         return ir.With(hasCont, with_items, body)
 
+    def visit_Import(self, node: Import) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        names: list[str] = []
+        asnames: list[ir.TraffyLHS] = []
+        for each in node.names:
+            name = each.name
+            asname = each.asname or name
+            names.append(name)
+            asnames.append(self.root.store_name_(asname))
+        rhs = ir.Import(position, 0, None, names)
+        lhs = ir.StoreList(position, False, asnames)
+        assign = ir.Assign(position, False, lhs, rhs)
+        return assign
 
+    def visit_ImportFrom(self, node: ImportFrom) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        names: list[str] = []
+        asnames: list[ir.TraffyLHS] = []
+        import_star = False
+        for each in node.names:
+            name = each.name
+            if name == '*':
+                assert not names
+                import_star = True
+                names.append(name)
+                break
+            asname = each.asname or name
+            names.append(name)
+            asnames.append(self.root.store_name_(asname))
+        if import_star:
+            assert node.module
+            return ir.ImportStar(position, node.level, node.module)
+        rhs = ir.Import(position, node.level, node.module, names)
+        lhs = ir.StoreList(position, False, asnames)
+        assign = ir.Assign(position, False, lhs, rhs)
+        return assign
+
+
+        
 def compile_module(filename: str,  modulename: str, src: str, ignore_src: bool = False) -> ir.ModuleSpec:
     node: Module = parse(src, filename=filename)
     top = Transpiler(filename, None if ignore_src else src, ir.Span.empty(), None)

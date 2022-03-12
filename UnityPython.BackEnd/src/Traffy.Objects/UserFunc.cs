@@ -15,7 +15,7 @@ namespace Traffy.Objects
      ) : TrObject
     {
 
-        public static TrClass CLASS;
+        static TrClass CLASS;
 
         public TrClass Class => CLASS;
 

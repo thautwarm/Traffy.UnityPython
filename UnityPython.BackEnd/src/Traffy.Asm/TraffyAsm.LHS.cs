@@ -9,7 +9,7 @@ namespace Traffy.Asm
 
     using binary_func = Func<TrObject, TrObject, TrObject>;
 
-    public class MultiAssign : TraffyLHS
+    public sealed class MultiAssign : TraffyLHS
     {
         public bool hasCont { set; get; }
         public TraffyLHS[] targets;
@@ -45,7 +45,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class StoreListEx : TraffyLHS
+    public sealed class StoreListEx : TraffyLHS
     {
         public TraffyLHS[] before;
         public TraffyLHS unpack;
@@ -119,7 +119,7 @@ namespace Traffy.Asm
         }
     }
     [Serializable]
-    public class StoreList : TraffyLHS
+    public sealed class StoreList : TraffyLHS
     {
         public bool hasCont { get; set; }
         public int position;
@@ -183,7 +183,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class StoreFree : TraffyLHS
+    public sealed class StoreFree : TraffyLHS
     {
         public int slot;
         public bool hasCont => false;
@@ -217,7 +217,7 @@ namespace Traffy.Asm
         }
     }
     [Serializable]
-    public class StoreLocal : TraffyLHS
+    public sealed class StoreLocal : TraffyLHS
     {
         public int slot;
         public bool hasCont => false;
@@ -252,7 +252,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class StoreGlobal : TraffyLHS
+    public sealed class StoreGlobal : TraffyLHS
     {
         public TrObject name;
         public bool hasCont => false;
@@ -284,7 +284,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class StoreItem : TraffyLHS
+    public sealed class StoreItem : TraffyLHS
     {
         public TraffyAsm value;
         public TraffyAsm item;
@@ -333,7 +333,7 @@ namespace Traffy.Asm
         }
     }
     [Serializable]
-    public class StoreAttr : TraffyLHS
+    public sealed class StoreAttr : TraffyLHS
     {
         public int position;
 

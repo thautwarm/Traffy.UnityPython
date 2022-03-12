@@ -352,7 +352,7 @@ namespace Traffy.Objects
         public TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>();
+        public List<TrObject> __array__ { get; } = new List<TrObject>();
         public TrUserObject(TrClass cls)
         {
             CLASS = cls;

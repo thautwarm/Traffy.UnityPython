@@ -604,12 +604,12 @@ namespace Traffy.Objects
         static PolyIC CachePath = new PolyIC("path".ToIntern());
         static PolyIC CacheMsg = new PolyIC("msg".ToIntern());
         public List<TrObject> __array__ { get; } = new List<TrObject>(4);
-        public ImportError(string name, string path, string msg) : base(msg)
+        public ImportError(string name, TrObject path, string msg) : base(msg)
         {
             var o_msg = MK.Str(msg);
             this.Base().args = new TrObject[] { o_msg };
             this.Base()[CacheName] = MK.Str(name);
-            this.Base()[CachePath] = MK.Str(path);
+            this.Base()[CachePath] = path;
             this.Base()[CacheMsg] = o_msg;
             this.Base().args = new TrObject[] { o_msg };
         }

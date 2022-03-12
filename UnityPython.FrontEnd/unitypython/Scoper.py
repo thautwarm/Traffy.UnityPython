@@ -1,12 +1,17 @@
 from __future__ import annotations
 from ast import (
+    NodeVisitor,
+
     AST,
-    For,
-    Index,
-    SetComp,
     stmt,
     expr,
-    NodeVisitor,
+
+    Import,
+    ImportFrom,
+
+    For,
+    Index,
+    SetComp,    
 
     ClassDef,
     Return,
@@ -159,6 +164,16 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
     def solve(self):
         solved = self.symtable_builder.solve()
         return solved
+
+    def visit_Import(self, node: Import) -> Any:
+        for alias in node.names:
+            self.symtable_builder.mut_var(alias.asname or alias.name)
+
+    def visit_ImportFrom(self, node: ImportFrom) -> Any:
+        for alias in node.names:
+            if alias.name == "*":
+                continue
+            self.symtable_builder.mut_var(alias.asname or alias.name)
 
     def visit_With(self, node: With) -> Any:
         for each in node.items:

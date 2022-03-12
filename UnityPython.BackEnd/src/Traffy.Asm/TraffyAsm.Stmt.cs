@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.Serialization;
 using Traffy.Objects;
 
@@ -774,4 +775,62 @@ namespace Traffy.Asm
             return RTS.object_none;
         }
     }
+
+    [Serializable]
+    public class ImportStar : TraffyAsm
+    {
+        public bool hasCont => false;
+        public int position;
+        public int level;
+        [AllowNull] public string module;
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidOperationException("import * cannot be used in async mode");
+        }
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var imported = RTS.import_from_module(module, level, frame.func.globals, null);
+            foreach(var (key, value) in imported)
+            {
+                frame.store_global(key, value);
+            }
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+    }
+    [Serializable]
+    public class Import: TraffyAsm
+    {
+        public bool hasCont => false;
+        public int position;
+        public int level;
+        // if null, 'names' is a list of module names;
+        // otherwise, 'names' is a list of imported names from 'module'
+        [AllowNull] public string module;
+        public string[] names;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            List<TrObject> from_list = RTS.barelist_create();
+            var imported = RTS.import_from_module(module, level, frame.func.globals, names);
+            
+            foreach(var (_, value) in imported)
+            {
+                RTS.barelist_add(from_list, value);
+            }
+            
+            frame.traceback.Pop();
+            return RTS.object_from_barelist(from_list);
+        }
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidOperationException("continuation is not supported for import from");
+        }
+    }
+
 }

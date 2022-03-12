@@ -7,6 +7,15 @@ using System.Runtime.CompilerServices;
 public static class Utils
 {
 
+    public static List<T> ToList<T>(this IEnumerator<T> self)
+    {
+        var lst = new List<T>();
+        while (self.MoveNext())
+        {
+            lst.Add(self.Current);
+        }
+        return lst;
+    }
     public static bool TryFindValue<T>(this List<T> self, Func<T, bool> predicate, out T value)
     {
         foreach (var item in self)

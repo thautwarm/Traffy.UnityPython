@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Traffy.Objects;
 
@@ -563,8 +564,7 @@ namespace Traffy
             cls.Name = name;
             TrObject new_inst(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
-                var o = MK.UserObject(cls);
-                return o;
+                return MK.UserObject(cls);
             }
             cls[cls.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc($"{name}.__new__", new_inst));
             cls.SetupClass(ns);
@@ -600,6 +600,100 @@ namespace Traffy
         {
             return MK.Str(rt_value.__repr__());
         }
+
+        public static Stack<(TrStr, TrObject)> import_from_module([AllowNull] string module, int level, Dictionary<TrObject, TrObject> globals, [AllowNull] string[] __all__)
+        {
+
+            var imported = new Stack<(TrStr, TrObject)>();
+            if (module == null)
+            {
+                Func<string, string> resolveName;
+                if (level == 0)
+                {
+                    resolveName = name => name;
+                }
+                else
+                {
+                    var sectors = globals[MK.Str("__name__")].AsStr().Split('.');
+                    sectors = sectors.Take(sectors.Length - level).ToArray();
+                    resolveName = (name) =>
+                    {
+                        var newsectors = new string[sectors.Length + 1];
+                        Array.Copy(sectors, newsectors, sectors.Length);
+                        newsectors[newsectors.Length - 1] = name;
+                        return string.Join(".", newsectors);
+                    };
+                }
+                if (__all__ == null)
+                {
+                    throw new ValueError("import * from None is not allowed");
+                }
+                foreach (var each in __all__)
+                {
+                    var name = MK.Str(each);
+                    var value = ModuleSystem.ImportModule(resolveName(each));
+                    imported.Push((name, value));
+                }
+            }
+            else
+            {
+                string resolvedName;
+                if (level == 0)
+                {
+                    resolvedName = module;
+                }
+                else
+                {
+                    var sectors = globals[MK.Str("__name__")].AsStr().Split('.');
+                    resolvedName = string.Join(".", sectors.Take(sectors.Length - level).Append(module));
+                }
+                var mod = ModuleSystem.ImportModule(resolvedName);
+                if (__all__ == null)
+                {
+                    if (mod.Namespace.TryGetValue(MK.Str("__all__"), out var export))
+                    {
+                        export.__iter__().ToList().ForEach(x =>
+                        {
+                            if (x is TrStr key)
+                            {
+                                var value = mod.__getattr__(x);
+                                imported.Push((key, value));
+                            }
+                            else
+                            {
+                                throw new TypeError($"__all__ must be a list of strings, not {x.Class.Name}");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        foreach (var kv in mod.Namespace)
+                        {
+                            if (kv.Key is TrStr key)
+                            {
+                                if (key.value.StartsWith("_"))
+                                {
+                                    continue;
+                                }
+                                imported.Push((key, kv.Value));
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    foreach (var each in __all__)
+                    {
+                        var name = MK.Str(each);
+                        var value = mod.__getattr__(name);
+                        imported.Push((name, value));
+                    }
+                }
+            }
+
+            return imported;
+        }
     }
 
     public static class MK
@@ -629,7 +723,7 @@ namespace Traffy
 
         public static TrFloat Float(double v)
         {
-            return new TrFloat { value = (float) v };
+            return new TrFloat { value = (float)v };
         }
 
         public static TrInt Int(long p)
@@ -720,16 +814,6 @@ namespace Traffy
                 return iterable;
             }
             return new TrIter(v);
-        }
-
-        public static TrObject Map(TrObject func, IEnumerator<TrObject>[] iter)
-        {
-            return new TrMapObject(func, iter);
-        }
-
-        public static TrObject Filter(TrObject func, IEnumerator<TrObject> iter)
-        {
-            return new TrFilter(func, iter);
         }
 
         public static TrObject object_imod(TrObject arg1, TrObject arg2)

@@ -70,36 +70,20 @@ public class App
             return 1;
         }
         Initialization.InitRuntime();
-        var o = System.IO.File.ReadAllText(argv[0]);
-        var x =  ModuleSpec.Parse(o);
-        var d = RTS.baredict_create();
-        d[MK.Str("print")] = TrSharpFunc.FromFunc("print", (BList<TrObject> xs, Dictionary<TrObject, TrObject> kwargs) => {
-            var itr = xs.GetEnumerator();
-            if (itr.MoveNext())
-            {
-                Console.Write(itr.Current.__str__());
-                while (itr.MoveNext())
-                {
-                    Console.Write(" ");
-                    Console.Write(itr.Current.__str__());
-                }
-            }
-            Console.WriteLine();
-            return MK.None();
-        });
-
-        d[MK.Str("next")] = TrSharpFunc.FromFunc("next", x => x.__next__());
-        d[MK.Str("time")] = TrSharpFunc.FromFunc("time", time);
-        d[MK.Str("len")] = TrSharpFunc.FromFunc("len", x => x.__len__());
-        Initialization.Populate(d);
-
+        Initialization.Prelude(TrSharpFunc.FromFunc("next", x => x.__next__()));
+        Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
+        Initialization.Prelude(TrSharpFunc.FromFunc("len", x => x.__len__()));
+        ModuleSystem.DynamicLoad("__main__", argv[0]);
+        ModuleSystem.DynamicLoad("TestModules.__init__", "TestModules/__init__.py.json");
+        ModuleSystem.DynamicLoad("TestModules.MyModule", "TestModules/MyModule.py.json");
+        
         var cls = (TrObject) RTS.new_class("S", new TrObject[0], null);
         TrUserObjectBase res = (TrUserObjectBase) cls.Call();
         // Console.WriteLine("res " + res.__repr__());
 
         try
         {
-            x.Exec(d);
+            ModuleSystem.ImportModule("__main__");
         }
         catch (Exception e)
         {
