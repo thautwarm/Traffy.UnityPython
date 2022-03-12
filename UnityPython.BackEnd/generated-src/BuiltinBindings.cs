@@ -12,6 +12,8 @@ namespace Traffy
             Initialization.Prelude(TrSharpFunc.FromFunc("range", Builtins.range));
             Initialization.Prelude(TrSharpFunc.FromFunc("print", Builtins.print));
             Initialization.Prelude(TrSharpFunc.FromFunc("stacktrace", Builtins.stacktrace));
+            Initialization.Prelude(TrSharpFunc.FromFunc("abs", Builtins.abs));
+            Initialization.Prelude(TrSharpFunc.FromFunc("callable", Builtins.callable));
         }
 
     

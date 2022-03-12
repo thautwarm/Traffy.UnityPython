@@ -52,6 +52,8 @@ public class Gen_Class_ClassInit : HasNamespace
 
         IEnumerable<Doc> builtin_class_init_generator()
         {
+            yield return "var ownership = typeof(T).GetInterfaceMethodSource();".Doc();
+            yield return "bool test;".Doc();
             foreach (var meth in magicMethods)
             {
                 if (meth.GetCustomAttribute<MagicMethod>().NonInstance)
@@ -59,7 +61,7 @@ public class Gen_Class_ClassInit : HasNamespace
                     continue;
                 }
                 var args = Enumerable.Range(0, meth.GetParameters().Length - 1).Select(x => $"arg{x}".Doc()).ToArray();
-                yield return $"if (typeof(T).IsDefinedInCurrentClass(\"{meth.Name}\"))".Doc();
+                yield return $"if (ownership.Contains(\"{meth.Name}\"))".Doc();
                 yield return $"cls[MagicNames.i_{meth.Name}] = {nameof(TrSharpFunc)}.FromFunc(cls.Name + \".{meth.Name}\", ({args.Prepend("self".Doc()).Join(Comma)}) => ((T)self).{meth.Name}({args.Join(Comma)}));".Doc() >> 4;
             }
         }

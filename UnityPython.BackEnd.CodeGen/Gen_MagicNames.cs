@@ -23,14 +23,20 @@ public class Gen_MagicNames : HasNamespace
 
         var i_decls = magicNames.Select(x => $"public static InternedString i_{x} = InternedString.FromString(\"{x}\");".Doc()).ToArray();
 
+        var ALL = String.Join(", ", magicNames.Select(x => x.Escape()));
+
         VSep(
             "using Traffy.Objects;".Doc(),
+            "using System.Collections.Generic;".Doc(),
             "namespace Traffy".Doc(),
             "{".Doc(),
                 VSep(
                     head,
                     "{".Doc(),
-                    VSep(VSep(s_decls), VSep(i_decls)).Indent(4),
+                    VSep(
+                        VSep(s_decls),
+                        VSep(i_decls),
+                        $"public static HashSet<string> ALL = new string[] {{ {ALL} }}.ToHashSet();".Doc()).Indent(4),
                     "}".Doc()
                 ).Indent(4),
             "}".Doc()
