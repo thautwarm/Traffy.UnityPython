@@ -26,6 +26,7 @@ namespace Traffy
     }
     public static class Initialization
     {
+        public const string IR_FILE_SUFFIX = ".py.json";
         public static class HashConfig
         {
             public const int BYTE_HASH_SEED = 17;

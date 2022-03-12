@@ -12,7 +12,7 @@ def valid_parts(parts: tuple[str, ...]):
             raise IOError(f"invalid module name {n}")
 
 
-def pipeline(filename: Path, rootdir: Path = Path("."), includesrc: bool = False, recursive: bool = False):
+def pipeline(filename: Path, rootdir: Path = Path("."), outdir: Path = Path('out'), includesrc: bool = False, recursive: bool = False):
     """
     :param filename: input python file or the directory containing python files
     :param includesrc: compile to traffy asm with source code included in the metadata for debugging.
@@ -22,11 +22,11 @@ def pipeline(filename: Path, rootdir: Path = Path("."), includesrc: bool = False
     if filename.is_dir():
         for each in filename.iterdir():
             if each.suffix == '.py':
-                pipeline(each, rootdir, includesrc, recursive)
+                pipeline(each, rootdir, outdir, includesrc, recursive)
             elif recursive and each.is_dir():
-                pipeline(each, rootdir, includesrc, recursive)
+                pipeline(each, rootdir, outdir, includesrc, recursive)
         return
-    
+
     with filename.open("r", encoding="utf-8") as file:
         src = file.read()
 
@@ -43,7 +43,10 @@ def pipeline(filename: Path, rootdir: Path = Path("."), includesrc: bool = False
         filename=str(filename), modulename=modulename, src=src, ignore_src=not includesrc
     )
     dict_data = fast_asdict(module_spec)
-    with filename.with_suffix(".py.json").open("w", encoding="utf-8") as file:
+    if not outdir.exists():
+        outdir.mkdir(parents=True, exist_ok=True, mode=0o755)
+    
+    with outdir.joinpath(modulename + ".py.json").open('w', encoding="utf-8") as file:
         file.write(dump_json(dict_data))
 
 def main():

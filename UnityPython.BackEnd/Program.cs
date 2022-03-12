@@ -73,9 +73,7 @@ public class App
         Initialization.Prelude(TrSharpFunc.FromFunc("next", x => x.__next__()));
         Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
         Initialization.Prelude(TrSharpFunc.FromFunc("len", x => x.__len__()));
-        ModuleSystem.DynamicLoad("__main__", argv[0]);
-        ModuleSystem.DynamicLoad("TestModules.__init__", "TestModules/__init__.py.json");
-        ModuleSystem.DynamicLoad("TestModules.MyModule", "TestModules/MyModule.py.json");
+        ModuleSystem.LoadDirectory("out");
         
         var cls = (TrObject) RTS.new_class("S", new TrObject[0], null);
         TrUserObjectBase res = (TrUserObjectBase) cls.Call();
@@ -83,7 +81,7 @@ public class App
 
         try
         {
-            ModuleSystem.ImportModule("__main__");
+            ModuleSystem.ImportModule(argv[0]);
         }
         catch (Exception e)
         {

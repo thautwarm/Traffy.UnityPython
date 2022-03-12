@@ -7,6 +7,19 @@ namespace Traffy
 {
     public class ModuleSystem
     {
+        
+        public static void LoadDirectory(string directory)
+        {
+            var files = System.IO.Directory.GetFiles(directory, "*" + Initialization.IR_FILE_SUFFIX);
+            foreach (var file in files)
+            {
+                var sourceCode = System.IO.File.ReadAllText(file);
+                var spec = ModuleSpec.Parse(sourceCode);
+                Console.WriteLine(spec.modulename);
+                DynamicLoadSpec(spec);
+            }
+        }
+
         static object ModuleLock = new object();
         static Dictionary<string, TrModule> modules = new Dictionary<string, TrModule>();
 
@@ -26,21 +39,35 @@ namespace Traffy
         }
 
         // load to the global modules, but not executed
-        public static void DynamicLoad(string name, string path)
+        public static void DynamicLoadSpec(string name, string path)
         {
             if (modules.ContainsKey(name))
             {
                 throw new InvalidProgramException($"Module '{name}' already exists");
             }
-            path = System.IO.Path.Combine(PROJECT_DIR, path);
+            DynamicLoadSpec(path);
+        }
+
+        public static void DynamicLoadSpec(string path)
+        {
             var sourceCode = System.IO.File.ReadAllText(path);
             var spec = ModuleSpec.Parse(sourceCode);
-            var mod = TrModule.CreateUninitialized(name, spec);
+            DynamicLoadSpec(spec);
+        }
+
+        public static void DynamicLoadSpec(ModuleSpec spec)
+        {
+            if (modules.ContainsKey(spec.modulename))
+            {
+                throw new InvalidProgramException($"Module '{spec.modulename}' already exists");
+            }
+            var mod = TrModule.CreateUninitialized(spec.modulename, spec);
             lock (ModuleLock)
             {
-                modules[name] = mod;
+                modules[spec.modulename] = mod;
             }
         }
+
 
         public static TrModule ImportModule(string name)
         {

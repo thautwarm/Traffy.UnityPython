@@ -1,5 +1,6 @@
 !UnityPython.BackEnd/.vscode/settings.json
 UnityPython.BackEnd/unitypython-typeshed
+out/
 */.vscode/launch.json
 */.vscode/tasks.json
 */.vscode/extensions.json
