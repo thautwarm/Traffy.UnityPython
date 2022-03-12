@@ -50,6 +50,7 @@ namespace Traffy.Objects
         }
 
 
+
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
