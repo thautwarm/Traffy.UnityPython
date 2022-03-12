@@ -58,7 +58,7 @@ public static class ExtCodeGen
 
     public static Doc GenerateMethod(Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body, bool Public = false)
     {
-        var head = (Public ? "public".Doc() : Empty) + retype + name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
+        var head = (Public ? "public ".Doc() : Empty) * retype + name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
         return head * NewLine * VSep("{".Doc(),
             VSep(body).Indent(4),
         "}".Doc());

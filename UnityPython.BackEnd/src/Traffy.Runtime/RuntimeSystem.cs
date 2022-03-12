@@ -572,12 +572,6 @@ namespace Traffy
             return TrGenerator.Create(rt_value);
         }
 
-        public static TrObject object_of_iter(MonoAsync<TrObject> rt_value)
-        {
-
-            return TrGenerator.Create(rt_value);
-        }
-
 
         public static TrObject object_call_ex(TrObject rt_func, BList<TrObject> rt_args, Dictionary<TrObject, TrObject> rt_kwargs)
         {

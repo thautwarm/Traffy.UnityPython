@@ -54,6 +54,8 @@ namespace Traffy.Objects
 
         string TrObject.__repr__() => TrException_repr(this);
 
+        string TrObject.__str__() => TrException_str(this);
+
         public string GetStackTrace()
         {
             return $"Traceback (most recent call last):\n{traceback?.GetStackTrace()}\n{Class.Name}: {__str__()}";

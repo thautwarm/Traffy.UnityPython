@@ -70,11 +70,11 @@ public class App
             return 1;
         }
         Initialization.InitRuntime();
-        Initialization.Prelude(TrSharpFunc.FromFunc("next", x => x.__next__()));
+        // Initialization.Prelude(TrSharpFunc.FromFunc("next", x => x.__next__()));
         Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
         Initialization.Prelude(TrSharpFunc.FromFunc("len", x => x.__len__()));
         ModuleSystem.LoadDirectory("out");
-        
+
         var cls = (TrObject) RTS.new_class("S", new TrObject[0], null);
         TrUserObjectBase res = (TrUserObjectBase) cls.Call();
         // Console.WriteLine("res " + res.__repr__());

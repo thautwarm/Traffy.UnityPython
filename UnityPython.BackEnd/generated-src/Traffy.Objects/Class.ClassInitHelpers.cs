@@ -67,7 +67,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___init__] = TrSharpFunc.FromFunc(cls.Name + ".__init__", (self,arg0,arg1) => ((T)self).__init__(arg0,arg1));
             cls[MagicNames.i___str__] = TrSharpFunc.FromFunc(cls.Name + ".__str__", (self) => ((T)self).__str__());
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((T)self).__repr__());
-            cls[MagicNames.i___next__] = TrSharpFunc.FromFunc(cls.Name + ".__next__", (self) => ((T)self).__next__());
+            cls[MagicNames.i___next__] = TrSharpFunc.FromFunc(cls.Name + ".__next__", (self,arg0) => ((T)self).__next__(arg0));
             cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((T)self).__add__(arg0));
             cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((T)self).__sub__(arg0));
             cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((T)self).__mul__(arg0));

@@ -25,13 +25,14 @@ namespace Traffy.Objects
                 return TrObject.__repr__(this);
             return self_repr.Call().AsStr();
         }
-        TrObject TrObject.__next__()
+        Boolean TrObject.__next__(TrRef refval)
         {
             var self_next = this[Class.ic__next];
             if ((object)self_next == null)
-                return TrObject.__next__(this);
-            return self_next.Call();
+                return TrObject.__next__(this, refval);
+            return self_next.Call(refval).AsBool();
         }
+
         TrObject TrObject.__add__(TrObject a)
         {
             var self_add = this[Class.ic__add];

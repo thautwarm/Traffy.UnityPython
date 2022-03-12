@@ -154,3 +154,11 @@ x = {1: 2, 3: 4}
 z = {**x}
 del z[1], z[2], z[3]
 print(z)
+
+xs = iter([1, 2, 3])
+
+
+if xs.__next__(xr := ref()):
+    a = xr.value
+    print(a)
+

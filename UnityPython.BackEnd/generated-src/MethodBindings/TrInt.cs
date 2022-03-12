@@ -7,7 +7,7 @@ namespace Traffy.Objects
         [Mark(Initialization.TokenBuiltinInit)]
         static void BindMethods()
         {
-             Traffy.Objects.TrObject __bind_from_bytes(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            Traffy.Objects.TrObject __bind_from_bytes(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 return Box.Apply(__args.Count switch
                 {
@@ -15,7 +15,7 @@ namespace Traffy.Objects
                     _ => throw new ValueError("requires 2 argument(s), got " + __args.Count)
                 }) ;
             }
-            CLASS["from_bytes"] = TrStaticMethod.Bind("from_bytes", __bind_from_bytes);
+            CLASS["from_bytes"] = TrStaticMethod.Bind(CLASS.Name + "." + "from_bytes", __bind_from_bytes);
         }
     }
 }

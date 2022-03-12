@@ -7,7 +7,7 @@ namespace Traffy.Objects
         [Mark(Initialization.TokenBuiltinInit)]
         static void BindMethods()
         {
-             Traffy.Objects.TrObject __bind_append(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            Traffy.Objects.TrObject __bind_append(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 return Box.Apply(__args.Count switch
                 {

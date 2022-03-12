@@ -11,7 +11,7 @@ using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
 using CSAST;
 
-[CodeGen(Path = "Traffy.Objects/")]
+[CodeGen(Path = "MethodBindings/")]
 public class Gen_PyBind : HasNamespace
 {
     public HashSet<string> RequiredNamespace { get; } = new HashSet<string>();
@@ -64,7 +64,7 @@ public class Gen_PyBind : HasNamespace
                     ).By(x => Box.Call(x))
                 );
             defs.Add(cm.Doc());
-            defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind({methName.Escape()}, {localBindName});".Doc());
+            defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, {localBindName});".Doc());
         }
 
 
@@ -86,7 +86,7 @@ public class Gen_PyBind : HasNamespace
             var cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
                     new Case(n + 1, self[meth.Name].Call(arguments.Take(n).ToArray()))).ToArray();
             var localBindName = "__bind_" + methName;
-            var cm = CSMethod.PyMethod(localBindName, retType,
+            var cm = CSMethod.PyMethod(localBindName, typeof(TrObject),
                     args["Count"].Switch(
                         cases.Append(new Case(new EId("_"), new EArgcountError(args["Count"], arguments.Length - defaultArgCount, arguments.Length))).ToArray()
                     ).By(x => Box.Call(x))
@@ -108,7 +108,7 @@ public class Gen_PyBind : HasNamespace
                 throw new Exception("Method " + meth.Name + " has no return type");
             var arg = new EId("_arg").Cast(entry);
             var localBindName = "__bind_" + methName;
-            var cm = new CSMethod(localBindName, retType, new[] { ("_arg", (CSType)entry) }, arg[meth.Name].By(x => Box.Call(x)));
+            var cm = new CSMethod(localBindName, retType, new[] { ("_arg", (CSType)typeof(TrObject)) }, arg[meth.Name].By(x => Box.Call(x)));
             defs.Add(cm.Doc());
             defs.Add($"CLASS[{methName.Escape()}] = TrProperty.Create({localBindName}, null);".Doc());
         }

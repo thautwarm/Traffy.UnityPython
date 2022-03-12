@@ -74,8 +74,9 @@ namespace Traffy.Objects
         [MagicMethod(Default = true)]
         public static string __repr__(TrObject self) => $"<{self.Class.Name} object>";
 
+
         [MagicMethod]
-        public static TrObject __next__(TrObject self) =>
+        public static bool __next__(TrObject self, TrRef defaultValue) =>
             throw self.unsupported(nameof(__next__));
 
         [MagicMethod]

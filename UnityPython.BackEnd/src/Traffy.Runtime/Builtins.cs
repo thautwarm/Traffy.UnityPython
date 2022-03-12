@@ -44,7 +44,6 @@ namespace Traffy
             return MK.Iter(_mapN(func, items));
 
         }
-        
         static IEnumerator<TrObject> _filter(TrObject func, IEnumerator<TrObject> items)
         {
             var curr = new BList<TrObject> { null };
