@@ -155,7 +155,6 @@ z = {**x}
 del z[1], z[2], z[3]
 print(z)
 
-<<<<<<< HEAD
 xs = iter([1, 2, 3])
 
 
@@ -163,6 +162,3 @@ if xs.__next__(xr := ref()):
     a = xr.value
     print(a)
 
-=======
-print(list(iter([1, 2, 3])))
->>>>>>> 1da8f5a810635487987a2039c197451f9775df69
