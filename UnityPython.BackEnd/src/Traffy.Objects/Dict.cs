@@ -26,6 +26,11 @@ namespace Traffy.Objects
             container[key] = value;
         }
 
+        public void __delitem__(TrObject key)
+        {
+            container.Remove(key);
+        }
+
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()

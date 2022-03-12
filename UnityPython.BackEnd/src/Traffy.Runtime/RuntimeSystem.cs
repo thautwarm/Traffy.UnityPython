@@ -319,14 +319,14 @@ namespace Traffy
             return tos.__getitem__(item);
         }
 
+        public static void object_delitem(TrObject tos, TrObject item)
+        {
+            tos.__delitem__(item);
+        }
+
         public static void object_setitem(TrObject tos, TrObject item, TrObject value)
         {
             tos.__setitem__(item, value);
-        }
-
-        public static void object_delitem(TrObject tos, TrObject item)
-        {
-            throw new NotImplementedException();
         }
 
         public static void object_setic(TrObject tos, InlineCache.PolyIC ic, TrObject value)
@@ -369,11 +369,6 @@ namespace Traffy
         public static void object_setattr(TrObject tos, TrObject attr, TrObject value)
         {
             tos.__setattr__(attr, value);
-        }
-
-        public static void object_delattr(TrObject tos, string attr)
-        {
-            throw new NotImplementedException();
         }
 
         public static TrObject object_call(TrObject f, BList<TrObject> args) => f.__call__(args, null);

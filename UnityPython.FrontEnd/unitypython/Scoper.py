@@ -11,7 +11,7 @@ from ast import (
 
     For,
     Index,
-    SetComp,    
+    SetComp,
 
     ClassDef,
     Return,
@@ -247,6 +247,13 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
 
     def visit_Delete(self, node: Delete) -> Any:
         for each in node.targets:
+            if isinstance(each, Attribute):
+                e = SyntaxError()
+                e.lineno = node.lineno
+                e.filename = self.filename
+                e.msg = "delete attribute is not allowed in UnityPython"
+                e.offset = node.col_offset
+                raise e
             self.lhs_scoper.visit(each)
 
     def visit_Pass(self, node: Pass) -> Any:

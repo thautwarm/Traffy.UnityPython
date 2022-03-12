@@ -149,3 +149,8 @@ from TestModules.TestImportStar import *
 from TestModules.TestImportStar__all__ import *
 print(a)
 print(b)
+
+x = {1: 2, 3: 4}
+z = {**x}
+del z[1], z[2], z[3]
+print(z)

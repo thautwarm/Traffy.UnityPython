@@ -26,6 +26,7 @@ namespace Traffy.Objects
         public PolyIC ic__call = new PolyIC(MagicNames.i___call__);
         public PolyIC ic__contains = new PolyIC(MagicNames.i___contains__);
         public PolyIC ic__getitem = new PolyIC(MagicNames.i___getitem__);
+        public PolyIC ic__delitem = new PolyIC(MagicNames.i___delitem__);
         public PolyIC ic__setitem = new PolyIC(MagicNames.i___setitem__);
         public PolyIC ic__findattr = new PolyIC(MagicNames.i___findattr__);
         public PolyIC ic__getattr = new PolyIC(MagicNames.i___getattr__);
@@ -84,6 +85,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___call__] = TrSharpFunc.FromFunc(cls.Name + ".__call__", (self,arg0,arg1) => ((T)self).__call__(arg0,arg1));
             cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc(cls.Name + ".__contains__", (self,arg0) => ((T)self).__contains__(arg0));
             cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((T)self).__getitem__(arg0));
+            cls[MagicNames.i___delitem__] = TrSharpFunc.FromFunc(cls.Name + ".__delitem__", (self,arg0) => ((T)self).__delitem__(arg0));
             cls[MagicNames.i___setitem__] = TrSharpFunc.FromFunc(cls.Name + ".__setitem__", (self,arg0,arg1) => ((T)self).__setitem__(arg0,arg1));
             cls[MagicNames.i___findattr__] = TrSharpFunc.FromFunc(cls.Name + ".__findattr__", (self,arg0,arg1) => ((T)self).__findattr__(arg0,arg1));
             cls[MagicNames.i___getattr__] = TrSharpFunc.FromFunc(cls.Name + ".__getattr__", (self,arg0) => ((T)self).__getattr__(arg0));
@@ -130,6 +132,7 @@ namespace Traffy.Objects
             ic__call = new PolyIC(MagicNames.i___call__);
             ic__contains = new PolyIC(MagicNames.i___contains__);
             ic__getitem = new PolyIC(MagicNames.i___getitem__);
+            ic__delitem = new PolyIC(MagicNames.i___delitem__);
             ic__setitem = new PolyIC(MagicNames.i___setitem__);
             ic__findattr = new PolyIC(MagicNames.i___findattr__);
             ic__getattr = new PolyIC(MagicNames.i___getattr__);

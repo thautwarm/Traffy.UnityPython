@@ -203,6 +203,10 @@ namespace Traffy.Objects
 
 
         [MagicMethod]
+        public static void __delitem__(TrObject self, TrObject item) =>
+            throw self.unsupported(nameof(__delitem__));
+
+        [MagicMethod]
         public static void __setitem__(TrObject self, TrObject key, TrObject value) =>
             throw self.unsupported(nameof(__setitem__));
 

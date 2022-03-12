@@ -95,7 +95,7 @@ namespace Traffy.InlineCache
                 else if (value is TrStaticMethod staticmethod)
                 {
                     ad.Kind = AttributeKind.ClassField;
-                    ad.MethodOrClassFieldOrClassMethod = value;
+                    ad.MethodOrClassFieldOrClassMethod = staticmethod;
                     ad.Class = null;
                     ad.Property = null;
                 }
@@ -109,7 +109,7 @@ namespace Traffy.InlineCache
                 return;
             }
 
-            var Token = Class.UpdatePrototype();
+            Class.UpdatePrototype();
 
             Shape ad_;
 

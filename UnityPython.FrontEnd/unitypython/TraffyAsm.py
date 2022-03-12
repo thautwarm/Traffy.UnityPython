@@ -603,6 +603,32 @@ class MultiAssign(TraffyLHS):
 
 
 @dataclass
+class DeleteLocal(TraffyIR):
+    slot: int
+    hasCont = False
+
+
+@dataclass
+class DeleteFree(TraffyIR):
+    slot: int
+    hasCont = False
+
+
+@dataclass
+class DeleteGlobal(TraffyIR):
+    name: TrObject
+    hasCont = False
+
+
+@dataclass
+class DeleteItem(TraffyIR):
+    position: int
+    hasCont: bool
+    value: TraffyIR
+    item: TraffyIR
+
+
+@dataclass
 class TrFuncPointer(object):
     posargcount: int
     allargcount: int

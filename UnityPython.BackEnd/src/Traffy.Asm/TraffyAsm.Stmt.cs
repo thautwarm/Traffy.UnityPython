@@ -9,8 +9,9 @@ namespace Traffy.Asm
 {
     using binary_func = Func<TrObject, TrObject, TrObject>;
 
+
     [Serializable]
-    public class Block : TraffyAsm
+    public sealed class Block : TraffyAsm
     {
         public bool hasCont { get; set; }
         public TraffyAsm[] suite;
@@ -47,7 +48,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class AsyncBlock : TraffyAsm
+    public sealed class AsyncBlock : TraffyAsm
     {
         public bool hasCont => true;
         public TraffyAsm[] suite;
@@ -75,7 +76,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class AugAssign : TraffyAsm
+    public sealed class AugAssign : TraffyAsm
     {
         public bool hasCont => op < 0;
         public int op;
@@ -115,7 +116,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Assign : TraffyAsm
+    public sealed class Assign : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -144,7 +145,7 @@ namespace Traffy.Asm
         }
     }
     [Serializable]
-    public class Return : TraffyAsm
+    public sealed class Return : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -172,7 +173,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class While : TraffyAsm
+    public sealed class While : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -248,7 +249,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class ForIn : TraffyAsm
+    public sealed class ForIn : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -340,7 +341,7 @@ namespace Traffy.Asm
         public TraffyAsm body;
     }
     [Serializable]
-    public class IfThenElse : TraffyAsm
+    public sealed class IfThenElse : TraffyAsm
     {
         public bool hasCont { get; set; }
 
@@ -395,7 +396,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Continue : TraffyAsm
+    public sealed class Continue : TraffyAsm
     {
         public bool hasCont => false;
 
@@ -412,7 +413,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Break : TraffyAsm
+    public sealed class Break : TraffyAsm
     {
         public bool hasCont => false;
 
@@ -429,7 +430,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Handler
+    public sealed class Handler
     {
         [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm exc_type;
         [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyLHS exc_bind;
@@ -438,7 +439,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Try : TraffyAsm
+    public sealed class Try : TraffyAsm
     {
         public bool hasCont { set; get; }
         public int position;
@@ -557,7 +558,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class Raise : TraffyAsm
+    public sealed class Raise : TraffyAsm
     {
         public bool hasCont { get; set; }
         public int position;
@@ -602,7 +603,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class DefClass : TraffyAsm
+    public sealed class DefClass : TraffyAsm
     {
         public bool hasCont { get; set; }
         public TraffyAsm[] bases;
@@ -662,7 +663,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class With: TraffyAsm
+    public sealed class With: TraffyAsm
     {
         public bool hasCont { get; set; }
         public TraffyAsm body;
@@ -777,7 +778,7 @@ namespace Traffy.Asm
     }
 
     [Serializable]
-    public class ImportStar : TraffyAsm
+    public sealed class ImportStar : TraffyAsm
     {
         public bool hasCont => false;
         public int position;
@@ -802,7 +803,7 @@ namespace Traffy.Asm
         }
     }
     [Serializable]
-    public class Import: TraffyAsm
+    public sealed class Import: TraffyAsm
     {
         public bool hasCont => false;
         public int position;
@@ -817,12 +818,12 @@ namespace Traffy.Asm
             frame.traceback.Push(position);
             List<TrObject> from_list = RTS.barelist_create();
             var imported = RTS.import_from_module(module, level, frame.func.globals, names);
-            
+
             foreach(var (_, value) in imported)
             {
                 RTS.barelist_add(from_list, value);
             }
-            
+
             frame.traceback.Pop();
             return RTS.object_from_barelist(from_list);
         }
@@ -830,6 +831,83 @@ namespace Traffy.Asm
         public MonoAsync<TrObject> cont(Frame frame)
         {
             throw new InvalidOperationException("continuation is not supported for import from");
+        }
+    }
+
+    [Serializable]
+    public sealed class DeleteLocal: TraffyAsm
+    {
+        public bool hasCont => false;
+        public int slot;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.delete_local(slot);
+            return RTS.object_none;
+        }
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidOperationException("continuation is not supported for delete local");
+        }
+    }
+
+    [Serializable]
+    public sealed class DeleteFree: TraffyAsm
+    {
+        public bool hasCont => false;
+        public int slot;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.delete_free(slot);
+            return RTS.object_none;
+        }
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidOperationException("continuation is not supported for delete free");
+        }
+    }
+
+    [Serializable]
+    public sealed class DeleteGlobal: TraffyAsm
+    {
+        public bool hasCont => false;
+        public TrObject name;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.delete_global(name);
+            return RTS.object_none;
+        }
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidOperationException("continuation is not supported for delete global");
+        }
+    }
+
+    [Serializable]
+    public sealed class DeleteItem: TraffyAsm
+    {
+        public bool hasCont { get; set;}
+        public int position;
+        public TraffyAsm value;
+        public TraffyAsm item;
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_value = value.exec(frame);
+            var rt_item = item.exec(frame);
+            RTS.object_delitem(rt_value, rt_item);
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+
+        public MonoAsync<TrObject> cont(Frame frame)
+        {
+            throw new InvalidOperationException("continuation is not supported for delete item");
         }
     }
 

@@ -124,7 +124,7 @@ namespace Traffy.InlineCache
                 receiver.shape = fieldShape.Get;
                 receiver.Token = cls.Token;
             }
-            PolyIC.WriteInst( obj, receiver.shape, value);
+            PolyIC.WriteInst(obj, receiver.shape, value);
             return;
         }
     }

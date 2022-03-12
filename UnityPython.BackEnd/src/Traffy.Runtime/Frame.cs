@@ -243,9 +243,35 @@ namespace Traffy
             }
             return localvars[operand];
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal Exception undef_local(int operand)
+        {
+            var name = func.fptr.metadata.localnames[operand];
+            return new NameError(name, $"undefined local variable '{name}'");
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal Exception undef_free(int operand)
+        {
+            var name = func.fptr.metadata.freenames[operand];
+            return new NameError(name, $"undefined free variable '{name}'");
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal Exception undef_global(TrObject name)
+        {
+            return new NameError(name.__str__(), $"undefined global variable '{name.__str__()}'");
+        }
+
         internal void delete_local(int operand)
         {
-            throw new NotImplementedException();
+            localvars[operand].Value = null;
+        }
+
+        internal void delete_free(int operand)
+        {
+            freevars[operand].Value = null;
         }
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
@@ -263,18 +289,25 @@ namespace Traffy
         [MethodImpl(MethodImplOptionsCompat.Best)]
         internal TrObject load_local(int operand)
         {
-            return localvars[operand].Value;
+            var v = localvars[operand].Value;
+            if(v == null)
+                throw undef_local(operand);
+            return v;
         }
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
         internal TrObject load_free(int operand)
         {
-            return freevars[operand].Value;
+            var v = freevars[operand].Value;
+            if(v == null)
+                throw undef_free(operand);
+            return v;
         }
 
         internal void delete_global(TrObject v)
         {
-            throw new NotImplementedException();
+            // TODO: I prefer no error but...
+            func.globals.Remove(v);
         }
 
         internal void store_global(TrObject v, TrObject trObject)
@@ -288,7 +321,7 @@ namespace Traffy
             {
                 return v;
             }
-            throw new NameError("global", name.__str__());
+            throw undef_global(name);
         }
 
         internal void clear_exception()

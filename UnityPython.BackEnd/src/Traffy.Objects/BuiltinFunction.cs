@@ -257,6 +257,21 @@ namespace Traffy.Objects
             return new TrSharpFunc(name, call);
         }
 
+
+        public static TrSharpFunc FromFunc(string name, Action<TrObject, TrObject> func)
+        {
+
+            if (func == null)
+                throw new InvalidProgramException("func is null");
+            TrObject call(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+            {
+                RTS.arg_check_positional_only(args, 2);
+                func(args[0], args[1]);
+                return RTS.object_none;
+            }
+            return new TrSharpFunc(name, call);
+        }
+
         public static TrSharpFunc FromFunc(string name, Func<TrObject, TrObject, bool> func)
         {
 

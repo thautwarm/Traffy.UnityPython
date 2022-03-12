@@ -88,6 +88,10 @@ using System;
         {
             return TrObject.__getitem__(this,item);
         }
+         void __delitem__(TrObject item)
+        {
+            TrObject.__delitem__(this,item);
+        }
          void __setitem__(TrObject key,TrObject value)
         {
             TrObject.__setitem__(this,key,value);

@@ -26,6 +26,7 @@ namespace Traffy
         public static TrStr s_call = MK.Str("__call__");
         public static TrStr s_contains = MK.Str("__contains__");
         public static TrStr s_getitem = MK.Str("__getitem__");
+        public static TrStr s_delitem = MK.Str("__delitem__");
         public static TrStr s_setitem = MK.Str("__setitem__");
         public static TrStr s_findattr = MK.Str("__findattr__");
         public static TrStr s_getattr = MK.Str("__getattr__");
@@ -69,6 +70,7 @@ namespace Traffy
         public static InternedString i___call__ = InternedString.FromString("__call__");
         public static InternedString i___contains__ = InternedString.FromString("__contains__");
         public static InternedString i___getitem__ = InternedString.FromString("__getitem__");
+        public static InternedString i___delitem__ = InternedString.FromString("__delitem__");
         public static InternedString i___setitem__ = InternedString.FromString("__setitem__");
         public static InternedString i___findattr__ = InternedString.FromString("__findattr__");
         public static InternedString i___getattr__ = InternedString.FromString("__getattr__");

@@ -52,6 +52,8 @@ namespace Traffy.Objects
                 this[MagicNames.i___contains__] = o_contains;
             if (!this.IsSet(MagicNames.i___getitem__) && cp_kwargs.TryPop(MagicNames.s_getitem, out var o_getitem))
                 this[MagicNames.i___getitem__] = o_getitem;
+            if (!this.IsSet(MagicNames.i___delitem__) && cp_kwargs.TryPop(MagicNames.s_delitem, out var o_delitem))
+                this[MagicNames.i___delitem__] = o_delitem;
             if (!this.IsSet(MagicNames.i___setitem__) && cp_kwargs.TryPop(MagicNames.s_setitem, out var o_setitem))
                 this[MagicNames.i___setitem__] = o_setitem;
             if (!this.IsSet(MagicNames.i___findattr__) && cp_kwargs.TryPop(MagicNames.s_findattr, out var o_findattr))

@@ -202,8 +202,15 @@ class Transpiler:
         else:
             return ir.StoreGlobal(name=const_to_variant(id))
 
-    def delete_name_(self, id: str):
-        raise NotImplementedError
+    def delete_name_(self, id: str) -> ir.TraffyIR:
+        if id in self.scope.localvars:
+            i = self.scope.localvars.order(id)
+            return ir.DeleteLocal(slot=i)
+        elif id in self.scope.freevars:
+            i = self.scope.freevars.order(id)
+            return ir.DeleteFree(slot=i)
+        else:
+            return ir.DeleteGlobal(name=const_to_variant(id))
 
     def create_fptr_builder(self, code: ir.TraffyIR, name: str) -> ir.TrFuncPointer:
         metadata = ir.Metadata(
@@ -1130,7 +1137,27 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         return ir.Continue()
 
     def visit_Delete(self, node: Delete) -> ir.TraffyIR:
-        raise NotImplementedError
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        block : list[ir.TraffyIR] = []
+        for each in node.targets:
+            assert not isinstance(each, Attribute)
+            if isinstance(each, Name):
+                block.append(self.root.delete_name_(each.id))
+            elif isinstance(each, Subscript):
+                value = self.root.rhs_transpiler.visit(each.value)
+                item = self.root.rhs_transpiler.visit(each.slice)
+                block.append(ir.DeleteItem(position=position, hasCont=ir.hasCont(value, item), value=value, item=item))
+            else:
+                e = SyntaxError()
+                e.msg = f"Delete target {each} is not supported"
+                e.lineno = each.lineno
+                e.offset = each.col_offset
+                e.filename = self.root.filename
+                raise e
+        if len(block) == 1:
+            return block[0]
+        return ir.Block(hasCont=ir.hasCont(*block), suite=block)
 
     def visit_block(self, suite: list[stmt]) -> ir.Block:
         xs: list[ir.TraffyIR] = []
