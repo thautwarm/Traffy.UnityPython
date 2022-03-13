@@ -170,6 +170,57 @@ namespace Traffy
             }
             return MK.Iter(_mkzip(iterators));
         }
+
+
+        static IEnumerator<TrObject> _enumerate(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            if (args.Count != 1)
+                throw new TypeError($"enumerate() expected 1 argument, got {args.Count}");
+            var iter = args[0].__iter__();
+            int i = 0;
+            while (true)
+            {
+                if (!iter.MoveNext())
+                {
+                    yield break;
+                }
+                var curr = new TrObject[2];
+                curr[0] = MK.Int(i++);
+                curr[1] = iter.Current;
+                yield return MK.Tuple(curr);
+            }
+        }
+
+        [PyBuiltin]
+        static TrObject enumerate(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            return MK.Iter(_enumerate(args, kwargs));
+        }
+
+
+        [PyBuiltin]
+        static TrObject reversed(TrObject self)
+        {
+            var cls = self.Class;
+            var rev = cls[cls.ic__reversed];
+            if (rev == null)
+            {
+                var meth_len = cls[cls.ic__len];
+                var meth_getitem = cls[cls.ic__getitem];
+                if (meth_len == null || meth_getitem == null)
+                    throw new TypeError($"{cls.Name} object is not reversible");
+                var count = meth_len.Call(self).AsInt();
+                static IEnumerator<TrObject> reversed_from_protocol(TrObject self, TrObject getitem, int count)
+                {
+                    for (var i = count - 1; i >= 0; i--)
+                    {
+                        yield return getitem.Call(self, MK.Int(i));
+                    }
+                }
+                return MK.Iter(reversed_from_protocol(self, meth_getitem, count));
+            }
+            return rev.Call(self);
+        }
     }
 
 }

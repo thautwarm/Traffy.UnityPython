@@ -144,11 +144,11 @@ namespace Traffy.Objects
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istop, istep) = slice.mkslice(container.Count);
+                        var (istart, istep, nstep) = slice.mkslice(container.Count);
                         var newcontainer = RTS.barelist_create();
-                        for (int i = istart; i < istop; i += istep)
+                        for (int i = 0, x = istart; i < nstep; i++, x += istep)
                         {
-                            RTS.barelist_add(newcontainer, container[i]);
+                            RTS.barelist_add(newcontainer, container[x]);
                         }
                         return MK.List(newcontainer);
                     }
@@ -159,45 +159,45 @@ namespace Traffy.Objects
 
         void TrObject.__setitem__(TrObject item, TrObject value)
         {
-            switch(item)
+            switch (item)
             {
                 case TrInt oitem:
-                {
-                    var i = oitem.value;
-                    if (i < 0)
-                        i += container.Count;
-                    if (i < 0 || i >= container.Count)
-                        throw new IndexError($"list assignment index out of range");
-                    container[unchecked((int)i)] = value;
-                    return;
-                }
+                    {
+                        var i = oitem.value;
+                        if (i < 0)
+                            i += container.Count;
+                        if (i < 0 || i >= container.Count)
+                            throw new IndexError($"list assignment index out of range");
+                        container[unchecked((int)i)] = value;
+                        return;
+                    }
                 case TrSlice slice:
-                {
-                    var (istart, istop, istep) = slice.mkslice(container.Count);
-                    if (istep == 1 && istart == 0 && istop == container.Count)
                     {
-                        container.Clear();
-                        var itr = value.__iter__();
-                        while (itr.MoveNext())
+                        var (istart, istep, nstep) = slice.mkslice(container.Count);
+                        if (istep == 1 && istart == 0 && nstep == container.Count)
                         {
-                            RTS.barelist_add(container, itr.Current);
+                            container.Clear();
+                            var itr = value.__iter__();
+                            while (itr.MoveNext())
+                            {
+                                RTS.barelist_add(container, itr.Current);
+                            }
+                            return;
                         }
-                        return;
-                    }
-                    else
-                    {
-                        var seq = value.__iter__().ToList();
-                        if (seq.Count != (istop - istart) / istep)
-                            throw new ValueError($"attempt to assign sequence of size {seq.Count} to extended slice of size {(istop - istart) / istep}");
-                        for (int i = istart, j = 0; i < istop; i += istep, j ++)
+                        else
                         {
-                            container[i] = seq[j];
+                            var seq = value.__iter__().ToList();
+                            if (seq.Count != nstep)
+                                throw new ValueError($"attempt to assign sequence of size {seq.Count} to extended slice of size {nstep}");
+                            for (int x = istart, i = 0; i < nstep; i++, x += istep)
+                            {
+                                container[x] = seq[i];
+                            }
+                            return;
                         }
-                        return;
                     }
-                }
                 default:
-                        throw new TypeError($"list indices must be integers, not '{item.AsClass.Name}'");
+                    throw new TypeError($"list indices must be integers, not '{item.AsClass.Name}'");
             }
         }
 
@@ -206,26 +206,26 @@ namespace Traffy.Objects
             switch (item)
             {
                 case TrInt oitem:
-                {
-                    var i = oitem.value;
-                    if (i < 0)
-                        i += container.Count;
-                    if (i < 0 || i >= container.Count)
-                        throw new IndexError($"list assignment index out of range");
-                    container.RemoveAt(unchecked((int)i));
-                    return;
-                }
-                case TrSlice slice:
-                {
-                    var (istart, istop, istep) = slice.mkslice(container.Count);
-                    // XXX: can optimize to O(n)
-                    // we may iterate the list, remove the items in the slice, and add the remaining items to the new list
-                    for (int i = istart, j = 0; i < istop; i += istep, j++)
                     {
-                        container.RemoveAt(i);
+                        var i = oitem.value;
+                        if (i < 0)
+                            i += container.Count;
+                        if (i < 0 || i >= container.Count)
+                            throw new IndexError($"list assignment index out of range");
+                        container.RemoveAt(unchecked((int)i));
+                        return;
                     }
-                    return;
-                }
+                case TrSlice slice:
+                    {
+                        var (istart, istep, nstep) = slice.mkslice(container.Count);
+                        // XXX: can optimize to O(n)
+                        // we may iterate the list, remove the items in the slice, and add the remaining items to the new list
+                        for (int x = istart, i = 0; i < nstep; i++, x += istep)
+                        {
+                            container.RemoveAt(x);
+                        }
+                        return;
+                    }
                 default:
                     throw new TypeError($"list indices must be integers, not '{item.AsClass.Name}'");
             }

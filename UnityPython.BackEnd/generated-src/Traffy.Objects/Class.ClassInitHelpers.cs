@@ -25,6 +25,7 @@ namespace Traffy.Objects
         public PolyIC ic__hash = new PolyIC(MagicNames.i___hash__);
         public PolyIC ic__call = new PolyIC(MagicNames.i___call__);
         public PolyIC ic__contains = new PolyIC(MagicNames.i___contains__);
+        public PolyIC ic__reversed = new PolyIC(MagicNames.i___reversed__);
         public PolyIC ic__getitem = new PolyIC(MagicNames.i___getitem__);
         public PolyIC ic__delitem = new PolyIC(MagicNames.i___delitem__);
         public PolyIC ic__setitem = new PolyIC(MagicNames.i___setitem__);
@@ -99,6 +100,8 @@ namespace Traffy.Objects
                 cls[MagicNames.i___call__] = TrSharpFunc.FromFunc(cls.Name + ".__call__", (self,arg0,arg1) => ((T)self).__call__(arg0,arg1));
             if (ownership.Contains("__contains__"))
                 cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc(cls.Name + ".__contains__", (self,arg0) => ((T)self).__contains__(arg0));
+            if (ownership.Contains("__reversed__"))
+                cls[MagicNames.i___reversed__] = TrSharpFunc.FromFunc(cls.Name + ".__reversed__", (self,arg0) => ((T)self).__reversed__(arg0));
             if (ownership.Contains("__getitem__"))
                 cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((T)self).__getitem__(arg0));
             if (ownership.Contains("__delitem__"))
@@ -162,6 +165,7 @@ namespace Traffy.Objects
             ic__hash = new PolyIC(MagicNames.i___hash__);
             ic__call = new PolyIC(MagicNames.i___call__);
             ic__contains = new PolyIC(MagicNames.i___contains__);
+            ic__reversed = new PolyIC(MagicNames.i___reversed__);
             ic__getitem = new PolyIC(MagicNames.i___getitem__);
             ic__delitem = new PolyIC(MagicNames.i___delitem__);
             ic__setitem = new PolyIC(MagicNames.i___setitem__);

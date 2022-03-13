@@ -59,7 +59,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public (int, int, int) mkslice(int count)
+        public (int start, int step, int nstep) mkslice(int count)
         {
             var start = this.start;
             var stop = this.stop;
@@ -108,7 +108,9 @@ namespace Traffy.Objects
             }
             istop = Math.Max(-1, Math.Min(istop, count));
             istart = Math.Max(Math.Min(istart, count - 1), 0);
-            return (istart, istop, istep);
+
+            int nstep = (istop - istart) / istep;
+            return (istart, istep, nstep);
         }
     }
 

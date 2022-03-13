@@ -102,5 +102,11 @@ namespace Traffy
         {
             return x.__len__();
         }
+
+        [PyBuiltin]
+        static int hash(TrObject x)
+        {
+            return x.__hash__();
+        }
     }
 }

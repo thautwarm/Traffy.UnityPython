@@ -4,7 +4,7 @@ using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
-    public class TrSharpMethod : TrObject
+    public partial class TrSharpMethod : TrObject
     {
         public TrObject func;
 

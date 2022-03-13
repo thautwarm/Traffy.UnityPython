@@ -209,6 +209,10 @@ namespace Traffy.Objects
             throw self.unsupported(nameof(__contains__));
 
         [MagicMethod]
+        public static TrObject __reversed__(TrObject self, TrObject a) =>
+            throw self.unsupported(nameof(__reversed__));
+
+        [MagicMethod]
         public static TrObject __getitem__(TrObject self, TrObject item) =>
             throw self.unsupported(nameof(__getitem__));
 
