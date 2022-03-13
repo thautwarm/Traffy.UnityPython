@@ -138,6 +138,38 @@ namespace Traffy
             }
         }
 
+        static IEnumerator<TrObject> _mkzip(IEnumerator<TrObject>[] items)
+        {
+            if (items.Length == 0)
+            {
+                yield break;
+            }
+
+            while (true)
+            {
+                var curr = new TrObject[items.Length];
+                for (int i = 0; i < items.Length; i++)
+                {
+                    if (!items[i].MoveNext())
+                    {
+                        yield break;
+                    }
+                    curr[i] = items[i].Current;
+                }
+                yield return MK.Tuple(curr);
+            }
+        }
+
+        [PyBuiltin]
+        static TrObject zip(BList<TrObject> args, Dictionary<TrObject, TrObject> _)
+        {
+            var iterators = new IEnumerator<TrObject>[args.Count];
+            for(int i = 0; i < args.Count; i++)
+            {
+                iterators[i] = args[i].__iter__();
+            }
+            return MK.Iter(_mkzip(iterators));
+        }
     }
 
 }
