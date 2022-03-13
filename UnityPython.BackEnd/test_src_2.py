@@ -173,12 +173,12 @@ print(chr(49))
 
 
 def test3():
-    o = XX
+    o = XX(1)
     i = 0
     s = 0
     while i < 10000000:
         i += 1
-        s += o.xx
+        s += o.x
     return s
 
 testfunc(test3)
@@ -188,3 +188,5 @@ class X:
     pass
 
 print(XX.xx)
+
+

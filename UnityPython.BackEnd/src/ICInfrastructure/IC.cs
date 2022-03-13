@@ -221,6 +221,8 @@ namespace Traffy.InlineCache
         public InternedString s_name;
         public PolyIC_Class ICClass;
         public PolyIC_Inst ICInstance;
+
+        // 'attribute' is always interned
         public TrStr attribute;
         public PolyIC(TrStr name)
         {

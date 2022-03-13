@@ -33,9 +33,30 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
+        bool _slow_read(Traffy.Objects.TrStr s, out Traffy.Objects.TrObject found)
+        {
+            if (s.value == s_attrValue)
+            {
+                found = value;
+                return true;
+            }
+            return CLASS.__getic_refl__(s, out found);
+        }
+
+        void _slow_write(Traffy.Objects.TrStr s, Traffy.Objects.TrObject s_value)
+        {
+            if (s.value == s_attrValue)
+            {
+                value = s_value;
+                return;
+            }
+            throw new AttributeError(this, s, $"'{CLASS.Name}' object has no attribute '" + s.value + "'");
+        }
+
+        bool TrObject.__getic_refl__(Traffy.Objects.TrStr s, out Traffy.Objects.TrObject found) => _slow_read(s, out found);
         bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found)
         {
-            if (object.ReferenceEquals(ic.attribute, s_attrValue))
+            if (object.ReferenceEquals(ic.attribute.value, s_attrValue))
             {
                 if (value == null)
                 {
@@ -45,39 +66,20 @@ namespace Traffy.Objects
                 found = value;
                 return true;
             }
-            var attr = ic.attribute.AsStr();
-            switch (attr)
-            {
-                case "value":
-                    if (value == null)
-                    {
-                        found = null;
-                        return false;
-                    }
-                    found = value;
-                    return true;
-                default:
-                    found = null;
-                    return false;
-            }
+            return _slow_read(ic.attribute, out found);
         }
 
-        public void __setattr__(TrObject s, TrObject m_value)
+
+        void TrObject.__setic_refl__(Traffy.Objects.TrStr s, Traffy.Objects.TrObject value) => _slow_write(s, value);
+        void TrObject.__setic__(Traffy.InlineCache.PolyIC ic, Traffy.Objects.TrObject s_value)
         {
-            TrStr attr = (TrStr)s;
-            if (attr.isInterned && object.ReferenceEquals(attr.value, s_attrValue))
+            TrStr attr = ic.attribute;
+            if (object.ReferenceEquals(attr.value, s_attrValue))
             {
-                value = m_value;
+                value = s_value;
                 return;
             }
-            switch (attr.value)
-            {
-                case "value":
-                    value = m_value;
-                    return;
-                default:
-                    throw new AttributeError(this, s, $"ref has no attribute '{attr.value}'");
-            }
+            _slow_write(attr, s_value);
         }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

@@ -55,7 +55,7 @@ namespace Traffy
             throw new TypeError("hex() argument must be an integer");
         }
 
-        // 'getattr' in Unity Python is very slow (arround 150x slower than statically reading attributes)
+
         [PyBuiltin]
         static TrObject getattr(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
