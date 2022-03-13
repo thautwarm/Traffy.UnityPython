@@ -31,7 +31,7 @@ namespace Traffy
             throw new TypeError("chr() argument must be an integer");
         }
 
-        [PyBind]
+        [PyBuiltin]
         static TrObject ord(TrObject a)
         {
             if (a is TrStr s)
@@ -39,7 +39,7 @@ namespace Traffy
             throw new TypeError("ord() argument must be a string of length 1");
         }
 
-        [PyBind]
+        [PyBuiltin]
         static TrObject oct(TrObject a)
         {
             if (a is TrInt i)
@@ -54,7 +54,7 @@ namespace Traffy
                 return MK.Str("0x" + Convert.ToString(i.value, 16));
             throw new TypeError("hex() argument must be an integer");
         }
-        
+
         [PyBuiltin]
         static bool hasattr(TrObject obj, TrObject attr)
         {
@@ -144,6 +144,32 @@ namespace Traffy
         static bool isinstance(TrObject x, TrObject type)
         {
             return x.__instancecheck__(type);
+        }
+
+        [PyBuiltin]
+        static bool issubclass(TrObject x, TrObject type)
+        {
+            if (type is TrTuple tup)
+            {
+                foreach(var elt in tup.elts)
+                {
+                    if(issubclass(x, elt))
+                        return true;
+                }
+                return false;
+            }
+            else if (type is TrClass cls)
+            {
+                return cls.__subclasscheck__((TrClass) x);
+            }
+            else if (type is TrUnionType union)
+            {
+                return issubclass(x, union.left) || issubclass(x, union.right);
+            }
+            else
+            {
+                throw new TypeError($"issubclass() arg 2 must be a class, type, or tuple of classes, or a uniontype, not {type}");
+            }
         }
 
     }

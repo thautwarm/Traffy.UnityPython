@@ -73,6 +73,24 @@ namespace Traffy
                 }) ;
             }
             Initialization.Prelude(TrSharpFunc.FromFunc("chr", __bind_chr));
+            Traffy.Objects.TrObject __bind_ord(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                return Box.Apply(__args.Count switch
+                {
+                    1 => Traffy.Builtins.ord(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0])),
+                    _ => throw new ValueError("requires 1 argument(s), got " + __args.Count)
+                }) ;
+            }
+            Initialization.Prelude(TrSharpFunc.FromFunc("ord", __bind_ord));
+            Traffy.Objects.TrObject __bind_oct(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                return Box.Apply(__args.Count switch
+                {
+                    1 => Traffy.Builtins.oct(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0])),
+                    _ => throw new ValueError("requires 1 argument(s), got " + __args.Count)
+                }) ;
+            }
+            Initialization.Prelude(TrSharpFunc.FromFunc("oct", __bind_oct));
             Traffy.Objects.TrObject __bind_hex(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 return Box.Apply(__args.Count switch

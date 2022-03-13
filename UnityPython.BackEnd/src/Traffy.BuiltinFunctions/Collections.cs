@@ -177,7 +177,7 @@ namespace Traffy
             if (args.Count != 1)
                 throw new TypeError($"enumerate() expected 1 argument, got {args.Count}");
             var iter = args[0].__iter__();
-            int i = 0;
+            long i = 0;
             while (true)
             {
                 if (!iter.MoveNext())
@@ -206,15 +206,6 @@ namespace Traffy
 
         static TrObject _key = MK.Str("key");
         static TrObject _reverse = MK.Str("reverse");
-
-        static Comparison<TrObject> _normal_cmp = (TrObject a, TrObject b) =>
-        {
-            if (a.__lt__(b))
-                return -1;
-            if (a.__eq__(b))
-                return 0;
-            return 1;
-        };
 
         static Comparison<TrObject> _rev_cmp = (TrObject a, TrObject b) =>
         {
@@ -320,5 +311,4 @@ namespace Traffy
             }
         }
     }
-
 }

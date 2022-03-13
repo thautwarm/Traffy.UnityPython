@@ -89,3 +89,13 @@ zz = k[0]
 k = zz + 1
 x = sum([1.0, 2, 3], 0)
 
+
+class Pow:
+    def __pow__(self, x: str) -> int:
+        return 1
+
+pp = Pow()
+x = pp ** "asd"
+
+if isinstance(1, int):
+    x = 5
