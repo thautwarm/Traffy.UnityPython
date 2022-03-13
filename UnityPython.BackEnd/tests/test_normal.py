@@ -31,3 +31,4 @@ print(xs[::-1])
 
 print(list(reversed(xs[::1])))
 
+# print(reversed({}))

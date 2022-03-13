@@ -101,7 +101,7 @@ namespace Traffy.Objects
             if (ownership.Contains("__contains__"))
                 cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc(cls.Name + ".__contains__", (self,arg0) => ((T)self).__contains__(arg0));
             if (ownership.Contains("__reversed__"))
-                cls[MagicNames.i___reversed__] = TrSharpFunc.FromFunc(cls.Name + ".__reversed__", (self,arg0) => ((T)self).__reversed__(arg0));
+                cls[MagicNames.i___reversed__] = TrSharpFunc.FromFunc(cls.Name + ".__reversed__", (self) => ((T)self).__reversed__());
             if (ownership.Contains("__getitem__"))
                 cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((T)self).__getitem__(arg0));
             if (ownership.Contains("__delitem__"))

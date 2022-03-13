@@ -33,6 +33,14 @@ namespace Traffy.Objects
         bool TrObject.__bool__() => value.Length != 0;
         List<TrObject> TrObject.__array__ => null;
 
+        IEnumerator<TrObject> TrObject.__iter__()
+        {
+            for(int i = 0; i < value.Length; i++)
+            {
+                yield return MK.Str(value[i].ToString());
+            }
+        }
+
         public static TrClass CLASS;
         public TrClass Class => CLASS;
         public TrStr Interned() => isInterned ? this : MK.IStr(value);

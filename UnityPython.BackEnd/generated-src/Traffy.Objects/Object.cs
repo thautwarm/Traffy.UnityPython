@@ -84,9 +84,9 @@ using System;
         {
             return TrObject.__contains__(this,a);
         }
-        TrObject __reversed__(TrObject a)
+        TrObject __reversed__()
         {
-            return TrObject.__reversed__(this,a);
+            return TrObject.__reversed__(this);
         }
         TrObject __getitem__(TrObject item)
         {

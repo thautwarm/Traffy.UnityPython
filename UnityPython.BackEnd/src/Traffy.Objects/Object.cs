@@ -209,8 +209,23 @@ namespace Traffy.Objects
             throw self.unsupported(nameof(__contains__));
 
         [MagicMethod]
-        public static TrObject __reversed__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__reversed__));
+        public static TrObject __reversed__(TrObject self)
+        {
+            var cls = self.Class;
+            var meth_len = cls[cls.ic__len];
+            var meth_getitem = cls[cls.ic__getitem];
+            if (meth_len == null || meth_getitem == null)
+                throw new TypeError($"{cls.Name} object is not reversible");
+            var count = meth_len.Call(self).AsInt();
+            static IEnumerator<TrObject> reversed_from_protocol(TrObject self, TrObject getitem, int count)
+            {
+                for (var i = count - 1; i >= 0; i--)
+                {
+                    yield return getitem.Call(self, MK.Int(i));
+                }
+            }
+            return MK.Iter(reversed_from_protocol(self, meth_getitem, count));
+        }
 
         [MagicMethod]
         public static TrObject __getitem__(TrObject self, TrObject item) =>

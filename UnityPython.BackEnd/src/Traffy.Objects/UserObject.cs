@@ -145,6 +145,13 @@ namespace Traffy.Objects
                 return TrObject.__contains__(this, a);
             return self_contains.Call(a).AsBool();
         }
+        TrObject TrObject.__reversed__()
+        {
+            var self_reversed = this[Class.ic__reversed];
+            if ((object)self_reversed == null)
+                return TrObject.__reversed__(this);
+            return self_reversed.Call();
+        }
         TrObject TrObject.__getitem__(TrObject item)
         {
             var self_getitem = this[Class.ic__getitem];
@@ -152,6 +159,7 @@ namespace Traffy.Objects
                 return TrObject.__getitem__(this, item);
             return self_getitem.Call(item);
         }
+
         void TrObject.__setitem__(TrObject key, TrObject value)
         {
             var self_setitem = this[Class.ic__setitem];

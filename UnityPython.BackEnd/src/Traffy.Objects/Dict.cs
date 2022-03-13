@@ -36,6 +36,16 @@ namespace Traffy.Objects
             container.Remove(key);
         }
 
+        TrObject TrObject.__reversed__()
+        {
+            throw new TypeError("'dict' object is not reversible");
+        }
+
+        TrObject TrObject.__len__()
+        {
+            return MK.Int(container.Count);
+        }
+
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
