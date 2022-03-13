@@ -24,6 +24,10 @@ namespace Traffy.Objects
             {
                 return cls.__subclasscheck__(obj.Class);
             }
+            else if (classes is TrUnionType union)
+            {
+                return __instancecheck__(obj, union.left) || __instancecheck__(obj, union.right);
+            }
             else if (classes is TrTuple tup)
             {
                 foreach (var cls_ in tup.elts)

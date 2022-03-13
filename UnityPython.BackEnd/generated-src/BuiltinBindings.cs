@@ -138,6 +138,15 @@ namespace Traffy
                 }) ;
             }
             Initialization.Prelude(TrSharpFunc.FromFunc("round", __bind_round));
+            Traffy.Objects.TrObject __bind_isinstance(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                return Box.Apply(__args.Count switch
+                {
+                    2 => Traffy.Builtins.isinstance(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]),Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1])),
+                    _ => throw new ValueError("requires 2 argument(s), got " + __args.Count)
+                }) ;
+            }
+            Initialization.Prelude(TrSharpFunc.FromFunc("isinstance", __bind_isinstance));
         }
 
     

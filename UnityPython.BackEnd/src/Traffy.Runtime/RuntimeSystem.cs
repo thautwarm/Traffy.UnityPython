@@ -806,6 +806,11 @@ namespace Traffy
             return new TrIter(v);
         }
 
+        public static TrObject UnionType(TrClass left, TrClass right)
+        {
+            return new TrUnionType(left, right);
+        }
+
         public static TrObject object_imod(TrObject arg1, TrObject arg2)
         {
             throw new NotImplementedException();

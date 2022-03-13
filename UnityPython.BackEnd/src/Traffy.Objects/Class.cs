@@ -141,6 +141,23 @@ namespace Traffy.Objects
 
         public TrClass Class { set; get; }
 
+        TrObject TrObject.__getitem__(TrObject item)
+        {
+            return this;
+        }
+
+        TrObject TrObject.__bitor__(Traffy.Objects.TrObject a)
+        {
+            if (a.IsNone())
+            {
+                return MK.UnionType(this, TrNone.CLASS);
+            }
+            if (a is TrClass cls)
+            {
+                return MK.UnionType(this, cls);
+            }
+            throw new TypeError($"unsupported operand type(s) for |: class '{this.Name}' and '{a.Class.Name}' object");
+        }
         public string __repr__() => Name;
 
         public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

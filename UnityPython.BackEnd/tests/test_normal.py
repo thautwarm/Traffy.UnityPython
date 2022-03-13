@@ -71,3 +71,13 @@ class X:
 print(sorted([X(1.2), X(1.0), X(2)]))
 
 print(sum([X(2.0), X(3.0)], X(1.0)))
+
+def f(x):
+    if isinstance(x, int | None):
+        return x
+
+print(f(1.0))
+print(f(None))
+print(f('1'))
+print(f(1))
+

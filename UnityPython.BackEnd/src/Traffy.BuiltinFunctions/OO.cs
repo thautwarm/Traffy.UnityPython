@@ -127,5 +127,11 @@ namespace Traffy
             return x.__round__(n ?? MK.None());
         }
 
+        [PyBuiltin]
+        static bool isinstance(TrObject x, TrObject type)
+        {
+            return x.__instancecheck__(type);
+        }
+
     }
 }
