@@ -70,7 +70,8 @@ class X:
 
 print(sorted([X(1.2), X(1.0), X(2)]))
 
-print(sum([X(2.0), X(3.0)], X(1.0)))
+x = sum([X(2.0), X(3.0)], X(1.0))
+print(x)
 
 def f(x):
     if isinstance(x, int | None):
@@ -80,4 +81,11 @@ print(f(1.0))
 print(f(None))
 print(f('1'))
 print(f(1))
+
+print(sorted([1, 2, 3], key = lambda x: -x))
+
+k = [1, 2.0]
+zz = k[0]
+k = zz + 1
+x = sum([1.0, 2, 3], 0)
 

@@ -82,6 +82,15 @@ namespace Traffy
                 }) ;
             }
             Initialization.Prelude(TrSharpFunc.FromFunc("hex", __bind_hex));
+            Traffy.Objects.TrObject __bind_hasattr(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                return Box.Apply(__args.Count switch
+                {
+                    2 => Traffy.Builtins.hasattr(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]),Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1])),
+                    _ => throw new ValueError("requires 2 argument(s), got " + __args.Count)
+                }) ;
+            }
+            Initialization.Prelude(TrSharpFunc.FromFunc("hasattr", __bind_hasattr));
             Initialization.Prelude(TrSharpFunc.FromFunc("getattr", getattr));
             Traffy.Objects.TrObject __bind_setattr(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {

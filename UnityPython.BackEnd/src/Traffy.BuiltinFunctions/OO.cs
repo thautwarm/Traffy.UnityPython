@@ -54,7 +54,20 @@ namespace Traffy
                 return MK.Str("0x" + Convert.ToString(i.value, 16));
             throw new TypeError("hex() argument must be an integer");
         }
-
+        
+        [PyBuiltin]
+        static bool hasattr(TrObject obj, TrObject attr)
+        {
+            if (!(attr is TrStr s))
+            {
+                throw new TypeError("hasattr() arg 2 must be a string");
+            }
+            if (obj is TrObject o)
+            {
+                return o.__getic_refl__(s, out var _);
+            }
+            throw new TypeError("hasattr() arg 1 must be an object");
+        }
 
         [PyBuiltin]
         static TrObject getattr(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
