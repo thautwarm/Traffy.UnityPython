@@ -209,6 +209,10 @@ namespace Traffy.Objects
             throw self.unsupported(nameof(__contains__));
 
         [MagicMethod]
+        public static TrObject __round__(TrObject self, TrObject ndigits) =>
+            throw self.unsupported(nameof(__round__));
+
+        [MagicMethod]
         public static TrObject __reversed__(TrObject self)
         {
             var cls = self.Class;

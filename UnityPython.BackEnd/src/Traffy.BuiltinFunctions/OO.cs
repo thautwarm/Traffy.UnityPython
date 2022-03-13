@@ -108,5 +108,24 @@ namespace Traffy
         {
             return x.__hash__();
         }
+
+        [PyBuiltin]
+        static TrObject pow(TrObject x, TrObject y)
+        {
+            return x.__pow__(y);
+        }
+
+        [PyBuiltin]
+        static TrObject repr(TrObject x)
+        {
+            return MK.Str(x.__repr__());
+        }
+
+        [PyBuiltin]
+        static TrObject round(TrObject x, TrObject n = null)
+        {
+            return x.__round__(n ?? MK.None());
+        }
+
     }
 }

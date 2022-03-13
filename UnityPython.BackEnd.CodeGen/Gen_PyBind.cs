@@ -59,7 +59,7 @@ public class Gen_PyBind : HasNamespace
             var cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
                     new Case(n, new EType(entry)[meth.Name].Call(arguments.Take(n).ToArray()))).ToArray();
             var localBindName = "__bind_" + methName;
-            var cm = CSMethod.PyMethod(localBindName, retType,
+            var cm = CSMethod.PyMethod(localBindName, typeof(TrObject),
                     args["Count"].Switch(
                         cases.Append(new Case(new EId("_"), new EArgcountError(args["Count"], arguments.Length - defaultArgCount, arguments.Length))).ToArray()
                     ).By(x => Box.Call(x))

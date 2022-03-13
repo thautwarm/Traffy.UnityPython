@@ -31,4 +31,36 @@ print(xs[::-1])
 
 print(list(reversed(xs[::1])))
 
+print(round(1.555, 2))
+print(round(5))
+
 # print(reversed({}))
+print(sorted([1, 2, 3, 1.5, -1]))
+
+class X:
+    def __init__(self, x):
+        self.x = x
+    def __gt__(self, x):
+        if type(x) is X:
+            return self.x > x.x
+        raise TypeError("x")
+    def __lt__(self, x):
+        if type(x) is X:
+            return self.x < x.x
+        raise TypeError("x")
+    def __eq__(self, x):
+        if type(x) is X:
+            return self.x == x.x
+        return False
+    def __ge__(self, x):
+        if type(x) is X:
+            return self.x >= x.x
+        raise TypeError("x")
+    def __le__(self, x):
+        if type(x) is X:
+            return self.x <= x.x
+        raise TypeError("x")
+    def __repr__(self) -> str:
+        return  f"<X {self.x}>"
+
+print(sorted([X(1.2), X(1.0), X(2)]))

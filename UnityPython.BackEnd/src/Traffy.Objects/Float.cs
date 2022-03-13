@@ -13,6 +13,13 @@ namespace Traffy.Objects
 
         object TrObject.Native => value;
         List<TrObject> TrObject.__array__ => null;
+
+        TrObject TrObject.__round__(TrObject ndigits)
+        {
+            if (ndigits.IsNone())
+                return MK.Int(System.Convert.ToInt64(value));
+            return MK.Float(Math.Round(value, ndigits.AsInt(), MidpointRounding.AwayFromZero));
+        }
         bool TrObject.__bool__() => value != 0.0f;
 
         string TrObject.__repr__() => value.ToString();

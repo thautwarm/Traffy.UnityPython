@@ -201,25 +201,103 @@ namespace Traffy
         [PyBuiltin]
         static TrObject reversed(TrObject self)
         {
-            var cls = self.Class;
-            var rev = cls[cls.ic__reversed];
-            if (rev == null)
+            return self.__reversed__();
+        }
+
+        static TrObject _key = MK.Str("key");
+        static TrObject _reverse = MK.Str("reverse");
+
+        static Comparison<TrObject> _normal_cmp = (TrObject a, TrObject b) =>
+        {
+            if (a.__lt__(b))
+                return -1;
+            if (a.__eq__(b))
+                return 0;
+            return 1;
+        };
+
+        static Comparison<TrObject> _rev_cmp = (TrObject a, TrObject b) =>
+        {
+            if (a.__eq__(b))
+                return 0;
+            if (a.__lt__(b))
+                return 1;
+            return -1;
+        };
+
+        static Func<TrObject, Comparison<TrObject>> _normal_cmp_by = (TrObject key) => (TrObject a, TrObject b) =>
+        {
+            var ka = key.Call(a);
+            var kb = key.Call(b);
+            if (ka.__eq__(kb))
+                return 0;
+            if (ka.__lt__(kb))
+                return -1;
+            return 1;
+        };
+
+        static Func<TrObject, Comparison<TrObject>> _rev_cmp_by = (TrObject key) => (TrObject a, TrObject b) =>
+        {
+            var ka = key.Call(a);
+            var kb = key.Call(b);
+            if (ka.__eq__(kb))
+                return 0;
+            if (ka.__lt__(kb))
+                return 1;
+            return -1;
+        };
+
+        [PyBuiltin]
+        static TrObject sorted(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            if (args.Count != 1)
+                throw new TypeError($"sorted() expected 1 argument, got {args.Count}");
+            var self = args[0];
+            TrObject key = null;
+            bool reverse = false;
+
+            if (kwargs != null)
             {
-                var meth_len = cls[cls.ic__len];
-                var meth_getitem = cls[cls.ic__getitem];
-                if (meth_len == null || meth_getitem == null)
-                    throw new TypeError($"{cls.Name} object is not reversible");
-                var count = meth_len.Call(self).AsInt();
-                static IEnumerator<TrObject> reversed_from_protocol(TrObject self, TrObject getitem, int count)
+                kwargs.TryGetValue(_key, out key);
+                if (kwargs.TryGetValue(_reverse, out var o_rev))
                 {
-                    for (var i = count - 1; i >= 0; i--)
-                    {
-                        yield return getitem.Call(self, MK.Int(i));
-                    }
+                    reverse = o_rev.AsBool();
                 }
-                return MK.Iter(reversed_from_protocol(self, meth_getitem, count));
             }
-            return rev.Call(self);
+
+            List<TrObject> seq;
+            if (self is TrList lst)
+            {
+                seq = lst.container.Copy();
+            }
+            else
+            {
+                seq = self.__iter__().ToList();
+            }
+
+            if (key == null)
+            {
+                if (reverse)
+                {
+                    seq.Sort(_rev_cmp);
+                }
+                else
+                {
+                    seq.Sort();
+                }
+            }
+            else
+            {
+                if (reverse)
+                {
+                    seq.Sort(_rev_cmp_by(key));
+                }
+                else
+                {
+                    seq.Sort(_normal_cmp_by(key));
+                }
+            }
+            return MK.List(seq);
         }
     }
 

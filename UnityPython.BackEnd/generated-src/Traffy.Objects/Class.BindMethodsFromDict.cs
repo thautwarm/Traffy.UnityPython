@@ -50,6 +50,8 @@ namespace Traffy.Objects
                 this[MagicNames.i___call__] = o_call;
             if (!this.IsSet(MagicNames.i___contains__) && cp_kwargs.TryPop(MagicNames.s_contains, out var o_contains))
                 this[MagicNames.i___contains__] = o_contains;
+            if (!this.IsSet(MagicNames.i___round__) && cp_kwargs.TryPop(MagicNames.s_round, out var o_round))
+                this[MagicNames.i___round__] = o_round;
             if (!this.IsSet(MagicNames.i___reversed__) && cp_kwargs.TryPop(MagicNames.s_reversed, out var o_reversed))
                 this[MagicNames.i___reversed__] = o_reversed;
             if (!this.IsSet(MagicNames.i___getitem__) && cp_kwargs.TryPop(MagicNames.s_getitem, out var o_getitem))

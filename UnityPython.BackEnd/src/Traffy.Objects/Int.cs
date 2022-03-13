@@ -8,9 +8,15 @@ namespace Traffy.Objects
     {
         public static TrObject ToTr(this int self) => MK.Int(self);
 
-        public static int AsInt(this TrObject self) => (int)((TrInt)self).value;
-
-        public static int AsIntUnchecked(this TrObject self) => unchecked((int)((TrInt)self).value);
+        public static int AsInt(this TrObject self)
+        {
+            var i = self as TrInt;
+            if (i == null)
+            {
+                throw new TypeError($"'{self.Class.Name}' object cannot be interpreted as an integer");
+            }
+            return unchecked((int) i.value);
+        }
     }
     [Serializable]
     public sealed partial class TrInt : TrObject
@@ -19,6 +25,9 @@ namespace Traffy.Objects
         object TrObject.Native => value;
 
         string TrObject.__repr__() => value.ToString();
+
+        // XXX: CPython behavior: check 'ndigit' should be int
+        TrObject TrObject.__round__(TrObject _) => this;
 
         public static TrClass CLASS;
         TrClass TrObject.Class => CLASS;

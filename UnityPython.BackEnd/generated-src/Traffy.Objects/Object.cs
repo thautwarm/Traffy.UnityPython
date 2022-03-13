@@ -84,6 +84,10 @@ using System;
         {
             return TrObject.__contains__(this,a);
         }
+        TrObject __round__(TrObject ndigits)
+        {
+            return TrObject.__round__(this,ndigits);
+        }
         TrObject __reversed__()
         {
             return TrObject.__reversed__(this);
