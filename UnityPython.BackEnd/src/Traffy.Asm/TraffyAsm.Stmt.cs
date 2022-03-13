@@ -905,10 +905,61 @@ namespace Traffy.Asm
             return RTS.object_none;
         }
 
-        public MonoAsync<TrObject> cont(Frame frame)
+        public async MonoAsync<TrObject> cont(Frame frame)
         {
-            throw new InvalidOperationException("continuation is not supported for delete item");
+            frame.traceback.Push(position);
+            var rt_value = value.hasCont ? await value.cont(frame) : value.exec(frame);
+            var rt_item = item.hasCont ? await item.cont(frame) : item.exec(frame);
+            RTS.object_delitem(rt_value, rt_item);
+            frame.traceback.Pop();
+            return RTS.object_none;
         }
     }
 
+    [Serializable]
+    public sealed class Assert: TraffyAsm
+    {
+        public bool hasCont { get; set;}
+        public int position;
+        public TraffyAsm test;
+        [AllowNull] public TraffyAsm msg;
+
+        public TrObject exec(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_test = test.exec(frame);
+            if (!RTS.object_bool(rt_test))
+            {
+                if (msg == null)
+                {
+                    throw new AssertionError();
+                }
+                else
+                {
+                    throw new AssertionError(msg.exec(frame));
+                }
+            }
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+
+        public async MonoAsync<TrObject> cont(Frame frame)
+        {
+            frame.traceback.Push(position);
+            var rt_test = test.hasCont ? await test.cont(frame) : test.exec(frame);
+            if (!RTS.object_bool(rt_test))
+            {
+                if (msg == null)
+                {
+                    throw new AssertionError();
+                }
+                else
+                {
+                    throw new AssertionError(msg.hasCont ? await msg.cont(frame) : msg.exec(frame));
+                }
+            }
+            frame.traceback.Pop();
+            return RTS.object_none;
+        }
+    }
 }

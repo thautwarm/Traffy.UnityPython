@@ -181,12 +181,14 @@ def test3():
         s += o.x
     return s
 
-testfunc(test3)
+# testfunc(test3)
 
 class X:
     k = 5
     pass
 
 print(XX.xx)
+
+# assert X.k == 8, "asda"
 
 

@@ -8,6 +8,7 @@ from ast import (
 
     Import,
     ImportFrom,
+    Assert,
 
     For,
     Index,
@@ -164,6 +165,11 @@ class ScoperStmt(StmtNodeVisitorInlineCache):
     def solve(self):
         solved = self.symtable_builder.solve()
         return solved
+
+    def visit_Assert(self, node: Assert) -> Any:
+        self.rhs_scoper.visit(node.test)
+        if node.msg:
+            self.rhs_scoper.visit(node.msg)
 
     def visit_Import(self, node: Import) -> Any:
         for alias in node.names:

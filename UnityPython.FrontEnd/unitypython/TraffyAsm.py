@@ -629,6 +629,14 @@ class DeleteItem(TraffyIR):
 
 
 @dataclass
+class Assert(TraffyIR):
+    position: int
+    hasCont: bool
+    test: TraffyIR
+    msg: TraffyIR | None
+
+
+@dataclass
 class TrFuncPointer(object):
     posargcount: int
     allargcount: int

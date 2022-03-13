@@ -1274,8 +1274,18 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         assign = ir.Assign(position, False, lhs, rhs)
         return assign
 
+    def visit_Assert(self, node: Assert) -> Any:
+        self.root.cur_pos = extract_pos(node)
+        position = self.root.pos_ind
+        hasCont = False
+        test = self.root.rhs_transpiler.visit(node.test)
+        hasCont = hasCont or test.hasCont
+        msg = None
+        if node.msg:
+            msg = self.root.rhs_transpiler.visit(node.msg)
+            hasCont = hasCont or msg.hasCont
+        return ir.Assert(position, hasCont, test, msg)
 
-        
 def compile_module(filename: str,  modulename: str, src: str, ignore_src: bool = False) -> ir.ModuleSpec:
     node: Module = parse(src, filename=filename)
     top = Transpiler(filename, None if ignore_src else src, ir.Span.empty(), None)
