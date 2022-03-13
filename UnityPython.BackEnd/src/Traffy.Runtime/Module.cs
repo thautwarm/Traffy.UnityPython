@@ -7,7 +7,6 @@ namespace Traffy
 {
     public class ModuleSystem
     {
-        
         public static void LoadDirectory(string directory)
         {
             var files = System.IO.Directory.GetFiles(directory, "*" + Initialization.IR_FILE_SUFFIX);
@@ -22,6 +21,8 @@ namespace Traffy
 
         static object ModuleLock = new object();
         static Dictionary<string, TrModule> modules = new Dictionary<string, TrModule>();
+
+        public static Dictionary<string, TrModule> Modules => modules;
 
         static string PROJECT_DIR = ".";
         public static void SetProjectDir(string dir)

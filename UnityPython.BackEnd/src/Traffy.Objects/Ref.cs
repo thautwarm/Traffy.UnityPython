@@ -8,12 +8,12 @@ namespace Traffy.Objects
     {
         public TrObject value;
         static string s_attrValue = String.Intern("value");
-        public object Native => this;
+        object TrObject.Native => this;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()

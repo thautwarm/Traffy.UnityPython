@@ -66,6 +66,16 @@ namespace Traffy
             throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to string");
         }
 
+        public static TrRef Apply(THint<TrRef> _, TrObject o)
+        {
+            var s_o = o as TrRef;
+            if (s_o != null)
+            {
+                return s_o;
+            }
+            throw new TypeError($"requires '{TrRef.CLASS.Name}', got {o.Class.Name}");
+        }
+
         public static byte[] Apply(THint<byte[]> _, TrObject o)
         {
             var b_o = o as TrBytes;

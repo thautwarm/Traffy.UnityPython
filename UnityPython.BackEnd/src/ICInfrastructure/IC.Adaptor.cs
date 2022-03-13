@@ -162,6 +162,11 @@ namespace Traffy.InlineCache
 
         public static void WriteInst(TrObject self, Shape shape, TrObject value)
         {
+            if (shape.Kind == AttributeKind.Property)
+            {
+                shape.Property.Set(self, value);
+                return;
+            }
             if (self.__array__ == null || self.Class.IsFixed)
                 throw new AttributeError(self, MK.IStr(shape.Name), $"object {self.Class.Name} has no attribute {shape.Name}");
             self.SetInstField(shape.FieldIndex, shape.Name.Value, value);

@@ -37,12 +37,12 @@ namespace Traffy.Objects
 
 
 
-    public partial class TrClass : TrObject
+    public sealed partial class TrClass : TrObject
     {
         public bool IsClass => true;
         static IdComparer idComparer = new IdComparer();
         public static Dictionary<Type, TrClass> TypeDict = new Dictionary<Type, TrClass>();
-        public static TrClass MetaClass = null;
+        static TrClass MetaClass = null;
 
         public bool IsFixed = false;
         public bool IsSealed = false;

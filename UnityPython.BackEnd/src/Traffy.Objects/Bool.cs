@@ -26,15 +26,16 @@ namespace Traffy.Objects
 
         string TrObject.__repr__() => value ? "True" : "False";
         object TrObject.Native => value;
-        public static TrBool TrBool_True = new TrBool(true);
-        public static TrBool TrBool_False = new TrBool(false);
+        internal static TrBool TrBool_True = new TrBool(true);
+        internal static TrBool TrBool_False = new TrBool(false);
 
+        public TrBool(){ }
         private TrBool(bool v)
         {
             value = v;
         }
 
-        public static TrClass CLASS = null;
+        static TrClass CLASS = null;
         TrClass TrObject.Class => CLASS;
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

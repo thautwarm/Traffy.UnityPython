@@ -5,16 +5,15 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Traffy.Objects
 {
-    public class TrSharpFunc : TrObject
+    public sealed class TrSharpFunc : TrObject
     {
-        public string __repr__() => $"<function {name}>";
-        [NotNull] public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
-        public bool __bool__() => true;
         public string name;
-        public Dictionary<TrObject, TrObject> __dict__ => null;
+        [NotNull] public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
+        string TrObject.__repr__() => $"<function {name}>";
+        bool TrObject.__bool__() => true;
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -31,7 +30,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             try
             {

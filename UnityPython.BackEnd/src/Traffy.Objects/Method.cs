@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
@@ -7,14 +8,25 @@ namespace Traffy.Objects
     {
         public TrObject func;
 
+        [PyBind]
+        public TrObject __func__
+        {
+            get { return func; }
+            set { func = value; }
+        }
         public TrObject self;
 
-        public Dictionary<TrObject, TrObject> __dict__ => null;
+        [PyBind]
+        public TrObject __self__
+        {
+            get { return self; }
+            set { self = value; }
+        }
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
         string TrObject.__repr__() => $"<bound method {func.__repr__()} at {self.__repr__()}>";
 

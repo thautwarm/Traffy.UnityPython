@@ -7,12 +7,12 @@ using InlineHelper;
 namespace Traffy.Objects
 {
     [Serializable]
-    public class TrBytes : TrObject
+    public sealed class TrBytes : TrObject
     {
         public byte[] contents;
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
-            bool isEqual = false;
+            bool isEqual;
             if (other is TrBytes b)
             {
                 if (contents.Inline().SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents, out isEqual))
@@ -31,7 +31,7 @@ namespace Traffy.Objects
 
         string TrObject.__repr__() => contents.Select(x => $"\\x{x:X}").Prepend("b'").Append("'").By(String.Concat);
         bool TrObject.__bool__() => contents.Length != 0;
-        static TrClass CLASS;
+        public static TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -67,9 +67,9 @@ namespace Traffy.Objects
 
         bool TrObject.__le__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents, out var _)
+            ? contents.Inline().SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqLtE<FArray<byte>, FList<byte>, byte>(byteArray.contents, out var _)
+            ? contents.Inline().SeqLtE<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <=: '{CLASS.Name}' and '{other.Class.Name}'");
 
         bool TrObject.__lt__(TrObject other) =>
@@ -89,9 +89,9 @@ namespace Traffy.Objects
 
         bool TrObject.__ge__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqGtE<FArray<byte>, FArray<byte>, byte>(b.contents, out var _)
+            ? contents.Inline().SeqGtE<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqGtE<FArray<byte>, FList<byte>, byte>(byteArray.contents, out var _)
+            ? contents.Inline().SeqGtE<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for >=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
@@ -103,7 +103,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for !=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool __eq__(TrObject other) =>
+        bool TrObject.__eq__(TrObject other) =>
             (other is TrBytes b)
             ? contents.Inline().SeqEq<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -143,7 +143,7 @@ namespace Traffy.Objects
                 var arg2 = args[2] as TrStr;
                 if (arg2 == null)
                     throw new TypeError($"bytes(str, encoding) argument 2 must be str, not {args[2].Class.Name}");
-                switch (arg2.value)
+                switch (arg2.value.ToLowerInvariant())
                 {
                     case "utf8":
                     case "utf-8":

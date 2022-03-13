@@ -29,6 +29,7 @@ public class Gen_PyBind : HasNamespace
         {
             return;
         }
+        (this as HasNamespace).AddNamepace("System");
         (this as HasNamespace).AddNamepace("System.Collections.Generic");
         CSExpr THint(Type t) => new EType((new TId("THint"))[t])["Unique"];
         CSExpr Unbox = (new EId("Unbox"))["Apply"];
@@ -39,7 +40,7 @@ public class Gen_PyBind : HasNamespace
 
         (typeof(Mark)).RefGen(this);
 
-        foreach (var meth in entry.GetMethods(BindingFlags.Public | BindingFlags.Static))
+        foreach (var meth in entry.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
         {
             var attr = meth.GetCustomAttribute<PyBind>();
             if (attr == null)
@@ -68,7 +69,7 @@ public class Gen_PyBind : HasNamespace
         }
 
 
-        foreach (var meth in entry.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var meth in entry.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
         {
             var attr = meth.GetCustomAttribute<PyBind>();
             if (attr == null)
@@ -83,8 +84,21 @@ public class Gen_PyBind : HasNamespace
             var args = new EId(CSExpr.ARGS);
             var arguments = meth.GetParameters().Select((x, i) => Unbox.Call(THint(x.ParameterType), args[i + 1])).ToArray();
             var self = args[0].Cast(entry);
-            var cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
+            Case[] cases;
+            var methNameSplit = meth.Name.Split('.');
+            if (methNameSplit.Length != 1)
+            {
+                var realMethName = methNameSplit.Last();
+                var declTypeName = methNameSplit.Take(methNameSplit.Length - 1).By(x => String.Join(".", x));
+                var dcl = new TId(declTypeName);
+                cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
+                    new Case(n + 1, new ECast(self, dcl)[realMethName].Call(arguments.Take(n).ToArray()))).ToArray();
+            }
+            else
+            {
+                cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
                     new Case(n + 1, self[meth.Name].Call(arguments.Take(n).ToArray()))).ToArray();
+            }
             var localBindName = "__bind_" + methName;
             var cm = CSMethod.PyMethod(localBindName, typeof(TrObject),
                     args["Count"].Switch(
@@ -95,7 +109,7 @@ public class Gen_PyBind : HasNamespace
             defs.Add($"CLASS[{methName.Escape()}] = TrSharpFunc.FromFunc({methName.Escape()}, {localBindName});".Doc());
         }
 
-        foreach (var meth in entry.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var meth in entry.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
         {
             var attr = meth.GetCustomAttribute<PyBind>();
             if (attr == null)
@@ -107,10 +121,31 @@ public class Gen_PyBind : HasNamespace
             if (!hasReturn)
                 throw new Exception("Method " + meth.Name + " has no return type");
             var arg = new EId("_arg").Cast(entry);
-            var localBindName = "__bind_" + methName;
-            var cm = new CSMethod(localBindName, retType, new[] { ("_arg", (CSType)typeof(TrObject)) }, arg[meth.Name].By(x => Box.Call(x)));
-            defs.Add(cm.Doc());
-            defs.Add($"CLASS[{methName.Escape()}] = TrProperty.Create({localBindName}, null);".Doc());
+            var value = Unbox.Call(THint(retType), new EId("_value"));
+            var prop_Reader = "__read_" + methName;
+            var prop_Writer = "__write_" + methName;
+            if (!meth.CanRead)
+            {
+                defs.Add($"Func<TrObject, TrObject> {prop_Reader} = null;".Doc());
+            }
+            else
+            {
+                var cm = new CSMethod(prop_Reader, retType, new[] { ("_arg", (CSType)typeof(TrObject)) }, arg[meth.Name].By(x => Box.Call(x)));
+                defs.Add(cm.Doc());
+            }
+            if (!meth.CanWrite)
+            {
+                defs.Add($"Action<TrObject, TrObject> {prop_Writer} = null;".Doc());
+            }
+            else
+            {
+                var cm = new CSMethod(
+                    prop_Writer,
+                    typeof(void),
+                    new[] { ("_arg", typeof(TrObject)), ("_value", (CSType)typeof(TrObject)) }, arg[meth.Name].Assign(value));
+                defs.Add(cm.Doc());
+            }
+            defs.Add($"CLASS[{methName.Escape()}] = TrProperty.Create(CLASS.Name + \".{methName}\", {prop_Reader}, {prop_Writer});".Doc());
         }
         if (!s_GenerateAny)
             return;

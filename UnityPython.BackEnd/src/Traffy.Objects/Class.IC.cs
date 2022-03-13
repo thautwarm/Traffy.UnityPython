@@ -26,6 +26,10 @@ namespace Traffy.Objects
                     return true;
                 }
             }
+            if (LoadCachedShape_ReadClass(name, out ad) && ad.Kind == AttributeKind.Property)
+            {
+                return true;
+            }
             ad = null;
             return false;
         }
@@ -124,7 +128,7 @@ namespace Traffy.Objects
             }
             if (IsFixed)
                 throw new TypeError($"{Name} class has no attribute {name} (immutable)");
-            if (__instance_fields__.Count == Initialization.OBJECT_SHAPE_MAX_FIELD)
+            if (__instance_fields__.Count >= Initialization.OBJECT_SHAPE_MAX_FIELD)
             {
                 throw new TypeError($"class {Name} cannot add a shape for field {name} (more than 255 fields)");
             }

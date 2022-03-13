@@ -10,7 +10,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
         IEnumerator<TrObject> TrObject.__iter__() => container.GetEnumerator();
 
         string TrObject.__repr__() => "{" + string.Join(", ", container.Select(x => x.__repr__())) + "}";

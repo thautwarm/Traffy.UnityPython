@@ -21,7 +21,7 @@ namespace Traffy.Objects
         public static TrClass CLASS = null;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
         IEnumerator<TrObject> TrObject.__iter__() => this;
 
@@ -66,20 +66,10 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public bool MoveNext()
-        {
-            return iter.MoveNext();
-        }
+        public bool MoveNext() => iter.MoveNext();
+        public void Reset() => iter.Reset();
 
-        public void Reset()
-        {
-            iter.Reset();
-        }
-
-        public void Dispose()
-        {
-            iter.Dispose();
-        }
+        public void Dispose() => iter.Dispose();
     }
 
 }

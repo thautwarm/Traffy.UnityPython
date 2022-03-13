@@ -6,14 +6,13 @@ namespace Traffy.Objects
     public class TrStaticMethod : TrObject
     {
         public TrObject func;
-        public Dictionary<TrObject, TrObject> __dict__ => null;
 
-        public string __repr__() => $"<staticmethod {func.__repr__()}>";
+        string TrObject.__repr__() => $"<staticmethod {func.__repr__()}>";
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -33,7 +32,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             return func.__call__(args, kwargs);
         }

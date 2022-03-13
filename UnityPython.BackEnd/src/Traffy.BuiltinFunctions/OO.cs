@@ -96,5 +96,11 @@ namespace Traffy
                 throw new TypeError("setattr(): attribute name must be a string");
             return MK.None();
         }
+
+        [PyBuiltin]
+        static TrObject len(TrObject x)
+        {
+            return x.__len__();
+        }
     }
 }

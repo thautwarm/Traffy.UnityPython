@@ -4,17 +4,16 @@ using System.Collections.Generic;
 namespace Traffy.Objects
 {
     [Serializable]
-    public partial class TrFloat : TrObject
+    public sealed partial class TrFloat : TrObject
     {
         public float value;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public object Native => value;
-
-        public List<TrObject> __array__ => null;
-        public bool __bool__() => value != 0.0f;
+        object TrObject.Native => value;
+        List<TrObject> TrObject.__array__ => null;
+        bool TrObject.__bool__() => value != 0.0f;
 
         string TrObject.__repr__() => value.ToString();
 

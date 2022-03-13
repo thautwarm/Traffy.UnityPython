@@ -66,7 +66,9 @@ def const_to_variant(v: object) -> ir.TrObject:
 
 
 def _const_to_variant(v):
-    if isinstance(v, int):
+    if isinstance(v, bool):
+        return ir.TrBool(value=v)
+    elif isinstance(v, int):
         return ir.TrInt(value=v)
     elif isinstance(v, float):
         return ir.TrFloat(value=v)
@@ -74,8 +76,6 @@ def _const_to_variant(v):
         return ir.TrStr(value=v)
     elif v is None:
         return ir.TrNone()
-    elif isinstance(v, bool):
-        return ir.TrBool(value=v)
     elif isinstance(v, frozenset):
         raise TypeError(v)
     elif isinstance(v, tuple):

@@ -27,6 +27,8 @@ namespace CSAST
         public CSExpr Call(params CSExpr[] arguments) => new ECall(this, arguments);
         public CSExpr Switch(params Case[] cases) => new ESwitch(this, cases);
 
+        public CSExpr Assign(CSExpr value) => new EAssign(this, value);
+
         public CSExpr Cast(Type t) => new ECast(this, t);
 
         public static implicit operator CSExpr(int i) => new EInt(i);
@@ -115,6 +117,21 @@ namespace CSAST
         public override Doc Doc()
         {
             return func.Doc() * args.Select(x => x.Doc()).Join(Comma).SurroundedBy(Parens);
+        }
+    }
+
+    public class EAssign: CSExpr
+    {
+        public CSExpr left;
+        public CSExpr right;
+        public EAssign(CSExpr left, CSExpr right)
+        {
+            this.left = left;
+            this.right = right;
+        }
+        public override Doc Doc()
+        {
+            return left.Doc() + "=".Doc() + right.Doc();
         }
     }
 

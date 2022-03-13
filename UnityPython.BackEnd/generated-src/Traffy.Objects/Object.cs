@@ -16,9 +16,9 @@ using System;
         {
             return TrObject.__repr__(this);
         }
-        Boolean __next__(TrRef defaultValue)
+        Boolean __next__(TrRef refval)
         {
-            return TrObject.__next__(this,defaultValue);
+            return TrObject.__next__(this,refval);
         }
         TrObject __add__(TrObject a)
         {

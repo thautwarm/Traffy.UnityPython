@@ -1,32 +1,37 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
-    public partial class TrDict : TrObject
+    public sealed partial class TrDict : TrObject
     {
         public Dictionary<TrObject, TrObject> container;
-
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
-        public bool __bool__() => container.Count > 0;
+        string TrObject.__repr__() => "{" + String.Join(", ", container.Select(kv => $"{kv.Key.__repr__()}: {kv.Value.__repr__()}")) + "}";
 
-        public bool __getitem__(TrObject key, TrRef found)
+        bool TrObject.__bool__() => container.Count > 0;
+
+
+        TrObject TrObject.__getitem__(TrObject key)
         {
-            return container.TryGetValue(key, out found.value);
+            return container.TryGetValue(key, out var value) ? value : throw new KeyError(key);
         }
 
-        public void __setitem__(TrObject key, TrObject value)
+
+        void TrObject.__setitem__(TrObject key, TrObject value)
         {
             container[key] = value;
         }
 
-        public void __delitem__(TrObject key)
+
+        void TrObject.__delitem__(TrObject key)
         {
             container.Remove(key);
         }
@@ -35,10 +40,9 @@ namespace Traffy.Objects
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
-            CLASS = TrClass.CreateClass("dict");
+            CLASS = TrClass.FromPrototype<TrDict>("dict");
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("dict.__new__", TrDict.datanew));
-            CLASS[CLASS.ic__bool] = TrSharpFunc.FromFunc("dict.__new__", o => ((TrDict)o).__bool__());
             TrClass.TypeDict[typeof(TrDict)] = CLASS;
         }
 
@@ -72,10 +76,6 @@ namespace Traffy.Objects
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
-
-
-        public string __repr__() =>
-            "{" + String.Join(", ", container.Select(kv => $"{kv.Key.__repr__()}: {kv.Value.__repr__()}")) + "}";
     }
 
 }

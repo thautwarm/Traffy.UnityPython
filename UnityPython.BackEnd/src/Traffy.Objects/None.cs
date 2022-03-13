@@ -8,9 +8,9 @@ namespace Traffy.Objects
     public partial class TrNone : TrObject
     {
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
-        public object Native => this;
+        object TrObject.Native => this;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;

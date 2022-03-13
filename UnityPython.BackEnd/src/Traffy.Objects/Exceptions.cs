@@ -28,7 +28,7 @@ namespace Traffy.Objects
             return exc.traceback.cause;
         }
 
-        public static TrProperty _obj_getcause = TrProperty.Create(GetCause, null);
+        public readonly static TrProperty _obj_getcause = TrProperty.Create(TrSharpFunc.FromFunc("GetCause", GetCause), null);
 
         public TrExceptionBase UnsafeCause
         {
@@ -156,7 +156,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -187,7 +187,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(3);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(3);
 
         static InlineCache.PolyIC CacheName = new InlineCache.PolyIC("name".ToIntern());
         static InlineCache.PolyIC CacheObj = new InlineCache.PolyIC("obj".ToIntern());
@@ -241,8 +241,7 @@ namespace Traffy.Objects
         int TrExceptionBase.IndexArgs => _IndexArgs;
         static InlineCache.PolyIC CacheName = new InlineCache.PolyIC("name".ToIntern());
 
-        // __array__
-        public List<TrObject> __array__ { get; } = new List<TrObject>(2);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(2);
 
         void _Init(TrObject name, string msg)
         {
@@ -291,7 +290,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public TypeError(string msg) : base(msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
@@ -335,7 +334,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public ValueError(string msg) : base(msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
@@ -383,7 +382,7 @@ namespace Traffy.Objects
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
         static InlineCache.PolyIC CacheValue = new InlineCache.PolyIC("value".ToIntern());
-        public List<TrObject> __array__ { get; } = new List<TrObject>(2);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(2);
         public StopIteration(TrObject value) : base()
         {
             this.Base().args = new TrObject[] { value };
@@ -428,7 +427,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public LookupError(string msg) : base(msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
@@ -470,7 +469,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public KeyError(TrObject value) : base(value.__repr__())
         {
             this.Base().args = new TrObject[] { value };
@@ -513,7 +512,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public IndexError(string msg) : base(msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
@@ -556,7 +555,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public AssertionError(TrObject value) : base(value.__repr__())
         {
             this.Base().args = new TrObject[] { value };
@@ -605,7 +604,7 @@ namespace Traffy.Objects
         static PolyIC CacheName = new PolyIC("name".ToIntern());
         static PolyIC CachePath = new PolyIC("path".ToIntern());
         static PolyIC CacheMsg = new PolyIC("msg".ToIntern());
-        public List<TrObject> __array__ { get; } = new List<TrObject>(4);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(4);
         public ImportError(string name, TrObject path, string msg) : base(msg)
         {
             var o_msg = MK.Str(msg);
@@ -657,7 +656,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public RuntimeError(string msg) : base(msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
@@ -699,7 +698,7 @@ namespace Traffy.Objects
         static int _IndexArgs = -1;
         int TrExceptionBase.IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public NotImplementError(string msg) : base(msg)
         {
 
@@ -746,14 +745,14 @@ namespace Traffy.Objects
         static int _IndexTypeName = -1;
         static int _IndexMsg = -1;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
         public Exception Error;
-        public object Native => Error;
-        public bool __eq__(TrObject other)
+        object TrObject.Native => Error;
+        bool TrObject.__eq__(TrObject other)
         {
-            if (other is NativeError)
+            if (other is NativeError inner)
             {
-                return Error == ((NativeError)other).Error;
+                return Error == inner.Error;
             }
             return false;
         }
@@ -777,7 +776,7 @@ namespace Traffy.Objects
             CLASS.Name = "NativeError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NativeError.__new__", NativeError.datanew);
-            CLASS[CLASS.ic__eq] = TrSharpFunc.FromFunc("NativeError.__eq__", (o, r) => ((NativeError)o).__eq__(r));
+            CLASS[CLASS.ic__eq] = TrSharpFunc.FromFunc("NativeError.__eq__", (o, r) => o.__eq__(r));
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             _IndexMsg = CLASS.AddField("msg");

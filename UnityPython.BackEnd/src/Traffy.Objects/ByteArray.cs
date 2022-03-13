@@ -7,21 +7,22 @@ using InlineHelper;
 namespace Traffy.Objects
 {
 
-    public class TrByteArray : TrObject
+    public sealed class TrByteArray : TrObject
     {
         public FList<byte> contents;
-        public string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("bytearray(b'").Append("')").By(String.Concat);
-        public bool __bool__() => contents.Count != 0;
-        public List<TrObject> __array__ => null;
+        object TrObject.Native => contents;
+        string TrObject.__repr__() => contents.Select(x => $"\\x{x:X}").Prepend("bytearray(b'").Append("')").By(String.Concat);
+        bool TrObject.__bool__() => contents.Count != 0;
+        List<TrObject> TrObject.__array__ => null;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
         bool TrObject.__le__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.SeqLtE<FList<byte>, FArray<byte>, byte>(b.contents, out var _)
+            ? contents.SeqLtE<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.SeqLtE<FList<byte>, FList<byte>, byte>(byteArray.contents, out var _)
+            ? contents.SeqLtE<FList<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <=: '{CLASS.Name}' and '{other.Class.Name}'");
 
         bool TrObject.__lt__(TrObject other) =>
@@ -41,9 +42,9 @@ namespace Traffy.Objects
 
         bool TrObject.__ge__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.SeqGtE<FList<byte>, FArray<byte>, byte>(b.contents, out var _)
+            ? contents.SeqGtE<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.SeqGtE<FList<byte>, FList<byte>, byte>(byteArray.contents, out var _)
+            ? contents.SeqGtE<FList<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for >=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
@@ -55,7 +56,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for !=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool __eq__(TrObject other) =>
+        bool TrObject.__eq__(TrObject other) =>
             (other is TrBytes b)
             ? contents.SeqEq<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -80,9 +81,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public object Native => contents;
-
-        public TrObject __add__(TrObject other)
+        TrObject TrObject.__add__(TrObject other)
         {
             if (other is TrBytes b)
             {

@@ -59,9 +59,9 @@ namespace Traffy.Objects
             };
             frameRecords.Add(record);
         }
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
-        static TrClass CLASS;
+        public static TrClass CLASS;
         public TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]

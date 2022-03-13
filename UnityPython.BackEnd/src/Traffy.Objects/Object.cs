@@ -6,6 +6,16 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
 
+    public static class ExtTrObject
+    {
+        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptionsCompat.Best)]
+        public static TrObject AsObject<T>(this T self) where T: TrObject
+        {
+            return self;
+        }
+
+        public static bool IsNone(this TrObject self) => object.ReferenceEquals(self, TrNone.Unique);
+    }
     public class TraffyComparer : IEqualityComparer<TrObject>
     {
         public bool Equals(TrObject x, TrObject y)
@@ -76,7 +86,7 @@ namespace Traffy.Objects
 
 
         [MagicMethod]
-        public static bool __next__(TrObject self, TrRef defaultValue) =>
+        public static bool __next__(TrObject self, TrRef refval) =>
             throw self.unsupported(nameof(__next__));
 
         [MagicMethod]
@@ -296,7 +306,7 @@ namespace Traffy.Objects
 
     public class TrRawObject : TrUserObjectBase
     {
-        internal static TrClass CLASS;
+        public static TrClass CLASS;
         TrClass TrObject.Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]

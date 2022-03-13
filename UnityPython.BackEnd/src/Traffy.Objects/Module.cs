@@ -30,12 +30,12 @@ namespace Traffy.Objects
         ModuleSpec m_Spec;
         public Dictionary<TrObject, TrObject> Namespace = RTS.baredict_create();
 
-        static TrClass CLASS;
+        public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
-        public bool __bool__() => true;
+        bool TrObject.__bool__() => true;
         TrObject TrObject.__getitem__(TrObject item) => throw new TypeError("'module' object is not subscriptable");
         void TrObject.__setitem__(TrObject key, TrObject value) => throw new TypeError("'module' object is not subscriptable");
         bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found) =>

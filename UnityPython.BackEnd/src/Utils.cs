@@ -88,13 +88,19 @@ public static class Utils
             return true;
         for (int i = 0; i < seq1.Count; i++)
         {
-            if (seq1[i].Equals(seq2[i]))
-                return false;
+            if (!seq1[i].Equals(seq2[i]))
+                return true;
         }
-        return true;
+        return false;
     }
 
 
+    internal static bool SeqLtE<Col1, Col2, T>(this Col1 seq1, Col2 seq2) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
+    {
+        return SeqLtE<Col1, Col2, T>(seq1, seq2, out var _);
+    }
+
+    [MethodImpl(MethodImplOptionsCompat.Best)]
     internal static bool SeqLtE<Col1, Col2, T>(this Col1 seq1, Col2 seq2, out bool seqIsEqual) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
     {
         var commonLen = Math.Min(seq1.Count, seq2.Count);
@@ -137,6 +143,12 @@ public static class Utils
         return seq1.SeqLtE<Col1, Col2, T>(seq2, out var isEqual) && !isEqual;
     }
 
+    internal static bool SeqGtE<Col1, Col2, T>(this Col1 seq1, Col2 seq2) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
+    {
+        return SeqGtE<Col1, Col2, T>(seq1, seq2, out var _);
+    }
+
+    [MethodImpl(MethodImplOptionsCompat.Best)]
     internal static bool SeqGtE<Col1, Col2, T>(this Col1 seq1, Col2 seq2, out bool seqIsEqual) where Col1 : IList<T> where Col2 : IList<T> where T : IComparable<T>
     {
         var commonLen = Math.Min(seq1.Count, seq2.Count);

@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
 
-    public sealed class TrGenerator : TrObject, IEnumerator<TrObject>
+    public sealed partial class TrGenerator : TrObject, IEnumerator<TrObject>
     {
         // at the end of such generator, result is set.
         public Awaitable<TrObject> m_Generator;
@@ -22,7 +22,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -68,67 +68,44 @@ namespace Traffy.Objects
         IEnumerator<TrObject> TrObject.__iter__() => this;
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
-        public TrObject __next__()
+        bool TrObject.__next__(TrRef refval)
         {
             m_Generator.m_Result = RTS.object_none;
-            return m_Generator.MoveNext() ? m_Generator.GetResult() : throw new StopIteration(m_Generator.GetResult());
-        }
-
-        public TrObject __send__(TrObject v)
-        {
-            m_Generator.m_Result = v;
-            return m_Generator.MoveNext() ? m_Generator.GetResult() : throw new StopIteration(m_Generator.GetResult());
-        }
-
-        public TrObject __send__(TrObject v, TrRef found)
-        {
-            m_Generator.m_Result = v;
-            var ret = MK.Bool(m_Generator.MoveNext());
-            found.value = m_Generator.GetResult();
-            return ret;
-        }
-
-
-        public static TrObject __send__(TrObject _self, TrObject v)
-        {
-            var self = (TrGenerator)_self;
-            return self.__send__(v);
-        }
-
-        public static TrObject __send__(TrObject _self, TrObject v, TrRef found)
-        {
-            var self = (TrGenerator)_self;
-            return self.__send__(v, found);
-        }
-
-        static TrObject _overloaded_send(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        {
-            if (kwargs != null)
-                throw new TypeError("Generator.send() doesn't accept keyword arguments");
-            if (args.Count == 2)
-                return __send__(args[0], args[1]);
-            if (args.Count == 3)
+            if (m_Generator.MoveNext())
             {
-                return __send__(args[0], args[1], (TrRef)args[2]);
+                refval.value = m_Generator.GetResult();
+                return true;
             }
-            throw new ValueError("Generator.send() takes 1 or 2 arguments");
+            return false;
         }
 
-        public static TrObject _obj__send__ = TrSharpFunc.FromFunc("Generator.send", _overloaded_send);
+        [PyBind]
+        public bool send(TrObject sent, TrRef refval = null)
+        {
+            m_Generator.m_Result = sent;
+            if (m_Generator.MoveNext())
+            {
+                if (refval != null)
+                    refval.value = m_Generator.GetResult();
+                return true;
+            }
+            return false;
+        }
+
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrGenerator>("Generator");
-
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("Generator.__new__", TrGenerator.datanew));
-            CLASS.AddMethod("send", _obj__send__);
+            CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrGenerator)] = CLASS;
         }
         [Traffy.Annotations.Mark(typeof(TrGenerator))]
         static void _SetupClasses()
         {
             CLASS.SetupClass();
+            CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
         }
 

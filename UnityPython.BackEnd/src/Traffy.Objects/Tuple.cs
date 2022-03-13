@@ -20,7 +20,9 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
+        string TrObject.__repr__() =>
+            elts.Length == 1 ? $"({elts[0].__repr__()},)" : "(" + String.Join(", ", elts.Select(x => x.__repr__())) + ")";
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -30,6 +32,11 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("tuple.__new__", TrTuple.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrTuple)] = CLASS;
+        }
+
+        IEnumerator<TrObject> TrObject.__iter__()
+        {
+            return elts.AsEnumerable().GetEnumerator();
         }
 
         [Traffy.Annotations.Mark(typeof(TrTuple))]
@@ -52,9 +59,6 @@ namespace Traffy.Objects
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
-
-        public string __repr__() =>
-            elts.Length == 1 ? $"({elts[0].__repr__()},)" : "(" + String.Join(", ", elts.Select(x => x.__repr__())) + ")";
     }
 
 }

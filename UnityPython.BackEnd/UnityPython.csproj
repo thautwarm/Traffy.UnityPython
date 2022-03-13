@@ -5,7 +5,7 @@
     <TargetFramework>net6</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>NUNITY</DefineConstants>
+     <DefineConstants>NUNITY;TESTS</DefineConstants>
     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 

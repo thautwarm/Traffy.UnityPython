@@ -42,9 +42,10 @@ namespace Traffy.Objects
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetInstField(int FieldIndex, string name, TrObject value)
         {
+            // already checked notnull
             var array = __array__;
-            if (null == (object)array)
-                throw new AttributeError(this, MK.Str(name), $"object {Class.Name} has no attribute {name}");
+            // if (null == (object)array)
+            //     throw new AttributeError(this, MK.Str(name), $"object {Class.Name} has no attribute {name}");
 
             if (FieldIndex < array.Count)
             {

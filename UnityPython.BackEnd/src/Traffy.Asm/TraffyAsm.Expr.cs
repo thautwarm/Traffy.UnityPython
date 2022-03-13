@@ -631,7 +631,7 @@ namespace Traffy.Asm
         public TrObject exec(Frame frame)
         {
             frame.traceback.Push(position);
-            var localval = frame.load_local(slot);
+            var localval = frame.load_free(slot);
             frame.traceback.Pop();
             return localval;
         }

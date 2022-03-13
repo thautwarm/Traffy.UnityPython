@@ -15,11 +15,11 @@ namespace Traffy.Objects
      ) : TrObject
     {
 
-        static TrClass CLASS;
+        public static TrClass CLASS;
 
         public TrClass Class => CLASS;
 
-        public string __repr__()
+        string TrObject.__repr__()
         {
             return $"<function {fptr.metadata.codename}>";
         }
@@ -49,9 +49,9 @@ namespace Traffy.Objects
         }
         TrObject AsObject => this;
 
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
 
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             return Execute(args, kwargs, null);
         }

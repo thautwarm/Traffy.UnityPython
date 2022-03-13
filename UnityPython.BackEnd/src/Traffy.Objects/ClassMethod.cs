@@ -1,15 +1,29 @@
 using System;
 using System.Collections.Generic;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
-    public class TrClassMethod : TrObject
+    public sealed partial class TrClassMethod : TrObject
     {
         public TrObject func;
-        public Dictionary<TrObject, TrObject> __dict__ => null;
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-        public List<TrObject> __array__ => null;
+        List<TrObject> TrObject.__array__ => null;
+
+        [PyBind]
+        public TrObject __func__
+        {
+            get
+            {
+                return func;
+            }
+
+            set
+            {
+                func = value;
+            }
+        }
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -31,7 +45,6 @@ namespace Traffy.Objects
 
 
         // call types.MethodType
-
         public static TrClassMethod Bind(TrObject func)
         {
             return new TrClassMethod { func = func };

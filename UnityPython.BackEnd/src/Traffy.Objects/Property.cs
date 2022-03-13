@@ -1,26 +1,26 @@
 using System;
 using System.Collections.Generic;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
     public partial class TrProperty : TrObject
     {
-        public Func<TrObject, TrObject> getter = null;
-        public Action<TrObject, TrObject> setter = null;
-        public List<TrObject> __array__ => null;
+        TrObject _getter;
+        TrObject _setter = null;
+        List<TrObject> TrObject.__array__ => null;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
-
         TrObject bind_setter(TrObject o)
         {
-            setter = (self, v) => o.Call(self, v);
+            _setter = o;
             return this;
         }
 
         TrObject bind_getter(TrObject o)
         {
-            getter = (self) => o.Call(self);
+            _getter = o;
             return this;
         }
 
@@ -41,43 +41,51 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found)
+        [PyBind]
+        TrObject getter
         {
+            get {
+                return TrSharpFunc.FromFunc("property.getter", bind_getter);
+            }
+        }
 
-            var attr = ic.attribute.AsStr();
-            switch (attr)
-            {
-                case "setter":
-                    found = TrSharpFunc.FromFunc("property.setter", bind_setter);
-                    return true;
-                case "getter":
-                    found = TrSharpFunc.FromFunc("property.getter", bind_getter);
-                    return true;
-                default:
-                    found = null;
-                    return false;
+        [PyBind]
+        TrObject setter
+        {
+            get {
+                return TrSharpFunc.FromFunc("property.setter", bind_setter);
             }
         }
 
         internal TrObject Get(TrObject o)
         {
-            if (getter == null)
+            if (_getter == null)
                 throw new Exception("property has no getter");
-            return getter(o);
+            return _getter.Call(o);
         }
 
         internal void Set(TrObject trObject, TrObject value)
         {
-            if (setter == null)
+            if (_setter == null)
                 throw new Exception("property has no setter");
-            setter(trObject, value);
+            _setter.Call(trObject, value);
         }
 
-        public static TrProperty Create(Func<TrObject, TrObject> getter, Action<TrObject, TrObject> setter)
+        public static TrProperty Create(TrObject s_getter, TrObject s_setter)
         {
             var prop = new TrProperty();
-            prop.getter = getter;
-            prop.setter = setter;
+            prop._getter = s_getter;
+            prop._setter = s_setter;
+            return prop;
+        }
+
+        public static TrProperty Create(string name, Func<TrObject, TrObject> s_getter, Action<TrObject, TrObject> s_setter)
+        {
+            var prop = new TrProperty();
+            if (s_getter != null)
+                prop._getter = TrSharpFunc.FromFunc("get " + name, s_getter);
+            if (s_setter != null)
+                prop._setter = TrSharpFunc.FromFunc("set" + name, s_setter);
             return prop;
         }
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -90,9 +98,12 @@ namespace Traffy.Objects
             if (narg == 2 && kwargs == null)
             {
 
-                var pyfunc = args[1];
-                Func<TrObject, TrObject> getter = self => pyfunc.Call(self);
-                return TrProperty.Create(getter, null);
+                var prop = new TrProperty();
+                prop._getter = args[1];
+                return prop;
+                // var pyfunc = args[1];
+                // Func<TrObject, TrObject> getter = self => pyfunc.Call(self);
+                // return TrProperty.Create(getter, null);
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }

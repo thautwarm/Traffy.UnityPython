@@ -28,10 +28,10 @@ namespace Traffy.Objects
             throw new TypeError($"unsupported comparison for '{CLASS.Name}' and '{other.Class.Name}'");
         }
 
-        public string __repr__() => value.Escape();
-        public string __str__() => value;
-        public bool __bool__() => value.Length != 0;
-        public List<TrObject> __array__ => null;
+        string TrObject.__repr__() => value.Escape();
+        string TrObject.__str__() => value;
+        bool TrObject.__bool__() => value.Length != 0;
+        List<TrObject> TrObject.__array__ => null;
 
         public static TrClass CLASS;
         public TrClass Class => CLASS;
@@ -42,9 +42,9 @@ namespace Traffy.Objects
             InternedString.Unsafe(this.value) :
             InternedString.FromString(value);
 
-        public int __hash__() => value.GetHashCode();
+        int TrObject.__hash__() => value.GetHashCode();
 
-        public bool __contains__(TrObject other) => value.Contains(other.AsStr());
+        bool TrObject.__contains__(TrObject other) => value.Contains(other.AsStr());
 
         bool TrObject.__le__(TrObject other)
         {
@@ -87,18 +87,22 @@ namespace Traffy.Objects
         {
             if (!(other is TrStr b))
             {
-                throw new TypeError($"unsupported operand type(s) for !=: '{CLASS.Name}' and '{other.Class.Name}'");
+                return true;
             }
-            return value.Inline().SeqNe<FString, FString, char>(b.value);
+            if (isInterned && b.isInterned)
+                return !object.ReferenceEquals(value, b.value);
+            return value != b.value;
         }
 
         bool TrObject.__eq__(TrObject other)
         {
             if (!(other is TrStr b))
             {
-                throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
+                return false;
             }
-            return value.Inline().SeqEq<FString, FString, char>(b.value);
+            if (isInterned && b.isInterned)
+                return object.ReferenceEquals(value, b.value);
+            return value == b.value;
         }
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -119,26 +123,14 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public object Native => value;
+        object TrObject.Native => value;
 
-        public TrObject __add__(TrObject other)
+        TrObject TrObject.__add__(TrObject other)
         {
             if (other is TrStr s)
                 return MK.Str(value + s.value);
             throw new TypeError($"unsupported operand type(s) for +: '{CLASS.Name}' and '{other.Class.Name}'");
         }
-
-        public bool __eq__(TrObject other)
-        {
-            return
-                other is TrStr s &&
-                (isInterned
-                    ? object.ReferenceEquals(s.value, value)
-                    : s.value == value);
-        }
-
-
-
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
