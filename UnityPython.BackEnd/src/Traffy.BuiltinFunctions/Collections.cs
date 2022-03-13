@@ -299,6 +299,26 @@ namespace Traffy
             }
             return MK.List(seq);
         }
+
+        [PyBuiltin]
+        static TrObject sum(TrObject seq, TrObject start = null)
+        {
+            // TODO: 'start' keyword
+            if (start == null)
+            {
+                start = MK.Int(0);
+            }
+            var iter = seq.__iter__();
+            var sum = start;
+            while (true)
+            {
+                if (!iter.MoveNext())
+                {
+                    return sum;
+                }
+                sum = sum.__add__(iter.Current);
+            }
+        }
     }
 
 }

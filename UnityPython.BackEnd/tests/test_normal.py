@@ -39,7 +39,7 @@ print(sorted([1, 2, 3, 1.5, -1]))
 
 class X:
     def __init__(self, x):
-        self.x = x
+        self.x: int = x
     def __gt__(self, x):
         if type(x) is X:
             return self.x > x.x
@@ -63,4 +63,11 @@ class X:
     def __repr__(self) -> str:
         return  f"<X {self.x}>"
 
+    def __add__(self, x):
+        if type(x) is X:
+            return X(self.x + x.x)
+        raise TypeError("x")
+
 print(sorted([X(1.2), X(1.0), X(2)]))
+
+print(sum([X(2.0), X(3.0)], X(1.0)))

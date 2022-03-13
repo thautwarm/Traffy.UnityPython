@@ -26,6 +26,16 @@ namespace Traffy
             }
             Initialization.Prelude(TrSharpFunc.FromFunc("reversed", __bind_reversed));
             Initialization.Prelude(TrSharpFunc.FromFunc("sorted", sorted));
+            Traffy.Objects.TrObject __bind_sum(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                return Box.Apply(__args.Count switch
+                {
+                    1 => Traffy.Builtins.sum(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0])),
+                    2 => Traffy.Builtins.sum(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]),Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1])),
+                    _ => throw new ValueError("requires 1 to 2 argument(s), got " + __args.Count)
+                }) ;
+            }
+            Initialization.Prelude(TrSharpFunc.FromFunc("sum", __bind_sum));
             Initialization.Prelude(TrSharpFunc.FromFunc("print", print));
             Traffy.Objects.TrObject __bind_stacktrace(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
