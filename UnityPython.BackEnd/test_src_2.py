@@ -92,7 +92,13 @@ def test2():
         x += 1
     return x
 
-print(None)
+class XX:
+    xx =5
+    def __init__(self, x):
+        self.x = x
+
+
+
 # testfunc(test1)
 # testfunc(test2)
 
@@ -164,3 +170,21 @@ if xs.__next__(xr := ref()):
 
 print(int("0b111"))
 print(chr(49))
+
+
+def test3():
+    o = XX
+    i = 0
+    s = 0
+    while i < 10000000:
+        i += 1
+        s += o.xx
+    return s
+
+testfunc(test3)
+
+class X:
+    k = 5
+    pass
+
+print(XX.xx)

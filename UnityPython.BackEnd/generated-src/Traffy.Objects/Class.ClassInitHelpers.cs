@@ -28,9 +28,6 @@ namespace Traffy.Objects
         public PolyIC ic__getitem = new PolyIC(MagicNames.i___getitem__);
         public PolyIC ic__delitem = new PolyIC(MagicNames.i___delitem__);
         public PolyIC ic__setitem = new PolyIC(MagicNames.i___setitem__);
-        public PolyIC ic__findattr = new PolyIC(MagicNames.i___findattr__);
-        public PolyIC ic__getattr = new PolyIC(MagicNames.i___getattr__);
-        public PolyIC ic__setattr = new PolyIC(MagicNames.i___setattr__);
         public PolyIC ic__iter = new PolyIC(MagicNames.i___iter__);
         public PolyIC ic__await = new PolyIC(MagicNames.i___await__);
         public PolyIC ic__len = new PolyIC(MagicNames.i___len__);
@@ -54,9 +51,6 @@ namespace Traffy.Objects
             cls[MagicNames.i___str__] = TrSharpFunc.FromFunc("object.__str__", TrObject.__str__);
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc("object.__repr__", TrObject.__repr__);
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc("object.__hash__", TrObject.__hash__);
-            cls[MagicNames.i___findattr__] = TrSharpFunc.FromFunc("object.__findattr__", TrObject.__findattr__);
-            cls[MagicNames.i___getattr__] = TrSharpFunc.FromFunc("object.__getattr__", TrObject.__getattr__);
-            cls[MagicNames.i___setattr__] = TrSharpFunc.FromFunc("object.__setattr__", TrObject.__setattr__);
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc("object.__eq__", TrObject.__eq__);
             cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc("object.__ne__", TrObject.__ne__);
         }
@@ -65,7 +59,6 @@ namespace Traffy.Objects
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
             var ownership = typeof(T).GetInterfaceMethodSource();
-            bool test;
             if (ownership.Contains("__init__"))
                 cls[MagicNames.i___init__] = TrSharpFunc.FromFunc(cls.Name + ".__init__", (self,arg0,arg1) => ((T)self).__init__(arg0,arg1));
             if (ownership.Contains("__str__"))
@@ -112,12 +105,6 @@ namespace Traffy.Objects
                 cls[MagicNames.i___delitem__] = TrSharpFunc.FromFunc(cls.Name + ".__delitem__", (self,arg0) => ((T)self).__delitem__(arg0));
             if (ownership.Contains("__setitem__"))
                 cls[MagicNames.i___setitem__] = TrSharpFunc.FromFunc(cls.Name + ".__setitem__", (self,arg0,arg1) => ((T)self).__setitem__(arg0,arg1));
-            if (ownership.Contains("__findattr__"))
-                cls[MagicNames.i___findattr__] = TrSharpFunc.FromFunc(cls.Name + ".__findattr__", (self,arg0,arg1) => ((T)self).__findattr__(arg0,arg1));
-            if (ownership.Contains("__getattr__"))
-                cls[MagicNames.i___getattr__] = TrSharpFunc.FromFunc(cls.Name + ".__getattr__", (self,arg0) => ((T)self).__getattr__(arg0));
-            if (ownership.Contains("__setattr__"))
-                cls[MagicNames.i___setattr__] = TrSharpFunc.FromFunc(cls.Name + ".__setattr__", (self,arg0,arg1) => ((T)self).__setattr__(arg0,arg1));
             if (ownership.Contains("__iter__"))
                 cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((T)self).__iter__());
             if (ownership.Contains("__await__"))
@@ -178,9 +165,6 @@ namespace Traffy.Objects
             ic__getitem = new PolyIC(MagicNames.i___getitem__);
             ic__delitem = new PolyIC(MagicNames.i___delitem__);
             ic__setitem = new PolyIC(MagicNames.i___setitem__);
-            ic__findattr = new PolyIC(MagicNames.i___findattr__);
-            ic__getattr = new PolyIC(MagicNames.i___getattr__);
-            ic__setattr = new PolyIC(MagicNames.i___setattr__);
             ic__iter = new PolyIC(MagicNames.i___iter__);
             ic__await = new PolyIC(MagicNames.i___await__);
             ic__len = new PolyIC(MagicNames.i___len__);

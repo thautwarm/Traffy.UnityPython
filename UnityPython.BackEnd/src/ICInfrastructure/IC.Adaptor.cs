@@ -8,26 +8,17 @@ namespace Traffy.InlineCache
         [MethodImpl(MethodImplOptionsCompat.Best)]
         public bool Read(TrObject self, out TrObject ob)
         {
-            var cls = self as TrClass;
-            if (null == (object)cls)
-                return ReadInst(self, out ob);
-            return ReadClass(cls, out ob);
+            return self.__getic__(this, out ob);
         }
-
 
         public void Write(TrObject self, TrObject value)
         {
-            if (self is TrClass cls)
-            {
-                WriteClass(cls, value);
-                return;
-            }
-            WriteInst(self, value);
+            self.__setic__(this, value);
         }
 
-        public static bool ReadClass(TrClass Class, string name, out TrObject value)
+        public static bool ReadClass_refl(TrClass Class, TrStr name, out TrObject value)
         {
-            if (Class.LoadCachedShape_ReadClass(name, out var shape))
+            if (Class.LoadCachedShape_ReadClass(name.value, out var shape))
             {
                 return ReadClass(Class, shape, out value);
             }
@@ -63,12 +54,12 @@ namespace Traffy.InlineCache
             }
         }
 
-        public static void WriteClass(TrClass Class, string s, TrObject value)
+        public static void WriteClass_refl(TrClass Class, TrStr s, TrObject value)
         {
             if (Class.IsFixed)
-                throw new AttributeError(Class, MK.Str(s), $"class {Class.Name} has no attribute {s}");
+                throw new AttributeError(Class, s, $"class {Class.Name} has no attribute {s}");
 
-            if (Class.LoadCachedShape_TryWriteClass(s, out var ad))
+            if (Class.LoadCachedShape_TryWriteClass(s.value, out var ad))
             {
                 Class.UpdatePrototype();
                 if (value is TrProperty prop)
@@ -112,36 +103,37 @@ namespace Traffy.InlineCache
             Class.UpdatePrototype();
 
             Shape ad_;
+            var attr = s.GetInternedString();
 
             {
                 if (value is TrProperty prop)
                 {
-                    ad_ = Shape.MKProperty(s.ToIntern(), property: prop);
+                    ad_ = Shape.MKProperty(attr, property: prop);
                 }
                 else if (value is TrSharpFunc || value is TrFunc)
                 {
-                    ad_ = Shape.MKMethod(s.ToIntern(), method: value);
+                    ad_ = Shape.MKMethod(attr, method: value);
                 }
                 else if (value is TrClassMethod classmethod)
                 {
-                    ad_ = Shape.MKClassMethod(s.ToIntern(), Class, classmethod: classmethod.func);
+                    ad_ = Shape.MKClassMethod(attr, Class, classmethod: classmethod.func);
                 }
                 else if (value is TrStaticMethod staticmethod)
                 {
-                    ad_ = Shape.MKClassField(s.ToIntern(), staticmethod.func);
+                    ad_ = Shape.MKClassField(attr, staticmethod.func);
                 }
                 else
                 {
-                    ad_ = Shape.MKClassField(s.ToIntern(), value);
+                    ad_ = Shape.MKClassField(attr, value);
                 }
             }
 
             Class.__prototype__.Add(ad_.Name.Value, ad_);
         }
 
-        public static bool ReadInst(TrObject self, string s, out TrObject ob)
+        public static bool ReadInst_refl(TrObject self, TrStr s, out TrObject ob)
         {
-            if (!self.Class.LoadCachedShape_ReadInst(s, out var shape))
+            if (!self.Class.LoadCachedShape_ReadInst(s.value, out var shape))
             {
                 ob = null;
                 return false;
@@ -154,18 +146,18 @@ namespace Traffy.InlineCache
             return self.ReadInst(shape, out ob);
         }
 
-        public static void WriteInst(TrObject self, string s, TrObject value)
+        public static void WriteInst_refl(TrObject self, TrStr s, TrObject value)
         {
-            if (self.Class.LoadCachedShape_WriteInst(s, out var ad))
+            if (self.Class.LoadCachedShape_WriteInst(s.value, out var ad))
             {
                 WriteInst(self, ad, value);
                 return;
             }
             if (self.__array__ == null)
-                throw new AttributeError(self, MK.Str(s), $"object {self.Class.Name} has no attribute {s} (immutable)");
+                throw new AttributeError(self, s, $"object {self.Class.Name} has no attribute {s} (immutable)");
 
-            int index = self.Class.AddField(s);
-            self.SetInstField(index, s, value);
+            int index = self.Class.AddField(s.value);
+            self.SetInstField(index, s.value, value);
         }
 
         public static void WriteInst(TrObject self, Shape shape, TrObject value)

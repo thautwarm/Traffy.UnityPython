@@ -163,23 +163,17 @@ namespace Traffy.Objects
             self_setitem.Call(key, value);
         }
 
-        Boolean TrObject.__findattr__(TrObject name, TrRef found)
+        void TrObject.__delitem__(TrObject key)
         {
-            var self_getattr = this[Class.ic__getattr];
-            if ((object)self_getattr == null)
-                return TrObject.__findattr__(this, name, found);
-            return self_getattr.Call(name, found).AsBool();
-        }
-        void TrObject.__setattr__(TrObject name, TrObject value)
-        {
-            var self_setattr = this[Class.ic__setattr];
-            if ((object)self_setattr == null)
+            var self_delitem = this[Class.ic__delitem];
+            if ((object)self_delitem == null)
             {
-                TrObject.__setattr__(this, name, value);
+                TrObject.__delitem__(this, key);
                 return;
             }
-            self_setattr.Call(name, value);
+            self_delitem.Call(key);
         }
+
         IEnumerator<TrObject> TrObject.__iter__()
         {
             var self_iter = this[Class.ic__iter];

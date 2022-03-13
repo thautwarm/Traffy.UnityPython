@@ -21,7 +21,6 @@ namespace Traffy.Objects
             CLASS = TrClass.FromPrototype<TrRef>("ref");
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ref.__new__", TrRef.datanew);
-            CLASS.InstanceUseInlineCache = false;
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrRef)] = CLASS;
         }
@@ -34,23 +33,32 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        TrObject TrObject.__getattr__(TrObject s)
+        bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found)
         {
-            TrStr attr = (TrStr)s;
-            if (attr.isInterned && object.ReferenceEquals(attr.value, s_attrValue))
+            if (object.ReferenceEquals(ic.attribute, s_attrValue))
             {
                 if (value == null)
-                    value = RTS.object_none;
-                return value;
+                {
+                    found = null;
+                    return false;
+                }
+                found = value;
+                return true;
             }
-            switch (attr.value)
+            var attr = ic.attribute.AsStr();
+            switch (attr)
             {
                 case "value":
                     if (value == null)
-                        value = RTS.object_none;
-                    return value;
+                    {
+                        found = null;
+                        return false;
+                    }
+                    found = value;
+                    return true;
                 default:
-                    throw new AttributeError(this, attr, $"{Class.Name} has no attribute {attr}");
+                    found = null;
+                    return false;
             }
         }
 

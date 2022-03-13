@@ -16,20 +16,20 @@ namespace Traffy.Objects
         }
         public TrObject this[string s]
         {
-            get => __getic__(s, out var ob) ? ob : null;
-            set => __setic__(s, value);
+            get => __getic_refl__(MK.Str(s), out var ob) ? ob : null;
+            set => __setic_refl__(MK.Str(s), value);
         }
 
         public bool __getic__(PolyIC ic, out TrObject found) =>
-            ic.ReadInst(this, out found);
+            ic.ICInstance.ReadInst(this, out found);
         public void __setic__(PolyIC ic, TrObject value) =>
-            ic.WriteInst(this, value);
+            ic.ICInstance.WriteInst(this, value);
 
-        public bool __getic__(string s, out TrObject found) =>
-            PolyIC.ReadInst(this, s, out found);
+        public bool __getic_refl__(TrStr s, out TrObject found) =>
+            PolyIC.ReadInst_refl(this, s, out found);
 
-        public void __setic__(string s, TrObject value) =>
-            PolyIC.WriteInst(this, s, value);
+        public void __setic_refl__(TrStr s, TrObject value) =>
+            PolyIC.WriteInst_refl(this, s, value);
 
 
         public TrObject GetInstField(int FieldIndex, string name)

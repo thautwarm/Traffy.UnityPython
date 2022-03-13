@@ -39,7 +39,7 @@ namespace Traffy.Objects
         public object Native => this;
         public TrClass Class { get; }
         Exception unsupported(string op) =>
-            throw new TypeError($"{Class.Name} has no {op} method");
+            throw new TypeError($"{Class.Name} has no attribute '{op}'");
 
         // public static TrObject __new__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         // {
@@ -210,30 +210,6 @@ namespace Traffy.Objects
         [MagicMethod]
         public static void __setitem__(TrObject self, TrObject key, TrObject value) =>
             throw self.unsupported(nameof(__setitem__));
-
-
-        [MagicMethod(Default = true)]
-        public static bool __findattr__(TrObject self, TrObject name, TrRef found)
-        {
-            return self.__getic__(name.AsStr(), out found.value);
-        }
-
-        [MagicMethod(Default = true)]
-        public static TrObject __getattr__(TrObject self, TrObject name)
-        {
-            if (self.__getic__(name.AsStr(), out var found))
-            {
-                return found;
-            }
-            throw new AttributeError(self, name, $"{self.Class.Name} has no attribute {name}");
-        }
-
-
-        [MagicMethod(Default = true)]
-        public static void __setattr__(TrObject self, TrObject name, TrObject value)
-        {
-            self.__setic__(name.AsStr(), value);
-        }
 
         // default '__iter__'
         [MagicMethod]

@@ -331,21 +331,11 @@ namespace Traffy
 
         public static void object_setic(TrObject tos, InlineCache.PolyIC ic, TrObject value)
         {
-            if (!tos.Class.InstanceUseInlineCache)
-            {
-                object_setattr(tos, ic.attribute, value);
-                return;
-            }
             tos.__setic__(ic, value);
         }
 
         public static TrObject object_getic(TrObject tos, InlineCache.PolyIC ic)
         {
-            if (!tos.Class.InstanceUseInlineCache)
-            {
-                return object_getattr(tos, ic.attribute);
-            }
-
             if (tos.__getic__(ic, out var o))
             {
                 return o;
@@ -355,27 +345,35 @@ namespace Traffy
             throw new AttributeError(tos, MK.IStr(ic.Name), $"{tos.Class.Name} object has no attribute {ic.Name}");
         }
 
-
-        public static TrObject object_getattr(TrObject tos, TrObject attr)
+        public static void object_setattr(TrObject tos, TrObject name, TrObject value)
         {
-            return tos.__getattr__(attr);
+            object_setattr(tos, (TrStr) name, value);
+        }
+        public static void object_setattr(TrObject tos, TrStr name, TrObject value)
+        {
+            tos.__setic_refl__(name, value);
         }
 
-        public static void object_setattr(TrObject tos, string attr, TrObject value)
+        public static TrObject object_getattr(TrObject tos, TrObject name)
         {
-            tos.__setattr__(MK.Str(attr), value);
+            return object_getattr(tos, (TrStr) name);
         }
-
-        public static void object_setattr(TrObject tos, TrObject attr, TrObject value)
+        public static TrObject object_getattr(TrObject tos, TrStr name)
         {
-            tos.__setattr__(attr, value);
+            if (tos.__getic_refl__(name, out var o))
+            {
+                return o;
+            }
+            if (tos is TrClass cls)
+                throw new AttributeError(tos, name, $"class {cls.Name} has no attribute {name}");
+            throw new AttributeError(tos, name, $"{tos.Class.Name} object has no attribute {name}");
         }
 
         public static TrObject object_call(TrObject f, BList<TrObject> args) => f.__call__(args, null);
 
         public static TrObject object_eq(TrObject l, TrObject r) => MK.Bool(l.__eq__(r));
 
-        public static TrObject object_ne(TrObject l, TrObject r) => MK.Bool(!(l.__ne__(r)));
+        public static TrObject object_ne(TrObject l, TrObject r) => MK.Bool(!l.__ne__(r));
 
         public static TrObject object_lt(TrObject l, TrObject r) => MK.Bool(l.__lt__(r));
 
@@ -645,7 +643,7 @@ namespace Traffy
                         {
                             if (x is TrStr key)
                             {
-                                var value = mod.__getattr__(x);
+                                var value = RTS.object_getattr(mod, key);
                                 imported.Push((key, value));
                             }
                             else
@@ -675,7 +673,7 @@ namespace Traffy
                     foreach (var each in __all__)
                     {
                         var name = MK.Str(each);
-                        var value = mod.__getattr__(name);
+                        var value = RTS.object_getattr(mod, name);
                         imported.Push((name, value));
                     }
                 }

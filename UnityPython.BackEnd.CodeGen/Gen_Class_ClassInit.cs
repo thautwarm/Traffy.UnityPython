@@ -53,7 +53,6 @@ public class Gen_Class_ClassInit : HasNamespace
         IEnumerable<Doc> builtin_class_init_generator()
         {
             yield return "var ownership = typeof(T).GetInterfaceMethodSource();".Doc();
-            yield return "bool test;".Doc();
             foreach (var meth in magicMethods)
             {
                 if (meth.GetCustomAttribute<MagicMethod>().NonInstance)

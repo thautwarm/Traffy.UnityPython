@@ -38,29 +38,28 @@ namespace Traffy.Objects
         public bool __bool__() => true;
         TrObject TrObject.__getitem__(TrObject item) => throw new TypeError("'module' object is not subscriptable");
         void TrObject.__setitem__(TrObject key, TrObject value) => throw new TypeError("'module' object is not subscriptable");
+        bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found) =>
+            _read_module(ic.attribute, out found) || CLASS.__getic__(ic, out found);
+        void TrObject.__setic__(Traffy.InlineCache.PolyIC ic, Traffy.Objects.TrObject value) => _write_module(ic.attribute, value);
+        bool TrObject.__getic_refl__(Traffy.Objects.TrStr s, out Traffy.Objects.TrObject found) =>
+            _read_module(s, out found) || CLASS.__getic_refl__(s, out found);
+        void TrObject.__setic_refl__(TrStr s, TrObject value) => _write_module(s, value);
 
-        public TrObject __getattr__(TrObject name)
+        public bool _read_module(TrStr name, out TrObject found)
         {
-            if (Namespace.TryGetValue(name, out var value))
-            {
-                return value;
-            }
-            throw new AttributeError(this, name, $"No attribute {name.__repr__()}");
+            return Namespace.TryGetValue(name, out found);
         }
 
-        public void __setattr__(TrObject name, TrObject value)
+        public void _write_module(TrStr name, TrObject value)
         {
-            if (name is TrStr)
-                Namespace[name] = value;
-            else
-                throw new TypeError($"Attribute name must be a string, got {name.Class.Name}");
+            Namespace[name] = value;
         }
+
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
         {
             CLASS = TrClass.FromPrototype<TrModule>("module");
-            CLASS.InstanceUseInlineCache = false;
             TrClass.TypeDict[typeof(TrModule)] = CLASS;
         }
 

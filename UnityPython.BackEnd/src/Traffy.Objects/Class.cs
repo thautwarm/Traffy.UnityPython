@@ -39,7 +39,6 @@ namespace Traffy.Objects
 
     public partial class TrClass : TrObject
     {
-        public bool InstanceUseInlineCache = true;
         public bool IsClass => true;
         static IdComparer idComparer = new IdComparer();
         public static Dictionary<Type, TrClass> TypeDict = new Dictionary<Type, TrClass>();
@@ -70,14 +69,6 @@ namespace Traffy.Objects
         // values are never null
         public TrClass[] __base;
         public TrClass[] __mro;
-
-        public bool __getattr__(TrObject name, TrRef found) => this.__getic__(name.AsStr(), out found.value);
-        public void __setattr__(TrObject name, TrObject value)
-        {
-            if (IsFixed)
-                throw new TypeError($"can't set attribute '{name}' on {this}");
-            this.__setic__(name.AsStr(), value);
-        }
         public string Name;
         public bool __subclasscheck__(TrClass @class)
         {
@@ -335,9 +326,6 @@ namespace Traffy.Objects
             if (cp_kwargs != null)
                 BindMethodsFromDict(cp_kwargs);
 
-            if (this.IsSet(i___setattr__) || this.IsSet(i___getattr__))
-                InstanceUseInlineCache = false;
-
             if (this.IsSet(i___eq__) && !this.IsSet(i___hash__))
             {
                 TrObject unhashable(TrObject self)
@@ -355,24 +343,11 @@ namespace Traffy.Objects
                 this[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"{Class.Name}.__hash__", unhashable);
             }
 
-            if (this.IsSet(i___findattr__, out var findattr) && !this.IsSet(i___getattr__))
-            {
-                TrObject _getattr(TrObject self, TrObject key)
-                {
-                    TrRef v = new TrRef();
-                    var item = findattr.Call(self, key, v).__bool__();
-                    if (item)
-                        return v.value;
-                    throw new LookupError($"{self.Class.Name} does not have a key '{key.__str__()}'");
-                }
-                this[MagicNames.i___getattr__] = TrSharpFunc.FromFunc($"{Class.Name}.__getattr__", _getattr);
-            }
-
             if (cp_kwargs != null)
                 foreach (var kv in cp_kwargs)
                 {
                     if (kv.Key.IsStr())
-                        __setattr__(kv.Key, kv.Value);
+                        RTS.object_setattr(this, kv.Key, kv.Value);
                     else
                         throw new Exception($"Invalid keyword argument {kv.Key}");
                 }

@@ -36,6 +36,7 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public TrClass Class => CLASS;
         public TrStr Interned() => isInterned ? this : MK.IStr(value);
+        public InternedString GetInternedString() => InternedString.Unsafe(Interned().value);
 
         public InternedString AsIString() => isInterned ?
             InternedString.Unsafe(this.value) :

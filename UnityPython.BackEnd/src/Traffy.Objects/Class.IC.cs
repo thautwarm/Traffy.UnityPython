@@ -84,32 +84,32 @@ namespace Traffy.Objects
         }
 
         public bool __getic__(PolyIC ic, out TrObject found) =>
-            ic.ReadClass(this, out found);
+            ic.ICClass.ReadClass(this, out found);
         public void __setic__(PolyIC ic, TrObject value) =>
-            ic.WriteClass(this, value);
+            __setic_refl__(ic.attribute, value);
 
-        public bool __getic__(string s, out TrObject found) =>
-            PolyIC.ReadClass(this, s, out found);
+        public bool __getic_refl__(TrStr s, out TrObject found) =>
+            PolyIC.ReadClass_refl(this, s, out found);
 
-        public void __setic__(string s, TrObject value) =>
-            PolyIC.WriteClass(this, s, value);
+        public void __setic_refl__(TrStr s, TrObject value) =>
+            PolyIC.WriteClass_refl(this, s, value);
 
         public TrObject this[InternedString s]
         {
-            get => __getic__(s.Value, out var value) ? value : null;
-            set => __setic__(s.Value, value);
+            get => __getic_refl__(MK.IStr(s.Value), out var value) ? value : null;
+            set => __setic_refl__(MK.IStr(s.Value), value);
         }
 
         public TrObject this[string s]
         {
-            get => __getic__(s, out var value) ? value : null;
-            set => __setic__(s, value);
+            get => __getic_refl__(MK.Str(s), out var value) ? value : null;
+            set => __setic_refl__(MK.Str(s), value);
         }
 
         public TrObject this[PolyIC ic]
         {
             get => __getic__(ic, out var value) ? value : null;
-            set => __setic__(ic.Name.Value, value);
+            set => __setic_refl__(MK.IStr(ic.Name), value);
         }
 
         public int AddField(string name) => AddFieldOrFind(name, out var _);

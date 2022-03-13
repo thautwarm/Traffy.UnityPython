@@ -17,6 +17,9 @@ namespace Traffy
             Initialization.Prelude(TrSharpFunc.FromFunc("abs", Builtins.abs));
             Initialization.Prelude(TrSharpFunc.FromFunc("bin", Builtins.bin));
             Initialization.Prelude(TrSharpFunc.FromFunc("chr", Builtins.chr));
+            Initialization.Prelude(TrSharpFunc.FromFunc("hex", Builtins.hex));
+            Initialization.Prelude(TrSharpFunc.FromFunc("getattr", Builtins.getattr));
+            Initialization.Prelude(TrSharpFunc.FromFunc("setattr", Builtins.setattr));
         }
 
     

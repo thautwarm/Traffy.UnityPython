@@ -229,7 +229,7 @@ namespace Traffy.InlineCache
             ICInstance = new PolyIC_Inst(s_name);
             if (!name.isInterned)
                 name = name.Interned();
-            this.attribute = name;
+            attribute = name;
         }
 
         public PolyIC(InternedString name)
@@ -237,27 +237,7 @@ namespace Traffy.InlineCache
             s_name = name;
             ICClass = new PolyIC_Class(s_name);
             ICInstance = new PolyIC_Inst(s_name);
-            this.attribute = MK.IStr(name);
-        }
-
-        public bool ReadClass(TrClass Class, out TrObject ob)
-        {
-            return ICClass.ReadClass(Class, out ob);
-        }
-
-        public void WriteClass(TrClass Class, TrObject value)
-        {
-            WriteClass(Class, Name.Value, value);
-        }
-
-        public bool ReadInst(TrObject obj, out TrObject value)
-        {
-            return ICInstance.ReadInst(obj, out value);
-        }
-
-        public void WriteInst(TrObject obj, TrObject value)
-        {
-            ICInstance.WriteInst(obj, value);
+            attribute = MK.IStr(name);
         }
     }
 

@@ -30,7 +30,6 @@ namespace Traffy.Objects
             CLASS = TrClass.FromPrototype<TrProperty>("property");
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("property.__new__", datanew);
-            CLASS.InstanceUseInlineCache = false;
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrProperty)] = CLASS;
         }
@@ -42,19 +41,21 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public bool __getattr__(TrObject s, TrRef found)
+        bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found)
         {
-            var attr = s.AsStr();
+
+            var attr = ic.attribute.AsStr();
             switch (attr)
             {
                 case "setter":
-                    found.value = TrSharpFunc.FromFunc("property.setter", bind_setter);
+                    found = TrSharpFunc.FromFunc("property.setter", bind_setter);
                     return true;
                 case "getter":
-                    found.value = TrSharpFunc.FromFunc("property.getter", bind_getter);
+                    found = TrSharpFunc.FromFunc("property.getter", bind_getter);
                     return true;
                 default:
-                    throw new Exception($"property has no attribute {attr}");
+                    found = null;
+                    return false;
             }
         }
 

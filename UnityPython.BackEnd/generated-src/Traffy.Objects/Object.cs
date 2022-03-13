@@ -96,18 +96,6 @@ using System;
         {
             TrObject.__setitem__(this,key,value);
         }
-        Boolean __findattr__(TrObject name,TrRef found)
-        {
-            return TrObject.__findattr__(this,name,found);
-        }
-        TrObject __getattr__(TrObject name)
-        {
-            return TrObject.__getattr__(this,name);
-        }
-        void __setattr__(TrObject name,TrObject value)
-        {
-            TrObject.__setattr__(this,name,value);
-        }
         IEnumerator<TrObject> __iter__()
         {
             return TrObject.__iter__(this);
