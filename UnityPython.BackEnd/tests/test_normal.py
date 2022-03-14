@@ -108,4 +108,6 @@ x.append(2)
 x.extend([3, 4])
 x.extend(range(2, 5, 2))
 
+x.insert(0, 100)
+
 print(x)
