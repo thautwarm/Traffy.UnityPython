@@ -99,3 +99,13 @@ x = pp ** "asd"
 
 if isinstance(1, int):
     x = 5
+
+
+x = [1, 2]
+
+x.append(2)
+
+x.extend([3, 4])
+x.extend(range(2, 5, 2))
+
+print(x)

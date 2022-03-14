@@ -35,6 +35,24 @@ namespace Traffy.Objects
                 }) ;
             }
             CLASS["append"] = TrSharpFunc.FromFunc("append", __bind_append);
+            Traffy.Objects.TrObject __bind_extend(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                return Box.Apply(__args.Count switch
+                {
+                    2 => ((Traffy.Objects.TrList)__args[0]).extend(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1])),
+                    _ => throw new ValueError("requires 1 argument(s), got " + __args.Count)
+                }) ;
+            }
+            CLASS["extend"] = TrSharpFunc.FromFunc("extend", __bind_extend);
+            Traffy.Objects.TrObject __bind_insert(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                return Box.Apply(__args.Count switch
+                {
+                    3 => ((Traffy.Objects.TrList)__args[0]).insert(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]),Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[2])),
+                    _ => throw new ValueError("requires 2 argument(s), got " + __args.Count)
+                }) ;
+            }
+            CLASS["insert"] = TrSharpFunc.FromFunc("insert", __bind_insert);
         }
     }
 }

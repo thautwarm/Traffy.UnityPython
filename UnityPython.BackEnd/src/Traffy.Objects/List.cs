@@ -237,6 +237,43 @@ namespace Traffy.Objects
             container.Add(elt);
             return MK.None();
         }
+
+        [PyBind]
+        public TrObject extend(TrObject other)
+        {
+            if (other is TrList lst)
+            {
+                container.AddRange(lst.container);
+            }
+            else
+            {
+                var itr = other.__iter__();
+                while (itr.MoveNext())
+                {
+                    container.Add(itr.Current);
+                }
+            }
+            return MK.None();
+        }
+
+        [PyBind]
+        public TrObject insert(TrObject index, TrObject elt)
+        {
+            if (index is TrInt i)
+            {
+                if (i.value < 0)
+                    i.value += container.Count;
+                if (i.value < 0 || i.value > container.Count)
+                    throw new IndexError($"list assignment index out of range");
+                container.Insert(unchecked((int)i.value), elt);
+            }
+            else
+            {
+                throw new TypeError($"list indices must be integers, not '{index.AsClass.Name}'");
+            }
+            return MK.None();
+        }
+
     }
 
 }
