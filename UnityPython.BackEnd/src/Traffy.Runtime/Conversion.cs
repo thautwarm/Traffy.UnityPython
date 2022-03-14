@@ -56,6 +56,22 @@ namespace Traffy
     }
     public static class Unbox
     {
+
+        public static TrObject Apply(THint<TrObject> _, TrObject o)
+        {
+            return o;
+        }
+
+        public static T Apply<T>(THint<T> _, TrObject o) where T : class, TrObject
+        {
+            var s_o = o as T;
+            if ((object) s_o != null)
+            {
+                return s_o;
+            }
+            throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to string");
+        }
+
         public static string Apply(THint<string> _, TrObject o)
         {
             var s_o = o as TrStr;
@@ -158,11 +174,6 @@ namespace Traffy
                 return (byte)i_o.value;
             }
             throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to byte");
-        }
-
-        public static TrObject Apply(THint<TrObject> _, TrObject o)
-        {
-            return o;
         }
     }
 }

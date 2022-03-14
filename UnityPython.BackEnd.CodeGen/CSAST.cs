@@ -1,18 +1,38 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using PrettyDoc;
 using Traffy;
 using Traffy.Objects;
 using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
-using System.Reflection;
-using System;
 
 namespace CSAST
 {
     public interface CSAST
     {
         public Doc Doc();
+    }
+
+    public static class ExtStmt
+    {
+        public static Doc BlockDoc(this CSStmt[] stmts)
+        {
+            if (stmts.Length == 1)
+            {
+                return stmts[0].Doc().Indent(4);
+            }
+            return VSep(
+                "{".Doc(),
+                VSep(stmts.Select(x => x.Doc()).ToArray()).Indent(4),
+                "}".Doc()
+            );
+        }
+
+        public static CSExpr IsNotNull(this CSExpr a) => new EOp("!=", a, new EId("null"));
+
+        public static CSExpr And(this CSExpr a, CSExpr b) => new EOp("&&", a, b);
     }
 
     public abstract class CSExpr : CSAST
@@ -24,14 +44,185 @@ namespace CSAST
         public CSExpr this[string s] => new EAttr(s, this);
 
         public CSExpr this[CSExpr s] => new EItem(this, s);
+
+        public CSExpr Not() => new ENot(this);
         public CSExpr Call(params CSExpr[] arguments) => new ECall(this, arguments);
-        public CSExpr Switch(params Case[] cases) => new ESwitch(this, cases);
+        public CSStmt Switch(params Case[] cases) => new SSwitch(this, cases);
 
         public CSExpr Assign(CSExpr value) => new EAssign(this, value);
 
         public CSExpr Cast(Type t) => new ECast(this, t);
 
         public static implicit operator CSExpr(int i) => new EInt(i);
+        public static CSExpr operator+(CSExpr a, CSExpr b) => new EOp("+", a, b);
+        public static CSExpr operator-(CSExpr a, CSExpr b) => new EOp("+", a, b);
+
+        public static CSExpr OfConst(object o)
+        {
+            if (o == null)
+                return new EId("null");
+
+            switch(o)
+            {
+                case int i:
+                    return new EInt(i);
+                case string s:
+                    return new EStr(s);
+                case bool b:
+                    return new EBool(b);
+                case float f:
+                    return new EFloat(f);
+                default:
+                    throw new Exception($"Unsupported type {o.GetType().Name}");
+            }
+
+        }
+    }
+
+    public abstract class CSStmt: CSAST
+    {
+        public abstract Doc Doc();
+    }
+
+    public class SAssign : CSStmt
+    {
+        public CSExpr left;
+        public CSExpr right;
+        public SAssign(CSExpr left, CSExpr right)
+        {
+            this.left = left;
+            this.right = right;
+        }
+        public override Doc Doc()
+        {
+            return left.Doc() + "=".Doc() + right.Doc() * ";".Doc();
+        }
+    }
+
+    public class SDecl : CSStmt
+    {
+        public string n;
+
+        public CSType t;
+
+        public CSExpr expr;
+
+        public SDecl(string n, CSType t, CSExpr expr)
+        {
+            this.n = n;
+            this.t = t;
+            this.expr = expr;
+        }
+
+        public override Doc Doc()
+        {
+            if (t == null)
+                return "var".Doc() + n.Doc() + "=".Doc() + expr.Doc() * ";".Doc();
+            if (expr == null)
+                return t.Doc() + n.Doc() * ";".Doc();
+            return t.Doc() + n.Doc() + "=".Doc() + expr.Doc() * ";".Doc();
+        }
+    }
+
+    public class SExpr : CSStmt
+    {
+        public CSExpr expr;
+        public SExpr(CSExpr expr)
+        {
+            this.expr = expr;
+        }
+        public override Doc Doc()
+        {
+            return expr.Doc() * ";".Doc();
+        }
+    }
+    public class SError : CSStmt
+    {
+        public CSExpr msg;
+        public SError(CSExpr msg)
+        {
+            this.msg = msg;
+        }
+        public override Doc Doc()
+        {
+            return "throw new ValueError(".Doc() + msg.Doc() + ");".Doc();
+        }
+    }
+
+
+    public class SReturn : CSStmt
+    {
+        public CSExpr value;
+        public SReturn(CSExpr value)
+        {
+            this.value = value;
+        }
+
+        public SReturn()
+        {
+            this.value = null;
+        }
+        public override Doc Doc()
+        {
+            if (value == null)
+                return "return;".Doc();
+            return "return".Doc() + value.Doc() * ";".Doc();
+        }
+    }
+
+    public class SIf: CSStmt
+    {
+        public CSExpr condition;
+        public CSStmt[] then;
+        public CSStmt[] @else = null;
+        public SIf(CSExpr condition, params CSStmt[] then)
+        {
+            this.condition = condition;
+            this.then = then;
+        }
+        public SIf(CSExpr condition, CSStmt[] then, CSStmt[] @else)
+        {
+            this.condition = condition;
+            this.then = then;
+            this.@else = @else;
+        }
+        public override Doc Doc()
+        {
+            if (@else == null)
+                return VSep(
+                    "if".Doc() + condition.Doc().SurroundedBy(Parens),
+                    then.BlockDoc()
+                );
+
+            return VSep(
+                    "if".Doc() + condition.Doc().SurroundedBy(Parens),
+                    then.BlockDoc(),
+                    "else".Doc(),
+                    @else.BlockDoc()
+                );
+        }
+    }
+
+    public class SSwitch : CSStmt
+    {
+        public CSExpr expr;
+        public Case[] cases;
+        public SSwitch(CSExpr expr, Case[] cases)
+        {
+            this.expr = expr;
+            this.cases = cases;
+        }
+        public override Doc Doc()
+        {
+            return VSep(
+                "switch".Doc() * expr.Doc().SurroundedBy(Parens),
+                VSep(
+                    "{".Doc(),
+                        cases.Select(x => x.Doc()).Join(NewLine).Indent(4),
+                    "}".Doc()
+                )
+            );
+        }
     }
 
     public class EId : CSExpr
@@ -43,6 +234,7 @@ namespace CSAST
         }
         public override Doc Doc() => id.Doc();
     }
+
     public class EInt : CSExpr
     {
         public int value;
@@ -53,6 +245,18 @@ namespace CSAST
         public override Doc Doc()
         {
             return value.ToString().Doc();
+        }
+    }
+    public class EVarOut : CSExpr
+    {
+        public string name;
+        public EVarOut(string name)
+        {
+            this.name = name;
+        }
+        public override Doc Doc()
+        {
+            return "out var".Doc() + name.Doc();
         }
     }
     public class EStr : CSExpr
@@ -80,6 +284,18 @@ namespace CSAST
         }
     }
 
+    public class ENot : CSExpr
+    {
+        public CSExpr expr;
+        public ENot(CSExpr expr)
+        {
+            this.expr = expr;
+        }
+        public override Doc Doc()
+        {
+            return ("!".Doc() + expr.Doc()).SurroundedBy(Parens);
+        }
+    }
     public class EBool : CSExpr
     {
         public bool value;
@@ -105,22 +321,58 @@ namespace CSAST
             return type.Doc();
         }
     }
+
+    public class EOp : CSExpr
+    {
+        public string op;
+        public CSExpr left;
+        public CSExpr right;
+        public EOp(string op, CSExpr left, CSExpr right)
+        {
+            this.op = op;
+            this.left = left;
+            this.right = right;
+        }
+
+        public override Doc Doc()
+        {
+            return (left.Doc() + op.Doc() + right.Doc()).SurroundedBy(Parens);
+        }
+    }
     public class ECall : CSExpr
     {
         public CSExpr func;
         public CSExpr[] args;
+        public (string Key, CSExpr Arg)[] keywords;
         public ECall(CSExpr func, CSExpr[] args)
         {
             this.func = func;
             this.args = args;
+            this.keywords = Array.Empty<(string, CSExpr)>();
         }
+
+        public ECall(CSExpr func, CSExpr[] args, (string, CSExpr)[] keywords)
+        {
+            this.func = func;
+            this.args = args;
+            this.keywords = keywords;
+        }
+
         public override Doc Doc()
         {
-            return func.Doc() * args.Select(x => x.Doc()).Join(Comma).SurroundedBy(Parens);
+            if (keywords.Length == 0)
+                return func.Doc() * args.Select(x => x.Doc()).Join(Comma).SurroundedBy(Parens);
+            if (args.Length == 0)
+                return func.Doc() * keywords.Select(x => x.Key.Doc() + ":".Doc() + x.Arg.Doc()).Join(Comma).SurroundedBy(Parens);
+            return func.Doc() *
+                ( args.Select(x => x.Doc()).Join(Comma)
+                  * Comma
+                  * keywords.Select(x => x.Key.Doc() + ":".Doc() + x.Arg.Doc()).Join(Comma)
+                ).SurroundedBy(Parens);
         }
     }
 
-    public class EAssign: CSExpr
+    public class EAssign : CSExpr
     {
         public CSExpr left;
         public CSExpr right;
@@ -152,52 +404,32 @@ namespace CSAST
     public class EArgcountError : CSExpr
     {
         public CSExpr argcount;
+        public string methodname;
         public int min;
-        public int max = -1;
-        public EArgcountError(CSExpr argcount, int min, int max = -1)
+        public int max;
+        public EArgcountError(CSExpr argcount, string methodname, int min, int max)
         {
             this.argcount = argcount;
+            this.methodname = methodname;
             this.min = min;
             this.max = max;
         }
         public override Doc Doc()
         {
             if (max == min)
-                return $"throw new ValueError(\"requires {min} argument(s), got \" + {argcount.Doc()})".Doc();
-            return $"throw new ValueError(\"requires {min} to {max} argument(s), got \" + {argcount.Doc()})".Doc();
+                return $"throw new ValueError(\"{methodname}() requires {min} positional argument(s), got \" + {argcount.Doc()})".Doc();
+            return $"throw new ValueError(\"{methodname}() requires {min} to {max} positional argument(s), got \" + {argcount.Doc()})".Doc();
         }
     }
-    public record Case(CSExpr caseExpr, CSExpr body)
+    public record Case(CSExpr caseExpr, CSStmt[] body)
     {
         public Doc Doc()
         {
             if (caseExpr == null)
             {
-                return "_".Doc() * "=>".Doc() * body.Doc();
+                return "default:".Doc() * NewLine * body.BlockDoc();
             }
-            return caseExpr.Doc() + "=>".Doc() + body.Doc();
-        }
-    }
-
-    public class ESwitch : CSExpr
-    {
-        public CSExpr expr;
-        public Case[] cases;
-        public ESwitch(CSExpr expr, Case[] cases)
-        {
-            this.expr = expr;
-            this.cases = cases;
-        }
-        public override Doc Doc()
-        {
-            return VSep(
-                expr.Doc() + "switch".Doc(),
-                VSep(
-                    "{".Doc(),
-                        cases.Select(x => x.Doc()).Join(Comma * NewLine).Indent(4),
-                    "}".Doc()
-                )
-            );
+            return "case".Doc() + caseExpr.Doc() * ":".Doc() * NewLine * body.BlockDoc();
         }
     }
 
@@ -235,9 +467,9 @@ namespace CSAST
         string name,
         CSType returnType,
         (string name, CSType type)[] arguments,
-        CSExpr body) : CSAST
+        CSStmt[] body) : CSAST
     {
-        public static CSMethod PyMethod(string name, CSType returnType, CSExpr body)
+        public static CSMethod PyMethod(string name, CSType returnType, CSStmt[] body)
         {
             return new CSMethod(name, returnType, new (string name, CSType type)[2]
             {
@@ -250,14 +482,11 @@ namespace CSAST
         public Doc Doc()
         {
             var doc_arguments = arguments.Select(x => (x.name.Doc(), x.type.Doc())).ToArray();
-            var retIndicator =
-                (returnType is TC tc && tc.c == TypeConst.Void) ?
-                "".Doc() : "return".Doc();
             return GenerateMethod(
                 returnType.Doc(),
                 name.Doc(),
                 doc_arguments,
-                new[] { retIndicator + body.Doc() + ";".Doc() },
+                body.Select(x => x.Doc()).ToArray(),
                 Public: false
             );
         }
@@ -279,6 +508,8 @@ namespace CSAST
             }
             if (t.IsGenericType)
             {
+                if (t.GetGenericTypeDefinition() == t)
+                    goto TypeId;
                 return new TGen(t.GetGenericTypeDefinition(), t.GetGenericArguments().Select(x => (CSType)x).ToArray());
             }
             if (t == typeof(long))
@@ -293,6 +524,7 @@ namespace CSAST
                 return new TC(TypeConst.Object);
             if (t == typeof(void))
                 return new TC(TypeConst.Void);
+            TypeId:
             var name = t.Name;
             // replace `
             name = name.Replace("`", "");

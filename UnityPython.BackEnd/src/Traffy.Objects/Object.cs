@@ -43,6 +43,8 @@ namespace Traffy.Objects
             if (__lt__(other)) return -1;
             return 1;
         }
+
+        // if the object is a class, cast it.
         public TrClass AsClass => (TrClass)this;
         public bool IsClass => false;
         public List<TrObject> __array__ => null;

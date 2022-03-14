@@ -82,7 +82,7 @@ namespace Traffy
                         if (args[1] is TrStr attr)
                             return obj.__getic_refl__(attr, out found)
                             ? found
-                            : throw new AttributeError(obj, args[1], $"{obj.AsClass.Name} has no attribute '{attr}'");
+                            : throw new AttributeError(obj, args[1], $"{obj.Class.Name} has no attribute '{attr}'");
                         else
                             throw new TypeError("getattr(): attribute name must be a string");
                     }

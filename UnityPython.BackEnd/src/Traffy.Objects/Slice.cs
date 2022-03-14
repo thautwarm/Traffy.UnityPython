@@ -74,7 +74,7 @@ namespace Traffy.Objects
             else
             {
                 if (!step.IsNone())
-                    throw new TypeError($"slice step must be an integer, not '{step.AsClass.Name}'");
+                    throw new TypeError($"slice step must be an integer, not '{step.Class.Name}'");
                 istep = 1;
             }
             if (start is TrInt istart_o)
@@ -88,7 +88,7 @@ namespace Traffy.Objects
             else
             {
                 if (!start.IsNone())
-                    throw new TypeError($"slice start must be an integer, not '{start.AsClass.Name}'");
+                    throw new TypeError($"slice start must be an integer, not '{start.Class.Name}'");
                 istart = istep > 0 ? 0 : count - 1;
             }
 
@@ -103,7 +103,7 @@ namespace Traffy.Objects
             else
             {
                 if (!stop.IsNone())
-                    throw new TypeError($"slice stop must be an integer, not '{stop.AsClass.Name}'");
+                    throw new TypeError($"slice stop must be an integer, not '{stop.Class.Name}'");
                 istop = istep > 0 ? count : -1;
             }
             istop = Math.Max(-1, Math.Min(istop, count));

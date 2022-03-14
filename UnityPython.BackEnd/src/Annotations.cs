@@ -13,12 +13,14 @@ namespace Traffy.Annotations
 
     public class PyBind: Attribute
     {
+        public class Keyword: Attribute
+        {
+            public bool Only;
+        }
         public string Name;
     }
 
-    public class PyBuiltin: Attribute
-    {
-    }
+    public class PyBuiltin: Attribute { }
     public class Mark : Attribute
     {
         public object Token;

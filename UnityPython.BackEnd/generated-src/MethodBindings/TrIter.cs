@@ -10,11 +10,17 @@ namespace Traffy.Objects
         {
             Traffy.Objects.TrObject __bind___new__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
-                return Box.Apply(__args.Count switch
+                switch(__args.Count)
                 {
-                    2 => Traffy.Objects.TrIter.__new__(Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]),Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1])),
-                    _ => throw new ValueError("requires 2 argument(s), got " + __args.Count)
-                }) ;
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                        return Box.Apply(Traffy.Objects.TrIter.__new__(_0,_1));
+                    }
+                    default:
+                        throw new ValueError("__new__() requires 2 positional argument(s), got " + __args.Count);
+                }
             }
             CLASS["__new__"] = TrStaticMethod.Bind(CLASS.Name + "." + "__new__", __bind___new__);
         }

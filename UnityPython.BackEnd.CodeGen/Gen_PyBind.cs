@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CSAST;
 using PrettyDoc;
 using Traffy;
 using Traffy.Annotations;
 using Traffy.Objects;
 using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
-using CSAST;
+using static Helper;
 
 [CodeGen(Path = "MethodBindings/")]
 public class Gen_PyBind : HasNamespace
@@ -23,6 +24,7 @@ public class Gen_PyBind : HasNamespace
         RequiredNamespace.Clear();
     }
 
+
     void HasNamespace.Generate(Action<string> write)
     {
         if (!entry.IsAssignableTo(typeof(TrObject)))
@@ -31,14 +33,11 @@ public class Gen_PyBind : HasNamespace
         }
         (this as HasNamespace).AddNamepace("System");
         (this as HasNamespace).AddNamepace("System.Collections.Generic");
-        CSExpr THint(Type t) => new EType((new TId("THint"))[t])["Unique"];
-        CSExpr Unbox = (new EId("Unbox"))["Apply"];
-        CSExpr Box = (new EId("Box"))["Apply"];
 
-        List<Doc> defs = new List<Doc>();
+        List<Doc> defs = new();
         bool s_GenerateAny = false;
 
-        (typeof(Mark)).RefGen(this);
+        typeof(Mark).RefGen(this);
 
         foreach (var meth in entry.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
         {
@@ -48,21 +47,25 @@ public class Gen_PyBind : HasNamespace
             s_GenerateAny = true;
             var methName = attr.Name ?? meth.Name;
             var retType = meth.ReturnType;
-            var hasReturn = retType != typeof(void);
-            if (!hasReturn)
-                throw new Exception("Method " + meth.Name + " has no return type");
-            var defaultArgCount = meth.GetParameters().Count(x => x.DefaultValue != DBNull.Value);
-            var args = new EId(CSExpr.ARGS);
-            var arguments = meth.GetParameters().Select((x, i) =>
-                Unbox.Call(THint(x.ParameterType), args[i])).ToArray();
-            var methExpr = new EId(meth.Name);
-            var cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
-                    new Case(n, new EType(entry)[meth.Name].Call(arguments.Take(n).ToArray()))).ToArray();
+            var ps = meth.GetParameters().Select(x => (x.ParameterType, x.Name, x.DefaultValue)).ToArray();
+            var (nonDefaultArgCount, defaultArgCount) = countPositionalDefault(meth);
+            var methExpr = new EType(entry)[meth.Name];
+            var cases = Enumerable
+                    .Range(nonDefaultArgCount, defaultArgCount + 1)
+                    .Select(n =>
+                        new Case(
+                            n,
+                            CallFunc(retType, ps, n,
+                                (args, kws) => new ECall(methExpr, args, kws)).ToArray()))
+                    .ToArray();
             var localBindName = "__bind_" + methName;
             var cm = CSMethod.PyMethod(localBindName, typeof(TrObject),
-                    args["Count"].Switch(
-                        cases.Append(new Case(new EId("_"), new EArgcountError(args["Count"], arguments.Length - defaultArgCount, arguments.Length))).ToArray()
-                    ).By(x => Box.Call(x))
+                    PYARGS["Count"].Switch(
+                        cases.Append(new Case(null,
+                            new SExpr(
+                                new EArgcountError(PYARGS["Count"], methName, nonDefaultArgCount, nonDefaultArgCount + defaultArgCount)).SingletonArray()
+                                )).ToArray()
+                    ).SingletonArray()
                 );
             defs.Add(cm.Doc());
             defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, {localBindName});".Doc());
@@ -77,33 +80,41 @@ public class Gen_PyBind : HasNamespace
             s_GenerateAny = true;
             var methName = attr.Name ?? meth.Name;
             var retType = meth.ReturnType;
-            var hasReturn = retType != typeof(void);
-            if (!hasReturn)
-                throw new Exception("Method " + meth.Name + " has no return type");
-            var defaultArgCount = meth.GetParameters().Count(x => x.DefaultValue != DBNull.Value);
+            var (nonDefaultArgCount, defaultArgCount) = countPositionalDefault(meth);
             var args = new EId(CSExpr.ARGS);
-            var arguments = meth.GetParameters().Select((x, i) => Unbox.Call(THint(x.ParameterType), args[i + 1])).ToArray();
-            var self = args[0].Cast(entry);
-            Case[] cases;
+            var ps = meth.GetParameters()
+                .Select(x => (x.ParameterType, x.Name, x.DefaultValue))
+                .Prepend((entry, "__self", DBNull.Value))
+                .ToArray();
+
             var methNameSplit = meth.Name.Split('.');
+            Func<CSExpr, CSExpr> getMeth = self => self[meth.Name];
             if (methNameSplit.Length != 1)
             {
                 var realMethName = methNameSplit.Last();
                 var declTypeName = methNameSplit.Take(methNameSplit.Length - 1).By(x => String.Join(".", x));
                 var dcl = new TId(declTypeName);
-                cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
-                    new Case(n + 1, new ECast(self, dcl)[realMethName].Call(arguments.Take(n).ToArray()))).ToArray();
+                getMeth = self => new ECast(self, dcl)[realMethName];
             }
-            else
-            {
-                cases = Enumerable.Range(arguments.Length - defaultArgCount, defaultArgCount + 1).Select(n =>
-                    new Case(n + 1, self[meth.Name].Call(arguments.Take(n).ToArray()))).ToArray();
-            }
+
+            var cases = Enumerable
+                    .Range(nonDefaultArgCount + 1, defaultArgCount + 1)
+                    .Select(n =>
+                        new Case(
+                            n,
+                            CallFunc(retType, ps, n,
+                                (args, kws) => new ECall(getMeth(args[0]), args.Skip(1).ToArray(), kws)).ToArray()))
+                    .ToArray();
+
             var localBindName = "__bind_" + methName;
+
             var cm = CSMethod.PyMethod(localBindName, typeof(TrObject),
-                    args["Count"].Switch(
-                        cases.Append(new Case(new EId("_"), new EArgcountError(args["Count"], arguments.Length - defaultArgCount, arguments.Length))).ToArray()
-                    ).By(x => Box.Call(x))
+                    PYARGS["Count"].Switch(
+                        cases.Append(new Case(null,
+                            new SExpr(
+                                new EArgcountError(PYARGS["Count"], methName, nonDefaultArgCount + 1, nonDefaultArgCount + 1 + defaultArgCount)).SingletonArray()
+                                )).ToArray()
+                    ).SingletonArray()
                 );
             defs.Add(cm.Doc());
             defs.Add($"CLASS[{methName.Escape()}] = TrSharpFunc.FromFunc({methName.Escape()}, {localBindName});".Doc());
@@ -119,9 +130,9 @@ public class Gen_PyBind : HasNamespace
             var retType = meth.PropertyType;
             var hasReturn = retType != typeof(void);
             if (!hasReturn)
-                throw new Exception("Method " + meth.Name + " has no return type");
+                throw new Exception("property " + meth.Name + " has no return type");
             var arg = new EId("_arg").Cast(entry);
-            var value = Unbox.Call(THint(retType), new EId("_value"));
+            var value = Helper.Unbox.Call(THint(retType), new EId("_value"));
             var prop_Reader = "__read_" + methName;
             var prop_Writer = "__write_" + methName;
             if (!meth.CanRead)
@@ -130,7 +141,10 @@ public class Gen_PyBind : HasNamespace
             }
             else
             {
-                var cm = new CSMethod(prop_Reader, retType, new[] { ("_arg", (CSType)typeof(TrObject)) }, arg[meth.Name].By(x => Box.Call(x)));
+                var cm = new CSMethod(prop_Reader, retType,
+                    new[] { ("_arg", (CSType)typeof(TrObject)) },
+                    new SReturn(arg[meth.Name].By(x => Helper.Box.Call(x))).SingletonArray()
+                );
                 defs.Add(cm.Doc());
             }
             if (!meth.CanWrite)
@@ -142,7 +156,9 @@ public class Gen_PyBind : HasNamespace
                 var cm = new CSMethod(
                     prop_Writer,
                     typeof(void),
-                    new[] { ("_arg", typeof(TrObject)), ("_value", (CSType)typeof(TrObject)) }, arg[meth.Name].Assign(value));
+                    new[] { ("_arg", typeof(TrObject)), ("_value", (CSType)typeof(TrObject)) },
+                    new SExpr (arg[meth.Name].Assign(value)).SingletonArray()
+                );
                 defs.Add(cm.Doc());
             }
             defs.Add($"CLASS[{methName.Escape()}] = TrProperty.Create(CLASS.Name + \".{methName}\", {prop_Reader}, {prop_Writer});".Doc());

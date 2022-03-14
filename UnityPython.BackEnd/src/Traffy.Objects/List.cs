@@ -93,7 +93,7 @@ namespace Traffy.Objects
             {
                 return container.Inline().SeqGt<FList<TrObject>, FList<TrObject>, TrObject>(lst.container.Inline());
             }
-            throw new TypeError($"'>' not supported between instances of '{Class.Name}' and '" + other.AsClass.Name + "'");
+            throw new TypeError($"'>' not supported between instances of '{Class.Name}' and '" + other.Class.Name + "'");
         }
 
         bool TrObject.__ge__(Traffy.Objects.TrObject other)
@@ -102,7 +102,7 @@ namespace Traffy.Objects
             {
                 return container.Inline().SeqGtE<FList<TrObject>, FList<TrObject>, TrObject>(lst.container.Inline());
             }
-            throw new TypeError($"'>=' not supported between instances of '{Class.Name}' and '" + other.AsClass.Name + "'");
+            throw new TypeError($"'>=' not supported between instances of '{Class.Name}' and '" + other.Class.Name + "'");
         }
 
         bool TrObject.__lt__(Traffy.Objects.TrObject other)
@@ -111,7 +111,7 @@ namespace Traffy.Objects
             {
                 return container.Inline().SeqLt<FList<TrObject>, FList<TrObject>, TrObject>(lst.container.Inline());
             }
-            throw new TypeError($"'<' not supported between instances of '{Class.Name}' and '" + other.AsClass.Name + "'");
+            throw new TypeError($"'<' not supported between instances of '{Class.Name}' and '" + other.Class.Name + "'");
         }
 
         bool TrObject.__le__(Traffy.Objects.TrObject other)
@@ -120,11 +120,11 @@ namespace Traffy.Objects
             {
                 return container.Inline().SeqLtE<FList<TrObject>, FList<TrObject>, TrObject>(lst.container.Inline());
             }
-            throw new TypeError($"'<=' not supported between instances of '{Class.Name}' and '" + other.AsClass.Name + "'");
+            throw new TypeError($"'<=' not supported between instances of '{Class.Name}' and '" + other.Class.Name + "'");
         }
 
         [PyBind]
-        TrObject copy()
+        public TrObject copy()
         {
             return MK.List(container.Copy());
         }
@@ -153,7 +153,7 @@ namespace Traffy.Objects
                         return MK.List(newcontainer);
                     }
                 default:
-                    throw new TypeError($"list indices must be integers, not '{item.AsClass.Name}'");
+                    throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");
             }
         }
 
@@ -197,7 +197,7 @@ namespace Traffy.Objects
                         }
                     }
                 default:
-                    throw new TypeError($"list indices must be integers, not '{item.AsClass.Name}'");
+                    throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");
             }
         }
 
@@ -227,7 +227,7 @@ namespace Traffy.Objects
                         return;
                     }
                 default:
-                    throw new TypeError($"list indices must be integers, not '{item.AsClass.Name}'");
+                    throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");
             }
         }
 
@@ -269,7 +269,155 @@ namespace Traffy.Objects
             }
             else
             {
-                throw new TypeError($"list indices must be integers, not '{index.AsClass.Name}'");
+                throw new TypeError($"list indices must be integers, not '{index.Class.Name}'");
+            }
+
+            // read file 'a.txt';
+            return MK.None();
+        }
+
+        [PyBind]
+        public TrObject pop(TrObject index = null)
+        {
+            if (index == null)
+            {
+                if (container.Count == 0)
+                    throw new IndexError($"pop from empty list");
+                var ret = container[container.Count - 1];
+                container.RemoveAt(container.Count - 1);
+                return ret;
+            }
+            else if (index is TrInt i)
+            {
+                if (i.value < 0)
+                    i.value += container.Count;
+                if (i.value < 0 || i.value >= container.Count)
+                    throw new IndexError($"list assignment index out of range");
+                var ret = container[unchecked((int)i.value)];
+                container.RemoveAt(unchecked((int)i.value));
+                return ret;
+            }
+            else
+            {
+                throw new TypeError($"list indices must be integers, not '{index.Class.Name}'");
+            }
+        }
+
+        [PyBind]
+        public TrObject remove(TrObject value)
+        {
+            var index = container.IndexOf(value);
+            if (index == -1)
+                throw new ValueError($"list.remove(x): x not in list");
+            container.RemoveAt(index);
+            return MK.None();
+        }
+
+        [PyBind]
+        public TrObject reverse()
+        {
+            container.Reverse();
+            return MK.None();
+        }
+
+        [PyBind]
+        public TrObject clear()
+        {
+            container.Clear();
+            return MK.None();
+        }
+
+
+        [PyBind]
+        public TrObject find(TrObject x, int start = 0, int end = -1)
+        {
+            if (end == -1)
+                end = container.Count;
+            var index = container.IndexOf(x, start, end - start);
+            return MK.Int(index);
+        }
+
+        [PyBind]
+        public TrObject index(TrObject x, int start = 0, int end = -1)
+        {
+            if (end == -1)
+                end = container.Count;
+            var index = container.IndexOf(x, start, end - start);
+            if (index == -1)
+                throw new ValueError($"list.index(x): x not in list");
+            return MK.Int(index);
+        }
+
+        [PyBind]
+        public TrObject count(TrObject x)
+        {
+            int cnt = 0;
+            for (int i = 0; i < container.Count; i++)
+            {
+                if (container[i].__eq__(x))
+                    cnt++;
+            }
+            return MK.Int(cnt);
+        }
+
+        static Comparison<TrObject> _rev_cmp = (TrObject a, TrObject b) =>
+        {
+            if (a.__eq__(b))
+                return 0;
+            if (a.__lt__(b))
+                return 1;
+            return -1;
+        };
+
+        static Func<TrObject, Comparison<TrObject>> _normal_cmp_by = (TrObject key) => (TrObject a, TrObject b) =>
+        {
+            var ka = key.Call(a);
+            var kb = key.Call(b);
+            if (ka.__eq__(kb))
+                return 0;
+            if (ka.__lt__(kb))
+                return -1;
+            return 1;
+        };
+
+        static Func<TrObject, Comparison<TrObject>> _rev_cmp_by = (TrObject key) => (TrObject a, TrObject b) =>
+        {
+            var ka = key.Call(a);
+            var kb = key.Call(b);
+            if (ka.__eq__(kb))
+                return 0;
+            if (ka.__lt__(kb))
+                return 1;
+            return -1;
+        };
+
+        [PyBind]
+        public TrObject sort(
+            [PyBind.Keyword(Only = true)] TrObject key = null,
+            [PyBind.Keyword(Only = true)] bool reverse = false)
+        {
+
+            if (key == null)
+            {
+                if (reverse)
+                {
+                    container.Sort(_rev_cmp);
+                }
+                else
+                {
+                    container.Sort();
+                }
+            }
+            else
+            {
+                if (reverse)
+                {
+                    container.Sort(_rev_cmp_by(key));
+                }
+                else
+                {
+                    container.Sort(_normal_cmp_by(key));
+                }
             }
             return MK.None();
         }

@@ -73,14 +73,14 @@ print(sorted([X(1.2), X(1.0), X(2)]))
 x = sum([X(2.0), X(3.0)], X(1.0))
 print(x)
 
-def f(x):
+def fff(x):
     if isinstance(x, int | None):
         return x
 
-print(f(1.0))
-print(f(None))
-print(f('1'))
-print(f(1))
+print(fff(1.0))
+print(fff(None))
+print(fff('1'))
+print(fff(1))
 
 print(sorted([1, 2, 3], key = lambda x: -x))
 
@@ -111,3 +111,11 @@ x.extend(range(2, 5, 2))
 x.insert(0, 100)
 
 print(x)
+
+def f():
+    pass
+
+xs = [1, 2, -8, 1]
+xs.sort()
+print(xs)
+
