@@ -1,8 +1,8 @@
 using System;
-using Traffy.Objects;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using Traffy.Objects;
 
 namespace Traffy
 {
@@ -290,7 +290,7 @@ namespace Traffy
         internal TrObject load_local(int operand)
         {
             var v = localvars[operand].Value;
-            if(v == null)
+            if (v == null)
                 throw undef_local(operand);
             return v;
         }
@@ -299,7 +299,7 @@ namespace Traffy
         internal TrObject load_free(int operand)
         {
             var v = freevars[operand].Value;
-            if(v == null)
+            if (v == null)
                 throw undef_free(operand);
             return v;
         }
@@ -380,7 +380,7 @@ namespace Traffy
         }
     }
 
-    public struct SuppressControlFlow: IDisposable
+    public struct SuppressControlFlow : IDisposable
     {
         public STATUS CONT;
         public Frame Frame;
@@ -399,7 +399,7 @@ namespace Traffy
 
         public void Dispose()
         {
-            Frame.CONT =  MostSevere(Frame.CONT, CONT);
+            Frame.CONT = MostSevere(Frame.CONT, CONT);
         }
     }
 }

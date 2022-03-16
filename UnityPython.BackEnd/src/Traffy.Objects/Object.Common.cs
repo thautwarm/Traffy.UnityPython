@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Traffy.Objects
 {
-    public partial interface TrObject
+    public abstract partial class TrObject
     {
         public static int ObjectSequenceHash<TList>(TList xs, int seed, int primSeed) where TList : IList<TrObject>
         {

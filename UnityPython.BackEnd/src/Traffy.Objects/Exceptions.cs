@@ -14,11 +14,11 @@ namespace Traffy.Objects
         }
     }
 
-    public interface TrExceptionBase : TrUserObjectBase
+    public abstract class TrExceptionBase : TrUserObjectBase
     {
-        public Exception AsException();
-        public int IndexArgs { get; }
-        public TrTraceback traceback { get; set; }
+        public Exception AsException() => RTS.exc_tobare(this);
+        public abstract int IndexArgs { get; }
+        public TrTraceback traceback;
 
         public static TrObject GetCause(TrObject _exc)
         {
@@ -52,13 +52,23 @@ namespace Traffy.Objects
             return String.Join(", ", ((TrExceptionBase)self).args.Select(x => x.__str__()));
         }
 
-        string TrObject.__repr__() => TrException_repr(this);
+        public override string __repr__() => TrException_repr(this);
 
-        string TrObject.__str__() => TrException_str(this);
+        public override string __str__() => TrException_str(this);
 
-        public string GetStackTrace()
+        public virtual string GetStackTrace()
         {
             return $"Traceback (most recent call last):\n{traceback?.GetStackTrace()}\n{Class.Name}: {__str__()}";
+        }
+
+        public static implicit operator TrExceptionBase(Exception e)
+        {
+            return RTS.exc_frombare(e);
+        }
+
+        public static implicit operator Exception(TrExceptionBase e)
+        {
+            return e.AsException();
         }
     }
 
@@ -88,17 +98,14 @@ namespace Traffy.Objects
             return res;
         }
     }
-    public class TrBaseException : Exception, TrExceptionBase
+    public class TrBaseException : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
 
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        public List<TrObject> __array__ { get; set; } = new List<TrObject>(1);
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
 
         public TrBaseException() : base()
         {
@@ -111,7 +118,7 @@ namespace Traffy.Objects
 
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -136,27 +143,24 @@ namespace Traffy.Objects
         }
     }
 
-    public class TrException : Exception, TrExceptionBase
+    public class TrException : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
         public TrException() : base()
         {
             this.Base().args = new TrObject[0];
         }
-        public TrException(string msg) : base(msg)
+        public TrException(string msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -178,16 +182,13 @@ namespace Traffy.Objects
     }
 
     // fields: 'name', 'obj'
-    public class AttributeError : Exception, TrExceptionBase
+    public class AttributeError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(3);
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(3);
 
         static InlineCache.PolyIC CacheName = new InlineCache.PolyIC("name".ToIntern());
         static InlineCache.PolyIC CacheObj = new InlineCache.PolyIC("obj".ToIntern());
@@ -199,7 +200,7 @@ namespace Traffy.Objects
             this.Base()[CacheObj] = obj;
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
-        public AttributeError(TrObject obj, TrObject attr, string msg) : base(msg)
+        public AttributeError(TrObject obj, TrObject attr, string msg)
         {
             Init(obj, attr, msg);
         }
@@ -210,7 +211,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -231,17 +232,14 @@ namespace Traffy.Objects
         }
     }
     // fields: 'name'
-    public class NameError : Exception, TrExceptionBase
+    public class NameError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
         static InlineCache.PolyIC CacheName = new InlineCache.PolyIC("name".ToIntern());
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(2);
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(2);
 
         void _Init(TrObject name, string msg)
         {
@@ -249,7 +247,7 @@ namespace Traffy.Objects
             this.Base()[CacheName] = name;
         }
 
-        public NameError(string name, string msg) : base(msg)
+        public NameError(string name, string msg)
         {
             _Init(name.ToTr(), msg);
         }
@@ -260,7 +258,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -281,17 +279,14 @@ namespace Traffy.Objects
         }
     }
 
-    public class TypeError : Exception, TrExceptionBase
+    public class TypeError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public TypeError(string msg) : base(msg)
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public TypeError(string msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
@@ -302,7 +297,7 @@ namespace Traffy.Objects
 
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -325,17 +320,14 @@ namespace Traffy.Objects
     }
 
 
-    public class ValueError : Exception, TrExceptionBase
+    public class ValueError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public ValueError(string msg) : base(msg)
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public ValueError(string msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
@@ -345,7 +337,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -369,26 +361,23 @@ namespace Traffy.Objects
 
 
     // fields: 'value'
-    public class StopIteration : Exception, TrExceptionBase
+    public class StopIteration : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString()
         {
             return this.Base().__repr__();
         }
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
         static InlineCache.PolyIC CacheValue = new InlineCache.PolyIC("value".ToIntern());
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(2);
-        public StopIteration(TrObject value) : base()
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(2);
+        public StopIteration(TrObject value)
         {
             this.Base().args = new TrObject[] { value };
             this.Base()[CacheValue] = value;
         }
-        public StopIteration() : base()
+        public StopIteration()
         {
             this.Base().args = new TrObject[0];
             this.Base()[CacheValue] = RTS.object_none;
@@ -396,7 +385,7 @@ namespace Traffy.Objects
 
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -418,27 +407,24 @@ namespace Traffy.Objects
         }
     }
 
-    public class LookupError : Exception, TrExceptionBase
+    public class LookupError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public LookupError(string msg) : base(msg)
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public LookupError(string msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
-        public LookupError() : base()
+        public LookupError()
         {
             this.Base().args = new TrObject[0];
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -460,17 +446,14 @@ namespace Traffy.Objects
     }
 
 
-    public class KeyError : Exception, TrExceptionBase
+    public class KeyError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public KeyError(TrObject value) : base(value.__repr__())
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public KeyError(TrObject value)
         {
             this.Base().args = new TrObject[] { value };
         }
@@ -480,7 +463,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -503,17 +486,14 @@ namespace Traffy.Objects
         }
     }
 
-    public class IndexError : Exception, TrExceptionBase
+    public class IndexError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public IndexError(string msg) : base(msg)
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public IndexError(string msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
@@ -524,7 +504,7 @@ namespace Traffy.Objects
 
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -546,17 +526,14 @@ namespace Traffy.Objects
         }
     }
 
-    public class AssertionError : Exception, TrExceptionBase
+    public class AssertionError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public AssertionError(TrObject value) : base(value.__repr__())
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public AssertionError(TrObject value)
         {
             this.Base().args = new TrObject[] { value };
         }
@@ -566,7 +543,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -592,20 +569,17 @@ namespace Traffy.Objects
     // - 'msg': string
     // - 'name': string
     // - 'path': string
-    public class ImportError : Exception, TrExceptionBase
+    public class ImportError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
         static PolyIC CacheName = new PolyIC("name".ToIntern());
         static PolyIC CachePath = new PolyIC("path".ToIntern());
         static PolyIC CacheMsg = new PolyIC("msg".ToIntern());
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(4);
-        public ImportError(string name, TrObject path, string msg) : base(msg)
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(4);
+        public ImportError(string name, TrObject path, string msg)
         {
             var o_msg = MK.Str(msg);
             this.Base().args = new TrObject[] { o_msg };
@@ -625,7 +599,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -647,17 +621,14 @@ namespace Traffy.Objects
         }
     }
 
-    public class RuntimeError : Exception, TrExceptionBase
+    public class RuntimeError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public RuntimeError(string msg) : base(msg)
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public RuntimeError(string msg)
         {
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
@@ -667,7 +638,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
@@ -689,17 +660,14 @@ namespace Traffy.Objects
         }
     }
 
-    public class NotImplementError : Exception, TrExceptionBase
+    public class NotImplementError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
-        public NotImplementError(string msg) : base(msg)
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
+        public NotImplementError(string msg)
         {
 
             this.Base().args = new TrObject[] { MK.Str(msg) };
@@ -712,7 +680,7 @@ namespace Traffy.Objects
 
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -733,22 +701,19 @@ namespace Traffy.Objects
         }
     }
 
-    public class NativeError : Exception, TrExceptionBase
+    public class NativeError : TrExceptionBase
     {
-        public TrTraceback traceback { get; set; }
-        public Exception AsException() => this;
-        public override string StackTrace => ((TrExceptionBase)this).GetStackTrace();
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
-        int TrExceptionBase.IndexArgs => _IndexArgs;
+        public override int IndexArgs => _IndexArgs;
 
         static int _IndexTypeName = -1;
         static int _IndexMsg = -1;
 
-        List<TrObject> TrObject.__array__ { get; } = new List<TrObject>(1);
+        public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public Exception Error;
-        object TrObject.Native => Error;
-        bool TrObject.__eq__(TrObject other)
+        public override object Native => Error;
+        public override bool __eq__(TrObject other)
         {
             if (other is NativeError inner)
             {
@@ -756,7 +721,7 @@ namespace Traffy.Objects
             }
             return false;
         }
-        public NativeError(Exception native) : base(native.Message)
+        public NativeError(Exception native)
         {
             if (native is TrExceptionBase)
                 throw new Exception("native error should not be a traffy error");
@@ -767,7 +732,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -798,7 +763,7 @@ namespace Traffy.Objects
             // just report error
             throw new TypeError("cannot create native error manually");
         }
-        string TrExceptionBase.GetStackTrace()
+        public override string GetStackTrace()
         {
             return $"Traceback (most recent call last):\n{traceback?.GetStackTrace()}\n{Class.Name}: {this.Base().__str__()}\n{Error.StackTrace}";
         }

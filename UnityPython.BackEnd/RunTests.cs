@@ -7,6 +7,17 @@ using Traffy;
 using Traffy.Objects;
 using static Traffy.Objects.ExtMonoAsyn;
 
+public abstract class X
+{
+    public virtual int f()
+    {
+        return 1;
+    }
+}
+
+public class Y : X
+{
+}
 public class App
 {
     public static TrObject time()
@@ -20,16 +31,19 @@ public class App
         Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
         ModuleSystem.LoadDirectory(argv[0]);
         var test_modules = ModuleSystem.Modules.Keys.Where(x => x.Split(".").Last().StartsWith("test_")).ToList();
-        try
+        
+        foreach (var module_name in test_modules)
+            ModuleSystem.ImportModule(module_name);
+    
+        return 0;
+    }
+#else
+    public static int Main()
+    {
+        foreach(var mi in typeof(Y).GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
         {
-            foreach (var module_name in test_modules)
-                ModuleSystem.ImportModule(module_name);
-        }
-        catch (Exception e)
-        {
-            var exc = RTS.exc_frombare(e);
-            Console.WriteLine(exc.GetStackTrace());
-            return 1;
+            var mf = mi.GetBaseDefinition();
+            Console.WriteLine($"{mi.Name} {mf.Name}");
         }
         return 0;
     }

@@ -7,19 +7,26 @@ using System.Runtime.Serialization;
 namespace Traffy.Objects
 {
     // runtime
-    public record TrFunc(
-        Variable[] freevars,
-        Dictionary<TrObject, TrObject> globals,
-        (int slot, TrObject value)[] default_args,
-        TrFuncPointer fptr
-     ) : TrObject
+    public sealed class TrFunc : TrObject
     {
+        public Variable[] freevars;
+        public Dictionary<TrObject, TrObject> globals;
+        public (int slot, TrObject value)[] default_args;
+        public TrFuncPointer fptr;
+
+        public TrFunc(Variable[] freevars, Dictionary<TrObject, TrObject> globals, (int slot, TrObject value)[] default_args, TrFuncPointer fptr)
+        {
+            this.fptr = fptr;
+            this.freevars = freevars;
+            this.globals = globals;
+            this.default_args = default_args;
+        }
 
         public static TrClass CLASS;
 
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        string TrObject.__repr__()
+        public override string __repr__()
         {
             return $"<function {fptr.metadata.codename}>";
         }
@@ -49,9 +56,9 @@ namespace Traffy.Objects
         }
         TrObject AsObject => this;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
-        TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             return Execute(args, kwargs, null);
         }

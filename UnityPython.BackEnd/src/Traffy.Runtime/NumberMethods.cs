@@ -420,66 +420,66 @@ namespace Traffy.Objects
 
     public partial class TrFloat
     {
-        public TrObject __add__(TrObject o) => NumberMethods.float_add(this, o);
-        public TrObject __sub__(TrObject o) => NumberMethods.float_sub(this, o);
-        public TrObject __mul__(TrObject o) => NumberMethods.float_mul(this, o);
-        public TrObject __floordiv__(TrObject o) => NumberMethods.float_floordiv(this, o);
-        public TrObject __truediv__(TrObject o) => NumberMethods.float_truediv(this, o);
+        public override TrObject __add__(TrObject o) => NumberMethods.float_add(this, o);
+        public override TrObject __sub__(TrObject o) => NumberMethods.float_sub(this, o);
+        public override TrObject __mul__(TrObject o) => NumberMethods.float_mul(this, o);
+        public override TrObject __floordiv__(TrObject o) => NumberMethods.float_floordiv(this, o);
+        public override TrObject __truediv__(TrObject o) => NumberMethods.float_truediv(this, o);
 
-        public TrObject __mod__(TrObject o) => NumberMethods.float_mod(this, o);
+        public override TrObject __mod__(TrObject o) => NumberMethods.float_mod(this, o);
 
-        public TrObject __pow__(TrObject o) => NumberMethods.float_pow(this, o);
+        public override TrObject __pow__(TrObject o) => NumberMethods.float_pow(this, o);
 
-        public bool __eq__(TrObject o) => NumberMethods.float_t_eq(this, o);
+        public override bool __eq__(TrObject o) => NumberMethods.float_t_eq(this, o);
 
-        public bool __ne__(TrObject o) => NumberMethods.float_t_ne(this, o);
+        public override bool __ne__(TrObject o) => NumberMethods.float_t_ne(this, o);
 
-        public bool __lt__(TrObject o) => NumberMethods.float_t_lt(this, o);
+        public override bool __lt__(TrObject o) => NumberMethods.float_t_lt(this, o);
 
-        public bool __gt__(TrObject o) => NumberMethods.float_t_gt(this, o);
+        public override bool __gt__(TrObject o) => NumberMethods.float_t_gt(this, o);
 
-        public bool __le__(TrObject o) => NumberMethods.float_t_le(this, o);
+        public override bool __le__(TrObject o) => NumberMethods.float_t_le(this, o);
 
-        public bool __ge__(TrObject o) => NumberMethods.float_t_ge(this, o);
-        public TrObject __neg__() => MK.Float(-value);
-        public TrObject __pos__() => this;
+        public override bool __ge__(TrObject o) => NumberMethods.float_t_ge(this, o);
+        public override TrObject __neg__() => MK.Float(-value);
+        public override TrObject __pos__() => this;
     }
 
     public partial class TrInt
     {
-        public TrObject __add__(TrObject o) => NumberMethods.int_t_add(this, o);
-        public TrObject __sub__(TrObject o) => NumberMethods.int_t_sub(this, o);
-        public TrObject __mul__(TrObject o) => NumberMethods.int_t_mul(this, o);
+        public override TrObject __add__(TrObject o) => NumberMethods.int_t_add(this, o);
+        public override TrObject __sub__(TrObject o) => NumberMethods.int_t_sub(this, o);
+        public override TrObject __mul__(TrObject o) => NumberMethods.int_t_mul(this, o);
 
-        public TrObject __floordiv__(TrObject o) => NumberMethods.int_t_floordiv(this, o);
-        public TrObject __truediv__(TrObject o) => NumberMethods.int_t_truediv(this, o);
+        public override TrObject __floordiv__(TrObject o) => NumberMethods.int_t_floordiv(this, o);
+        public override TrObject __truediv__(TrObject o) => NumberMethods.int_t_truediv(this, o);
 
-        public TrObject __mod__(TrObject o) => NumberMethods.int_t_mod(this, o);
+        public override TrObject __mod__(TrObject o) => NumberMethods.int_t_mod(this, o);
 
-        public TrObject __pow__(TrObject o) => NumberMethods.int_t_pow(this, o);
+        public override TrObject __pow__(TrObject o) => NumberMethods.int_t_pow(this, o);
 
-        public TrObject __lshift__(TrObject o) => NumberMethods.int_t_lshift(this, o);
+        public override TrObject __lshift__(TrObject o) => NumberMethods.int_t_lshift(this, o);
 
-        public TrObject __rshift__(TrObject o) => NumberMethods.int_t_rshift(this, o);
+        public override TrObject __rshift__(TrObject o) => NumberMethods.int_t_rshift(this, o);
 
-        public bool __eq__(TrObject o) => NumberMethods.int_t_eq(this, o);
+        public override bool __eq__(TrObject o) => NumberMethods.int_t_eq(this, o);
 
-        public bool __ne__(TrObject o) => NumberMethods.int_t_ne(this, o);
+        public override bool __ne__(TrObject o) => NumberMethods.int_t_ne(this, o);
 
-        public bool __lt__(TrObject o) => NumberMethods.int_t_lt(this, o);
+        public override bool __lt__(TrObject o) => NumberMethods.int_t_lt(this, o);
 
-        public bool __gt__(TrObject o) => NumberMethods.int_t_gt(this, o);
+        public override bool __gt__(TrObject o) => NumberMethods.int_t_gt(this, o);
 
-        public bool __le__(TrObject o) => NumberMethods.int_t_le(this, o);
+        public override bool __le__(TrObject o) => NumberMethods.int_t_le(this, o);
 
-        public bool __ge__(TrObject o) => NumberMethods.int_t_ge(this, o);
+        public override bool __ge__(TrObject o) => NumberMethods.int_t_ge(this, o);
 
-        public TrObject __bitand__(TrObject o) => NumberMethods.int_t_bitand(this, o);
-        public TrObject __bitor__(TrObject o) => NumberMethods.int_t_bitor(this, o);
-        public TrObject __bitxor__(TrObject o) => NumberMethods.int_t_bitxor(this, o);
+        public override TrObject __bitand__(TrObject o) => NumberMethods.int_t_bitand(this, o);
+        public override TrObject __bitor__(TrObject o) => NumberMethods.int_t_bitor(this, o);
+        public override TrObject __bitxor__(TrObject o) => NumberMethods.int_t_bitxor(this, o);
 
-        public TrObject __neg__() => MK.Int(-value);
-        public TrObject __pos__() => this;
-        public TrObject __invert__() => MK.Int(~value);
+        public override TrObject __neg__() => MK.Int(-value);
+        public override TrObject __pos__() => this;
+        public override TrObject __invert__() => MK.Int(~value);
     }
 }

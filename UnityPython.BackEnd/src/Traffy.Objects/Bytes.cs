@@ -1,13 +1,12 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
-
+using System.Linq;
 using InlineHelper;
 
 namespace Traffy.Objects
 {
     [Serializable]
-    public sealed class TrBytes : TrObject
+    public sealed class TrBytes : TrObject, IComparable<TrObject>
     {
         public byte[] contents;
         int IComparable<TrObject>.CompareTo(TrObject other)
@@ -29,10 +28,11 @@ namespace Traffy.Objects
         }
 
 
-        string TrObject.__repr__() => contents.Select(x => $"\\x{x:X}").Prepend("b'").Append("'").By(String.Concat);
-        bool TrObject.__bool__() => contents.Length != 0;
+        public override string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("b'").Append("'").By(String.Concat);
+        public override bool __bool__() => contents.Length != 0;
         public static TrClass CLASS;
-        TrClass TrObject.Class => CLASS;
+        public override TrClass Class => CLASS;
+        public override List<TrObject> __array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -52,9 +52,9 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        object TrObject.Native => contents;
+        public override object Native => contents;
 
-        TrObject TrObject.__add__(TrObject other)
+        public override TrObject __add__(TrObject other)
         {
             if (other is TrBytes b)
             {
@@ -65,21 +65,21 @@ namespace Traffy.Objects
         }
 
 
-        bool TrObject.__le__(TrObject other) =>
+        public override bool __le__(TrObject other) =>
             (other is TrBytes b)
             ? contents.Inline().SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
             ? contents.Inline().SeqLtE<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <=: '{CLASS.Name}' and '{other.Class.Name}'");
 
-        bool TrObject.__lt__(TrObject other) =>
+        public override bool __lt__(TrObject other) =>
             (other is TrBytes b)
             ? contents.Inline().SeqLt<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
             ? contents.Inline().SeqLt<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <: '{CLASS.Name}' and '{other.Class.Name}'");
 
-        bool TrObject.__gt__(TrObject other) =>
+        public override bool __gt__(TrObject other) =>
             (other is TrBytes b)
             ? contents.Inline().SeqGt<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -87,7 +87,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for >: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool TrObject.__ge__(TrObject other) =>
+        public override bool __ge__(TrObject other) =>
             (other is TrBytes b)
             ? contents.Inline().SeqGtE<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -95,7 +95,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for >=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool TrObject.__ne__(TrObject other) =>
+        public override bool __ne__(TrObject other) =>
             (other is TrBytes b)
             ? contents.Inline().SeqNe<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -103,7 +103,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for !=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool TrObject.__eq__(TrObject other) =>
+        public override bool __eq__(TrObject other) =>
             (other is TrBytes b)
             ? contents.Inline().SeqEq<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -111,7 +111,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        int TrObject.__hash__()
+        public override int __hash__()
         {
             return contents.Inline().ByteSequenceHash<FArray<byte>>(
                 Initialization.HashConfig.BYTE_HASH_SEED,

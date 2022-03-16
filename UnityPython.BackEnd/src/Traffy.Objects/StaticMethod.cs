@@ -7,12 +7,12 @@ namespace Traffy.Objects
     {
         public TrObject func;
 
-        string TrObject.__repr__() => $"<staticmethod {func.__repr__()}>";
+        public override string __repr__() => $"<staticmethod {func.__repr__()}>";
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -32,7 +32,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             return func.__call__(args, kwargs);
         }

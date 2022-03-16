@@ -10,38 +10,38 @@ namespace Traffy.Objects
         public Dictionary<TrObject, TrObject> container;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
-        string TrObject.__repr__() => "{" + String.Join(", ", container.Select(kv => $"{kv.Key.__repr__()}: {kv.Value.__repr__()}")) + "}";
+        public override string __repr__() => "{" + String.Join(", ", container.Select(kv => $"{kv.Key.__repr__()}: {kv.Value.__repr__()}")) + "}";
 
-        bool TrObject.__bool__() => container.Count > 0;
+        public override bool __bool__() => container.Count > 0;
 
 
-        TrObject TrObject.__getitem__(TrObject key)
+        public override TrObject __getitem__(TrObject key)
         {
             return container.TryGetValue(key, out var value) ? value : throw new KeyError(key);
         }
 
 
-        void TrObject.__setitem__(TrObject key, TrObject value)
+        public override void __setitem__(TrObject key, TrObject value)
         {
             container[key] = value;
         }
 
 
-        void TrObject.__delitem__(TrObject key)
+        public override void __delitem__(TrObject key)
         {
             container.Remove(key);
         }
 
-        TrObject TrObject.__reversed__()
+        public override TrObject __reversed__()
         {
             throw new TypeError("'dict' object is not reversible");
         }
 
-        TrObject TrObject.__len__()
+        public override TrObject __len__()
         {
             return MK.Int(container.Count);
         }

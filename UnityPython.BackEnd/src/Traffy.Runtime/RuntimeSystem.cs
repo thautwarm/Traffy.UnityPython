@@ -501,34 +501,26 @@ namespace Traffy
 
         public static bool exc_check_instance(Exception e, TrObject rt_exc)
         {
-            if (e is TrObject obj)
-            {
-                return obj.__instancecheck__(rt_exc);
-            }
-            if (rt_exc is TrClass cls)
-            {
-                return cls == NativeError.CLASS;
-            }
-            else
-            {
-                throw new TypeError($"exception class must be a class, not '{rt_exc.Class.Name}'.");
-            }
+            var e_obj = exc_frombare(e);
+            return e_obj.__instancecheck__(rt_exc);
         }
 
         public static TrExceptionBase exc_frombare(Exception e)
         {
-            if (e is TrExceptionBase o)
-                return o;
-            return new NativeError(e);
+            throw new NotImplementedException();
+            // if (e is TrExceptionBase o)
+            //     return o;
+            // return new NativeError(e);
         }
 
         public static Exception exc_tobare(TrObject rt_exc)
         {
-            if (rt_exc is Exception o)
-            {
-                return o;
-            }
-            throw new ValueError($"{rt_exc.__repr__()} is not an exception");
+            throw new NotImplementedException();
+            // if (rt_exc is Exception o)
+            // {
+            //     return o;
+            // }
+            // throw new ValueError($"{rt_exc.__repr__()} is not an exception");
         }
 
         public static Awaitable<TrObject> generator_of_iter(IEnumerator<TrObject> o)

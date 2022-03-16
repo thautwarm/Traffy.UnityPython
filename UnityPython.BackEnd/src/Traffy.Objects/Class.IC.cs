@@ -87,15 +87,15 @@ namespace Traffy.Objects
             return false;
         }
 
-        public bool __getic__(PolyIC ic, out TrObject found) =>
+        public override bool __getic__(PolyIC ic, out TrObject found) =>
             ic.ICClass.ReadClass(this, out found);
-        public void __setic__(PolyIC ic, TrObject value) =>
+        public override void __setic__(PolyIC ic, TrObject value) =>
             __setic_refl__(ic.attribute, value);
 
-        public bool __getic_refl__(TrStr s, out TrObject found) =>
+        public override bool __getic_refl__(TrStr s, out TrObject found) =>
             PolyIC.ReadClass_refl(this, s, out found);
 
-        public void __setic_refl__(TrStr s, TrObject value) =>
+        public override void __setic_refl__(TrStr s, TrObject value) =>
             PolyIC.WriteClass_refl(this, s, value);
 
         public TrObject this[InternedString s]
@@ -104,13 +104,13 @@ namespace Traffy.Objects
             set => __setic_refl__(MK.IStr(s.Value), value);
         }
 
-        public TrObject this[string s]
+        public override TrObject this[string s]
         {
             get => __getic_refl__(MK.Str(s), out var value) ? value : null;
             set => __setic_refl__(MK.Str(s), value);
         }
 
-        public TrObject this[PolyIC ic]
+        public override TrObject this[PolyIC ic]
         {
             get => __getic__(ic, out var value) ? value : null;
             set => __setic_refl__(MK.IStr(ic.Name), value);

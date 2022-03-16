@@ -24,11 +24,11 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
-        string TrObject.__repr__() => $"<bound method {func.__repr__()} at {self.__repr__()}>";
+        public override string __repr__() => $"<bound method {func.__repr__()} at {self.__repr__()}>";
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -48,7 +48,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             args.AddLeft(self);
             var o = func.__call__(args, kwargs);

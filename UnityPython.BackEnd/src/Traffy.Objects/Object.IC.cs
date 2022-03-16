@@ -6,29 +6,29 @@ using Traffy.InlineCache;
 
 namespace Traffy.Objects
 {
-    public partial interface TrObject
+    public abstract partial class TrObject
     {
 
-        public TrObject this[PolyIC ic]
+        public virtual TrObject this[PolyIC ic]
         {
             get => __getic__(ic, out var ob) ? ob : null;
             set => __setic__(ic, value);
         }
-        public TrObject this[string s]
+        public virtual TrObject this[string s]
         {
             get => __getic_refl__(MK.Str(s), out var ob) ? ob : null;
             set => __setic_refl__(MK.Str(s), value);
         }
 
-        public bool __getic__(PolyIC ic, out TrObject found) =>
+        public virtual bool __getic__(PolyIC ic, out TrObject found) =>
             ic.ICInstance.ReadInst(this, out found);
-        public void __setic__(PolyIC ic, TrObject value) =>
+        public virtual void __setic__(PolyIC ic, TrObject value) =>
             ic.ICInstance.WriteInst(this, value);
 
-        public bool __getic_refl__(TrStr s, out TrObject found) =>
+        public virtual bool __getic_refl__(TrStr s, out TrObject found) =>
             PolyIC.ReadInst_refl(this, s, out found);
 
-        public void __setic_refl__(TrStr s, TrObject value) =>
+        public virtual void __setic_refl__(TrStr s, TrObject value) =>
             PolyIC.WriteInst_refl(this, s, value);
 
 

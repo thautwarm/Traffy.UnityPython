@@ -10,29 +10,29 @@ namespace Traffy.Objects
     public sealed class TrByteArray : TrObject
     {
         public FList<byte> contents;
-        object TrObject.Native => contents;
-        string TrObject.__repr__() => contents.Select(x => $"\\x{x:X}").Prepend("bytearray(b'").Append("')").By(String.Concat);
-        bool TrObject.__bool__() => contents.Count != 0;
-        List<TrObject> TrObject.__array__ => null;
+        public override object Native => contents;
+        public override string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("bytearray(b'").Append("')").By(String.Concat);
+        public override bool __bool__() => contents.Count != 0;
+        public override List<TrObject> __array__ => null;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        bool TrObject.__le__(TrObject other) =>
+        public override bool __le__(TrObject other) =>
             (other is TrBytes b)
             ? contents.SeqLtE<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
             ? contents.SeqLtE<FList<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <=: '{CLASS.Name}' and '{other.Class.Name}'");
 
-        bool TrObject.__lt__(TrObject other) =>
+        public override bool __lt__(TrObject other) =>
             (other is TrBytes b)
             ? contents.SeqLt<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
             ? contents.SeqLt<FList<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <: '{CLASS.Name}' and '{other.Class.Name}'");
 
-        bool TrObject.__gt__(TrObject other) =>
+        public override bool __gt__(TrObject other) =>
             (other is TrBytes b)
             ? contents.SeqGt<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -40,7 +40,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for >: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool TrObject.__ge__(TrObject other) =>
+        public override bool __ge__(TrObject other) =>
             (other is TrBytes b)
             ? contents.SeqGtE<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -48,7 +48,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for >=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool TrObject.__ne__(TrObject other) =>
+        public override bool __ne__(TrObject other) =>
             (other is TrBytes b)
             ? contents.SeqNe<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -56,7 +56,7 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for !=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        bool TrObject.__eq__(TrObject other) =>
+        public override bool __eq__(TrObject other) =>
             (other is TrBytes b)
             ? contents.SeqEq<FList<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
@@ -81,7 +81,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        TrObject TrObject.__add__(TrObject other)
+        public override TrObject __add__(TrObject other)
         {
             if (other is TrBytes b)
             {

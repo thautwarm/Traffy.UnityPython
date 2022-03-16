@@ -8,12 +8,10 @@ namespace Traffy.Objects
     public partial class TrNone : TrObject
     {
 
-        List<TrObject> TrObject.__array__ => null;
-
-        object TrObject.Native => this;
+        public override List<TrObject> __array__ => null;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
         public static TrNone Unique = new TrNone();
         public static bool unique_set = false;
 

@@ -8,12 +8,10 @@ namespace Traffy.Objects
     {
         public TrObject value;
         static string s_attrValue = String.Intern("value");
-        object TrObject.Native => this;
-
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -53,8 +51,8 @@ namespace Traffy.Objects
             throw new AttributeError(this, s, $"'{CLASS.Name}' object has no attribute '" + s.value + "'");
         }
 
-        bool TrObject.__getic_refl__(Traffy.Objects.TrStr s, out Traffy.Objects.TrObject found) => _slow_read(s, out found);
-        bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found)
+        public override bool __getic_refl__(Traffy.Objects.TrStr s, out Traffy.Objects.TrObject found) => _slow_read(s, out found);
+        public override bool __getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found)
         {
             if (object.ReferenceEquals(ic.attribute.value, s_attrValue))
             {
@@ -70,8 +68,8 @@ namespace Traffy.Objects
         }
 
 
-        void TrObject.__setic_refl__(Traffy.Objects.TrStr s, Traffy.Objects.TrObject value) => _slow_write(s, value);
-        void TrObject.__setic__(Traffy.InlineCache.PolyIC ic, Traffy.Objects.TrObject s_value)
+        public override void __setic_refl__(Traffy.Objects.TrStr s, Traffy.Objects.TrObject value) => _slow_write(s, value);
+        public override void __setic__(Traffy.InlineCache.PolyIC ic, Traffy.Objects.TrObject s_value)
         {
             TrStr attr = ic.attribute;
             if (object.ReferenceEquals(attr.value, s_attrValue))

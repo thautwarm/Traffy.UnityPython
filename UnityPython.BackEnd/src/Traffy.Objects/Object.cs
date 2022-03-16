@@ -29,7 +29,7 @@ namespace Traffy.Objects
         }
     }
 
-    public partial interface TrObject : IEquatable<TrObject>, IComparable<TrObject>
+    public abstract partial class TrObject : IEquatable<TrObject>, IComparable<TrObject>
     {
         public static TrObject[] EmptyObjectArray = new TrObject[0];
 
@@ -46,10 +46,9 @@ namespace Traffy.Objects
 
         // if the object is a class, cast it.
         public TrClass AsClass => (TrClass)this;
-        public bool IsClass => false;
-        public List<TrObject> __array__ => null;
-        public object Native => this;
-        public TrClass Class { get; }
+        public abstract List<TrObject> __array__ { get; }
+        public virtual object Native => this;
+        public abstract TrClass Class { get; }
         Exception unsupported(string op) =>
             throw new TypeError($"{Class.Name} has no attribute '{op}'");
 
@@ -332,7 +331,9 @@ namespace Traffy.Objects
     public class TrRawObject : TrUserObjectBase
     {
         public static TrClass CLASS;
-        TrClass TrObject.Class => CLASS;
+        public override TrClass Class => CLASS;
+
+        public override List<TrObject> __array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -366,9 +367,9 @@ namespace Traffy.Objects
     public class TrUserObject : TrUserObjectBase
     {
         public TrClass CLASS;
-        TrClass TrObject.Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        public List<TrObject> __array__ { get; } = new List<TrObject>();
+        public override List<TrObject> __array__ { get; } = new List<TrObject>();
         public TrUserObject(TrClass cls)
         {
             CLASS = cls;

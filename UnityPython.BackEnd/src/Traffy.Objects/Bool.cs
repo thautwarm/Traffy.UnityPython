@@ -22,10 +22,10 @@ namespace Traffy.Objects
     {
         public bool value;
 
-        bool TrObject.__bool__() => value;
+        public override bool __bool__() => value;
 
-        string TrObject.__repr__() => value ? "True" : "False";
-        object TrObject.Native => value;
+        public override string __repr__() => value ? "True" : "False";
+        public override object Native => value;
         internal static TrBool TrBool_True = new TrBool(true);
         internal static TrBool TrBool_False = new TrBool(false);
 
@@ -36,7 +36,9 @@ namespace Traffy.Objects
         }
 
         static TrClass CLASS = null;
-        TrClass TrObject.Class => CLASS;
+        public override TrClass Class => CLASS;
+
+        public override List<TrObject> __array__ => null;
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

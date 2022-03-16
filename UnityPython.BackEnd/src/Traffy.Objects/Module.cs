@@ -31,19 +31,17 @@ namespace Traffy.Objects
         public Dictionary<TrObject, TrObject> Namespace = RTS.baredict_create();
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
-        bool TrObject.__bool__() => true;
-        TrObject TrObject.__getitem__(TrObject item) => throw new TypeError("'module' object is not subscriptable");
-        void TrObject.__setitem__(TrObject key, TrObject value) => throw new TypeError("'module' object is not subscriptable");
-        bool TrObject.__getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found) =>
+        public override bool __bool__() => true;
+        public override bool __getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found) =>
             _read_module(ic.attribute, out found) || CLASS.__getic__(ic, out found);
-        void TrObject.__setic__(Traffy.InlineCache.PolyIC ic, Traffy.Objects.TrObject value) => _write_module(ic.attribute, value);
-        bool TrObject.__getic_refl__(Traffy.Objects.TrStr s, out Traffy.Objects.TrObject found) =>
+        public override void __setic__(Traffy.InlineCache.PolyIC ic, Traffy.Objects.TrObject value) => _write_module(ic.attribute, value);
+        public override bool __getic_refl__(Traffy.Objects.TrStr s, out Traffy.Objects.TrObject found) =>
             _read_module(s, out found) || CLASS.__getic_refl__(s, out found);
-        void TrObject.__setic_refl__(TrStr s, TrObject value) => _write_module(s, value);
+        public override void __setic_refl__(TrStr s, TrObject value) => _write_module(s, value);
 
         public bool _read_module(TrStr name, out TrObject found)
         {

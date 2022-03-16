@@ -20,9 +20,9 @@ namespace Traffy.Objects
         public TrObject Current => m_Generator.GetResult();
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -64,11 +64,11 @@ namespace Traffy.Objects
             throw new NotSupportedException("cannot reset Traffy coroutines");
         }
 
-        Awaitable<TrObject> TrObject.__await__() => this.m_Generator;
-        IEnumerator<TrObject> TrObject.__iter__() => this;
+        public override Awaitable<TrObject> __await__() => this.m_Generator;
+        public override IEnumerator<TrObject> __iter__() => this;
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
-        bool TrObject.__next__(TrRef refval)
+        public override bool __next__(TrRef refval)
         {
             m_Generator.m_Result = RTS.object_none;
             if (m_Generator.MoveNext())

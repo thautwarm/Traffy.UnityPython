@@ -74,7 +74,7 @@ namespace SimpleJSON
             var res = new List<(string, Type, Action<object, object>)>();
             foreach (var prop in typeobject.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (prop.CanWrite)
+                if (prop.CanWrite && prop.GetIndexParameters().Length == 0)
                 {
                     Action<object, object> setValue = prop.SetValue;
                     res.Add((prop.Name, prop.PropertyType, setValue));
@@ -221,7 +221,7 @@ namespace SimpleJSON
                             {
                                 args[0] = parse_key(kv.Key);
 #if DEBUG
-                                Console.WriteLine(node.Tag + " ." + kv.Key + " -> " + t_value.Name);
+                                Console.WriteLine("spec " + node.Tag + " ." + kv.Key + " -> " + t_value.Name);
 #endif
                                 args[1] = Deserialize(kv.Value, t_value, context);
                                 Add(dict, args);
@@ -234,7 +234,7 @@ namespace SimpleJSON
                         {
                                 var jattr = jobject[name_field];
 #if DEBUG
-                                Console.WriteLine(node.Tag + " ." + name_field + " -> " + t_field.Name);
+                                Console.WriteLine("real " + node.Tag + " ." + name_field + " -> " + t_field.Name);
 #endif
 
                             var value = Deserialize(jattr, t_field, context);
@@ -344,8 +344,11 @@ namespace SimpleJSON
                     concreteClasses = new Dictionary<string, Type>();
                     foreach (var t in typeobject.Assembly.GetTypes())
                     {
-                        if (t.IsClass && !t.IsAbstract)
+                        if (typeobject.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract && t.GetCustomAttribute<SerializableAttribute>() != null)
                         {
+#if DEBUG
+                            Console.WriteLine($"{t.Name} implements {typeobject.Name}");
+#endif
                             concreteClasses[t.Name] = t;
                         }
                     }

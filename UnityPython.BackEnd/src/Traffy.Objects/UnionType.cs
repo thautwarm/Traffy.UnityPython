@@ -5,16 +5,15 @@ using System.Linq;
 namespace Traffy.Objects
 {
 
-    [Serializable]
     public partial class TrUnionType : TrObject
     {
         public TrClass left;
         public TrClass right;
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
-        string TrObject.__repr__() => left.__repr__() + "|" + right.__repr__();
+        public override List<TrObject> __array__ => null;
+        public override string __repr__() => left.__repr__() + "|" + right.__repr__();
 
         public TrUnionType(TrClass left, TrClass right)
         {

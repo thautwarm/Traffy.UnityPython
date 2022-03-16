@@ -22,15 +22,17 @@ namespace Traffy.Objects
     public sealed partial class TrInt : TrObject
     {
         public Int64 value;
-        object TrObject.Native => value;
+        public override object Native => value;
 
-        string TrObject.__repr__() => value.ToString();
+        public override string __repr__() => value.ToString();
 
         // XXX: CPython behavior: check 'ndigit' should be int
-        TrObject TrObject.__round__(TrObject _) => this;
+        public override TrObject __round__(TrObject _) => this;
 
         public static TrClass CLASS;
-        TrClass TrObject.Class => CLASS;
+        public override TrClass Class => CLASS;
+
+        public override List<TrObject> __array__ => null;
 
 
         [PyBind]

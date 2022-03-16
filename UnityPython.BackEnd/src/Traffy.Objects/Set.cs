@@ -8,12 +8,12 @@ namespace Traffy.Objects
         public HashSet<TrObject> container;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
-        IEnumerator<TrObject> TrObject.__iter__() => container.GetEnumerator();
+        public override List<TrObject> __array__ => null;
+        public override IEnumerator<TrObject> __iter__() => container.GetEnumerator();
 
-        string TrObject.__repr__() => "{" + string.Join(", ", container.Select(x => x.__repr__())) + "}";
+        public override string __repr__() => "{" + string.Join(", ", container.Select(x => x.__repr__())) + "}";
 
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]

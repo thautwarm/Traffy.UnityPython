@@ -9,11 +9,11 @@ namespace Traffy.Objects
     {
         public string name;
         [NotNull] public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
-        string TrObject.__repr__() => $"<function {name}>";
-        bool TrObject.__bool__() => true;
+        public override string __repr__() => $"<function {name}>";
+        public override bool __bool__() => true;
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
-        List<TrObject> TrObject.__array__ => null;
+        public override TrClass Class => CLASS;
+        public override List<TrObject> __array__ => null;
 
         [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
         static void _Init()
@@ -30,7 +30,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        TrObject TrObject.__call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             try
             {

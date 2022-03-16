@@ -8,10 +8,10 @@ namespace Traffy.Objects
     {
         TrObject _getter;
         TrObject _setter = null;
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
         TrObject bind_setter(TrObject o)
         {
             _setter = o;

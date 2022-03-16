@@ -6,14 +6,14 @@ using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
-    public sealed partial class TrList : TrObject
+    public sealed partial class TrList : TrObject, IComparable<TrObject>
     {
         public List<TrObject> container;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        List<TrObject> TrObject.__array__ => null;
+        public override List<TrObject> __array__ => null;
 
         [PyBind(Name = "compare")]
         int IComparable<TrObject>.CompareTo(TrObject other)
@@ -58,18 +58,18 @@ namespace Traffy.Objects
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }
 
-        IEnumerator<TrObject> TrObject.__iter__()
+        public override IEnumerator<TrObject> __iter__()
         {
             return container.GetEnumerator();
         }
 
-        TrObject TrObject.__len__() => MK.Int(container.Count);
+        public override TrObject __len__() => MK.Int(container.Count);
 
-        string TrObject.__repr__() => "[" + String.Join(",", container.Select((i) => i.__str__())) + "]";
+        public override string __repr__() => "[" + String.Join(",", container.Select((i) => i.__str__())) + "]";
 
-        string TrObject.__str__() => this.AsObject().__repr__();
+        public override string __str__() => this.AsObject().__repr__();
 
-        bool TrObject.__eq__(Traffy.Objects.TrObject other)
+        public override bool __eq__(Traffy.Objects.TrObject other)
         {
             if (other is TrList lst)
             {
@@ -78,7 +78,7 @@ namespace Traffy.Objects
             return false;
         }
 
-        bool TrObject.__ne__(Traffy.Objects.TrObject other)
+        public override bool __ne__(Traffy.Objects.TrObject other)
         {
             if (other is TrList lst)
             {
@@ -87,7 +87,7 @@ namespace Traffy.Objects
             return true;
         }
 
-        bool TrObject.__gt__(Traffy.Objects.TrObject other)
+        public override bool __gt__(Traffy.Objects.TrObject other)
         {
             if (other is TrList lst)
             {
@@ -96,7 +96,7 @@ namespace Traffy.Objects
             throw new TypeError($"'>' not supported between instances of '{Class.Name}' and '" + other.Class.Name + "'");
         }
 
-        bool TrObject.__ge__(Traffy.Objects.TrObject other)
+        public override bool __ge__(Traffy.Objects.TrObject other)
         {
             if (other is TrList lst)
             {
@@ -105,7 +105,7 @@ namespace Traffy.Objects
             throw new TypeError($"'>=' not supported between instances of '{Class.Name}' and '" + other.Class.Name + "'");
         }
 
-        bool TrObject.__lt__(Traffy.Objects.TrObject other)
+        public override bool __lt__(Traffy.Objects.TrObject other)
         {
             if (other is TrList lst)
             {
@@ -114,7 +114,7 @@ namespace Traffy.Objects
             throw new TypeError($"'<' not supported between instances of '{Class.Name}' and '" + other.Class.Name + "'");
         }
 
-        bool TrObject.__le__(Traffy.Objects.TrObject other)
+        public override bool __le__(Traffy.Objects.TrObject other)
         {
             if (other is TrList lst)
             {
@@ -129,7 +129,7 @@ namespace Traffy.Objects
             return MK.List(container.Copy());
         }
 
-        TrObject TrObject.__getitem__(TrObject item)
+        public override TrObject __getitem__(TrObject item)
         {
             switch (item)
             {
@@ -157,7 +157,7 @@ namespace Traffy.Objects
             }
         }
 
-        void TrObject.__setitem__(TrObject item, TrObject value)
+        public override void __setitem__(TrObject item, TrObject value)
         {
             switch (item)
             {
@@ -201,7 +201,7 @@ namespace Traffy.Objects
             }
         }
 
-        void TrObject.__delitem__(Traffy.Objects.TrObject item)
+        public override void __delitem__(Traffy.Objects.TrObject item)
         {
             switch (item)
             {

@@ -8,8 +8,8 @@ namespace Traffy.Objects
     {
         public TrObject func;
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
-        List<TrObject> TrObject.__array__ => null;
+        public override TrClass Class => CLASS;
+        public override List<TrObject> __array__ => null;
 
         [PyBind]
         public TrObject __func__

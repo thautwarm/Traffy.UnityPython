@@ -1,2 +1,2 @@
 unitypython.exe tests --includesrc --recursive --outdir out
-dotnet run out -c Release --framework net6
+dotnet run out -c Release

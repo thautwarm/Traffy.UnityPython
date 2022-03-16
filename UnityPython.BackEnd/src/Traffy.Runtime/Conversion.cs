@@ -62,10 +62,10 @@ namespace Traffy
             return o;
         }
 
-        public static T Apply<T>(THint<T> _, TrObject o) where T : class, TrObject
+        public static T Apply<T>(THint<T> _, TrObject o) where T : TrObject
         {
             var s_o = o as T;
-            if ((object) s_o != null)
+            if ((object)s_o != null)
             {
                 return s_o;
             }

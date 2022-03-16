@@ -9,20 +9,20 @@ namespace Traffy.Objects
         public float value;
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
 
-        object TrObject.Native => value;
-        List<TrObject> TrObject.__array__ => null;
+        public override object Native => value;
+        public override List<TrObject> __array__ => null;
 
-        TrObject TrObject.__round__(TrObject ndigits)
+        public override TrObject __round__(TrObject ndigits)
         {
             if (ndigits.IsNone())
                 return MK.Int(System.Convert.ToInt64(value));
             return MK.Float(Math.Round(value, ndigits.AsInt(), MidpointRounding.AwayFromZero));
         }
-        bool TrObject.__bool__() => value != 0.0f;
+        public override bool __bool__() => value != 0.0f;
 
-        string TrObject.__repr__() => value.ToString();
+        public override string __repr__() => value.ToString();
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

@@ -119,3 +119,35 @@ xs = [1, 2, -8, 1]
 xs.sort()
 print(xs)
 
+
+def _test1():
+    x = 0
+    for i in range(10000000):
+        x += 1
+        yield x
+
+def test1():
+    x = list(_test1())
+    print(x[50])
+    return len(x)
+
+def test2():
+    x = 0
+    while x < 10000000:
+        x += 1
+    return x
+
+class XX:
+    xx =5
+    def __init__(self, x):
+        self.x = x
+
+
+def testfunc(f):
+    a = time()
+    print("res", f())
+    print(time() - a)
+
+
+testfunc(test1)
+testfunc(test2)

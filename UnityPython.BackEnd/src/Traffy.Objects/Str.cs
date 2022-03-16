@@ -14,13 +14,13 @@ namespace Traffy.Objects
     }
 
     [Serializable]
-    public partial class TrStr : TrObject
+    public partial class TrStr : TrObject, IComparable<TrObject>
     {
         public string value;
         public bool isInterned = false;
-
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
+            // TODO: check if this is called
             if (other is TrStr s)
             {
                 return value.CompareTo(s.value);
@@ -28,12 +28,11 @@ namespace Traffy.Objects
             throw new TypeError($"unsupported comparison for '{CLASS.Name}' and '{other.Class.Name}'");
         }
 
-        string TrObject.__repr__() => value.Escape();
-        string TrObject.__str__() => value;
-        bool TrObject.__bool__() => value.Length != 0;
-        List<TrObject> TrObject.__array__ => null;
-
-        IEnumerator<TrObject> TrObject.__iter__()
+        public override string __repr__() => value.Escape();
+        public override string __str__() => value;
+        public override bool __bool__() => value.Length != 0;
+        public override List<TrObject> __array__ => null;
+        public override IEnumerator<TrObject> __iter__()
         {
             for(int i = 0; i < value.Length; i++)
             {
@@ -42,7 +41,7 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS;
-        public TrClass Class => CLASS;
+        public override TrClass Class => CLASS;
         public TrStr Interned() => isInterned ? this : MK.IStr(value);
         public InternedString GetInternedString() => InternedString.Unsafe(Interned().value);
 
@@ -50,11 +49,11 @@ namespace Traffy.Objects
             InternedString.Unsafe(this.value) :
             InternedString.FromString(value);
 
-        int TrObject.__hash__() => value.GetHashCode();
+        public override int __hash__() => value.GetHashCode();
 
-        bool TrObject.__contains__(TrObject other) => value.Contains(other.AsStr());
+        public override bool __contains__(TrObject other) => value.Contains(other.AsStr());
 
-        bool TrObject.__le__(TrObject other)
+        public override bool __le__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -62,7 +61,7 @@ namespace Traffy.Objects
             }
             return value.Inline().SeqLtE<FString, FString, char>(b.value, out var _);
         }
-        bool TrObject.__lt__(TrObject other)
+        public override bool __lt__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -71,7 +70,7 @@ namespace Traffy.Objects
             return value.Inline().SeqLt<FString, FString, char>(b.value);
         }
 
-        bool TrObject.__gt__(TrObject other)
+        public override bool __gt__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -81,7 +80,7 @@ namespace Traffy.Objects
         }
 
 
-        bool TrObject.__ge__(TrObject other)
+        public override bool __ge__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -91,7 +90,7 @@ namespace Traffy.Objects
         }
 
 
-        bool TrObject.__ne__(TrObject other)
+        public override bool __ne__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -102,7 +101,7 @@ namespace Traffy.Objects
             return value != b.value;
         }
 
-        bool TrObject.__eq__(TrObject other)
+        public override bool __eq__(TrObject other)
         {
             if (!(other is TrStr b))
             {
@@ -131,9 +130,9 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        object TrObject.Native => value;
+        public override object Native => value;
 
-        TrObject TrObject.__add__(TrObject other)
+        public override TrObject __add__(TrObject other)
         {
             if (other is TrStr s)
                 return MK.Str(value + s.value);

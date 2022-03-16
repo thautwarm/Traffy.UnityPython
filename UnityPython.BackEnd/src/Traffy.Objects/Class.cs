@@ -39,7 +39,6 @@ namespace Traffy.Objects
 
     public sealed partial class TrClass : TrObject
     {
-        public bool IsClass => true;
         static IdComparer idComparer = new IdComparer();
         public static Dictionary<Type, TrClass> TypeDict = new Dictionary<Type, TrClass>();
         static TrClass MetaClass = null;
@@ -63,7 +62,7 @@ namespace Traffy.Objects
         // include itself
         public HashSet<TrClass> __subclasses = new HashSet<TrClass>(idComparer);
 
-        public List<TrObject> __array__ => null;
+        public override List<TrObject> __array__ => null;
 
         // does not contain those that are inherited from '__mro__'
         // values are never null
@@ -139,14 +138,14 @@ namespace Traffy.Objects
             throw new NotImplementedException("custom metaclasses not supported yet.");
         }
 
-        public TrClass Class { set; get; }
+        public override TrClass Class => MetaClass;
 
-        TrObject TrObject.__getitem__(TrObject item)
+        public override TrObject __getitem__(TrObject item)
         {
             return this;
         }
 
-        TrObject TrObject.__bitor__(Traffy.Objects.TrObject a)
+        public override TrObject __bitor__(Traffy.Objects.TrObject a)
         {
             if (a.IsNone())
             {
@@ -158,9 +157,9 @@ namespace Traffy.Objects
             }
             throw new TypeError($"unsupported operand type(s) for |: class '{this.Name}' and '{a.Class.Name}' object");
         }
-        public string __repr__() => Name;
+        public override string __repr__() => Name;
 
-        public TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             // XXX: should we support metaclasses other than 'type'?
             args.AddLeft(this);
@@ -251,7 +250,6 @@ namespace Traffy.Objects
                 __base = bases,
             };
             cls.InitInlineCacheForMagicMethods();
-            cls.Class = cls;
             return cls;
         }
 
@@ -325,7 +323,6 @@ namespace Traffy.Objects
         }
         public void SetupClass(Dictionary<TrObject, TrObject> kwargs)
         {
-            Class = MetaClass;
             __mro = C3_linearize(this);
             foreach (var cls in __mro)
             {

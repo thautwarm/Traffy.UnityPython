@@ -6,12 +6,11 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
 
-    [Serializable]
     public sealed partial class TrIter : TrObject, IEnumerator<TrObject>
     {
         public IEnumerator<TrObject> iter;
-        public IEnumerator<TrObject> __iter__ => this;
-        public object Native => iter;
+        public override IEnumerator<TrObject> __iter__() => this;
+        public override object Native => iter;
 
         public TrIter(IEnumerator<TrObject> itr)
         {
@@ -19,11 +18,8 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS = null;
-        public TrClass Class => CLASS;
-
-        List<TrObject> TrObject.__array__ => null;
-
-        IEnumerator<TrObject> TrObject.__iter__() => this;
+        public override TrClass Class => CLASS;
+        public override List<TrObject> __array__ => null;
 
         public TrObject Current => iter.Current;
 
@@ -35,8 +31,7 @@ namespace Traffy.Objects
             return MK.Iter(obj.__iter__());
         }
 
-
-        bool TrObject.__next__(TrRef refval)
+        public override bool __next__(TrRef refval)
         {
             if (iter.MoveNext())
             {
