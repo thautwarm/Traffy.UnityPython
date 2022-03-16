@@ -43,7 +43,7 @@ namespace Traffy
             if (flush)
                 System.Console.Out.Flush();
 #else
-            Debug.Log(sb.ToString());
+            UnityEngine.Debug.Log(sb.ToString());
 #endif
             return MK.None();
         }

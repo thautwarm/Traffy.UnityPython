@@ -375,7 +375,10 @@ namespace Traffy.Objects
                 var init_class = cls[ic__init_subclass];
                 if (init_class != null)
                 {
-                    init_class.Call(cls, this);
+                    var _args = new BList<TrObject>();
+                    _args.Add(cls);
+                    _args.Add(this);
+                    init_class.__call__(_args, null);
                     // XXX: different from CPython, we don't break here
                     // break;
                 }

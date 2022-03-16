@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 namespace Traffy.Objects
 {
-    public partial interface TrUserObjectBase: TrObject
+    public interface TrUserObjectBase: TrObject
     {
         TrObject TrObject.__init__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
