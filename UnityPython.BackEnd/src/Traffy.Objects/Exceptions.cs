@@ -723,7 +723,7 @@ namespace Traffy.Objects
         }
         public NativeError(Exception native)
         {
-            if (native is TrExceptionBase)
+            if (native is TrExceptionWrapper)
                 throw new Exception("native error should not be a traffy error");
             Error = native;
             this.Base().args = new TrObject[] { MK.Str(native.Message) };

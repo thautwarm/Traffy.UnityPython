@@ -513,10 +513,6 @@ namespace Traffy
             }
             var exc = new NativeError(e);
             return exc;
-
-            // if (e is TrExceptionBase o)
-            //     return o;
-            // return new NativeError(e);
         }
 
         public static Exception exc_tobare(TrObject rt_exc)
