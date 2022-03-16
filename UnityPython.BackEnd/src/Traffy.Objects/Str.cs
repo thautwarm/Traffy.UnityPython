@@ -22,7 +22,6 @@ namespace Traffy.Objects
         public bool isInterned = false;
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
-            // TODO: check if this is called
             if (other is TrStr s)
             {
                 return value.CompareTo(s.value);

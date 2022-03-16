@@ -518,8 +518,8 @@ namespace Traffy
         public static Exception exc_tobare(TrObject rt_exc)
         {
             if (rt_exc is TrExceptionBase o)
-                new TrExceptionWrapper(o);
-            throw new TypeError($"exceptions must be old-style classes or derived from BaseException, not {rt_exc.Class.Name}");
+                return new TrExceptionWrapper(o);
+            throw new TrExceptionWrapper(new TypeError($"exceptions must be old-style classes or derived from BaseException, not {rt_exc.Class.Name}"));
         }
 
         public static Awaitable<TrObject> generator_of_iter(IEnumerator<TrObject> o)
