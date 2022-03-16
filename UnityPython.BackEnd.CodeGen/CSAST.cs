@@ -487,7 +487,8 @@ namespace CSAST
                 name.Doc(),
                 doc_arguments,
                 body.Select(x => x.Doc()).ToArray(),
-                Public: false
+                Public: false,
+                Static: true
             );
         }
     }

@@ -9,5 +9,4 @@ public static class CodeGenConfig
             .GetMethods(BindingFlags.Static | BindingFlags.Public)
             .Where(m => m.GetCustomAttribute<MagicMethod>() != null)
             .ToArray();
-    
 }

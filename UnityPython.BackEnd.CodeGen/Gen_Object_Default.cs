@@ -53,7 +53,7 @@ public class Gen_ObjectDefault : HasNamespace
                                   .SurroundedBy(Parens)
                         * ";".Doc(),
             };
-            defs.Add(GenerateMethod(meth.ReturnType.RefGen(this), meth.Name.Doc(), sig_Args, body));
+            defs.Add(GenerateMethod(meth.ReturnType.RefGen(this), meth.Name.Doc(), sig_Args, body, Public: true, Virtual: true));
         }
 
         RequiredNamespace.Remove(entry.Namespace);
