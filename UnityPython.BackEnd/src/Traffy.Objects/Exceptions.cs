@@ -769,4 +769,16 @@ namespace Traffy.Objects
         }
     }
 
+    public class TrExceptionWrapper: Exception
+    {
+        public TrExceptionBase TrO;
+        public TrExceptionWrapper(TrExceptionBase trO): base (trO.args.Length > 0 ? trO.args[0].__str__() : "")
+        {
+            TrO = trO;
+        }
+
+        public override string ToString() => TrO.__repr__();
+        public override string StackTrace => TrO.GetStackTrace();
+    }
+
 }

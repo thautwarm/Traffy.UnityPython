@@ -507,7 +507,13 @@ namespace Traffy
 
         public static TrExceptionBase exc_frombare(Exception e)
         {
-            throw new NotImplementedException();
+            if (e is TrExceptionWrapper wrapper)
+            {
+                return wrapper.TrO;
+            }
+            var exc = new NativeError(e);
+            return exc;
+
             // if (e is TrExceptionBase o)
             //     return o;
             // return new NativeError(e);
@@ -515,12 +521,9 @@ namespace Traffy
 
         public static Exception exc_tobare(TrObject rt_exc)
         {
-            throw new NotImplementedException();
-            // if (rt_exc is Exception o)
-            // {
-            //     return o;
-            // }
-            // throw new ValueError($"{rt_exc.__repr__()} is not an exception");
+            if (rt_exc is TrExceptionBase o)
+                new TrExceptionWrapper(o);
+            throw new TypeError($"exceptions must be old-style classes or derived from BaseException, not {rt_exc.Class.Name}");
         }
 
         public static Awaitable<TrObject> generator_of_iter(IEnumerator<TrObject> o)
