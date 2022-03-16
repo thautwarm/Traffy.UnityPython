@@ -149,5 +149,26 @@ def testfunc(f):
     print(time() - a)
 
 
-testfunc(test1)
-testfunc(test2)
+# testfunc(test1)
+# testfunc(test2)
+
+# print([[1], 3] < [[1], 3, 1])
+# print([2, 3] * 2)
+
+x = list(range(10))
+print(x)
+del x[19:0:-3]
+print(x)
+
+
+x = tuple(range(10))
+
+print(x[19:0:-3])
+
+print((1, 2).count(2))
+
+assert (1, 2) + (1, 2) == (1, 2, 1, 2), "tuple concat"
+assert (1, 2) * 3 == (1, 2, 1, 2, 1, 2), "tuple mul"
+assert (1, 2, 7, 9).index(7) == 2, "tuple index"
+
+[1, 2] <= [2, 4]

@@ -22,6 +22,7 @@ namespace Traffy.Objects
     [PyBuiltin]
     public sealed partial class TrInt : TrObject
     {
+
         public Int64 value;
         public override object Native => value;
 
@@ -34,7 +35,6 @@ namespace Traffy.Objects
         public override TrClass Class => CLASS;
 
         public override List<TrObject> __array__ => null;
-
 
         [PyBind]
         public static TrObject __new__(TrObject clsobj, TrObject value)

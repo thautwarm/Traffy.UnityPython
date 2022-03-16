@@ -8,7 +8,7 @@
      <TargetFramework>net6</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>NUNITY;TESTS</DefineConstants>
+     <DefineConstants>NUNITY;TESTS;DEV</DefineConstants>
   </PropertyGroup>
 
   <!-- <ItemGroup>
