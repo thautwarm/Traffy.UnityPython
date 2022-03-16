@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
+    [PyBuiltin]
     public partial class TrSet : TrObject
     {
         public HashSet<TrObject> container;

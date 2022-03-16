@@ -4,6 +4,8 @@ using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
+
+    [PyBuiltin]
     public sealed partial class TrClassMethod : TrObject
     {
         public TrObject func;

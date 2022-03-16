@@ -11,27 +11,6 @@ public static class Utils
         return new HashSet<T>(source);
     }
 
-    internal static HashSet<string> GetInterfaceMethodSource(this Type t)
-    {
-        var owned = new HashSet<string>();
-        foreach(var mi in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-        {
-            if (mi.GetBaseDefinition().DeclaringType != mi.DeclaringType)
-                owned.Add(mi.Name);
-        }
-        return owned;
-        // var interface_t = t.GetInterfaceMap(typeof(Traffy.Objects.TrObject));
-        // var res = new HashSet<string>();
-        // for(int i = 0; i < interface_t.TargetMethods.Length; i++)
-        // {
-        //     var targetMethod = interface_t.TargetMethods[i];
-        //     var interfaceMethod = interface_t.InterfaceMethods[i];
-        //     var methName = interfaceMethod.Name;
-        //     if (Traffy.MagicNames.ALL.Contains(methName) && interfaceMethod != targetMethod)
-        //         res.Add(methName);
-        // }
-        // return res;
-    }
 
     internal static List<T> ToList<T>(this IEnumerator<T> self)
     {

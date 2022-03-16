@@ -5,6 +5,7 @@ using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
+    [PyBuiltin]
     public sealed partial class TrDict : TrObject
     {
         public Dictionary<TrObject, TrObject> container;

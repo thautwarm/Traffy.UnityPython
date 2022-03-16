@@ -4,6 +4,7 @@ using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
+    [PyBuiltin]
     public partial class TrProperty : TrObject
     {
         TrObject _getter;

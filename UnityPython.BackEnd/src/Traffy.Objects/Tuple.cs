@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
@@ -13,6 +14,7 @@ namespace Traffy.Objects
     }
 
     [Serializable]
+    [PyBuiltin]
     public partial class TrTuple : TrObject
     {
         public TrObject[] elts;

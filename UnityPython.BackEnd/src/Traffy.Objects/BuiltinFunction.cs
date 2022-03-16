@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Traffy.Objects
 {
+    [Traffy.Annotations.PyBuiltin]
     public sealed class TrSharpFunc : TrObject
     {
         public string name;

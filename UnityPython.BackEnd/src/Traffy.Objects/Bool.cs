@@ -18,6 +18,7 @@ namespace Traffy.Objects
     }
 
     [Serializable]
+    [Traffy.Annotations.PyBuiltin]
     public sealed partial class TrBool : TrObject
     {
         public bool value;

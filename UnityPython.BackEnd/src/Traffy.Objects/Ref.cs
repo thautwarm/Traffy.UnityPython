@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
+    [PyBuiltin]
     public partial class TrRef : TrObject
     {
         public TrObject value;

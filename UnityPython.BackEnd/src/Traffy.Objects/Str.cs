@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using InlineHelper;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
@@ -14,6 +15,7 @@ namespace Traffy.Objects
     }
 
     [Serializable]
+    [PyBuiltin]
     public partial class TrStr : TrObject, IComparable<TrObject>
     {
         public string value;

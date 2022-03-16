@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
+    [PyBuiltin]
     public class TrStaticMethod : TrObject
     {
         public TrObject func;

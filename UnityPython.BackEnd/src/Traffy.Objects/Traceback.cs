@@ -32,6 +32,7 @@ namespace Traffy.Objects
         }
     }
 
+    [Traffy.Annotations.PyBuiltin]
     public class TrTraceback : TrObject
     {
         public List<FrameRecord> frameRecords = new List<FrameRecord>();

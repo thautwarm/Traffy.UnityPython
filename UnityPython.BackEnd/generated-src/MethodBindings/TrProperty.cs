@@ -8,13 +8,13 @@ namespace Traffy.Objects
         [Mark(Initialization.TokenBuiltinInit)]
         static void BindMethods()
         {
-            Traffy.Objects.TrObject __read_getter(Traffy.Objects.TrObject _arg)
+            static  Traffy.Objects.TrObject __read_getter(Traffy.Objects.TrObject _arg)
             {
                 return Box.Apply(((Traffy.Objects.TrProperty)_arg).getter);
             }
             Action<TrObject, TrObject> __write_getter = null;
             CLASS["getter"] = TrProperty.Create(CLASS.Name + ".getter", __read_getter, __write_getter);
-            Traffy.Objects.TrObject __read_setter(Traffy.Objects.TrObject _arg)
+            static  Traffy.Objects.TrObject __read_setter(Traffy.Objects.TrObject _arg)
             {
                 return Box.Apply(((Traffy.Objects.TrProperty)_arg).setter);
             }
