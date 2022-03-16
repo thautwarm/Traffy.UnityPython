@@ -56,17 +56,16 @@ public static class ExtCodeGen
         return $"{dt.Name}.{t.Name}".Doc();
     }
 
-    public static Doc GenerateMethod(Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body, bool Public = false)
+    public static Doc GenerateMethod(Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body, bool Public = false, bool Static = false, bool Override = false)
     {
+        var head_str = "";
+        if (Public)
+            head_str = "public " + head_str;
+        if (Static)
+            head_str = "static " + head_str;
+        else if (Override)
+            head_str = "override " + head_str;
         var head = (Public ? "public ".Doc() : Empty) * retype + name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
-        return head * NewLine * VSep("{".Doc(),
-            VSep(body).Indent(4),
-        "}".Doc());
-    }
-
-    public static Doc GenerateInterfaceMethod(Doc interfaceName, Doc retype, Doc name, (Doc name, Doc type)[] arguments, Doc[] body)
-    {
-        var head = retype + interfaceName * ".".Doc() * name * "(".Doc() * arguments.Select(x => x.type + x.name).Join(Comma) * ")".Doc();
         return head * NewLine * VSep("{".Doc(),
             VSep(body).Indent(4),
         "}".Doc());

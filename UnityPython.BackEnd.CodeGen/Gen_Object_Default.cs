@@ -59,15 +59,15 @@ public class Gen_ObjectDefault : HasNamespace
         RequiredNamespace.Remove(entry.Namespace);
         RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
         var x = VSep(
+            $"namespace {entry.Namespace}".Doc(),
+            "{".Doc(),
             VSep(
-                $"namespace {entry.Namespace}".Doc(),
-                "{".Doc(),
-                "public partial interface".Doc() + entry.Name.Doc(),
+                "public abstract partial class".Doc() + entry.Name.Doc(),
                 "{".Doc(),
                 defs.Join(NewLine).Indent(4),
                 "}".Doc()
             ).Indent(4),
-        "}".Doc()
+            "}".Doc()
         );
         x.Render(write);
         write("\n");

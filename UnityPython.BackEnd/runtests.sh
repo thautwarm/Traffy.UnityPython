@@ -1,2 +1,2 @@
 unitypython.exe tests --includesrc --recursive --outdir out
-dotnet run out -c Release
+dotnet run --project UnityPython.Tests.csproj -c Release out
