@@ -6,6 +6,7 @@ using InlineHelper;
 namespace Traffy.Objects
 {
     [Serializable]
+    [Traffy.Annotations.PyBuiltin]
     public sealed class TrBytes : TrObject, IComparable<TrObject>
     {
         public byte[] contents;

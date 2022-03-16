@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
     [Serializable]
+    [PyBuiltin]
     public sealed partial class TrFloat : TrObject
     {
         public float value;

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
 
+    [PyBuiltin]
     public partial class TrUnionType : TrObject
     {
         public TrClass left;

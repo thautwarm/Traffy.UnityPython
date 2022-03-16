@@ -6,6 +6,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
 
+    [PyBuiltin]
     public sealed partial class TrIter : TrObject, IEnumerator<TrObject>
     {
         public IEnumerator<TrObject> iter;

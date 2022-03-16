@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
     // runtime
+    [PyBuiltin]
     public sealed class TrFunc : TrObject
     {
         public Variable[] freevars;

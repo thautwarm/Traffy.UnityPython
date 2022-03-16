@@ -7,6 +7,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
 
+    [PyBuiltin]
     public sealed partial class TrGenerator : TrObject, IEnumerator<TrObject>
     {
         // at the end of such generator, result is set.

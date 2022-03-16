@@ -36,7 +36,6 @@ namespace Traffy.Objects
     }
 
 
-
     public sealed partial class TrClass : TrObject
     {
         static IdComparer idComparer = new IdComparer();

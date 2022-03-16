@@ -7,6 +7,7 @@ using InlineHelper;
 namespace Traffy.Objects
 {
 
+    [Traffy.Annotations.PyBuiltin]
     public sealed class TrByteArray : TrObject
     {
         public FList<byte> contents;

@@ -14,6 +14,42 @@ using static PrettyDoc.ExtPrettyDoc;
 [CodeGen(Path = "Traffy.Objects/Class.ClassInitHelpers.cs")]
 public class Gen_Class_ClassInit : HasNamespace
 {
+
+    internal static bool IsOwned(MethodInfo mi, Type me)
+    {
+        if (mi.DeclaringType != mi.GetBaseDefinition().DeclaringType && mi.DeclaringType == me)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    internal static HashSet<string> magicNames = null;
+    internal static HashSet<string> GetInterfaceMethodSource(Type t)
+    {
+        if (magicNames == null)
+            magicNames = magicMethods.Select(x => x.Name).ToHashSet();
+        var owned = new HashSet<string>();
+        foreach(var mi in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        {
+            if (magicNames.Contains(mi.Name) && IsOwned(mi, t))
+            {
+                owned.Add(mi.Name);
+            }
+        }
+        return owned;
+        // var interface_t = t.GetInterfaceMap(typeof(Traffy.Objects.TrObject));
+        // var res = new HashSet<string>();
+        // for(int i = 0; i < interface_t.TargetMethods.Length; i++)
+        // {
+        //     var targetMethod = interface_t.TargetMethods[i];
+        //     var interfaceMethod = interface_t.InterfaceMethods[i];
+        //     var methName = interfaceMethod.Name;
+        //     if (Traffy.MagicNames.ALL.Contains(methName) && interfaceMethod != targetMethod)
+        //         res.Add(methName);
+        // }
+        // return res;
+    }
     public static MethodInfo[] magicMethods = CodeGenConfig.MagicMethods;
     public HashSet<string> RequiredNamespace { get; } = new HashSet<string>();
     public Gen_Class_ClassInit()
@@ -50,19 +86,41 @@ public class Gen_Class_ClassInit : HasNamespace
             }
         }
 
-        IEnumerable<Doc> builtin_class_init_generator()
+        Type[] builtinPyClasses = typeof(TrObject).Assembly.GetTypes().Where(x =>
+            x.GetCustomAttribute<Traffy.Annotations.PyBuiltin>() != null
+            && x.IsClass && !x.IsAbstract && x.IsAssignableTo(typeof(TrObject))).ToArray();
+
+        IEnumerable<Doc> builtin_class_init_generator_foreach(Type builtinPyClass)
         {
-            yield return "var ownership = typeof(T).GetInterfaceMethodSource();".Doc();
+            yield return $"static void BuiltinClassInit_{builtinPyClass.Name}(TrClass cls)".Doc();
+            yield return "{".Doc();
+            var owned = GetInterfaceMethodSource(builtinPyClass);
             foreach (var meth in magicMethods)
             {
                 if (meth.GetCustomAttribute<MagicMethod>().NonInstance)
                 {
                     continue;
                 }
+                if (!owned.Contains(meth.Name))
+                    continue;
+
                 var args = Enumerable.Range(0, meth.GetParameters().Length - 1).Select(x => $"arg{x}".Doc()).ToArray();
-                yield return $"if (ownership.Contains(\"{meth.Name}\"))".Doc();
-                yield return $"cls[MagicNames.i_{meth.Name}] = {nameof(TrSharpFunc)}.FromFunc(cls.Name + \".{meth.Name}\", ({args.Prepend("self".Doc()).Join(Comma)}) => ((T)self).{meth.Name}({args.Join(Comma)}));".Doc() >> 4;
+                yield return $"cls[MagicNames.i_{meth.Name}] = {nameof(TrSharpFunc)}.FromFunc(cls.Name + \".{meth.Name}\", ({args.Prepend("self".Doc()).Join(Comma)}) => (({builtinPyClass.FullName})self).{meth.Name}({args.Join(Comma)}));".Doc() >> 4;
             }
+            yield return "}".Doc();
+        }
+
+        IEnumerable<Doc> builtin_class_init_generator()
+        {
+            foreach(var t in builtinPyClasses)
+            {
+                yield return $"if (typeof(T) == typeof({t.FullName}))".Doc();
+                yield return "{".Doc();
+                yield return $"BuiltinClassInit_{t.Name}(cls);".Doc() >> 4;
+                yield return $"return;".Doc() >> 4;
+                yield return "}".Doc();
+            }
+            yield return $"throw new System.Exception(\"Unsupported type: \" + typeof(T).FullName);".Doc();
         }
 
         IEnumerable<Doc> init_ic()
@@ -89,6 +147,7 @@ public class Gen_Class_ClassInit : HasNamespace
                             VSep(raw_init_generator().ToArray()).Indent(4),
                             "}".Doc(),
                             NewLine,
+                            VSep(builtinPyClasses.SelectMany(builtin_class_init_generator_foreach).ToArray()),
                             "static void BuiltinClassInit<T>(TrClass cls) where T : TrObject".Doc(),
                             "{".Doc(),
                             VSep(builtin_class_init_generator().ToArray()).Indent(4),

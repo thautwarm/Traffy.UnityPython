@@ -1,19 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <Compile Include="src/**/*.cs;generated-src/**/*.cs" />
-  </ItemGroup>
   <PropertyGroup>
     <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
-     <OutputType>Library</OutputType>
-     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-     <TargetFramework>netstandard2.1</TargetFramework>
+     <OutputType>Exe</OutputType>
+     <TargetFramework>net6</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
      <DefineConstants>NUNITY;TESTS</DefineConstants>
-    <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 
   <!-- <ItemGroup>

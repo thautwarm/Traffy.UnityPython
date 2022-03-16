@@ -19,6 +19,7 @@ namespace Traffy.Objects
         }
     }
     [Serializable]
+    [PyBuiltin]
     public sealed partial class TrInt : TrObject
     {
         public Int64 value;

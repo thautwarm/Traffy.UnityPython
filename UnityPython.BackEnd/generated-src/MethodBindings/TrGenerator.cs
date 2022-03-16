@@ -8,7 +8,7 @@ namespace Traffy.Objects
         [Mark(Initialization.TokenBuiltinInit)]
         static void BindMethods()
         {
-            Traffy.Objects.TrObject __bind_send(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_send(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {

@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,7 +7,7 @@
 
  <ItemGroup>
     <Reference Include="UnityPython">
-      <HintPath>../UnityPython.BackEnd/bin/Release/net6/UnityPython.dll</HintPath>
+      <HintPath>../UnityPython.BackEnd/bin/Release/netstandard2.1/UnityPython.dll</HintPath>
     </Reference>
   </ItemGroup>
 

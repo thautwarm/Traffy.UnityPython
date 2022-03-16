@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
     [Serializable]
+    [PyBuiltin]
     public partial class TrNone : TrObject
     {
 

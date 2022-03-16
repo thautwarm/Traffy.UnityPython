@@ -8,7 +8,7 @@ namespace Traffy.Objects
         [Mark(Initialization.TokenBuiltinInit)]
         static void BindMethods()
         {
-            Traffy.Objects.TrObject __bind_compare(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_compare(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -23,7 +23,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["compare"] = TrSharpFunc.FromFunc("compare", __bind_compare);
-            Traffy.Objects.TrObject __bind_copy(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_copy(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -37,7 +37,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["copy"] = TrSharpFunc.FromFunc("copy", __bind_copy);
-            Traffy.Objects.TrObject __bind_append(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_append(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -52,7 +52,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["append"] = TrSharpFunc.FromFunc("append", __bind_append);
-            Traffy.Objects.TrObject __bind_extend(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_extend(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -67,7 +67,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["extend"] = TrSharpFunc.FromFunc("extend", __bind_extend);
-            Traffy.Objects.TrObject __bind_insert(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_insert(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -83,7 +83,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["insert"] = TrSharpFunc.FromFunc("insert", __bind_insert);
-            Traffy.Objects.TrObject __bind_pop(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_pop(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -108,7 +108,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["pop"] = TrSharpFunc.FromFunc("pop", __bind_pop);
-            Traffy.Objects.TrObject __bind_remove(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_remove(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -123,7 +123,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["remove"] = TrSharpFunc.FromFunc("remove", __bind_remove);
-            Traffy.Objects.TrObject __bind_reverse(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_reverse(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -137,7 +137,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["reverse"] = TrSharpFunc.FromFunc("reverse", __bind_reverse);
-            Traffy.Objects.TrObject __bind_clear(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_clear(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -151,7 +151,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["clear"] = TrSharpFunc.FromFunc("clear", __bind_clear);
-            Traffy.Objects.TrObject __bind_find(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_find(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -196,7 +196,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["find"] = TrSharpFunc.FromFunc("find", __bind_find);
-            Traffy.Objects.TrObject __bind_index(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_index(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -241,7 +241,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["index"] = TrSharpFunc.FromFunc("index", __bind_index);
-            Traffy.Objects.TrObject __bind_count(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_count(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -256,7 +256,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["count"] = TrSharpFunc.FromFunc("count", __bind_count);
-            Traffy.Objects.TrObject __bind_sort(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_sort(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
