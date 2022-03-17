@@ -44,6 +44,7 @@ namespace Traffy.Objects
 
         public bool IsFixed = false;
         public bool IsSealed = false;
+        public bool IsAbstract = false;
 
         private object _token = new object();
         public object Token => _token;
@@ -341,7 +342,7 @@ namespace Traffy.Objects
 
             if (this.IsSet(i___eq__) && !this.IsSet(i___hash__))
             {
-                TrObject unhashable(TrObject self)
+                static TrObject unhashable(TrObject self)
                 {
                     throw new TypeError($"unhashable type: '{self.Class.Name}'");
                 }
@@ -349,11 +350,39 @@ namespace Traffy.Objects
             }
             if (this.IsSet(i___ne__) && !this.IsSet(i___hash__))
             {
-                TrObject unhashable(TrObject self)
+                static TrObject unhashable(TrObject self)
                 {
                     throw new TypeError($"unhashable type: '{self.Class.Name}'");
                 }
                 this[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"{Class.Name}.__hash__", unhashable);
+            }
+
+            if (this.IsSet(i___lt__))
+            {
+                if (!this.IsSet(i___ge__))
+                {
+                    static TrObject default_ge(TrObject self, TrObject other)
+                    {
+                        return MK.Bool(!self.__lt__(other));
+                    }
+                    this[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"{Class.Name}.__ge__", default_ge);
+                }
+                if (!this.IsSet(i___gt__))
+                {
+                    static TrObject default_gt(TrObject self, TrObject other)
+                    {
+                        return MK.Bool(!self.__eq__(other) && !self.__lt__(other));
+                    }
+                    this[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"{Class.Name}.__gt__", default_gt);
+                }
+                if (!this.IsSet(i___le__))
+                {
+                    static TrObject default_le(TrObject self, TrObject other)
+                    {
+                        return MK.Bool(self.__lt__(other) || self.__eq__(other));
+                    }
+                    this[MagicNames.i___le__] = TrSharpFunc.FromFunc($"{Class.Name}.__le__", default_le);
+                }
             }
 
             if (cp_kwargs != null)
