@@ -528,7 +528,9 @@ namespace CSAST
             TypeId:
             var name = t.Name;
             // replace `
-            name = name.Replace("`", "");
+            var stripIndex = name.IndexOf('`');
+            if (stripIndex != -1)
+                name = name.Substring(0, stripIndex);
             if (t.Namespace != null)
                 name = t.Namespace + "." + name;
             return new TId(name);

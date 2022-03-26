@@ -46,6 +46,8 @@ namespace Traffy.Objects
         public bool IsSealed = false;
         public bool IsAbstract = false;
 
+        public PolyIC ic__isabstractclass__ = new PolyIC("__isabstractclass__".ToIntern());
+        public HashSet<string> notimplemented_abstractfields = new HashSet<string>();
         private object _token = new object();
         public object Token => _token;
 
@@ -107,8 +109,7 @@ namespace Traffy.Objects
                 throw new TypeError($"Fatal: {cls.Name}.__new__() is not defined.");
             var o = cls_new.__call__(args, kwargs);
 
-            var cls_init = cls[cls.ic__init];
-            if (RTS.isinstanceof(o, cls) && cls_init != null)
+            if(RTS.isinstanceof(o, cls) && cls.__getic__(cls.ic__init, out var cls_init))
             {
                 args[0] = o;
                 cls_init.__call__(args, kwargs);
@@ -120,14 +121,15 @@ namespace Traffy.Objects
         public static TrObject typenew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             // cls, name, bases, ns
-            if (args.Count == 0)
+            var narg = args.Count;
+            if (narg == 0)
             {
                 throw new TypeError($"typenew cannot take zero arguments");
             }
             var cls = (TrClass)args[0];
             if (cls == MetaClass)
             {
-                if (args.Count != 4)
+                if (narg != 4)
                     throw new TypeError($"calling 'type' requires 4 arguments");
                 var name = args[1].AsStr();
                 var bases = (TrTuple)args[2];
@@ -166,14 +168,6 @@ namespace Traffy.Objects
             var res = typecall(args, kwargs);
             args.PopLeft();
             return res;
-        }
-
-        public bool __getic__(TrObject s, TrRef found)
-        {
-            var istr = s.AsStr().ToIntern();
-            var o = this[istr];
-            return false;
-            // throw new AttributeError($"attribute {s.__repr__()} not found.");
         }
 
         static TrClass[] C3_linearize(TrClass root)
@@ -311,10 +305,20 @@ namespace Traffy.Objects
 
         bool IsSet(string name, out TrObject o)
         {
-            if(__prototype__.TryGetValue(name, out Shape shape))
+            var o_name = MK.Str(name);
+            if(__getic_refl__(o_name, out var found))
             {
-                if (PolyIC.ReadClass(this, shape, out o))
+                if (TrRawObject.CLASS.__getic_refl__(o_name, out var foundFromObject))
                 {
+                    if (!Object.ReferenceEquals(found, foundFromObject))
+                    {
+                        o = found;
+                        return true;
+                    }
+                }
+                else
+                {
+                    o = found;
                     return true;
                 }
             }
@@ -393,10 +397,17 @@ namespace Traffy.Objects
                     else
                         throw new Exception($"Invalid keyword argument {kv.Key}");
                 }
+            
+            HashSet<TrClass> abs_classes = new HashSet<TrClass>(RTS.Py_COMPARER);
             foreach (var cls in __mro)
-            {
+            {    
                 if (cls == this)
                     continue;
+                if (cls.IsAbstract)
+                {
+                    abs_classes.Add(cls);
+                    continue;
+                }
                 var init_class = cls[cls.ic__init_subclass];
                 if (init_class != null)
                 {

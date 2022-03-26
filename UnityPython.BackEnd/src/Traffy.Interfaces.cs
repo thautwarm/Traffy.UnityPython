@@ -7,7 +7,7 @@ using Traffy.Objects;
 
 namespace Traffy
 {
-    public static class Interfaces
+    public static class Interfaces_
     {
         public enum AbsMemberKind
         {

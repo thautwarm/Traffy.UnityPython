@@ -16,6 +16,7 @@ namespace Traffy.Objects
 
         public static bool IsNone(this TrObject self) => object.ReferenceEquals(self, TrNone.Unique);
     }
+
     public class TraffyComparer : IEqualityComparer<TrObject>
     {
         public bool Equals(TrObject x, TrObject y)
@@ -32,6 +33,31 @@ namespace Traffy.Objects
     public abstract partial class TrObject : IEquatable<TrObject>, IComparable<TrObject>
     {
         public static TrObject[] EmptyObjectArray = new TrObject[0];
+
+        public virtual IEnumerable<(TrStr, TrObject)> GetDictItems()
+        {
+            var array = __array__;
+            if ((object)array != null)
+            {
+                foreach(var fshape in this.Class.__instance_fields__)
+                {
+                    var i = fshape.Get.FieldIndex;
+                    if (i < array.Count)
+                    {
+                        yield return (MK.IStr(fshape.Get.Name), array[i]);
+                    }
+                }
+            }
+            var cls = Class;
+            foreach(var kv in cls.__prototype__)
+            {
+                var shape = kv.Value;
+                if (InlineCache.PolyIC.ReadClass(cls, shape, out var value))
+                {
+                    yield return (MK.Str(kv.Key), value);
+                }
+            }
+        }
 
         bool IEquatable<TrObject>.Equals(TrObject other)
         {

@@ -20,9 +20,9 @@ namespace Traffy
         }
 
         static object ModuleLock = new object();
-        static Dictionary<string, TrModule> modules = new Dictionary<string, TrModule>();
+        static Dictionary<string, TrObject> modules = new Dictionary<string, TrObject>();
 
-        public static Dictionary<string, TrModule> Modules => modules;
+        public static Dictionary<string, TrObject> Modules => modules;
 
         static string PROJECT_DIR = ".";
         public static void SetProjectDir(string dir)
@@ -70,16 +70,23 @@ namespace Traffy
         }
 
 
-        public static TrModule ImportModule(string name)
+        public static TrObject ImportModule(string name)
         {
             if (modules.TryGetValue(name, out var mod))
             {
-                mod.InitInst();
+                if (mod is TrModule regularModule)
+                {
+                    regularModule.InitInst();
+                }
+                
                 return mod;
             }
             if (modules.TryGetValue(name + ".__init__", out mod))
             {
-                mod.InitInst();
+                if (mod is TrModule regularModule)
+                {
+                    regularModule.InitInst();
+                }
                 return mod;
             }
             throw new ImportError(name, MK.None(), $"No module '{name}'");

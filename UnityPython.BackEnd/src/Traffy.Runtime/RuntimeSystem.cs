@@ -402,8 +402,8 @@ namespace Traffy
             return trObject.__bool__();
         }
 
-        public static IEqualityComparer<TrObject> DICT_COMPARER = new TraffyComparer();
-        internal static Dictionary<TrObject, TrObject> baredict_create() => new Dictionary<TrObject, TrObject>(DICT_COMPARER);
+        public static IEqualityComparer<TrObject> Py_COMPARER = new TraffyComparer();
+        internal static Dictionary<TrObject, TrObject> baredict_create() => new Dictionary<TrObject, TrObject>(Py_COMPARER);
 
         internal static void baredict_extend(Dictionary<TrObject, TrObject> dict, TrObject other)
         {
@@ -477,7 +477,7 @@ namespace Traffy
 
         public static HashSet<TrObject> bareset_create()
         {
-            return new HashSet<TrObject>(DICT_COMPARER);
+            return new HashSet<TrObject>(Py_COMPARER);
         }
 
         public static void bareset_extend(HashSet<TrObject> set, TrObject rt_each)
@@ -628,7 +628,7 @@ namespace Traffy
                 var mod = ModuleSystem.ImportModule(resolvedName);
                 if (__all__ == null)
                 {
-                    if (mod.Namespace.TryGetValue(MK.Str("__all__"), out var export))
+                    if (mod.__getic_refl__(MK.Str("__all__"), out var export))
                     {
                         export.__iter__().ToList().ForEach(x =>
                         {
@@ -645,16 +645,13 @@ namespace Traffy
                     }
                     else
                     {
-                        foreach (var kv in mod.Namespace)
+                        foreach (var (key, value) in mod.GetDictItems())
                         {
-                            if (kv.Key is TrStr key)
+                            if (key.value.StartsWith("_"))
                             {
-                                if (key.value.StartsWith("_"))
-                                {
-                                    continue;
-                                }
-                                imported.Push((key, kv.Value));
+                                continue;
                             }
+                            imported.Push((key, value));
                         }
                     }
 

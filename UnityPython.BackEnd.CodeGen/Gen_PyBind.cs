@@ -12,7 +12,7 @@ using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
 using static Helper;
 
-[CodeGen(Path = "MethodBindings/")]
+[CodeGen(Path = "Traffy.MethodBindings/")]
 public class Gen_PyBind : HasNamespace
 {
     public HashSet<string> RequiredNamespace { get; } = new HashSet<string>();

@@ -58,6 +58,9 @@ namespace Traffy.Objects
         }
 
 
+        static void BuiltinClassInit_TrABC(TrClass cls)
+        {
+        }
         static void BuiltinClassInit_TrBool(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrBool)self).__repr__());
@@ -262,6 +265,11 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
+            if (typeof(T) == typeof(Traffy.Objects.TrABC))
+            {
+                BuiltinClassInit_TrABC(cls);
+                return;
+            }
             if (typeof(T) == typeof(Traffy.Objects.TrBool))
             {
                 BuiltinClassInit_TrBool(cls);

@@ -145,6 +145,15 @@ namespace Traffy.Objects
                 return TrObject.__contains__(this, a);
             return self_contains.Call(a).AsBool();
         }
+
+        public override TrObject __round__(TrObject ndigits)
+        {
+            var self_round = this[Class.ic__round];
+            if ((object)self_round == null)
+                return TrObject.__round__(this, ndigits);
+            return self_round.Call(ndigits);
+        }
+
         public override TrObject __reversed__()
         {
             var self_reversed = this[Class.ic__reversed];
@@ -188,6 +197,14 @@ namespace Traffy.Objects
             if ((object)self_iter == null)
                 return TrObject.__iter__(this);
             return self_iter.Call().__iter__();
+        }
+        
+        public override Awaitable<TrObject> __await__()
+        {
+            var self_await = this[Class.ic__await];
+            if ((object)self_await == null)
+                return TrObject.__await__(this);
+            return RTS.object_yield_from(self_await.Call());
         }
         public override TrObject __len__()
         {

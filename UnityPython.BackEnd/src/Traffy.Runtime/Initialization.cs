@@ -43,7 +43,7 @@ namespace Traffy
             Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenClassInit).ToList().ForEach(
                 f => f.method()
             );
-            var triples = Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is Type t && typeof(TrObject).IsAssignableFrom(t)).ToArray();
+            var triples = Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is Type).ToArray();
 #if DEBUG
             Console.WriteLine($"Found {triples.Length} classes");
 #endif

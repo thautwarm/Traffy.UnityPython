@@ -8,6 +8,16 @@ namespace Traffy.Objects
     [PyBuiltin]
     public partial class TrModule : TrObject
     {
+        public override IEnumerable<(TrStr, TrObject)> GetDictItems()
+        {
+            foreach(var kv in Namespace)
+            {
+                if (kv.Key is TrStr s)
+                {
+                    yield return (s, kv.Value);
+                }
+            }
+        }
 
         public static TrModule CreateUninitialized(string name, ModuleSpec spec)
         {

@@ -30,7 +30,7 @@ public class Gen_Class_BindMethodsFromDict : HasNamespace
         {
             var methdNameStripUnderscore = meth.Name.Substring(2, meth.Name.Length-4);
             defs.Add(
-                $"if (!this.IsSet({nameof(MagicNames)}.i_{meth.Name}) && cp_kwargs.TryPop({nameof(MagicNames)}.s_{methdNameStripUnderscore}, out var o_{methdNameStripUnderscore}))".Doc());
+                $"if (cp_kwargs.TryPop({nameof(MagicNames)}.s_{methdNameStripUnderscore}, out var o_{methdNameStripUnderscore}))".Doc());
             defs.Add($"    this[{nameof(MagicNames)}.i_{meth.Name}] = o_{methdNameStripUnderscore};".Doc());
         }
         RequiredNamespace.Remove(entry.Namespace);
