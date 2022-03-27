@@ -38,6 +38,8 @@ Basic development workflow:
 
 `UnityPython.BackEnd/tests/test_*.py` will be executed.
 
+Besides, we badly need more tests! Help us and refer [test_semantics](https://github.com/thautwarm/Traffy.UnityPython/blob/main/UnityPython.BackEnd/tests/test_semantics.py).
+
 ### How to add a method to datatypes? (concise way)
 
 `[PyBind]` can be used to bind Python methods. You can bind a Python `staticmethod` or instance method through the following the steps:
