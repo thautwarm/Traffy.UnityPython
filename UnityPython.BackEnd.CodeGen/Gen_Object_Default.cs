@@ -22,7 +22,7 @@ public class Gen_ObjectDefault : HasNamespace
         yield return ("Object.cs", GenerateDocument().ToArray());
     }
     IEnumerable<Doc> GenerateDocument()
-    {
+    {   
         var entry = typeof(Traffy.Objects.TrObject);
 
         List<Doc> defs = new List<Doc>();

@@ -37,14 +37,13 @@ namespace Traffy.Modules
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrBool>("module_abc");
+            CLASS = TrClass.FromPrototype<TrModule_abc>("module_abc");
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("module_abc.__new__", TrClass.new_notallow));
-            TrClass.TypeDict[typeof(TrModule_abc)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

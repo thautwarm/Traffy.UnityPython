@@ -95,7 +95,7 @@ public class Gen_OrderedInit : HasNamespace
                 classesToPrepare.Sort(new TypeHierarchyComparer());
                 return x;
             })
-            .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).Select(x => (t, x)))
+            .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).Distinct().Select(x => (t, x)))
             .ForEach(((Type t, MethodInfo mi) pair) =>
             {
                 var attr = pair.mi.GetCustomAttribute<SetupMark>();

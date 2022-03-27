@@ -81,6 +81,11 @@ public interface HasNamespace
         RequiredNamespace.Add(ns);
     }
     IEnumerable<(string filename, Doc[] docoment)> Generate();
+
+    public string Inspect()
+    {
+        return this.GetType().Name;
+    }
 }
 
 public class CodeGen : Attribute
@@ -102,6 +107,8 @@ public class CodeGen : Attribute
             .Where(x => x.IsClass && !x.IsAbstract && x.IsAssignableTo(typeof(TrObject)))
             .ToArray();
 
+        List<Func<(string Path, HasNamespace CodeGenerator)>> makers = new List<Func<(string, HasNamespace)>>();
+
         Assembly
         .GetAssembly(typeof(CodeGen))
         .GetTypes()
@@ -111,7 +118,6 @@ public class CodeGen : Attribute
             var attr_CodeGen = cls.GetCustomAttribute<CodeGen>();
             var ctors = cls.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
             ConstructorInfo ctor;
-            List<Func<(string Path, HasNamespace CodeGenerator)>> makers = new List<Func<(string, HasNamespace)>>();
             for (int i = 0; i < ctors.Length; i++)
             {
                 ctor = ctors[i];
@@ -122,7 +128,8 @@ public class CodeGen : Attribute
                         attr_CodeGen.Path ?? "Parametric"
                     );
                     makers.Add(() => (dirPath, (HasNamespace)ctor.Invoke(null)));
-                    goto codegen;
+
+                    return;
                 }
                 if (ctor.GetParameters().Length == 1 && ctor.GetParameters()[0].ParameterType == typeof(Type))
                 {
@@ -135,31 +142,31 @@ public class CodeGen : Attribute
                         );
                         makers.Add(() => (dirPath, (HasNamespace)ctor.Invoke(new object[] { t_ })));
                     }
-                    goto codegen;
-                }
-            }
-            return;
-        codegen:
-            makers.Add(() => (CodeGenConfig.RootDir, (HasNamespace) new Gen_OrderedInit()));
-            foreach (var maker in makers)
-            {
-                var (dirPath, o) = maker();
-                if (!System.IO.Directory.Exists(dirPath))
-                {
-                    System.IO.Directory.CreateDirectory(dirPath);
-                }
-
-                foreach(var pair in o.Generate())
-                {
-                    using (var file = System.IO.File.Open(System.IO.Path.Combine(dirPath, pair.filename), System.IO.FileMode.Create))
-                    {
-                        using (var writer = new System.IO.StreamWriter(file))
-                        {
-                            VSep(pair.docoment).Render(writer.Write);
-                        }
-                    }
+                    return;
                 }
             }
         });
+        
+        makers.Add(() => (CodeGenConfig.RootDir, (HasNamespace) new Gen_OrderedInit()));
+        foreach (var maker in makers)
+        {
+            var (dirPath, o) = maker();
+            Console.WriteLine("=======" + o.Inspect() + "=======");
+            if (!System.IO.Directory.Exists(dirPath))
+            {
+                System.IO.Directory.CreateDirectory(dirPath);
+            }
+
+            foreach(var pair in o.Generate())
+            {
+                using (var file = System.IO.File.Open(System.IO.Path.Combine(dirPath, pair.filename), System.IO.FileMode.Create))
+                {
+                    using (var writer = new System.IO.StreamWriter(file))
+                    {
+                        VSep(pair.docoment).Render(writer.Write);
+                    }
+                }
+            }
+        }
     }
 }

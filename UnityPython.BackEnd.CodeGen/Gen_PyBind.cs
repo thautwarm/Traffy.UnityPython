@@ -18,6 +18,12 @@ public class Gen_PyBind : HasNamespace
     public HashSet<string> RequiredNamespace { get; } = new HashSet<string>();
 
     public Type entry;
+
+    public string Inspect()
+    {
+        return this.GetType().Name + "(" + entry.Name + ")";
+    }
+
     public Gen_PyBind(Type t)
     {
         entry = t;
