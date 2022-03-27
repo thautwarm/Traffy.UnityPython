@@ -99,6 +99,8 @@ namespace Traffy.Objects
             return res;
         }
     }
+
+    [PyBuiltin]
     public class TrBaseException : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
@@ -149,6 +151,7 @@ namespace Traffy.Objects
         }
     }
 
+    [PyBuiltin]
     [PyInherit(typeof(TrBaseException))]
     public class TrException : TrExceptionBase
     {
@@ -179,7 +182,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "Exception";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("Exception.__new__", TrExceptionExt.datanew<TrException>);
@@ -196,6 +199,7 @@ namespace Traffy.Objects
     }
 
     // fields: 'name', 'obj'
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class AttributeError : TrExceptionBase
     {
@@ -238,7 +242,7 @@ namespace Traffy.Objects
         internal static void _Init()
         {
 
-            
+
             CLASS.Name = "AttributeError";
 
             _IndexArgs = CLASS.AddField("args");
@@ -254,6 +258,7 @@ namespace Traffy.Objects
         }
     }
     // fields: 'name'
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class NameError : TrExceptionBase
     {
@@ -292,7 +297,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "NameError";
 
             _IndexArgs = CLASS.AddField("args");
@@ -308,6 +313,7 @@ namespace Traffy.Objects
         }
     }
 
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class TypeError : TrExceptionBase
     {
@@ -338,7 +344,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "TypeError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("TypeError.__new__", TrExceptionExt.datanew<TypeError>);
@@ -356,6 +362,7 @@ namespace Traffy.Objects
     }
 
 
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class ValueError : TrExceptionBase
     {
@@ -385,7 +392,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "ValueError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ValueError.__new__", TrExceptionExt.datanew<ValueError>);
@@ -403,6 +410,7 @@ namespace Traffy.Objects
 
 
     // fields: 'value'
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class StopIteration : TrExceptionBase
     {
@@ -439,7 +447,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "StopIteration";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("StopIteration.__new__", TrExceptionExt.datanew<StopIteration>);
@@ -456,6 +464,7 @@ namespace Traffy.Objects
         }
     }
 
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class LookupError : TrExceptionBase
     {
@@ -485,7 +494,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "LookupError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("LookupError.__new__", TrExceptionExt.datanew<LookupError>);
@@ -503,6 +512,7 @@ namespace Traffy.Objects
 
 
 
+    [PyBuiltin]
     [PyInherit(typeof(LookupError))]
     public class KeyError : TrExceptionBase
     {
@@ -533,7 +543,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "KeyError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("KeyError.__new__", TrExceptionExt.datanew<KeyError>);
@@ -550,6 +560,7 @@ namespace Traffy.Objects
         }
     }
 
+    [PyBuiltin]
     [PyInherit(typeof(LookupError))]
     public class IndexError : TrExceptionBase
     {
@@ -581,7 +592,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "IndexError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("IndexError.__new__", TrExceptionExt.datanew<IndexError>);
@@ -597,6 +608,7 @@ namespace Traffy.Objects
         }
     }
 
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
 
     public class AssertionError : TrExceptionBase
@@ -627,7 +639,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "AssertionError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AssertionError.__new__", TrExceptionExt.datanew<AssertionError>);
@@ -647,6 +659,7 @@ namespace Traffy.Objects
     // - 'msg': string
     // - 'name': string
     // - 'path': string
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class ImportError : TrExceptionBase
     {
@@ -690,7 +703,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "ImportError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ImportError.__new__", TrExceptionExt.datanew<ImportError>);
@@ -706,6 +719,7 @@ namespace Traffy.Objects
         }
     }
 
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
 
     public class RuntimeError : TrExceptionBase
@@ -736,7 +750,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "RuntimeError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("RuntimeError.__new__", TrExceptionExt.datanew<RuntimeError>);
@@ -753,6 +767,7 @@ namespace Traffy.Objects
     }
 
 
+    [PyBuiltin]
     [PyInherit(typeof(RuntimeError))]
     public class NotImplementError : TrExceptionBase
     {
@@ -785,7 +800,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            
+
             CLASS.Name = "NotImplementError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NotImplementError.__new__", TrExceptionExt.datanew<NotImplementError>);
@@ -801,6 +816,7 @@ namespace Traffy.Objects
         }
     }
 
+    [PyBuiltin]
     [PyInherit(typeof(TrException))]
     public class NativeError : TrExceptionBase
     {
@@ -876,10 +892,10 @@ namespace Traffy.Objects
         }
     }
 
-    public class TrExceptionWrapper: Exception
+    public class TrExceptionWrapper : Exception
     {
         public TrExceptionBase TrO;
-        public TrExceptionWrapper(TrExceptionBase trO): base (trO.args.Length > 0 ? trO.args[0].__str__() : "")
+        public TrExceptionWrapper(TrExceptionBase trO) : base(trO.args.Length > 0 ? trO.args[0].__str__() : "")
         {
             TrO = trO;
         }

@@ -36,6 +36,7 @@ namespace Traffy.Objects
     }
 
 
+    [Traffy.Annotations.PyBuiltin]
     public sealed partial class TrClass : TrObject
     {
         static IdComparer idComparer = new IdComparer();

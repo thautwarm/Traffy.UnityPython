@@ -354,6 +354,7 @@ namespace Traffy.Objects
 
     }
 
+    [PyBuiltin]
     public class TrRawObject : TrUserObjectBase
     {
         public static TrClass CLASS;

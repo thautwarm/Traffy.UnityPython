@@ -1,9 +1,11 @@
 using Traffy;
+using Traffy.Annotations;
 using Traffy.Objects;
 
 namespace Traffy.Interfaces
 {
-    [AbstractClass(typeof(Iterable))]
+    [PyInherit(typeof(Iterable))]
+    [AbstractClass]
     public static partial class Reversible
     {
         [AbsMember]

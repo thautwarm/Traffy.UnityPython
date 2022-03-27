@@ -46,7 +46,16 @@ public class Gen_InterfaceClasses : HasNamespace
                 var abc = each.GetCustomAttribute<AbstractClass>();
                 if (abc == null)
                     continue;
-                var inheritances = abc.Parents;
+                Type[] inheritances;
+                PyInherit inherit;
+                if ((inherit = each.GetCustomAttribute<PyInherit>()) != null)
+                {
+                    inheritances = inherit.Parents;
+                }
+                else
+                {
+                    inheritances = Array.Empty<Type>();
+                }
                 defs.AddRange(GenerateClass(each, inheritances, binding_defs));
             }
         }
@@ -90,8 +99,14 @@ public class Gen_InterfaceClasses : HasNamespace
         yield return $"public static partial class {t.Name}".Doc();
         yield return "{".Doc();
 
-        yield return "[Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]".Doc().Indent(4);
-        yield return "static void _Init()".Doc().Indent(4);
+        CodeGen.Func_ClassBasedCrateRef[t] = $"{t.Namespace}.{t.Name}._Create";
+        yield return "internal static void _Create()".Doc().Indent(4);
+        yield return "{".Doc().Indent(4);
+        yield return $"    CLASS = TrClass.CreateClass({t.Name.Escape()});".Doc().Indent(4);
+        yield return "}".Doc().Indent(4);
+
+        CodeGen.Fun_InitRef.Add($"{t.Namespace}.{t.Name}._Init");
+        yield return "internal void _Init()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
         yield return $"    CLASS = TrClass.CreateClass({t.Name.Escape()});".Doc().Indent(4);
         yield return $"    CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];".Doc().Indent(4);
@@ -99,11 +114,12 @@ public class Gen_InterfaceClasses : HasNamespace
         yield return "}".Doc().Indent(4);
         yield return NewLine;
 
-        yield return $"[Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]".Doc().Indent(4);
-        yield return $"static void _SetupClasses()".Doc().Indent(4);
+        
+        CodeGen.Fun_SetupRef[t] = $"{t.Namespace}.{t.Name}._SetupClasses";
+        yield return $"internal static void _SetupClasses()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
-        var base_args = String.Join(",", bases.Select(x => x.Namespace + "." + x.Name + ".CLASS").Prepend(typeof(TrABC) + ".CLASS"));
-        yield return $"    CLASS.__base = new TrClass[] {{ {base_args} }};".Doc().Indent(4);
+        // var base_args = String.Join(",", bases.Select(x => x.Namespace + "." + x.Name + ".CLASS").Prepend(typeof(TrABC) + ".CLASS"));
+        // yield return $"    CLASS.__base = new TrClass[] {{ {base_args} }};".Doc().Indent(4);
         yield return $"    CLASS.SetupClass();".Doc().Indent(4);
         yield return $"    CLASS.IsFixed = true;".Doc().Indent(4);
         yield return "}".Doc().Indent(4);

@@ -5,7 +5,8 @@ using Traffy.Objects;
 
 namespace Traffy.Interfaces
 {
-    [AbstractClass(typeof(Reversible), typeof(Collection))]
+    [PyInherit(typeof(Reversible), typeof(Collection))]
+    [AbstractClass]
     public static partial class Sequence
     {
 

@@ -17,10 +17,8 @@ namespace Traffy.Interfaces
     [AttributeUsage(AttributeTargets.Class)]
     public partial class AbstractClass : Attribute
     {
-        public Type[] Parents;
-        public AbstractClass(params Type[] parents)
+        public AbstractClass()
         {
-            Parents = parents;
         }
     }
 }

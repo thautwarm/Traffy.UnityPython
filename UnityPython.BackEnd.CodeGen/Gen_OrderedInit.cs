@@ -71,10 +71,10 @@ public class Gen_OrderedInit : HasNamespace
 
         List<Doc> defs = new();
 
-        List<string> Fun_CrateRef = new();
-        Dictionary<Type, string> Fun_SetupRef = new();
-        List<string> Fun_InitRef = new();
-
+        List<string> Fun_CrateRef = CodeGen.Func_CrateRef;
+        var Func_ClassBasedCrateRef = CodeGen.Func_ClassBasedCrateRef;
+        List<string> Fun_InitRef = CodeGen.Fun_InitRef;
+        var Fun_SetupRef = CodeGen.Fun_SetupRef;
         List<Type> classesToPrepare = new();
 
         Assembly
@@ -82,7 +82,7 @@ public class Gen_OrderedInit : HasNamespace
             .GetTypes()
             .Select(t =>
             {
-                if (t.GetCustomAttribute<PyBuiltin>() != null || t.GetCustomAttribute<AbstractClass>() != null) ;
+                if (t.GetCustomAttribute<PyBuiltin>() != null || t.GetCustomAttribute<AbstractClass>() != null)
                 {
                     classesToPrepare.Add(t);
                     SuperClasses[t] = new HashSet<Type>();
@@ -106,16 +106,25 @@ public class Gen_OrderedInit : HasNamespace
                 switch (attr.Kind)
                 {
                     case SetupMarkKind.CreateRef:
-                        if (Fun_CrateRef.Contains(methodName))
-                            throw new Exception("dup: " + methodName);
-                        Fun_CrateRef.Add(methodName);
+                        if (!classesToPrepare.Contains(t))
+                        {
+                            if (Fun_CrateRef.Contains(methodName))
+                                throw new Exception("dup: " + methodName);
+                            Fun_CrateRef.Add(methodName);
+                        }
+                        else
+                        {
+                            if(Func_ClassBasedCrateRef.ContainsKey(t))
+                                throw new Exception("dup (create): " + t);
+                            Func_ClassBasedCrateRef[t] = methodName;
+                        }
                         break;
                     case SetupMarkKind.SetupRef:
                         if (!classesToPrepare.Contains(t))
                             throw new Exception($"{t} is not a python class [AbstractClass] or [PyBuiltin].");
-                        if (Fun_SetupRef.ContainsKey(t))
+                        if (CodeGen.Fun_SetupRef.ContainsKey(t))
                             throw new Exception("dup(class setup): " + t.Namespace + "." + t.Name);
-                        Fun_SetupRef[t] = methodName;
+                        CodeGen.Fun_SetupRef[t] = methodName;
                         break;
                     case SetupMarkKind.InitRef:
                         if (Fun_InitRef.Contains(methodName))
@@ -130,9 +139,15 @@ public class Gen_OrderedInit : HasNamespace
         IEnumerable<Doc> gen_body()
         {
 
+            foreach (var t in classesToPrepare)
+            {
+                if (Func_ClassBasedCrateRef.TryGetValue(t, out var m))
+                    yield return $"{m}();".Doc();
+            }
             foreach (var m in Fun_CrateRef)
             {
-                yield return $"{m}();".Doc();
+                if (!Func_ClassBasedCrateRef.ContainsValue(m))
+                    yield return $"{m}();".Doc();
             }
 
             foreach (var t in classesToPrepare)
@@ -152,8 +167,8 @@ public class Gen_OrderedInit : HasNamespace
 
             foreach (var t in classesToPrepare)
             {
-                var m = Fun_SetupRef[t];
-                yield return $"{m}();".Doc();
+                if(CodeGen.Fun_SetupRef.TryGetValue(t, out var m))
+                    yield return $"{m}();".Doc();
             }
         }
 

@@ -85,7 +85,10 @@ public interface HasNamespace
 
 public class CodeGen : Attribute
 {
-    public static List<string> Fun_InitRef = new();
+    public static readonly List<string> Func_CrateRef = new();
+    public static readonly Dictionary<Type, string> Func_ClassBasedCrateRef = new();
+    public static readonly List<string> Fun_InitRef = new();
+    public static readonly Dictionary<Type, string> Fun_SetupRef = new();
 
     [AllowNull] public string Path;
 
@@ -137,7 +140,7 @@ public class CodeGen : Attribute
             }
             return;
         codegen:
-            makers.Add(() => (".", (HasNamespace) new Gen_OrderedInit()));
+            makers.Add(() => (CodeGenConfig.RootDir, (HasNamespace) new Gen_OrderedInit()));
             foreach (var maker in makers)
             {
                 var (dirPath, o) = maker();

@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using Traffy;
+using Traffy.Annotations;
 using Traffy.Objects;
 
 namespace Traffy.Interfaces
 {
-    [AbstractClass(typeof(Sized), typeof(Iterable), typeof(Container))]
+    [PyInherit(typeof(Sized), typeof(Iterable), typeof(Container))]
+    [AbstractClass]
     public static partial class Collection
     {
 
