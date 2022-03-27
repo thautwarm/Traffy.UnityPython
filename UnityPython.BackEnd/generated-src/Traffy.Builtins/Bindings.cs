@@ -6,7 +6,7 @@ namespace Traffy
 {
     public static partial class Builtins
     {
-        static void InitBuiltins()
+        internal static void InitBuiltins()
         {
             Initialization.Prelude(TrSharpFunc.FromFunc("map", map));
             Initialization.Prelude(TrSharpFunc.FromFunc("filter", filter));

@@ -49,6 +49,10 @@ public class Gen_OrderedInit : HasNamespace
 
     public static IEnumerable<Type> GetParents(Type t)
     {
+        return _GetParents(t).Append(typeof(TrRawObject));
+    }
+    static IEnumerable<Type> _GetParents(Type t)
+    {
         foreach (var each in GetBases(t))
         {
             yield return each;
@@ -68,6 +72,7 @@ public class Gen_OrderedInit : HasNamespace
 
         (this as HasNamespace).AddNamepace("System");
         (this as HasNamespace).AddNamepace("System.Collections.Generic");
+        (this as HasNamespace).AddNamepace("Traffy.Objects");
 
         List<Doc> defs = new();
 
@@ -102,7 +107,7 @@ public class Gen_OrderedInit : HasNamespace
                 if (attr == null)
                     return;
                 var t = pair.t;
-                var methodName = $"{t.Namespace}.{t.Name}.{pair.t.Name}";
+                var methodName = $"{t.Namespace}.{t.Name}.{pair.mi.Name}";
                 switch (attr.Kind)
                 {
                     case SetupMarkKind.CreateRef:

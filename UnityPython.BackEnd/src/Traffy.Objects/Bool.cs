@@ -36,7 +36,7 @@ namespace Traffy.Objects
             value = v;
         }
 
-        static TrClass CLASS = null;
+        public static TrClass CLASS = null;
         public override TrClass Class => CLASS;
 
         public override List<TrObject> __array__ => null;

@@ -24,7 +24,7 @@ namespace Traffy
             return 0;
         }
     }
-    public static class Initialization
+    public static partial class Initialization
     {
         public const string IR_FILE_SUFFIX = ".py.json";
         public static class HashConfig

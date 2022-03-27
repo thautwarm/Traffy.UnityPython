@@ -5,7 +5,7 @@ namespace Traffy.Objects
 {
     public sealed partial class TrABC
     {
-        static void generated_BindMethods()
+        internal static void generated_BindMethods()
         {
             static  Traffy.Objects.TrObject __bind___init_subclass__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {

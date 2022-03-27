@@ -5,7 +5,7 @@ namespace Traffy.Objects
 {
     public sealed partial class TrGenerator
     {
-        static void generated_BindMethods()
+        internal static void generated_BindMethods()
         {
             static  Traffy.Objects.TrObject __bind_send(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {

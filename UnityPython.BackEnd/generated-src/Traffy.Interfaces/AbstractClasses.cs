@@ -6,7 +6,7 @@ namespace Traffy.Interfaces
 {
     public partial class AbstractClass
     {
-        static void generated_BindMethods()
+        internal static void generated_BindMethods()
         {
             Traffy.Interfaces.Awaitable.CLASS["__await__"] = TrSharpFunc.FromFunc("Awaitable.__await__", Traffy.Interfaces.Awaitable.__bind___await__);
             Traffy.Interfaces.Callable.CLASS["__call__"] = TrSharpFunc.FromFunc("Callable.__call__", Traffy.Interfaces.Callable.__call__);
@@ -33,7 +33,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Awaitable");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Awaitable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -67,7 +67,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Callable");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Callable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -88,7 +88,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Collection");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Collection");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -109,7 +109,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Comparable");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Comparable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -156,7 +156,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Container");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Container");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -191,7 +191,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Hashable");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Hashable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -225,7 +225,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Iterable");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Iterable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -259,7 +259,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Reversible");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Reversible");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -293,7 +293,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Sequence");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Sequence");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
@@ -348,7 +348,7 @@ namespace Traffy.Interfaces
         {
             CLASS = TrClass.CreateClass("Sized");
         }
-        internal void _Init()
+        internal static void _Init()
         {
             CLASS = TrClass.CreateClass("Sized");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];

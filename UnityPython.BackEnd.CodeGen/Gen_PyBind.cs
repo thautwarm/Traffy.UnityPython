@@ -201,7 +201,7 @@ public class Gen_PyBind : HasNamespace
                     "public sealed partial class".Doc() + entry.Name.Doc(),
                     "{".Doc(),
                         VSep(
-                            "static void generated_BindMethods()".Doc(),
+                            "internal static void generated_BindMethods()".Doc(),
                             "{".Doc(),
                             VSep(defs.ToArray()).Indent(4),
                             "}".Doc()

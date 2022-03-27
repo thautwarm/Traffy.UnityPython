@@ -43,7 +43,7 @@ public class Gen_Class_BindMethodsFromDict : HasNamespace
         {
             yield return use.Doc();
         }
-        var x = VSep(
+        yield return VSep(
             VSep(
                 $"namespace {entry.Namespace}".Doc(),
                 "{".Doc(),

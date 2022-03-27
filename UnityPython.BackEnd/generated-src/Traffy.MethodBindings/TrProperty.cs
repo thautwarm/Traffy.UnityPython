@@ -5,7 +5,7 @@ namespace Traffy.Objects
 {
     public sealed partial class TrProperty
     {
-        static void generated_BindMethods()
+        internal static void generated_BindMethods()
         {
             static  Traffy.Objects.TrObject __read_getter(Traffy.Objects.TrObject _arg)
             {

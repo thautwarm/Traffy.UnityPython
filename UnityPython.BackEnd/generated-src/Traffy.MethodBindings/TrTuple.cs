@@ -5,7 +5,7 @@ namespace Traffy.Objects
 {
     public sealed partial class TrTuple
     {
-        static void generated_BindMethods()
+        internal static void generated_BindMethods()
         {
             static  Traffy.Objects.TrObject __bind_count(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {

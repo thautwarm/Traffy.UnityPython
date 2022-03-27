@@ -363,7 +363,7 @@ namespace Traffy.Objects
         public override List<TrObject> __array__ => null;
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
-        internal static void _Create(TrObject self, TrObject cls)
+        internal static void _Create()
         {
             CLASS = TrClass.RawObjectClassObject();
         }

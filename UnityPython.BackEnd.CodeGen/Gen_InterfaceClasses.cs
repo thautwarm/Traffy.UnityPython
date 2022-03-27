@@ -36,6 +36,7 @@ public class Gen_InterfaceClasses : HasNamespace
 
         typeof(SetupMark).RefGen(this);
         typeof(TrObject).RefGen(this);
+        var cls_ABC = typeof(TrABC);
 
         foreach (var each in asm.GetTypes())
         {
@@ -55,6 +56,10 @@ public class Gen_InterfaceClasses : HasNamespace
                 else
                 {
                     inheritances = Array.Empty<Type>();
+                }
+                if (!inheritances.Contains(cls_ABC))
+                {
+                    inheritances = inheritances.Prepend(cls_ABC).ToArray();
                 }
                 defs.AddRange(GenerateClass(each, inheritances, binding_defs));
             }
@@ -77,7 +82,7 @@ public class Gen_InterfaceClasses : HasNamespace
                     $"public partial class {nameof(AbstractClass)}".Doc(),
                     "{".Doc(),
                         VSep(
-                            "static void generated_BindMethods()".Doc(),
+                            "internal static void generated_BindMethods()".Doc(),
                             "{".Doc(),
                                 VSep(binding_defs.ToArray()).Indent(4),
                             "}".Doc()
@@ -106,7 +111,7 @@ public class Gen_InterfaceClasses : HasNamespace
         yield return "}".Doc().Indent(4);
 
         CodeGen.Fun_InitRef.Add($"{t.Namespace}.{t.Name}._Init");
-        yield return "internal void _Init()".Doc().Indent(4);
+        yield return "internal static void _Init()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
         yield return $"    CLASS = TrClass.CreateClass({t.Name.Escape()});".Doc().Indent(4);
         yield return $"    CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];".Doc().Indent(4);

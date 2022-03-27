@@ -95,7 +95,7 @@ public class Gen_Builtins : HasNamespace
                     "public static partial class".Doc() + entry.Name.Doc(),
                     "{".Doc(),
                         VSep(
-                            "static void InitBuiltins()".Doc(),
+                            "internal static void InitBuiltins()".Doc(),
                             "{".Doc(),
                             VSep(built_bindings().ToArray()) >> 4,
                             "}".Doc(),

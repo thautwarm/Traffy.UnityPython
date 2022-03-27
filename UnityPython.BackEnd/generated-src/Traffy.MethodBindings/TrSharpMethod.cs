@@ -5,7 +5,7 @@ namespace Traffy.Objects
 {
     public sealed partial class TrSharpMethod
     {
-        static void generated_BindMethods()
+        internal static void generated_BindMethods()
         {
             static  Traffy.Objects.TrObject __read___func__(Traffy.Objects.TrObject _arg)
             {
