@@ -30,7 +30,7 @@ public class App
         Initialization.InitRuntime();
         Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
 
-        ModuleSystem.LoadDirectory(argv[0]);
+        ModuleSystem.LoadDirectory(argv.Length == 0 ? "out" : argv[0]);
         var test_modules = ModuleSystem.Modules.Keys.Where(x => x.Split(".").Last().StartsWith("test_")).ToList();
         try
         {

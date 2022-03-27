@@ -443,25 +443,7 @@ class ScoperLHS(ExprNodeVisitorInlineCache):
             self.visit(each)
 
 
-class ScoperClassLHS(ScoperLHS):
-    def __init__(self, scoper: ScoperClassStmt):
-        self.scoper = scoper
-
-    def visit_Name(self, node: Name) -> Any:
-        self.scoper.symtable_builder.mut_unknown(node.id)
-
-
-class ScoperClassRHS(ScoperRHS):
-    def __init__(self, scoper: ScoperClassStmt):
-        self.scoper = scoper
-
-    def visit_Name(self, node: Name) -> Any:
-        self.scoper.symtable_builder.read_unknown(node.id)
-
-
 class ScoperClassStmt(ScoperStmt):
     def __init__(self, filename: str, parent: ConciseSymtable | None):
-        self.filename = filename
-        self.symtable_builder = Symtable.new(parent)
-        self.rhs_scoper = ScoperClassRHS(self)
-        self.lhs_scoper = ScoperClassLHS(self)
+        ScoperStmt.__init__(self, filename, parent)
+        self.symtable_builder.is_class_level = True

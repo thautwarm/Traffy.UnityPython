@@ -750,6 +750,10 @@ namespace Traffy
         public static TrBytes Bytes(byte[] v) => new TrBytes { contents = v };
         public static TrBytes Bytes() => new TrBytes { contents = _zerobytes };
 
+        public static TrTuple NTuple(params TrObject[] trObjects)
+        {
+            return Tuple(trObjects);
+        }
         public static TrTuple Tuple(TrObject[] trObjects)
         {
             return new TrTuple { elts = trObjects };

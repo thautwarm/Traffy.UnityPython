@@ -888,7 +888,7 @@ namespace Traffy.Objects
         }
         public override string GetStackTrace()
         {
-            return $"Traceback (most recent call last):\n{traceback?.GetStackTrace()}\n{Class.Name}: {this.Base().__str__()}\n{Error.StackTrace}";
+            return $"Traceback (most recent call last):\n{traceback?.GetStackTrace()}\n{Class.Name}: {this.Base().__str__()}\n{Error.GetType().Name}():\n{Error.StackTrace}";
         }
     }
 

@@ -90,11 +90,16 @@ namespace Traffy.Objects
             {
                 if (!args_itr.MoveNext())
                 {
+                    if((object)localvars[i].Value != null)
+                    {
+                        continue;
+                    }
                     var arg_string = fptr.metadata.localnames.GetRange(i, fptr.posargcount - i).Select(x => $"\"{x}\"").By(x => String.Join(", ", x));
                     throw new TypeError($"{this.AsObject.__repr__()} missing {fptr.posargcount - i} positional argument(s): {arg_string}");
                 }
                 localvars[i].Value = args_itr.Current;
             }
+
             if (fptr.hasvararg)
             {
                 var vararg = RTS.barelist_create();

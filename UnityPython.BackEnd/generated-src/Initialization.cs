@@ -183,6 +183,7 @@ namespace Traffy
             Traffy.Objects.TrByteArray.generated_BindMethods();
             Traffy.Objects.TrBytes.generated_BindMethods();
             Traffy.Objects.TrClassMethod.generated_BindMethods();
+            Traffy.Objects.TrDict.generated_BindMethods();
             Traffy.Objects.TrGenerator.generated_BindMethods();
             Traffy.Objects.TrInt.generated_BindMethods();
             Traffy.Objects.TrIter.generated_BindMethods();

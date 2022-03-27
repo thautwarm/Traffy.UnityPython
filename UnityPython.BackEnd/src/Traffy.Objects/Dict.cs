@@ -48,6 +48,53 @@ namespace Traffy.Objects
             return MK.Int(container.Count);
         }
 
+        public override bool __eq__(TrObject eq)
+        {
+            if (eq is TrDict other)
+            {
+                return container.Count == other.container.Count && container.All(kv => other.container.TryGetValue(kv.Key, out var value) && value.__eq__(kv.Value));
+            }
+            throw new TypeError($"unsupported comparison for '{CLASS.Name}' and '{eq.Class.Name}'");
+        }
+
+        public override bool __ne__(TrObject other)
+        {
+            return !__eq__(other);
+        }
+
+        public override IEnumerator<TrObject> __iter__()
+        {
+            return keys();
+        }
+
+        [PyBind]
+        public IEnumerator<TrObject> keys()
+        {
+            foreach(var kv in container)
+            {
+                yield return kv.Key;
+            }
+        }
+
+        [PyBind]
+        public IEnumerator<TrObject> values()
+        {
+            foreach(var kv in container)
+            {
+                yield return kv.Value;
+            }
+        }
+
+        [PyBind]
+        public IEnumerator<TrObject> items()
+        {
+            foreach(var kv in container)
+            {
+                yield return MK.NTuple( kv.Key, kv.Value );
+            }
+        }
+
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {

@@ -143,6 +143,15 @@ namespace Traffy.Objects
             }
         }
 
+        public override TrObject __mul__(TrObject a)
+        {
+            if (a is TrInt o_times)
+            {
+                return MK.Str(value.Repeat(unchecked((int)o_times.value)));
+            }
+            throw new TypeError($"can't multiply sequence by non-int of type '{a.Class.Name}'");
+        }
+
         [PyBind]
         public long count(string element, int start = 0, int end = -1)
         {

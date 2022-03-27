@@ -40,6 +40,7 @@ class Symtable:
     enteredvars: OrderedDict[str, _Write]
     explicit_globalvars: set[str]
     parent: ConciseSymtable | None
+    is_class_level: bool = False
     @classmethod
     def new(cls, parent: ConciseSymtable | None):
         return cls(OrderedSet(), OrderedSet(), OrderedSet(), OrderedDict(), set(), parent)
@@ -69,16 +70,16 @@ class Symtable:
         self.explicit_globalvars.add(x)
 
     def mut_var(self, x: str):
-        self.enteredvars[x] = True
-
-    def mut_unknown(self, x: str):
-        self.localvars.add(x)
-
+        if self.is_class_level:
+            self.localvars.add(x)
+        else:
+            self.enteredvars[x] = True
+    
     def read_var(self, x: str):
-        self.enteredvars.setdefault(x, False)
-
-    def read_unknown(self, x: str):
-        self.unknown_vars.add(x)
+        if self.is_class_level:
+            self.unknown_vars.add(x)
+        else:
+            self.enteredvars.setdefault(x, False)
 
     def solve(self):
         for enter, do_write in self.enteredvars.items():
@@ -89,4 +90,3 @@ class Symtable:
                 if do_write:
                     self.localvars.add(enter)
         return ConciseSymtable(self.localvars, self.freevars, self.unknown_vars, self.parent)
-

@@ -22,16 +22,13 @@ public class TypeHierarchyComparer : IComparer<Type>
 
         if (Gen_OrderedInit.GetMro(x).Contains(y))
         {
-            Console.WriteLine($"{x} > {y}");
             return 1;
         }
 
         if (Gen_OrderedInit.GetMro(y).Contains(x))
         {
-            Console.WriteLine($"{x} < {y}");
             return -1;
         }
-        Console.WriteLine($"{x} = {y}");
         return 0;
     }
 }

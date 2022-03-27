@@ -5,10 +5,11 @@
 
   <PropertyGroup>
      <OutputType>Exe</OutputType>
-     <TargetFramework>net6</TargetFramework>
+     <TargetFramework>net6.0</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
      <DefineConstants>NUNITY;TESTS;DEV</DefineConstants>
+     <!-- <RuntimeIdentifier>win10-x64</RuntimeIdentifier> -->
   </PropertyGroup>
 
   <!-- <ItemGroup>
