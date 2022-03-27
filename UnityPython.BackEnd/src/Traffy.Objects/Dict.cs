@@ -6,6 +6,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Collection))]
     public sealed partial class TrDict : TrObject
     {
         public Dictionary<TrObject, TrObject> container;

@@ -7,6 +7,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
     public sealed partial class TrList : TrObject, IComparable<TrObject>
     {
         public List<TrObject> container;

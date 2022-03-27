@@ -7,6 +7,7 @@ namespace Traffy.Objects
 {
 
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Iterable))]
     public sealed partial class TrIter : TrObject, IEnumerator<TrObject>
     {
         public IEnumerator<TrObject> iter;

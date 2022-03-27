@@ -4,6 +4,7 @@ using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
+    [PyInherit(typeof(Traffy.Interfaces.Collection))]
     [PyBuiltin]
     public partial class TrSet : TrObject
     {

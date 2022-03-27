@@ -18,8 +18,8 @@ namespace Traffy.Objects
             return unchecked((int) i.value);
         }
     }
-    [Serializable]
     [PyBuiltin]
+    [Serializable]
     public sealed partial class TrInt : TrObject
     {
 

@@ -8,6 +8,7 @@ namespace Traffy.Objects
 {
 
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Iterable), typeof(Traffy.Interfaces.Awaitable))]
     public sealed partial class TrGenerator : TrObject, IEnumerator<TrObject>
     {
         // at the end of such generator, result is set.

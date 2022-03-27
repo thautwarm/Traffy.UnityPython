@@ -172,3 +172,5 @@ assert (1, 2) * 3 == (1, 2, 1, 2, 1, 2), "tuple mul"
 assert (1, 2, 7, 9).index(7) == 2, "tuple index"
 
 [1, 2] <= [2, 4]
+
+print(list.mro())

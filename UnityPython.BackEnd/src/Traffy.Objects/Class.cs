@@ -39,6 +39,7 @@ namespace Traffy.Objects
     [Traffy.Annotations.PyBuiltin]
     public sealed partial class TrClass : TrObject
     {
+    
         static IdComparer idComparer = new IdComparer();
         public static Dictionary<Type, TrClass> TypeDict = new Dictionary<Type, TrClass>();
         static TrClass MetaClass = null;
@@ -81,14 +82,20 @@ namespace Traffy.Objects
         }
         public TrObject AsObject => this as TrObject;
 
+
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
-        internal static void _Init()
+        internal static void _Create()
         {
             MetaClass = CreateMetaClass("type");
+            MetaClass.Name = "type";
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             MetaClass[MetaClass.ic__call] = TrClassMethod.Bind(TrSharpFunc.FromFunc("type.__call__", typecall));
             MetaClass[MetaClass.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("type.__new__", typenew));
-            MetaClass.Name = "type";
-            TrClass.TypeDict[typeof(TrClass)] = MetaClass;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -209,7 +216,7 @@ namespace Traffy.Objects
                         continue;
                     }
                     if (cls.IsSealed)
-                        throw new TypeError($"inheriting from {cls.Name} is not allowed.");
+                        throw new TypeError($"inheriting from sealed class {cls.Name} is not allowed.");
 
                     if (visited.Contains(cls))
                         continue;

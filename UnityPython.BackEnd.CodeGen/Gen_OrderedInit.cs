@@ -19,12 +19,12 @@ public class TypeHierarchyComparer : IComparer<Type>
     public int Compare(Type x, Type y)
     {
 
-        if (Gen_OrderedInit.GetParents(x).Contains(y))
+        if (Gen_OrderedInit.GetMro(x).Contains(y))
         {
             return 1;
         }
 
-        if (Gen_OrderedInit.GetParents(y).Contains(x))
+        if (Gen_OrderedInit.GetMro(y).Contains(x))
         {
             return -1;
         }
@@ -39,15 +39,23 @@ public class Gen_OrderedInit : HasNamespace
     {
     }
 
-    static Type[] GetBases(Type t)
+    
+    static Type[] _GetBases(Type t)
     {
         var inherit = t.GetCustomAttribute<PyInherit>();
         if (inherit == null)
             return Array.Empty<Type>();
         return inherit.Parents;
     }
+    
+    static IEnumerable<Type> GetBases(Type t)
+    {
+        if (t.GetCustomAttribute<AbstractClass>() != null)
+            return _GetBases(t).Prepend(typeof(TrABC));
+        return _GetBases(t);    
+    }
 
-    public static IEnumerable<Type> GetParents(Type t)
+    public static IEnumerable<Type> GetMro(Type t)
     {
         return _GetParents(t).Append(typeof(TrRawObject));
     }
@@ -56,7 +64,7 @@ public class Gen_OrderedInit : HasNamespace
         foreach (var each in GetBases(t))
         {
             yield return each;
-            foreach (var parent in GetParents(each))
+            foreach (var parent in GetMro(each))
             {
                 yield return parent;
             }
@@ -149,15 +157,18 @@ public class Gen_OrderedInit : HasNamespace
                 if (Func_ClassBasedCrateRef.TryGetValue(t, out var m))
                     yield return $"{m}();".Doc();
             }
+
             foreach (var m in Fun_CrateRef)
             {
                 if (!Func_ClassBasedCrateRef.ContainsValue(m))
                     yield return $"{m}();".Doc();
             }
 
+            // set bases
             foreach (var t in classesToPrepare)
             {
-                yield return $"TrClass.C3Linearized({t}.CLASS);".Doc();
+                var bases = String.Join(",", GetBases(t).Select(x => $"{x.Namespace}.{x.Name}.CLASS"));
+                yield return $"{t.Namespace}.{t.Name}.CLASS.__base = new TrClass[] {{ {bases} }};".Doc();
             }
 
             foreach (var m in Fun_InitRef)
@@ -168,6 +179,12 @@ public class Gen_OrderedInit : HasNamespace
             foreach (var m in CodeGen.Fun_InitRef)
             {
                 yield return $"{m}();".Doc();
+            }
+
+            // set mro
+            foreach (var t in classesToPrepare)
+            {
+                yield return $"{t}.CLASS.__mro = TrClass.C3Linearized({t}.CLASS);".Doc();
             }
 
             foreach (var t in classesToPrepare)

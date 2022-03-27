@@ -47,21 +47,8 @@ public class Gen_InterfaceClasses : HasNamespace
                 var abc = each.GetCustomAttribute<AbstractClass>();
                 if (abc == null)
                     continue;
-                Type[] inheritances;
-                PyInherit inherit;
-                if ((inherit = each.GetCustomAttribute<PyInherit>()) != null)
-                {
-                    inheritances = inherit.Parents;
-                }
-                else
-                {
-                    inheritances = Array.Empty<Type>();
-                }
-                if (!inheritances.Contains(cls_ABC))
-                {
-                    inheritances = inheritances.Prepend(cls_ABC).ToArray();
-                }
-                defs.AddRange(GenerateClass(each, inheritances, binding_defs));
+
+                defs.AddRange(GenerateClass(each, binding_defs));
             }
         }
 
@@ -97,7 +84,7 @@ public class Gen_InterfaceClasses : HasNamespace
 
     }
 
-    IEnumerable<Doc> GenerateClass(Type t, Type[] bases, List<Doc> binding_defs)
+    IEnumerable<Doc> GenerateClass(Type t, List<Doc> binding_defs)
     {
 
 

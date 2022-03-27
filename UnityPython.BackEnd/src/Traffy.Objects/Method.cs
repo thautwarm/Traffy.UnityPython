@@ -5,6 +5,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Callable))]
     public partial class TrSharpMethod : TrObject
     {
         public TrObject func;

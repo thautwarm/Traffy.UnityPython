@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Traffy.Annotations;
 
 namespace Traffy.Objects
@@ -360,6 +361,13 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
 
+        public static TrObject mro(TrObject clsobj)
+        {
+            if (clsobj is TrClass cls)
+                return MK.List(cls.__mro.Cast<TrObject>().ToList());
+            throw new TypeError("mro() argument 1 must be a class object");
+        }
+
         public override List<TrObject> __array__ => null;
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
@@ -373,7 +381,8 @@ namespace Traffy.Objects
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrSharpFunc.FromFunc("object.__new__", TrRawObject.datanew);
-            TrClass.TypeDict[typeof(TrRawObject)] = CLASS;
+            CLASS["mro"] = TrClassMethod.Bind(TrSharpFunc.FromFunc("object.mro", mro));
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()

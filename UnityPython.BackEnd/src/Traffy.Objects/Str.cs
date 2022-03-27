@@ -16,6 +16,7 @@ namespace Traffy.Objects
 
     [Serializable]
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
     public partial class TrStr : TrObject, IComparable<TrObject>
     {
         public string value;

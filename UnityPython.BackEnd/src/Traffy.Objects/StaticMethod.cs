@@ -5,6 +5,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Callable))]
     public class TrStaticMethod : TrObject
     {
         public TrObject func;

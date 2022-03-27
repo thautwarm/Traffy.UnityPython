@@ -2,12 +2,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using InlineHelper;
-
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
 
     [Traffy.Annotations.PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
     public sealed class TrByteArray : TrObject
     {
         public FList<byte> contents;

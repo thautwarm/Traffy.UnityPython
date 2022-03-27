@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using InlineHelper;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
     [Serializable]
-    [Traffy.Annotations.PyBuiltin]
+    [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
     public sealed class TrBytes : TrObject, IComparable<TrObject>
     {
         public byte[] contents;

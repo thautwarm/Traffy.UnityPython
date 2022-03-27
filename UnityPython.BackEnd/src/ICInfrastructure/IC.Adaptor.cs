@@ -47,7 +47,8 @@ namespace Traffy.InlineCache
                     value = shape.MethodOrClassFieldOrClassMethod;
                     return true;
                 case AttributeKind.ClassMethod:
-                    value = shape.MethodOrClassFieldOrClassMethod;
+                    var func = shape.MethodOrClassFieldOrClassMethod;
+                    value = TrSharpMethod.Bind(func, Class);
                     return true;
                 default:
                     throw new System.Exception("unexpected kind");
@@ -79,14 +80,14 @@ namespace Traffy.InlineCache
                 else if (value is TrClassMethod classmethod)
                 {
                     ad.Kind = AttributeKind.ClassMethod;
-                    ad.MethodOrClassFieldOrClassMethod = classmethod;
+                    ad.MethodOrClassFieldOrClassMethod = classmethod.func;
                     ad.Class = Class;
                     ad.Property = null;
                 }
                 else if (value is TrStaticMethod staticmethod)
                 {
                     ad.Kind = AttributeKind.ClassField;
-                    ad.MethodOrClassFieldOrClassMethod = staticmethod;
+                    ad.MethodOrClassFieldOrClassMethod = staticmethod.func;
                     ad.Class = null;
                     ad.Property = null;
                 }

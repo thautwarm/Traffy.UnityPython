@@ -19,6 +19,7 @@ namespace Traffy.Objects
         internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrABC>("abc");
+            CLASS.IsSealed = false;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
