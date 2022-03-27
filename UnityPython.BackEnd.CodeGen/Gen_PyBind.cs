@@ -24,12 +24,18 @@ public class Gen_PyBind : HasNamespace
         RequiredNamespace.Clear();
     }
 
+    public IEnumerable<(string, Doc[])> Generate()
+    {
+        var docs = GenerateDocument().ToArray();
+        if (docs.Length != 0)
+            yield return (entry.Name + ".cs", docs);
+    }
 
-    void HasNamespace.Generate(Action<string> write)
+    IEnumerable<Doc> GenerateDocument()
     {
         if (!entry.IsAssignableTo(typeof(TrObject)))
         {
-            return;
+            yield break;
         }
         (this as HasNamespace).AddNamepace("System");
         (this as HasNamespace).AddNamepace("System.Collections.Generic");
@@ -37,7 +43,7 @@ public class Gen_PyBind : HasNamespace
         List<Doc> defs = new();
         bool s_GenerateAny = false;
 
-        typeof(Mark).RefGen(this);
+        typeof(SetupMark).RefGen(this);
 
         foreach (var meth in entry.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
         {
@@ -163,12 +169,25 @@ public class Gen_PyBind : HasNamespace
             }
             defs.Add($"CLASS[{methName.Escape()}] = TrProperty.Create(CLASS.Name + \".{methName}\", {prop_Reader}, {prop_Writer});".Doc());
         }
+
+        foreach (var field in entry.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+        {
+            var attr = field.GetCustomAttribute<PyBind>();
+            if (attr == null)
+                continue;
+            s_GenerateAny = true;
+            defs.Add($"CLASS[{field.Name.Escape()}] = Traffy.Box.Apply".Doc() * new EType(entry)[field.Name].Doc().SurroundedBy(Parens) * ";".Doc());
+        }
         if (!s_GenerateAny)
-            return;
+            yield break;
 
         RequiredNamespace.Remove(entry.Namespace);
-        RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
-        var x = VSep(
+        foreach(var use in RequiredNamespace.Select(x => $"using {x};"))
+        {
+            yield return use.Doc();
+        }
+        CodeGen.Fun_InitRef.Add($"{entry.Namespace}.{entry.Name}.generated_BindMethods");
+        yield return VSep(
             VSep(
                 $"namespace {entry.Namespace}".Doc(),
                 "{".Doc(),
@@ -176,8 +195,7 @@ public class Gen_PyBind : HasNamespace
                     "public sealed partial class".Doc() + entry.Name.Doc(),
                     "{".Doc(),
                         VSep(
-                            $"[{nameof(Mark)}(Initialization.TokenBuiltinInit)]".Doc(),
-                            "static void BindMethods()".Doc(),
+                            "static void generated_BindMethods()".Doc(),
                             "{".Doc(),
                             VSep(defs.ToArray()).Indent(4),
                             "}".Doc()
@@ -185,7 +203,7 @@ public class Gen_PyBind : HasNamespace
                     "}".Doc()
                 ).Indent(4),
                 "}".Doc()));
-        x.Render(write);
-        write("\n");
+        
+        yield return NewLine;
     }
 }

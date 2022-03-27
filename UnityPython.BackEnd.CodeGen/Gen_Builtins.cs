@@ -13,7 +13,7 @@ using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
 using static Helper;
 
-[CodeGen(Path = "BuiltinBindings.cs")]
+[CodeGen(Path = "Traffy.Builtins/")]
 public class Gen_Builtins : HasNamespace
 {
     public static MethodInfo[] magicMethods = CodeGenConfig.MagicMethods;
@@ -21,8 +21,9 @@ public class Gen_Builtins : HasNamespace
     public Gen_Builtins()
     {
     }
+    
 
-    void HasNamespace.Generate(Action<string> write)
+    IEnumerable<Doc> GenerateDocument()
     {
         var entry = typeof(Builtins);
         RequiredNamespace.Add(entry.Namespace);
@@ -80,8 +81,13 @@ public class Gen_Builtins : HasNamespace
                 yield return $"{nameof(Initialization)}.Prelude({nameof(TrSharpFunc)}.FromFunc(\"{mi.Name}\", {localBindName}));".Doc();
             }
         }
-        RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
-        var x = VSep(
+        foreach(var use in RequiredNamespace.Select(x => $"using {x};"))
+        {
+            yield return use.Doc();
+        }
+        
+        CodeGen.Fun_InitRef.Add($"{entry.Namespace}.{entry.Name}.InitBuiltins");
+        yield return VSep(
             VSep(
                 $"namespace {entry.Namespace}".Doc(),
                 "{".Doc(),
@@ -89,7 +95,6 @@ public class Gen_Builtins : HasNamespace
                     "public static partial class".Doc() + entry.Name.Doc(),
                     "{".Doc(),
                         VSep(
-                            " [Traffy.Annotations.Mark(Initialization.TokenBuiltinInit)]".Doc(),
                             "static void InitBuiltins()".Doc(),
                             "{".Doc(),
                             VSep(built_bindings().ToArray()) >> 4,
@@ -99,7 +104,12 @@ public class Gen_Builtins : HasNamespace
                     "}".Doc()
                 ).Indent(4),
                 "}".Doc()));
-        x.Render(write);
-        write("\n");
+        
+        yield return NewLine;
+    }
+
+    public IEnumerable<(string filename, Doc[] docoment)> Generate()
+    {
+        yield return ("Bindings.cs", GenerateDocument().ToArray());
     }
 }

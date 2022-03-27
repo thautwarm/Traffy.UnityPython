@@ -64,18 +64,23 @@ namespace Traffy.Objects
             ? contents.SeqEq<FList<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrByteArray>("bytearray");
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("bytearray", TrByteArray.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrByteArray)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrByteArray))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

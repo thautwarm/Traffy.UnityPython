@@ -10,7 +10,7 @@ using Traffy.Objects;
 using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
 
-[CodeGen(Path = "Traffy.Objects/Class.BindMethodsFromDict.cs")]
+[CodeGen(Path = "Traffy.Objects.Setup/")]
 public class Gen_Class_BindMethodsFromDict : HasNamespace
 {
     public static MethodInfo[] magicMethods = CodeGenConfig.MagicMethods;
@@ -19,7 +19,12 @@ public class Gen_Class_BindMethodsFromDict : HasNamespace
     {
     }
 
-    void HasNamespace.Generate(Action<string> write)
+    public IEnumerable<(string, Doc[])> Generate()
+    {
+        yield return ("Class.BindMethodsFromDict.cs", GenerateDocument().ToArray());
+    }
+
+    IEnumerable<Doc> GenerateDocument()
     {
         var entry = typeof(Traffy.Objects.TrClass);
         List<Doc> defs = new List<Doc>();
@@ -34,7 +39,10 @@ public class Gen_Class_BindMethodsFromDict : HasNamespace
             defs.Add($"    this[{nameof(MagicNames)}.i_{meth.Name}] = o_{methdNameStripUnderscore};".Doc());
         }
         RequiredNamespace.Remove(entry.Namespace);
-        RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
+        foreach(var use in RequiredNamespace.Select(x => $"using {x};"))
+        {
+            yield return use.Doc();
+        }
         var x = VSep(
             VSep(
                 $"namespace {entry.Namespace}".Doc(),
@@ -51,7 +59,7 @@ public class Gen_Class_BindMethodsFromDict : HasNamespace
                     "}".Doc()
                 ).Indent(4),
                 "}".Doc()));
-        x.Render(write);
-        write("\n");
+        
+        yield return NewLine;
     }
 }

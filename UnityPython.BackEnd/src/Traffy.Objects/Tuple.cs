@@ -27,14 +27,27 @@ namespace Traffy.Objects
         public override string __repr__() =>
             elts.Length == 1 ? $"({elts[0].__repr__()},)" : "(" + String.Join(", ", elts.Select(x => x.__repr__())) + ")";
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrTuple>("tuple");
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("tuple.__new__", TrTuple.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrTuple)] = CLASS;
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            CLASS.IsFixed = true;
+            Initialization.Prelude(CLASS);
         }
 
         public override IEnumerator<TrObject> __iter__()
@@ -42,13 +55,7 @@ namespace Traffy.Objects
             return elts.AsEnumerable().GetEnumerator();
         }
 
-        [Traffy.Annotations.Mark(typeof(TrTuple))]
-        static void _SetupClasses()
-        {
-            CLASS.SetupClass();
-            CLASS.IsFixed = true;
-            Initialization.Prelude(CLASS);
-        }
+        
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

@@ -16,16 +16,21 @@ namespace Traffy.Objects
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrSharpFunc>("builtin_function");
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("builtin_function.__new__", TrSharpFunc.datanew));
             TrClass.TypeDict[typeof(TrSharpFunc)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrSharpFunc))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             Initialization.Prelude(CLASS);

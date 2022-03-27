@@ -35,45 +35,42 @@ namespace Traffy
             public const int TUPLE_HASH_PRIME = 23;
         }
         internal const int OBJECT_SHAPE_MAX_FIELD = 255;
-        internal const string TokenClassInit = "Traffy.ClassInit";
-        internal const string TokenBuiltinInit = "Traffy.BuiltinInit";
         static Dictionary<string, TrObject> m_Prelude = new Dictionary<string, TrObject>();
-        public static void InitRuntime()
-        {
-            Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenClassInit).ToList().ForEach(
-                f => f.method()
-            );
-            var triples = Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is Type).ToArray();
-#if DEBUG
-            Console.WriteLine($"Found {triples.Length} classes");
-#endif
-            foreach (var (t, attr, f) in triples)
-            {
-                if (!(attr.Token is Type tokenT) || tokenT != t)
-                {
-                    throw new Exception($"invalid mark for {t.Name}");
-                }
-                if (!TrClass.TypeDict.ContainsKey(tokenT))
-                {
-                    throw new Exception($"typedict not registered for {t.Name}");
-                }
-            }
+//             Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenClassInit).ToList().ForEach(
+//                 f => f.method()
+//             );
+//             var triples = Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is Type).ToArray();
+// #if DEBUG
+//             Console.WriteLine($"Found {triples.Length} classes");
+// #endif
+//             foreach (var (t, attr, f) in triples)
+//             {
+//                 if (!(attr.Token is Type tokenT) || tokenT != t)
+//                 {
+//                     throw new Exception($"invalid mark for {t.Name}");
+//                 }
+//                 if (!TrClass.TypeDict.ContainsKey(tokenT))
+//                 {
+//                     throw new Exception($"typedict not registered for {t.Name}");
+//                 }
+//                 TrClass.C3Linearized(TrClass.TypeDict[tokenT]);
+//             }
 
-            Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenBuiltinInit).ToList().ForEach(
-                f => f.method()
-            );
+//             Traffy.Annotations.Mark.Query(typeof(TrObject), x => x is string s && s == TokenBuiltinInit).ToList().ForEach(
+//                 f => f.method()
+//             );
 
-            triples
-                .Select(((Type t, Traffy.Annotations.Mark attr, Action f) x) =>
-                    new SetupSortPair
-                    {
-                        f = x.f,
-                        cls = TrClass.TypeDict[(Type)x.attr.Token]
-                    })
-                .OrderBy(x => x, new MroComparer())
-                .ToList()
-                .ForEach(x => x.f());
-        }
+//             triples
+//                 .Select(((Type t, Traffy.Annotations.Mark attr, Action f) x) =>
+//                     new SetupSortPair
+//                     {
+//                         f = x.f,
+//                         cls = TrClass.TypeDict[(Type)x.attr.Token]
+//                     })
+//                 .OrderBy(x => x, new MroComparer())
+//                 .ToList()
+//                 .ForEach(x => x.f());
+
         public static void Prelude(string name, TrObject o)
         {
             m_Prelude[name] = o;

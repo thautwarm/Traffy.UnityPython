@@ -65,16 +65,16 @@ namespace Traffy.Objects
             Namespace[name] = value;
         }
 
-
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrModule>("module");
             TrClass.TypeDict[typeof(TrModule)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrModule))]
-        static void _SetupClasses()
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

@@ -53,6 +53,16 @@ namespace Traffy
             return MK.Dict(o);
         }
 
+        public static TrObject Apply(Awaitable<TrObject> awaitable)
+        {
+            return TrGenerator.Create(awaitable);
+        }
+
+        public static TrObject Apply(IEnumerator<TrObject> awaitable)
+        {
+            return MK.Iter(awaitable);
+        }
+
     }
     public static class Unbox
     {

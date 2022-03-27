@@ -50,16 +50,21 @@ namespace Traffy.Objects
             }
         }
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrInt>("int");
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrInt)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrInt))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

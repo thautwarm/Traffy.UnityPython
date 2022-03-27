@@ -15,18 +15,22 @@ namespace Traffy.Objects
 
         public override List<TrObject> __array__ => null;
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrRef>("ref");
+        }
 
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ref.__new__", TrRef.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrRef)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrRef))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

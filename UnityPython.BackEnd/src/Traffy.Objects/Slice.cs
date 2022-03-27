@@ -41,20 +41,22 @@ namespace Traffy.Objects
             }
             throw new TypeError($"invalid invocation of {args[0].AsClass.Name}");
         }
-
-
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrSlice>("slice");
+        }
 
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("slice.__new__", TrSlice.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrSlice)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrSlice))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

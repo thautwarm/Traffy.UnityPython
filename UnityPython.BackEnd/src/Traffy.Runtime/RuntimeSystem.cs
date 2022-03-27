@@ -545,13 +545,14 @@ namespace Traffy
         public static TrClass new_class(string name, TrObject[] rt_bases, Dictionary<TrObject, TrObject> ns)
         {
             var cls = TrClass.CreateClass(name, rt_bases.Select(x => (TrClass)x).ToArray());
+            TrClass.C3Linearized(cls);
             cls.Name = name;
             TrObject new_inst(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 return MK.UserObject(cls);
             }
             cls[cls.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc($"{name}.__new__", new_inst));
-            cls.SetupClass(ns);
+            cls.SetupUserClass(ns);
             return cls;
         }
 

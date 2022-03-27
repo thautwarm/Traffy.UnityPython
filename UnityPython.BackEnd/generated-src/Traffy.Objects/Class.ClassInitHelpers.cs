@@ -58,6 +58,9 @@ namespace Traffy.Objects
         }
 
 
+        static void BuiltinClassInit_TrModule_abc(TrClass cls)
+        {
+        }
         static void BuiltinClassInit_TrABC(TrClass cls)
         {
         }
@@ -265,6 +268,11 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
+            if (typeof(T) == typeof(Traffy.Modules.TrModule_abc))
+            {
+                BuiltinClassInit_TrModule_abc(cls);
+                return;
+            }
             if (typeof(T) == typeof(Traffy.Objects.TrABC))
             {
                 BuiltinClassInit_TrABC(cls);

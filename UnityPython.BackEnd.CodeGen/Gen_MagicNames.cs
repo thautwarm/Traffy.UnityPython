@@ -4,11 +4,16 @@ using System.Linq;
 using PrettyDoc;
 using static PrettyDoc.ExtPrettyDoc;
 
-[CodeGen(Path = "Traffy.Runtime/MagicNames.cs")]
+[CodeGen(Path = "Traffy.Runtime/")]
 public class Gen_MagicNames : HasNamespace
 {
     public HashSet<string> RequiredNamespace { get; } = new HashSet<string>();
-    public void Generate(Action<string> write)
+
+    public IEnumerable<(string, Doc[])> Generate()
+    {
+        yield return ("MagicNames.cs", GenerateDocument().ToArray());
+    }
+    IEnumerable<Doc> GenerateDocument()
     {
         var head = "public static class MagicNames".Doc();
         var magicNames = CodeGenConfig.MagicMethods.Select(x => x.Name).ToArray();
@@ -25,7 +30,7 @@ public class Gen_MagicNames : HasNamespace
 
         var ALL = String.Join(", ", magicNames.Select(x => x.Escape()));
 
-        VSep(
+        yield return VSep(
             "using Traffy.Objects;".Doc(),
             "using System.Collections.Generic;".Doc(),
             "namespace Traffy".Doc(),
@@ -40,7 +45,7 @@ public class Gen_MagicNames : HasNamespace
                     "}".Doc()
                 ).Indent(4),
             "}".Doc()
-        ).Render(write);
-        write("\n");
+        );
+        yield return NewLine;
     }
 }

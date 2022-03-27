@@ -467,9 +467,10 @@ namespace CSAST
         string name,
         CSType returnType,
         (string name, CSType type)[] arguments,
-        CSStmt[] body) : CSAST
+        CSStmt[] body,
+        bool Public = false) : CSAST
     {
-        public static CSMethod PyMethod(string name, CSType returnType, CSStmt[] body)
+        public static CSMethod PyMethod(string name, CSType returnType, CSStmt[] body, bool Public = false)
         {
             return new CSMethod(name, returnType, new (string name, CSType type)[2]
             {
@@ -477,7 +478,7 @@ namespace CSAST
                         new TId(nameof(BList<object>))[nameof(TrObject)]),
                 (CSExpr.KWARGS,
                     new TId(nameof(Dictionary<object, object>))[nameof(TrObject), nameof(TrObject)])
-            }, body);
+            }, body, Public: Public);
         }
         public Doc Doc()
         {
@@ -487,7 +488,7 @@ namespace CSAST
                 name.Doc(),
                 doc_arguments,
                 body.Select(x => x.Doc()).ToArray(),
-                Public: false,
+                Public: Public,
                 Static: true
             );
         }

@@ -65,18 +65,22 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrTraceback>("Traceback");
+        }
 
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("Traceback.__new__", TrTraceback.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrTraceback)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrTraceback))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

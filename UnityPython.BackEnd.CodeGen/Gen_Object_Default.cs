@@ -9,7 +9,7 @@ using Traffy.Objects;
 using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
 
-[CodeGen(Path = "Traffy.Objects/Object.cs")]
+[CodeGen(Path = "Traffy.Objects/")]
 public class Gen_ObjectDefault : HasNamespace
 {
     public static MethodInfo[] magicMethods = CodeGenConfig.MagicMethods;
@@ -17,8 +17,11 @@ public class Gen_ObjectDefault : HasNamespace
     public Gen_ObjectDefault()
     {
     }
-
-    void HasNamespace.Generate(Action<string> write)
+    public IEnumerable<(string, Doc[]) > Generate()
+    {
+        yield return ("Object.cs", GenerateDocument().ToArray());
+    }
+    IEnumerable<Doc> GenerateDocument()
     {
         var entry = typeof(Traffy.Objects.TrObject);
 
@@ -57,8 +60,11 @@ public class Gen_ObjectDefault : HasNamespace
         }
 
         RequiredNamespace.Remove(entry.Namespace);
-        RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
-        var x = VSep(
+        foreach(var use in RequiredNamespace.Select(x => $"using {x};"))
+        {
+            yield return use.Doc();
+        }
+        yield return VSep(
             $"namespace {entry.Namespace}".Doc(),
             "{".Doc(),
             VSep(
@@ -69,7 +75,6 @@ public class Gen_ObjectDefault : HasNamespace
             ).Indent(4),
             "}".Doc()
         );
-        x.Render(write);
-        write("\n");
+        yield return NewLine;
     }
 }

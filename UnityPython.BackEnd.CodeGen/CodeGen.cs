@@ -80,11 +80,13 @@ public interface HasNamespace
     {
         RequiredNamespace.Add(ns);
     }
-    void Generate(Action<string> write);
+    IEnumerable<(string filename, Doc[] docoment)> Generate();
 }
 
 public class CodeGen : Attribute
 {
+    public static List<string> Fun_InitRef = new();
+
     [AllowNull] public string Path;
 
     public static void GenerateAll()
@@ -112,11 +114,11 @@ public class CodeGen : Attribute
                 ctor = ctors[i];
                 if (ctor.GetParameters().Length == 0)
                 {
-                    var path = System.IO.Path.Join(
+                    var dirPath = System.IO.Path.Join(
                         CodeGenConfig.RootDir,
-                        attr_CodeGen.Path ?? cls.Name.ToLowerInvariant() + ".cs"
+                        attr_CodeGen.Path ?? "Parametric"
                     );
-                    makers.Add(() => (path, (HasNamespace)ctor.Invoke(null)));
+                    makers.Add(() => (dirPath, (HasNamespace)ctor.Invoke(null)));
                     goto codegen;
                 }
                 if (ctor.GetParameters().Length == 1 && ctor.GetParameters()[0].ParameterType == typeof(Type))
@@ -124,31 +126,34 @@ public class CodeGen : Attribute
                     foreach (var t in py_classes)
                     {
                         var t_ = t;
-                        var path = System.IO.Path.Join(
+                        var dirPath = System.IO.Path.Join(
                             CodeGenConfig.RootDir,
-                            attr_CodeGen.Path ?? "Parametric",
-                            t.Name + ".cs"
+                            attr_CodeGen.Path ?? "Parametric"
                         );
-                        makers.Add(() => (path, (HasNamespace)ctor.Invoke(new object[] { t_ })));
+                        makers.Add(() => (dirPath, (HasNamespace)ctor.Invoke(new object[] { t_ })));
                     }
                     goto codegen;
                 }
             }
             return;
         codegen:
+            makers.Add(() => (".", (HasNamespace) new Gen_OrderedInit()));
             foreach (var maker in makers)
             {
-                var (path, o) = maker();
-                var dirPath = System.IO.Path.GetDirectoryName(path); // c# getdirectoryname is actually getting a path
+                var (dirPath, o) = maker();
                 if (!System.IO.Directory.Exists(dirPath))
                 {
                     System.IO.Directory.CreateDirectory(dirPath);
                 }
-                using (var file = System.IO.File.Open(path, System.IO.FileMode.Create))
+
+                foreach(var pair in o.Generate())
                 {
-                    using (var writer = new System.IO.StreamWriter(file))
+                    using (var file = System.IO.File.Open(System.IO.Path.Combine(dirPath, pair.filename), System.IO.FileMode.Create))
                     {
-                        o.Generate(writer.Write);
+                        using (var writer = new System.IO.StreamWriter(file))
+                        {
+                            VSep(pair.docoment).Render(writer.Write);
+                        }
                     }
                 }
             }

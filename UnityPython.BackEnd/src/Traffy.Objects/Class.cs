@@ -42,6 +42,8 @@ namespace Traffy.Objects
         public static Dictionary<Type, TrClass> TypeDict = new Dictionary<Type, TrClass>();
         static TrClass MetaClass = null;
 
+        public static TrClass CLASS { get => MetaClass; set => MetaClass = value; }
+
         public bool IsFixed = false;
         public bool IsSealed = false;
         public bool IsAbstract = false;
@@ -78,8 +80,8 @@ namespace Traffy.Objects
         }
         public TrObject AsObject => this as TrObject;
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Init()
         {
             MetaClass = CreateMetaClass("type");
             MetaClass[MetaClass.ic__call] = TrClassMethod.Bind(TrSharpFunc.FromFunc("type.__call__", typecall));
@@ -88,8 +90,8 @@ namespace Traffy.Objects
             TrClass.TypeDict[typeof(TrClass)] = MetaClass;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrClass))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             MetaClass.SetupClass();
             MetaClass.IsFixed = true;
@@ -140,6 +142,13 @@ namespace Traffy.Objects
             throw new NotImplementedException("custom metaclasses not supported yet.");
         }
 
+        public static TrObject new_notallow(TrObject cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+
+            throw new TypeError($"manually instantiating {cls.__repr__()} objects is not allowed.");
+
+        }
+
         public override TrClass Class => MetaClass;
 
         public override TrObject __getitem__(TrObject item)
@@ -170,7 +179,7 @@ namespace Traffy.Objects
             return res;
         }
 
-        static TrClass[] C3_linearize(TrClass root)
+        internal static TrClass[] C3Linearized(TrClass root)
         {
             var mro = new List<TrClass>();
             var visited = new HashSet<TrClass>(idComparer);
@@ -218,21 +227,23 @@ namespace Traffy.Objects
             return mro.ToArray();
         }
 
-        internal static TrClass CreateClass(string name, params TrClass[] bases)
+        internal static TrClass CreateClass(string name, params TrClass[] parents)
         {
             // XXX: builtin types cannot be inherited, or methods report incompatible errors
             var cls = new TrClass
             {
                 Name = name,
                 __mro = new TrClass[0],
-                __base = bases,
+                __base = parents,
             };
+            if (parents.Length == 0)
+                cls.__mro = new TrClass[] { cls };
             cls.InitInlineCacheForMagicMethods();
             return cls;
         }
 
         static bool isMetaClassInitialized = false;
-        internal static TrClass CreateMetaClass(string name, params TrClass[] bases)
+        internal static TrClass CreateMetaClass(string name)
         {
             if (isMetaClassInitialized)
                 throw new TypeError("MetaClass is already initialized.");
@@ -240,24 +251,26 @@ namespace Traffy.Objects
             var cls = new TrClass
             {
                 Name = name,
-                __mro = new TrClass[0],
-                __base = bases,
+                __mro = new TrClass[1],
+                __base = new TrClass[0],
             };
+            cls.__mro[0] = cls;
             cls.InitInlineCacheForMagicMethods();
             return cls;
         }
 
 
         // use for sealed classes which shall not be inherited
-        internal static TrClass FromPrototype<T>(string name, params TrClass[] bases) where T : TrObject
+        internal static TrClass FromPrototype<T>(string name) where T : TrObject
         {
             // XXX: builtin types cannot be inherited, or methods report incompatible errors
             var cls = new TrClass
             {
                 Name = name,
-                __mro = new TrClass[0],
-                __base = bases,
+                __mro = new TrClass[1],
+                __base = new TrClass[0],
             };
+            cls.__mro[0] = cls;
             cls.InitInlineCacheForMagicMethods();
             BuiltinClassInit<T>(cls);
             cls.IsSealed = true;
@@ -284,10 +297,6 @@ namespace Traffy.Objects
             return cls;
         }
 
-        public void SetupClass()
-        {
-            SetupClass(null);
-        }
 
         bool IsSet(InternedString name)
         {
@@ -325,9 +334,20 @@ namespace Traffy.Objects
             o = null;
             return false;
         }
-        public void SetupClass(Dictionary<TrObject, TrObject> kwargs)
+
+        public void SetupUserClass(Dictionary<TrObject, TrObject> kwargs = null)
         {
-            __mro = C3_linearize(this);
+            __mro = C3Linearized(this);
+            SetupClass(kwargs);
+        }
+        internal void SetupClass()
+        {
+            SetupClass(null);
+        }
+
+        internal void SetupClass(Dictionary<TrObject, TrObject> kwargs)
+        {
+            UpdatePrototype();
             foreach (var cls in __mro)
             {
                 cls.__subclasses.Add(this);

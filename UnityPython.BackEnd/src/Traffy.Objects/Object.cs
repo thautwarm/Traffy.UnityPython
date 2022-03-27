@@ -361,17 +361,21 @@ namespace Traffy.Objects
 
         public override List<TrObject> __array__ => null;
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create(TrObject self, TrObject cls)
         {
             CLASS = TrClass.RawObjectClassObject();
+        }
 
-            CLASS.Name = "object";
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS[CLASS.ic__new] = TrSharpFunc.FromFunc("object.__new__", TrRawObject.datanew);
             TrClass.TypeDict[typeof(TrRawObject)] = CLASS;
         }
-        [Traffy.Annotations.Mark(typeof(TrRawObject))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

@@ -7,13 +7,13 @@ using CSAST;
 using PrettyDoc;
 using Traffy;
 using Traffy.Annotations;
-using Traffy.Objects;
 using Traffy.Interfaces;
+using Traffy.Objects;
 using static ExtCodeGen;
-using static PrettyDoc.ExtPrettyDoc;
 using static Helper;
+using static PrettyDoc.ExtPrettyDoc;
 
-[CodeGen(Path = "Traffy.Interfaces.cs")]
+[CodeGen(Path = "Traffy.Interfaces/")]
 public class Gen_InterfaceClasses : HasNamespace
 {
     public HashSet<string> RequiredNamespace { get; } = new HashSet<string>();
@@ -22,8 +22,11 @@ public class Gen_InterfaceClasses : HasNamespace
         RequiredNamespace.Clear();
     }
 
-
-    void HasNamespace.Generate(Action<string> write)
+    public IEnumerable<(string, Doc[])> Generate()
+    {
+        yield return ("AbstractClasses.cs", GenerateDocument().ToArray());
+    }
+    IEnumerable<Doc> GenerateDocument()
     {
         var asm = typeof(AbstractClass).Assembly;
         List<Doc> defs = new();
@@ -31,10 +34,10 @@ public class Gen_InterfaceClasses : HasNamespace
         (this as HasNamespace).AddNamepace("System");
         (this as HasNamespace).AddNamepace("System.Collections.Generic");
 
-        typeof(Mark).RefGen(this);
+        typeof(SetupMark).RefGen(this);
         typeof(TrObject).RefGen(this);
 
-        foreach(var each in asm.GetTypes())
+        foreach (var each in asm.GetTypes())
         {
             // test static
             // https://stackoverflow.com/questions/4145072/how-to-tell-if-a-type-is-a-static-class
@@ -49,9 +52,15 @@ public class Gen_InterfaceClasses : HasNamespace
         }
 
         RequiredNamespace.Remove(typeof(AbstractClass).Namespace);
-        RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
+        
+        foreach(var use in RequiredNamespace.Select(x => $"using {x};"))
+        {
+            yield return use.Doc();
+        }
 
-        var x = VSep(
+        CodeGen.Fun_InitRef.Add($"{typeof(AbstractClass).Namespace}.{typeof(AbstractClass).Name}.generated_BindMethods");
+
+        yield return VSep(
             VSep(
                 $"namespace {typeof(AbstractClass).Namespace}".Doc(),
                 "{".Doc(),
@@ -59,8 +68,7 @@ public class Gen_InterfaceClasses : HasNamespace
                     $"public partial class {nameof(AbstractClass)}".Doc(),
                     "{".Doc(),
                         VSep(
-                            $"[{nameof(Mark)}(Initialization.TokenBuiltinInit)]".Doc(),
-                            "static void BindMethods()".Doc(),
+                            "static void generated_BindMethods()".Doc(),
                             "{".Doc(),
                                 VSep(binding_defs.ToArray()).Indent(4),
                             "}".Doc()
@@ -71,31 +79,31 @@ public class Gen_InterfaceClasses : HasNamespace
                     defs.ToArray()
                 ).Indent(4),
                 "}".Doc()));
-        x.Render(write);
-        write("\n");
+        yield return NewLine;
 
     }
 
     IEnumerable<Doc> GenerateClass(Type t, Type[] bases, List<Doc> binding_defs)
     {
 
-        
+
         yield return $"public static partial class {t.Name}".Doc();
         yield return "{".Doc();
 
-        yield return "[Traffy.Annotations.Mark(Initialization.TokenClassInit)]".Doc().Indent(4);
+        yield return "[Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]".Doc().Indent(4);
         yield return "static void _Init()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
-        var base_args = String.Join(",", bases.Select(x => x.Namespace + "." + x.Name + ".CLASS").Prepend(typeof(TrABC) + ".CLASS"));
-        yield return $"    CLASS = TrClass.CreateClass({t.Name.Escape()}, {base_args});".Doc().Indent(4);
+        yield return $"    CLASS = TrClass.CreateClass({t.Name.Escape()});".Doc().Indent(4);
+        yield return $"    CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];".Doc().Indent(4);
         yield return $"    TrClass.TypeDict[typeof({t.Name})] = CLASS;".Doc().Indent(4);
         yield return "}".Doc().Indent(4);
-
         yield return NewLine;
 
-        yield return $"[Traffy.Annotations.Mark(typeof({t.Name}))]".Doc().Indent(4);
+        yield return $"[Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]".Doc().Indent(4);
         yield return $"static void _SetupClasses()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
+        var base_args = String.Join(",", bases.Select(x => x.Namespace + "." + x.Name + ".CLASS").Prepend(typeof(TrABC) + ".CLASS"));
+        yield return $"    CLASS.__base = new TrClass[] {{ {base_args} }};".Doc().Indent(4);
         yield return $"    CLASS.SetupClass();".Doc().Indent(4);
         yield return $"    CLASS.IsFixed = true;".Doc().Indent(4);
         yield return "}".Doc().Indent(4);
@@ -120,7 +128,7 @@ public class Gen_InterfaceClasses : HasNamespace
                 && ps[1].ParameterType == typeof(BList<TrObject>)
                 && ps[2].ParameterType == typeof(Dictionary<TrObject, TrObject>))
             {
-                binding_defs.Add($"{t.Namespace}.{t.Name}.CLASS[{methName.Escape()}] = {nameof(TrSharpFunc)}.FromFunc(\"{t.Name}.{methName}\", {methName});".Doc());
+                binding_defs.Add($"{t.Namespace}.{t.Name}.CLASS[{methName.Escape()}] = {nameof(TrSharpFunc)}.FromFunc(\"{t.Name}.{methName}\", {t.Namespace}.{t.Name}.{methName});".Doc());
                 continue;
             }
             var (nonDefaultArgCount, defaultArgCount) = countPositionalDefault(meth);
@@ -143,20 +151,22 @@ public class Gen_InterfaceClasses : HasNamespace
                             new SExpr(
                                 new EArgcountError(PYARGS["Count"], methName, nonDefaultArgCount, nonDefaultArgCount + defaultArgCount)).SingletonArray()
                                 )).ToArray()
-                    ).SingletonArray()
+                    ).SingletonArray(),
+                    Public: true
                 );
             }
             else
             {
                 cm = CSMethod.PyMethod(localBindName, typeof(TrObject),
-                    new SError(new EStr("cannot call abstract method " + t.Name + "." + meth.Name)).SingletonArray()
+                    new SError(new EStr("cannot call abstract method " + t.Name + "." + meth.Name)).SingletonArray(),
+                    Public: true
                 );
             }
-            
+
             yield return cm.Doc().Indent(4);
 
-            binding_defs.Add($"{t.Namespace}.{t.Name}.CLASS[{methName.Escape()}] = TrSharpFunc.FromFunc({(t.Name + "." + methName).Escape()}, {localBindName});".Doc());
-        }        
+            binding_defs.Add($"{t.Namespace}.{t.Name}.CLASS[{methName.Escape()}] = TrSharpFunc.FromFunc({(t.Name + "." + methName).Escape()}, {t.Namespace}.{t.Name}.{localBindName});".Doc());
+        }
         yield return "}".Doc();
     }
 }

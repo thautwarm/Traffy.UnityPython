@@ -11,7 +11,7 @@ using Traffy.Objects;
 using static ExtCodeGen;
 using static PrettyDoc.ExtPrettyDoc;
 
-[CodeGen(Path = "Traffy.Objects/Class.ClassInitHelpers.cs")]
+[CodeGen(Path = "Traffy.Objects.Setup/")]
 public class Gen_Class_ClassInit : HasNamespace
 {
 
@@ -30,7 +30,7 @@ public class Gen_Class_ClassInit : HasNamespace
         if (magicNames == null)
             magicNames = magicMethods.Select(x => x.Name).ToHashSet();
         var owned = new HashSet<string>();
-        foreach(var mi in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        foreach (var mi in t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
         {
             if (magicNames.Contains(mi.Name) && IsOwned(mi, t))
             {
@@ -55,7 +55,11 @@ public class Gen_Class_ClassInit : HasNamespace
     public Gen_Class_ClassInit()
     {
     }
-    void HasNamespace.Generate(Action<string> write)
+    public IEnumerable<(string, Doc[])> Generate()
+    {
+        yield return ("Class.ClassInitHelpers.cs", GenerateDocument().ToArray());
+    }
+    IEnumerable<Doc> GenerateDocument()
     {
         var entry = typeof(Traffy.Objects.TrClass);
         RequiredNamespace.Add(typeof(PolyIC).Namespace);
@@ -112,7 +116,7 @@ public class Gen_Class_ClassInit : HasNamespace
 
         IEnumerable<Doc> builtin_class_init_generator()
         {
-            foreach(var t in builtinPyClasses)
+            foreach (var t in builtinPyClasses)
             {
                 yield return $"if (typeof(T) == typeof({t.FullName}))".Doc();
                 yield return "{".Doc();
@@ -132,8 +136,11 @@ public class Gen_Class_ClassInit : HasNamespace
         }
 
         RequiredNamespace.Remove(entry.Namespace);
-        RequiredNamespace.Select(x => $"using {x};\n").ForEach(write);
-        var x = VSep(
+        foreach(var use in RequiredNamespace.Select(x => $"using {x};"))
+        {
+            yield return use.Doc();
+        }
+        yield return VSep(
             VSep(
                 $"namespace {entry.Namespace}".Doc(),
                 "{".Doc(),
@@ -160,7 +167,7 @@ public class Gen_Class_ClassInit : HasNamespace
                     "}".Doc()
                 ).Indent(4),
                 "}".Doc()));
-        x.Render(write);
-        write("\n");
+        
+        yield return NewLine;
     }
 }

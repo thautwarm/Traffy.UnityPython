@@ -27,18 +27,22 @@ namespace Traffy.Objects
             }
         }
 
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrClassMethod>("classmethod");
+        }
 
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("classmethod.__new__", TrClassMethod.datanew));
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrClassMethod)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrClassMethod))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;

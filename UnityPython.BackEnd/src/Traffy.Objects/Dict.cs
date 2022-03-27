@@ -47,18 +47,22 @@ namespace Traffy.Objects
             return MK.Int(container.Count);
         }
 
-
-        [Traffy.Annotations.Mark(Initialization.TokenClassInit)]
-        static void _Init()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrDict>("dict");
+           CLASS = TrClass.FromPrototype<TrDict>("dict");
+        }
 
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("dict.__new__", TrDict.datanew));
             TrClass.TypeDict[typeof(TrDict)] = CLASS;
         }
 
-        [Traffy.Annotations.Mark(typeof(TrDict))]
-        static void _SetupClasses()
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
