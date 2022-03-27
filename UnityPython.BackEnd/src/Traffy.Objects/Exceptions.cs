@@ -139,7 +139,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("BaseException.__new__", TrExceptionExt.datanew<TrBaseException>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(TrBaseException)] = CLASS;
+
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -188,7 +188,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("Exception.__new__", TrExceptionExt.datanew<TrException>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(TrException)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -248,7 +248,7 @@ namespace Traffy.Objects
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AttributeError.__new__", TrExceptionExt.datanew<AttributeError>);
-            TrClass.TypeDict[typeof(AttributeError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -303,7 +303,7 @@ namespace Traffy.Objects
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NameError.__new__", TrExceptionExt.datanew<NameError>);
-            TrClass.TypeDict[typeof(NameError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -350,7 +350,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("TypeError.__new__", TrExceptionExt.datanew<TypeError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(TypeError)] = CLASS;
+
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -398,7 +398,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ValueError.__new__", TrExceptionExt.datanew<ValueError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(ValueError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -453,7 +453,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("StopIteration.__new__", TrExceptionExt.datanew<StopIteration>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(StopIteration)] = CLASS;
+
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -500,7 +500,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("LookupError.__new__", TrExceptionExt.datanew<LookupError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(LookupError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -549,7 +549,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("KeyError.__new__", TrExceptionExt.datanew<KeyError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(KeyError)] = CLASS;
+
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -598,7 +598,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("IndexError.__new__", TrExceptionExt.datanew<IndexError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(IndexError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -645,7 +645,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("AssertionError.__new__", TrExceptionExt.datanew<AssertionError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(AssertionError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -709,7 +709,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ImportError.__new__", TrExceptionExt.datanew<ImportError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(ImportError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -756,7 +756,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("RuntimeError.__new__", TrExceptionExt.datanew<RuntimeError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(RuntimeError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -806,7 +806,7 @@ namespace Traffy.Objects
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NotImplementError.__new__", TrExceptionExt.datanew<NotImplementError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
-            TrClass.TypeDict[typeof(NotImplementError)] = CLASS;
+
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -870,7 +870,7 @@ namespace Traffy.Objects
             _IndexMsg = CLASS.AddField("msg");
             _IndexTypeName = CLASS.AddField("typename");
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(NativeError)] = CLASS;
+
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

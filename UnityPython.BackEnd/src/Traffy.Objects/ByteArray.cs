@@ -141,7 +141,6 @@ namespace Traffy.Objects
         internal static void _Init()
         {
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrByteArray)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

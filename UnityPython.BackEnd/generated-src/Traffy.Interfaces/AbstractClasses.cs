@@ -36,7 +36,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Awaitable)] = CLASS;
         }
 
 
@@ -60,7 +59,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Callable)] = CLASS;
         }
 
 
@@ -80,7 +78,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Collection)] = CLASS;
         }
 
 
@@ -100,7 +97,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Comparable)] = CLASS;
         }
 
 
@@ -166,7 +162,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Container)] = CLASS;
         }
 
 
@@ -190,7 +185,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Hashable)] = CLASS;
         }
 
 
@@ -214,7 +208,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Iterable)] = CLASS;
         }
 
 
@@ -238,7 +231,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Reversible)] = CLASS;
         }
 
 
@@ -262,7 +254,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Sequence)] = CLASS;
         }
 
 
@@ -399,7 +390,6 @@ namespace Traffy.Interfaces
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-            TrClass.TypeDict[typeof(Sized)] = CLASS;
         }
 
 

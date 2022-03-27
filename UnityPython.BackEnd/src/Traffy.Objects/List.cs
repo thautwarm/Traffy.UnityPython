@@ -41,7 +41,6 @@ namespace Traffy.Objects
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("list.__new__", TrList.datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrList)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

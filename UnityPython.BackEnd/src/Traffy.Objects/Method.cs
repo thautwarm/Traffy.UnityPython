@@ -43,7 +43,6 @@ namespace Traffy.Objects
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("method.__new__", TrSharpMethod.datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrSharpMethod)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

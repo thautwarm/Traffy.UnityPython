@@ -28,7 +28,6 @@ namespace Traffy.Objects
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NoneType.__new__", TrNone.datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrNone)] = CLASS;
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()

@@ -26,7 +26,6 @@ namespace Traffy.Objects
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ref.__new__", TrRef.datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrRef)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

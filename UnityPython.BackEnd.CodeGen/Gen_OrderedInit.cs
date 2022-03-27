@@ -41,7 +41,7 @@ public class Gen_OrderedInit : HasNamespace
     }
 
 
-    public static void SolveMro(IList<Type> array)
+    public static void TotalSort_Types(IList<Type> array)
     {
         int length = array.Count;
         if (length == 0)
@@ -85,10 +85,10 @@ public class Gen_OrderedInit : HasNamespace
     }
     static IEnumerable<Type> _GetParents(Type t)
     {
-        foreach (var each in GetBases(t))
+        yield return t;
+        foreach (var each in _GetBases(t))
         {
-            yield return each;
-            foreach (var parent in GetMro(each))
+            foreach (var parent in _GetParents(each))
             {
                 yield return parent;
             }
@@ -129,7 +129,7 @@ public class Gen_OrderedInit : HasNamespace
             .ToArray()
             .By(x =>
             {
-                SolveMro(classesToPrepare);
+                TotalSort_Types(classesToPrepare);
                 return x;
             })
             .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).Distinct().Select(x => (t, x)))

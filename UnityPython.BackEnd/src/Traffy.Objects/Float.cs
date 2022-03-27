@@ -60,7 +60,6 @@ namespace Traffy.Objects
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("float.__new__", TrFloat.datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrFloat)] = CLASS;
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()

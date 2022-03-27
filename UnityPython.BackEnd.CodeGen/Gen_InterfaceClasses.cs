@@ -101,7 +101,6 @@ public class Gen_InterfaceClasses : HasNamespace
         yield return "internal static void _Init()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
         yield return $"    CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];".Doc().Indent(4);
-        yield return $"    TrClass.TypeDict[typeof({t.Name})] = CLASS;".Doc().Indent(4);
         yield return "}".Doc().Indent(4);
         yield return NewLine;
 

@@ -41,7 +41,6 @@ namespace Traffy.Objects
     {
     
         static IdComparer idComparer = new IdComparer();
-        public static Dictionary<Type, TrClass> TypeDict = new Dictionary<Type, TrClass>();
         static TrClass MetaClass = null;
 
         public static TrClass CLASS { get => MetaClass; set => MetaClass = value; }

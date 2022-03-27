@@ -37,8 +37,7 @@ namespace Traffy.Objects
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("classmethod.__new__", TrClassMethod.datanew));
-            CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrClassMethod)] = CLASS;
+            CLASS.IsSealed = true;            
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

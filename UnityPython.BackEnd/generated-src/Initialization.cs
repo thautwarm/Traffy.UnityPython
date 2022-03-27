@@ -8,7 +8,7 @@ namespace Traffy
         public static void InitRuntime()
         {
             Traffy.Objects.TrRawObject._Create();
-            Traffy.Objects.TrABC._Create();
+            Traffy.Interfaces.Awaitable._Create();
             Traffy.Interfaces.Callable._Create();
             Traffy.Interfaces.Container._Create();
             Traffy.Interfaces.Comparable._Create();
@@ -18,7 +18,7 @@ namespace Traffy
             Traffy.Interfaces.Reversible._Create();
             Traffy.Interfaces.Collection._Create();
             Traffy.Interfaces.Sequence._Create();
-            Traffy.Interfaces.Awaitable._Create();
+            Traffy.Objects.TrABC._Create();
             Traffy.Objects.TrBool._Create();
             Traffy.Objects.TrSharpFunc._Create();
             Traffy.Objects.TrByteArray._Create();
@@ -61,7 +61,7 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Create();
             Traffy.Objects.TrFunc._Create();
             Traffy.Objects.TrRawObject.CLASS.__base = new TrClass[] {  };
-            Traffy.Objects.TrABC.CLASS.__base = new TrClass[] {  };
+            Traffy.Interfaces.Awaitable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Callable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Container.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Comparable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
@@ -71,7 +71,7 @@ namespace Traffy
             Traffy.Interfaces.Reversible.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Iterable.CLASS };
             Traffy.Interfaces.Collection.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Sized.CLASS,Traffy.Interfaces.Iterable.CLASS,Traffy.Interfaces.Container.CLASS };
             Traffy.Interfaces.Sequence.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Reversible.CLASS,Traffy.Interfaces.Collection.CLASS };
-            Traffy.Interfaces.Awaitable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
+            Traffy.Objects.TrABC.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrBool.CLASS.__base = new TrClass[] { Traffy.Interfaces.Comparable.CLASS };
             Traffy.Objects.TrSharpFunc.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrByteArray.CLASS.__base = new TrClass[] { Traffy.Interfaces.Comparable.CLASS,Traffy.Interfaces.Sequence.CLASS };
@@ -114,7 +114,7 @@ namespace Traffy
             Traffy.Objects.TrUnionType.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrFunc.CLASS.__base = new TrClass[] { Traffy.Interfaces.Callable.CLASS };
             Traffy.Objects.TrRawObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRawObject.CLASS);
-            Traffy.Objects.TrABC.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrABC.CLASS);
+            Traffy.Interfaces.Awaitable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Awaitable.CLASS);
             Traffy.Interfaces.Callable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Callable.CLASS);
             Traffy.Interfaces.Container.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Container.CLASS);
             Traffy.Interfaces.Comparable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Comparable.CLASS);
@@ -124,7 +124,7 @@ namespace Traffy
             Traffy.Interfaces.Reversible.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Reversible.CLASS);
             Traffy.Interfaces.Collection.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Collection.CLASS);
             Traffy.Interfaces.Sequence.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Sequence.CLASS);
-            Traffy.Interfaces.Awaitable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Awaitable.CLASS);
+            Traffy.Objects.TrABC.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrABC.CLASS);
             Traffy.Objects.TrBool.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrBool.CLASS);
             Traffy.Objects.TrSharpFunc.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrSharpFunc.CLASS);
             Traffy.Objects.TrByteArray.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrByteArray.CLASS);
@@ -235,7 +235,7 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Init();
             Traffy.Objects.TrFunc._Init();
             Traffy.Objects.TrRawObject._SetupClasses();
-            Traffy.Objects.TrABC._SetupClasses();
+            Traffy.Interfaces.Awaitable._SetupClasses();
             Traffy.Interfaces.Callable._SetupClasses();
             Traffy.Interfaces.Container._SetupClasses();
             Traffy.Interfaces.Comparable._SetupClasses();
@@ -245,7 +245,7 @@ namespace Traffy
             Traffy.Interfaces.Reversible._SetupClasses();
             Traffy.Interfaces.Collection._SetupClasses();
             Traffy.Interfaces.Sequence._SetupClasses();
-            Traffy.Interfaces.Awaitable._SetupClasses();
+            Traffy.Objects.TrABC._SetupClasses();
             Traffy.Objects.TrBool._SetupClasses();
             Traffy.Objects.TrSharpFunc._SetupClasses();
             Traffy.Objects.TrByteArray._SetupClasses();

@@ -34,7 +34,6 @@ namespace Traffy.Objects
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("tuple.__new__", TrUnionType.datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrUnionType)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

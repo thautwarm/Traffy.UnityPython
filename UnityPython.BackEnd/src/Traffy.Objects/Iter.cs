@@ -55,7 +55,6 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            TrClass.TypeDict[typeof(TrIter)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

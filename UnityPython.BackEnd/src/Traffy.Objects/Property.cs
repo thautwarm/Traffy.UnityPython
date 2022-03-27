@@ -36,7 +36,6 @@ namespace Traffy.Objects
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("property.__new__", datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrProperty)] = CLASS;
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()

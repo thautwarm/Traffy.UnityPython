@@ -40,7 +40,6 @@ namespace Traffy.Objects
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("tuple.__new__", TrTuple.datanew);
             CLASS.IsSealed = true;
-            TrClass.TypeDict[typeof(TrTuple)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

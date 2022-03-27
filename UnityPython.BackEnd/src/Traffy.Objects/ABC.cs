@@ -26,7 +26,6 @@ namespace Traffy.Objects
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("ABC.__new__", TrABC.new_abstract_class_instance);
-            TrClass.TypeDict[typeof(TrABC)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

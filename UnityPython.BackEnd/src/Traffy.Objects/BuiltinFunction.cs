@@ -26,7 +26,6 @@ namespace Traffy.Objects
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("builtin_function.__new__", TrSharpFunc.datanew));
-            TrClass.TypeDict[typeof(TrSharpFunc)] = CLASS;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

@@ -69,7 +69,6 @@ namespace Traffy.Objects
         internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrModule>("module");
-            TrClass.TypeDict[typeof(TrModule)] = CLASS;
         }
 
 
