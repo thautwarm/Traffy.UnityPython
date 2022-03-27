@@ -41,6 +41,26 @@ public static class Utils
         return xs;
     }
 
+    internal static bool StartswithI<TList1, TList2, T>(this TList1 xs, TList2 content, int start) where T: IEquatable<T> where TList1 : IList<T> where TList2 : IList<T> 
+    {
+        var n1 = xs.Count;
+        var n2 = content.Count;
+        if (start + n2 > n1)
+        {
+            return false;
+        }
+    
+        for(int i = 0, j = start; i < n2; i++, j++)
+        {
+            
+            if(!xs[j].Equals(content[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     internal static int ByteSequenceHash<TList>(this TList xs, int seed, int primSeed) where TList : IList<byte>
     {
         unchecked

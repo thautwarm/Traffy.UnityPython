@@ -205,32 +205,9 @@ namespace Traffy
 
         public static TrObject object_inv(TrObject arg) => arg.__invert__();
 
-
-        public static bool isinstanceof_impl(TrObject o, TrClass cls)
-        {
-            if (o.Class == cls)
-            {
-                return true;
-            }
-            if (cls.__base.Length != 0)
-                for (int i = 0; i < cls.__base.Length; i++)
-                {
-                    if (isinstanceof(o, cls.__base[i])) return true;
-                }
-            return false;
-        }
-
         public static bool isinstanceof(TrObject o, TrObject cls)
         {
-            if (cls is TrTuple tuple)
-            {
-                return tuple.elts.Exist(x => isinstanceof(o, x));
-            }
-            else if (cls is TrClass t)
-            {
-                return isinstanceof_impl(o, t);
-            }
-            throw new TypeError($"{cls.__repr__()} is not a class or a tuple or classes");
+            return TrObject.__instancecheck__(o, cls);
         }
 
         public static TrObject[] object_as_array(TrObject trObject)
@@ -545,7 +522,6 @@ namespace Traffy
         public static TrClass new_class(string name, TrObject[] rt_bases, Dictionary<TrObject, TrObject> ns)
         {
             var cls = TrClass.CreateClass(name, rt_bases.Select(x => (TrClass)x).ToArray());
-            TrClass.C3Linearized(cls);
             cls.Name = name;
             TrObject new_inst(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {

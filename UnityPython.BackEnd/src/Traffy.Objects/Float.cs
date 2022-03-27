@@ -6,6 +6,7 @@ namespace Traffy.Objects
 {
     [Serializable]
     [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Comparable))]
     public sealed partial class TrFloat : TrObject
     {
         public float value;

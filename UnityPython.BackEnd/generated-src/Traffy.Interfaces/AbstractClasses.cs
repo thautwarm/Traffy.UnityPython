@@ -35,7 +35,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Awaitable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Awaitable)] = CLASS;
         }
@@ -49,16 +48,7 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___await__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            switch(__args.Count)
-            {
-                case 1:
-                {
-                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
-                    return Box.Apply(Traffy.Interfaces.Awaitable.__await__(_0));
-                }
-                default:
-                    throw new ValueError("__await__() requires 1 positional argument(s), got " + __args.Count);
-            }
+            throw new ValueError( "cannot call abstract method Awaitable.__await__" );
         }
     }
     public static partial class Callable
@@ -69,7 +59,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Callable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Callable)] = CLASS;
         }
@@ -90,7 +79,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Collection");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Collection)] = CLASS;
         }
@@ -111,7 +99,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Comparable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Comparable)] = CLASS;
         }
@@ -125,29 +112,49 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___lt__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
+            throw new ValueError( "cannot call abstract method Comparable.__lt__" );
+        }
+        public static  Traffy.Objects.TrObject __bind___ge__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
             switch(__args.Count)
             {
                 case 2:
                 {
                     var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
                     var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                    return Box.Apply(Traffy.Interfaces.Comparable.__lt__(_0,_1));
+                    return Box.Apply(Traffy.Interfaces.Comparable.__ge__(_0,_1));
                 }
                 default:
-                    throw new ValueError("__lt__() requires 2 positional argument(s), got " + __args.Count);
+                    throw new ValueError("__ge__() requires 2 positional argument(s), got " + __args.Count);
             }
-        }
-        public static  Traffy.Objects.TrObject __bind___ge__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-        {
-            throw new ValueError( "cannot call abstract method Comparable.__ge__" );
         }
         public static  Traffy.Objects.TrObject __bind___gt__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            throw new ValueError( "cannot call abstract method Comparable.__gt__" );
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Comparable.__gt__(_0,_1));
+                }
+                default:
+                    throw new ValueError("__gt__() requires 2 positional argument(s), got " + __args.Count);
+            }
         }
         public static  Traffy.Objects.TrObject __bind___le__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            throw new ValueError( "cannot call abstract method Comparable.__le__" );
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Comparable.__le__(_0,_1));
+                }
+                default:
+                    throw new ValueError("__le__() requires 2 positional argument(s), got " + __args.Count);
+            }
         }
     }
     public static partial class Container
@@ -158,7 +165,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Container");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Container)] = CLASS;
         }
@@ -172,17 +178,7 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___contains__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            switch(__args.Count)
-            {
-                case 2:
-                {
-                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
-                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                    return Box.Apply(Traffy.Interfaces.Container.__contains__(_0,_1));
-                }
-                default:
-                    throw new ValueError("__contains__() requires 2 positional argument(s), got " + __args.Count);
-            }
+            throw new ValueError( "cannot call abstract method Container.__contains__" );
         }
     }
     public static partial class Hashable
@@ -193,7 +189,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Hashable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Hashable)] = CLASS;
         }
@@ -207,16 +202,7 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___hash__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            switch(__args.Count)
-            {
-                case 1:
-                {
-                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
-                    return Box.Apply(Traffy.Interfaces.Hashable.__hash__(_0));
-                }
-                default:
-                    throw new ValueError("__hash__() requires 1 positional argument(s), got " + __args.Count);
-            }
+            throw new ValueError( "cannot call abstract method Hashable.__hash__" );
         }
     }
     public static partial class Iterable
@@ -227,7 +213,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Iterable");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Iterable)] = CLASS;
         }
@@ -241,16 +226,7 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___iter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            switch(__args.Count)
-            {
-                case 1:
-                {
-                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
-                    return Box.Apply(Traffy.Interfaces.Iterable.__iter__(_0));
-                }
-                default:
-                    throw new ValueError("__iter__() requires 1 positional argument(s), got " + __args.Count);
-            }
+            throw new ValueError( "cannot call abstract method Iterable.__iter__" );
         }
     }
     public static partial class Reversible
@@ -261,7 +237,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Reversible");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Reversible)] = CLASS;
         }
@@ -275,16 +250,7 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___reversed__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            switch(__args.Count)
-            {
-                case 1:
-                {
-                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
-                    return Box.Apply(Traffy.Interfaces.Reversible.__reversed__(_0));
-                }
-                default:
-                    throw new ValueError("__reversed__() requires 1 positional argument(s), got " + __args.Count);
-            }
+            throw new ValueError( "cannot call abstract method Reversible.__reversed__" );
         }
     }
     public static partial class Sequence
@@ -295,7 +261,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Sequence");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Sequence)] = CLASS;
         }
@@ -309,37 +274,120 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___getitem__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
+            throw new ValueError( "cannot call abstract method Sequence.__getitem__" );
+        }
+        public static  Traffy.Objects.TrObject __bind___iter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 1:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    return Box.Apply(Traffy.Interfaces.Sequence.__iter__(_0));
+                }
+                default:
+                    throw new ValueError("__iter__() requires 1 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind___contains__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
             switch(__args.Count)
             {
                 case 2:
                 {
                     var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
                     var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                    return Box.Apply(Traffy.Interfaces.Sequence.__getitem__(_0,_1));
+                    return Box.Apply(Traffy.Interfaces.Sequence.__contains__(_0,_1));
                 }
                 default:
-                    throw new ValueError("__getitem__() requires 2 positional argument(s), got " + __args.Count);
+                    throw new ValueError("__contains__() requires 2 positional argument(s), got " + __args.Count);
             }
-        }
-        public static  Traffy.Objects.TrObject __bind___iter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-        {
-            throw new ValueError( "cannot call abstract method Sequence.__iter__" );
-        }
-        public static  Traffy.Objects.TrObject __bind___contains__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-        {
-            throw new ValueError( "cannot call abstract method Sequence.__contains__" );
         }
         public static  Traffy.Objects.TrObject __bind___reversed__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            throw new ValueError( "cannot call abstract method Sequence.__reversed__" );
+            switch(__args.Count)
+            {
+                case 1:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    return Box.Apply(Traffy.Interfaces.Sequence.__reversed__(_0));
+                }
+                default:
+                    throw new ValueError("__reversed__() requires 1 positional argument(s), got " + __args.Count);
+            }
         }
         public static  Traffy.Objects.TrObject __bind_index(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            throw new ValueError( "cannot call abstract method Sequence.index" );
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    System.Int32 _2;
+                    if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("start"),out var __keyword__2)))
+                        _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                    else
+                        _2 = 0;
+                    System.Int32 _3;
+                    if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("stop"),out var __keyword__3)))
+                        _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                    else
+                        _3 = -1;
+                    bool _4;
+                    if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
+                        _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
+                    else
+                        _4 = false;
+                    return Box.Apply(Traffy.Interfaces.Sequence.index(_0,_1,start : _2,stop : _3,noraise : _4));
+                }
+                case 3:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                    System.Int32 _3;
+                    if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("stop"),out var __keyword__3)))
+                        _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                    else
+                        _3 = -1;
+                    bool _4;
+                    if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
+                        _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
+                    else
+                        _4 = false;
+                    return Box.Apply(Traffy.Interfaces.Sequence.index(_0,_1,_2,stop : _3,noraise : _4));
+                }
+                case 4:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                    var _3 = Unbox.Apply(THint<System.Int32>.Unique,__args[3]);
+                    bool _4;
+                    if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
+                        _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
+                    else
+                        _4 = false;
+                    return Box.Apply(Traffy.Interfaces.Sequence.index(_0,_1,_2,_3,noraise : _4));
+                }
+                default:
+                    throw new ValueError("index() requires 2 to 4 positional argument(s), got " + __args.Count);
+            }
         }
         public static  Traffy.Objects.TrObject __bind_count(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            throw new ValueError( "cannot call abstract method Sequence.count" );
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Sequence.count(_0,_1));
+                }
+                default:
+                    throw new ValueError("count() requires 2 positional argument(s), got " + __args.Count);
+            }
         }
     }
     public static partial class Sized
@@ -350,7 +398,6 @@ namespace Traffy.Interfaces
         }
         internal static void _Init()
         {
-            CLASS = TrClass.CreateClass("Sized");
             CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
             TrClass.TypeDict[typeof(Sized)] = CLASS;
         }
@@ -364,16 +411,7 @@ namespace Traffy.Interfaces
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___len__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
-            switch(__args.Count)
-            {
-                case 1:
-                {
-                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
-                    return Box.Apply(Traffy.Interfaces.Sized.__len__(_0));
-                }
-                default:
-                    throw new ValueError("__len__() requires 1 positional argument(s), got " + __args.Count);
-            }
+            throw new ValueError( "cannot call abstract method Sized.__len__" );
         }
     }
 }

@@ -16,18 +16,22 @@ using static PrettyDoc.ExtPrettyDoc;
 
 public class TypeHierarchyComparer : IComparer<Type>
 {
+    public static readonly TypeHierarchyComparer Inst = new TypeHierarchyComparer();
     public int Compare(Type x, Type y)
     {
 
         if (Gen_OrderedInit.GetMro(x).Contains(y))
         {
+            Console.WriteLine($"{x} > {y}");
             return 1;
         }
 
         if (Gen_OrderedInit.GetMro(y).Contains(x))
         {
+            Console.WriteLine($"{x} < {y}");
             return -1;
         }
+        Console.WriteLine($"{x} = {y}");
         return 0;
     }
 }
@@ -39,7 +43,30 @@ public class Gen_OrderedInit : HasNamespace
     {
     }
 
-    
+
+    public static void SolveMro(IList<Type> array)
+    {
+        int length = array.Count;
+        if (length == 0)
+            return;
+        
+
+        for (int i = 0; i < length; i++)
+        {
+            for (int j = i + 1; j < length; j++)
+            {
+                if (TypeHierarchyComparer.Inst.Compare(array[i], array[j]) > 0)
+                {
+                    var temp = array[i];
+
+                    array[i] = array[j];
+
+                    array[j] = temp;
+                }
+            }
+        }
+    }
+
     static Type[] _GetBases(Type t)
     {
         var inherit = t.GetCustomAttribute<PyInherit>();
@@ -47,12 +74,12 @@ public class Gen_OrderedInit : HasNamespace
             return Array.Empty<Type>();
         return inherit.Parents;
     }
-    
+
     static IEnumerable<Type> GetBases(Type t)
     {
         if (t.GetCustomAttribute<AbstractClass>() != null)
             return _GetBases(t).Prepend(typeof(TrABC));
-        return _GetBases(t);    
+        return _GetBases(t);
     }
 
     public static IEnumerable<Type> GetMro(Type t)
@@ -105,7 +132,7 @@ public class Gen_OrderedInit : HasNamespace
             .ToArray()
             .By(x =>
             {
-                classesToPrepare.Sort(new TypeHierarchyComparer());
+                SolveMro(classesToPrepare);
                 return x;
             })
             .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).Distinct().Select(x => (t, x)))
@@ -127,7 +154,7 @@ public class Gen_OrderedInit : HasNamespace
                         }
                         else
                         {
-                            if(Func_ClassBasedCrateRef.ContainsKey(t))
+                            if (Func_ClassBasedCrateRef.ContainsKey(t))
                                 throw new Exception("dup (create): " + t);
                             Func_ClassBasedCrateRef[t] = methodName;
                         }
@@ -171,25 +198,21 @@ public class Gen_OrderedInit : HasNamespace
                 yield return $"{t.Namespace}.{t.Name}.CLASS.__base = new TrClass[] {{ {bases} }};".Doc();
             }
 
-            foreach (var m in Fun_InitRef)
-            {
-                yield return $"{m}();".Doc();
-            }
-
-            foreach (var m in CodeGen.Fun_InitRef)
-            {
-                yield return $"{m}();".Doc();
-            }
-
+            
             // set mro
             foreach (var t in classesToPrepare)
             {
                 yield return $"{t}.CLASS.__mro = TrClass.C3Linearized({t}.CLASS);".Doc();
             }
 
+            foreach (var m in Fun_InitRef)
+            {
+                yield return $"{m}();".Doc();
+            }
+
             foreach (var t in classesToPrepare)
             {
-                if(CodeGen.Fun_SetupRef.TryGetValue(t, out var m))
+                if (CodeGen.Fun_SetupRef.TryGetValue(t, out var m))
                     yield return $"{m}();".Doc();
             }
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using InlineHelper;
 using Traffy.Annotations;
 
@@ -16,7 +17,7 @@ namespace Traffy.Objects
 
     [Serializable]
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
+    [PyInherit(typeof(Traffy.Interfaces.Comparable), typeof(Traffy.Interfaces.Sequence))]
     public partial class TrStr : TrObject, IComparable<TrObject>
     {
         public string value;
@@ -112,6 +113,59 @@ namespace Traffy.Objects
             if (isInterned && b.isInterned)
                 return object.ReferenceEquals(value, b.value);
             return value == b.value;
+        }
+
+        public override TrObject __len__()
+        {
+            return MK.Int(value.Length);
+        }
+
+        public override TrObject __getitem__(TrObject item)
+        {
+            switch(item)
+            {
+                case TrInt o_i:
+                {
+                    return MK.Str(this.value[(int)o_i.value].ToString());
+                }
+                case TrSlice o_slice:
+                {
+                    var (istart, istep, nstep) = o_slice.mkslice(value.Length);
+                    var newbuf = new StringBuilder();
+                    for (int i = 0, x = istart; i < nstep; i++, x += istep)
+                    {
+                        newbuf.Append(value[x]);
+                    }
+                    return MK.Str(newbuf.ToString());
+                }
+                default:
+                    throw new TypeError($"str indices must be integers, not '{item.Class.Name}'");
+            }
+        }
+
+        [PyBind]
+        public long count(string element, int start = 0, int end = -1)
+        {
+            long cnt = 0;
+            if (end == -1)
+            {
+                end = value.Length;
+            }
+
+            while (start < end)
+            {
+                if(value.Inline().StartswithI<FString, FString, char>(element, start))
+                {
+                    start += element.Length;
+                    cnt++;
+                }
+                else
+                {
+                    start++;
+                }
+
+            }
+            return cnt;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]

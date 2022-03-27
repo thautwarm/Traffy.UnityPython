@@ -100,7 +100,6 @@ public class Gen_InterfaceClasses : HasNamespace
         CodeGen.Fun_InitRef.Add($"{t.Namespace}.{t.Name}._Init");
         yield return "internal static void _Init()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
-        yield return $"    CLASS = TrClass.CreateClass({t.Name.Escape()});".Doc().Indent(4);
         yield return $"    CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];".Doc().Indent(4);
         yield return $"    TrClass.TypeDict[typeof({t.Name})] = CLASS;".Doc().Indent(4);
         yield return "}".Doc().Indent(4);
@@ -151,7 +150,7 @@ public class Gen_InterfaceClasses : HasNamespace
                     .ToArray();
             var localBindName = "__bind_" + methName;
             CSMethod cm;
-            if (isAbstract)
+            if (!isAbstract)
             {
                 cm = CSMethod.PyMethod(localBindName, typeof(TrObject),
                     PYARGS["Count"].Switch(

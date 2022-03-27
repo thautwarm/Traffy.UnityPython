@@ -10,5 +10,9 @@
 			"path": "UnityPython.BackEnd.CodeGen"
 		},
 	],
-	"settings": {}
+	"settings": {
+		"cSpell.words": [
+			"newbuf"
+		]
+	}
 }

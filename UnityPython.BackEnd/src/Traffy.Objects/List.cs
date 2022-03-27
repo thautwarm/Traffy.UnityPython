@@ -7,7 +7,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
+    [PyInherit(typeof(Traffy.Interfaces.Comparable), typeof(Traffy.Interfaces.Sequence))]
     public sealed partial class TrList : TrObject, IComparable<TrObject>
     {
         public List<TrObject> container;
@@ -199,13 +199,14 @@ namespace Traffy.Objects
             }
         }
 
+
         [PyBind]
-        public TrObject index(TrObject x, int start = 0, int end = -1)
+        public TrObject index(TrObject x, int start = 0, int end = -1, [PyBind.Keyword(Only = true)] bool noraise = false)
         {
             if (end == -1)
                 end = container.Count;
             var index = container.IndexOf(x, start, end - start);
-            if (index == -1)
+            if (index == -1 && !noraise)
                 throw new ValueError($"list.index(x): x not in list");
             return MK.Int(index);
         }

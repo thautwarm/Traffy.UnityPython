@@ -8,8 +8,8 @@ namespace Traffy.Objects
 {
     [Serializable]
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
-    public sealed class TrBytes : TrObject, IComparable<TrObject>
+    [PyInherit(typeof(Traffy.Interfaces.Comparable), typeof(Traffy.Interfaces.Sequence))]
+    public sealed partial class TrBytes : TrObject, IComparable<TrObject>
     {
         public byte[] contents;
         int IComparable<TrObject>.CompareTo(TrObject other)
@@ -46,8 +46,6 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("bytes.__new__", TrBytes.datanew);
             CLASS.IsSealed = true;
             TrClass.TypeDict[typeof(TrBytes)] = CLASS;
         }
@@ -127,53 +125,151 @@ namespace Traffy.Objects
             );
         }
 
-        public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        [PyBind]
+        public long count(TrObject o_elements, int start = 0, int end = -1)
         {
-            TrObject clsobj = args[0];
-            var narg = args.Count;
-            if (narg == 1)
-                return MK.Bytes();
-            if (narg == 2 && kwargs == null)
+            long cnt = 0;
+            if (end == -1)
             {
-                var arg = args[1];
-                if (arg is TrBytes)
-                    return arg;
-                if (arg is TrByteArray byteArray)
-                    return MK.Bytes(byteArray.contents.ToArray());
-                throw new TypeError($"bytes(x) argument 1 must be bytes or bytearray, not {arg.Class.Name}");
+                end = contents.Length;
             }
-            if (narg == 3)
-            {
-                var arg1 = args[1] as TrStr;
-                if (arg1 == null)
-                    throw new TypeError($"bytes(str, encoding) argument 1 must be str, not {args[1].Class.Name}");
 
-                var arg2 = args[2] as TrStr;
-                if (arg2 == null)
-                    throw new TypeError($"bytes(str, encoding) argument 2 must be str, not {args[2].Class.Name}");
-                switch (arg2.value.ToLowerInvariant())
+            switch (o_elements)
+            {
+                case TrByteArray b:
                 {
-                    case "utf8":
-                    case "utf-8":
-                        return MK.Bytes(System.Text.Encoding.UTF8.GetBytes(arg1.value));
-                    case "utf16":
-                    case "utf-16":
-                        return MK.Bytes(System.Text.Encoding.Unicode.GetBytes(arg1.value));
-                    case "utf32":
-                    case "utf-32":
-                        return MK.Bytes(System.Text.Encoding.UTF32.GetBytes(arg1.value));
-                    case "latin1":
-                    case "latin-1":
-                        return MK.Bytes(System.Text.Encoding.GetEncoding("iso-8859-1").GetBytes(arg1.value));
-                    case "ascii":
-                        return MK.Bytes(System.Text.Encoding.ASCII.GetBytes(arg1.value));
-                    default:
-                        throw new ValueError($"unknown encoding: {arg2.value}");
+                    while (start < end)
+                    {
+                        if (contents.Inline().StartswithI<FArray<byte>, FList<byte>, byte>(b.contents, start))
+                        {
+                            start += b.contents.Count;
+                            cnt++;
+                        }
+                        else
+                        {
+                            start++;
+                        }
+                    }
+                    return cnt;
                 }
+                case TrBytes b:
+                {
+                    while (start < end)
+                    {
+                        if (contents.Inline().StartswithI<FArray<byte>, FArray<byte>, byte>(b.contents, start))
+                        {
+                            start += b.contents.Length;
+                            cnt++;
+                        }
+                        else
+                        {
+                            start++;
+                        }
+                    }
+                    return cnt;
+                }
+
+                case TrInt b:
+                {
+                    if (b.value < 0 || b.value > 255)
+                    {
+                        throw new ValueError($"{Class.Name} must be in range(0, 256)");
+                    }
+                    byte elt = unchecked((byte) b.value);
+                    for(int i = start; i < end; i++)
+                    {
+                        if (contents[i] == elt)
+                        {
+                            cnt++;
+                        }
+                    }
+                    return cnt;
+                }
+                default:
+                    throw new TypeError($"{Class.Name}.count() argument must be 'bytes' or 'bytearray', not '{o_elements.Class.Name}'");
             }
-            throw new TypeError($"bytes() takes at most 3 arguments ({args.Count} given)");
         }
 
+
+        [PyBind]
+        public static TrBytes __new__(TrObject clsobj, TrObject buffer = null, string encoding = null)
+        {
+            if ((object)buffer == null)
+            {
+                return MK.Bytes();
+            }
+            switch (buffer)
+            {
+                case TrBytes b:
+                {
+                    return b;
+                }
+                case TrByteArray b:
+                {
+                    return MK.Bytes(b.contents.ToArray());
+                }
+                case TrInt b:
+                {
+                    int n = (int) b.value;
+                    var xs = new byte[n];
+                    for(int i = 0; i < n; i ++)
+                    {
+                        xs[i] = 0;
+                    }
+                    return MK.Bytes(xs);
+                }
+                case TrStr b:
+                {
+                    if (encoding == null)
+                    {
+                        throw new TypeError($"{clsobj.AsClass.Name}.__new__(): string argument without an encoding.");
+                    }
+                    switch (encoding.ToLowerInvariant())
+                    {
+                        case "utf8":
+                        case "utf-8":
+                            return MK.Bytes(System.Text.Encoding.UTF8.GetBytes(b.value));
+                        case "utf16":
+                        case "utf-16":
+                            return MK.Bytes(System.Text.Encoding.Unicode.GetBytes(b.value));
+                        case "utf32":
+                        case "utf-32":
+                            return MK.Bytes(System.Text.Encoding.UTF32.GetBytes(b.value));
+                        case "latin1":
+                        case "latin-1":
+                            return MK.Bytes(System.Text.Encoding.GetEncoding("iso-8859-1").GetBytes(b.value));
+                        case "ascii":
+                            return MK.Bytes(System.Text.Encoding.ASCII.GetBytes(b.value));
+                        default:
+                            throw new ValueError($"unknown encoding: {encoding}");
+                    }
+                }
+                default:
+                    if(RTS.isinstanceof(buffer, Traffy.Interfaces.Iterable.CLASS))
+                    {
+                        var xs = new List<byte>();
+                        var itr = buffer.__iter__();
+                        while (itr.MoveNext())
+                        {
+                            var elt = itr.Current;
+                            if (elt is TrInt o_i)
+                            {
+                                if (o_i.value > 255 || o_i.value < 0)
+                                {
+                                    throw new ValueError("bytes must be in range(0, 256)");
+                                }
+                                xs.Add((byte) o_i.value);
+                            }
+                            else
+                            {
+                                throw new TypeError($"{elt.Class.Name} object cannot be interpreted as an integer.");
+                            }   
+                        }
+                        return MK.Bytes(xs.ToArray());
+                    }
+                    throw new TypeError($"{clsobj.AsClass.Name}.__new__(): argument must be 'bytes' or 'bytearray' or 'str', not '{buffer.Class.Name}'");
+            }
+        }
 
     }
 

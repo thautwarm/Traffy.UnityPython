@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
@@ -19,6 +19,7 @@ namespace Traffy.Objects
 
     [Serializable]
     [Traffy.Annotations.PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.Comparable))]
     public sealed partial class TrBool : TrObject
     {
         public bool value;

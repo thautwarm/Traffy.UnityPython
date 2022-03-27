@@ -16,7 +16,7 @@ namespace Traffy.Objects
 
     [Serializable]
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.Sequence))]
+    [PyInherit(typeof(Traffy.Interfaces.Comparable), typeof(Traffy.Interfaces.Sequence))]
     public partial class TrTuple : TrObject
     {
         public TrObject[] elts;

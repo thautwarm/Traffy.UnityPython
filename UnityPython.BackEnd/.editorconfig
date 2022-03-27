@@ -9,6 +9,6 @@ dotnet_diagnostic.IDE0051.severity = silent
 dotnet_diagnostic.IDE0066.severity = silent
 dotnet_diagnostic.IDE0090.severity = silent
 dotnet_diagnostic.CA2211.severity = silent
-csharp_indent_case_contents = false
+# csharp_indent_case_contents = false
 csharp_indent_labels = false
 csharp_indent_case_contents_when_block = false

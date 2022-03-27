@@ -20,6 +20,7 @@ namespace Traffy.Objects
     }
     [PyBuiltin]
     [Serializable]
+    [PyInherit(typeof(Traffy.Interfaces.Comparable))]
     public sealed partial class TrInt : TrObject
     {
 

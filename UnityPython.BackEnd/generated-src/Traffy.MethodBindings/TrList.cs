@@ -40,7 +40,12 @@ namespace Traffy.Objects
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
                             _3 = -1;
-                        return Box.Apply(_0.index(_1,start : _2,end : _3));
+                        bool _4;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
+                            _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
+                        else
+                            _4 = false;
+                        return Box.Apply(_0.index(_1,start : _2,end : _3,noraise : _4));
                     }
                     case 3:
                     {
@@ -52,7 +57,12 @@ namespace Traffy.Objects
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
                             _3 = -1;
-                        return Box.Apply(_0.index(_1,_2,end : _3));
+                        bool _4;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
+                            _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
+                        else
+                            _4 = false;
+                        return Box.Apply(_0.index(_1,_2,end : _3,noraise : _4));
                     }
                     case 4:
                     {
@@ -60,7 +70,12 @@ namespace Traffy.Objects
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
                         var _3 = Unbox.Apply(THint<System.Int32>.Unique,__args[3]);
-                        return Box.Apply(_0.index(_1,_2,_3));
+                        bool _4;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
+                            _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
+                        else
+                            _4 = false;
+                        return Box.Apply(_0.index(_1,_2,_3,noraise : _4));
                     }
                     default:
                         throw new ValueError("index() requires 2 to 4 positional argument(s), got " + __args.Count);
