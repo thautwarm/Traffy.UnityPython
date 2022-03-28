@@ -10,12 +10,17 @@ namespace Traffy.Objects
     public partial class TrNone : TrObject
     {
 
+        const int NoneHash = 1225283;
         public override List<TrObject> __array__ => null;
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public static TrNone Unique = new TrNone();
         public static bool unique_set = false;
+
+        public override int __hash__() => NoneHash;
+
+        public override bool __eq__(TrObject other) => Object.ReferenceEquals(this, other);
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()

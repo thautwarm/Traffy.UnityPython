@@ -96,6 +96,9 @@ public class Gen_Class_ClassInit : HasNamespace
 
         IEnumerable<Doc> builtin_class_init_generator_foreach(Type builtinPyClass)
         {
+            var default_hashable = true;
+            var default_equitable = true;
+
             yield return $"static void BuiltinClassInit_{builtinPyClass.Name}(TrClass cls)".Doc();
             yield return "{".Doc();
             var owned = GetInterfaceMethodSource(builtinPyClass);
@@ -108,8 +111,20 @@ public class Gen_Class_ClassInit : HasNamespace
                 if (!owned.Contains(meth.Name))
                     continue;
 
+                if (meth.Name == "__hash__")
+                {
+                    default_hashable = false;
+                }
+                else if (meth.Name == "__eq__" || meth.Name == "__ne__")
+                {
+                    default_equitable = false;
+                }
                 var args = Enumerable.Range(0, meth.GetParameters().Length - 1).Select(x => $"arg{x}".Doc()).ToArray();
                 yield return $"cls[MagicNames.i_{meth.Name}] = {nameof(TrSharpFunc)}.FromFunc(cls.Name + \".{meth.Name}\", ({args.Prepend("self".Doc()).Join(Comma)}) => (({builtinPyClass.FullName})self).{meth.Name}({args.Join(Comma)}));".Doc() >> 4;
+            }
+            if (default_hashable && !default_equitable)
+            {
+                CodeGen.UnsetDefaultHash.Add(builtinPyClass);
             }
             yield return "}".Doc();
         }

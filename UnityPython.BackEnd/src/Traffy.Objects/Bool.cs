@@ -22,11 +22,18 @@ namespace Traffy.Objects
     [PyInherit(typeof(Traffy.Interfaces.Comparable))]
     public sealed partial class TrBool : TrObject
     {
+        const int HASH_TRUE = 263239;
+        const int HASH_FALSE = 1902157;
         public bool value;
 
         public override bool __bool__() => value;
 
         public override string __repr__() => value ? "True" : "False";
+
+        public override int __hash__()
+        {
+            return value ? HASH_TRUE : HASH_FALSE;
+        }
         public override object Native => value;
         internal static TrBool TrBool_True = new TrBool(true);
         internal static TrBool TrBool_False = new TrBool(false);

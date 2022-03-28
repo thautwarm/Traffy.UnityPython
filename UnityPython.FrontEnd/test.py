@@ -42,3 +42,7 @@ a <= 5
 
 x = "a" <= "2"
 
+
+
+class S:
+    __len__ = None

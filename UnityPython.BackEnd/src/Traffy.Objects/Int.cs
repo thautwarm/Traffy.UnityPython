@@ -29,6 +29,8 @@ namespace Traffy.Objects
 
         public override string __repr__() => value.ToString();
 
+        public override int __hash__() => value.GetHashCode();
+
         // XXX: CPython behavior: check 'ndigit' should be int
         public override TrObject __round__(TrObject _) => this;
 

@@ -141,7 +141,7 @@ namespace Traffy.Objects
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.mkslice(container.Count);
+                        var (istart, istep, nstep) = slice.resolveSlice(container.Count);
                         var newcontainer = RTS.barelist_create();
                         for (int i = 0, x = istart; i < nstep; i++, x += istep)
                         {
@@ -170,7 +170,7 @@ namespace Traffy.Objects
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.mkslice(container.Count);
+                        var (istart, istep, nstep) = slice.resolveSlice(container.Count);
                         if (istep == 1 && istart == 0 && nstep == container.Count)
                         {
                             container.Clear();
@@ -241,7 +241,7 @@ namespace Traffy.Objects
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.mkslice(container.Count);
+                        var (istart, istep, nstep) = slice.resolveSlice(container.Count);
                         // XXX: can optimize to O(n)
                         // we may iterate the list, remove the items in the slice, and add the remaining items to the new list
                         if (istep < 0)

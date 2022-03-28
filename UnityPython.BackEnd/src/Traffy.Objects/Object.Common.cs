@@ -11,7 +11,7 @@ namespace Traffy.Objects
                 int hash = seed;
                 for(int i = 0; i < xs.Count; i++)
                 {
-                    hash = hash * primSeed + xs[i].__hash__();
+                    hash = hash * primSeed ^ xs[i].__hash__();
                 }
                 return hash;
             }

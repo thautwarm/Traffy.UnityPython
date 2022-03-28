@@ -166,7 +166,6 @@ namespace Traffy
             Traffy.Objects.TrTuple.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrTuple.CLASS);
             Traffy.Objects.TrUnionType.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrUnionType.CLASS);
             Traffy.Objects.TrFunc.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrFunc.CLASS);
-            Traffy.Builtins.InitBuiltins();
             Traffy.Interfaces.Awaitable._Init();
             Traffy.Interfaces.Callable._Init();
             Traffy.Interfaces.Collection._Init();
@@ -178,6 +177,7 @@ namespace Traffy
             Traffy.Interfaces.Sequence._Init();
             Traffy.Interfaces.Sized._Init();
             Traffy.Interfaces.AbstractClass.generated_BindMethods();
+            Traffy.Builtins.InitBuiltins();
             Traffy.Modules.TrModule_abc.generated_BindMethods();
             Traffy.Objects.TrABC.generated_BindMethods();
             Traffy.Objects.TrByteArray.generated_BindMethods();
@@ -190,6 +190,7 @@ namespace Traffy
             Traffy.Objects.TrList.generated_BindMethods();
             Traffy.Objects.TrSharpMethod.generated_BindMethods();
             Traffy.Objects.TrProperty.generated_BindMethods();
+            Traffy.Objects.TrSlice.generated_BindMethods();
             Traffy.Objects.TrStr.generated_BindMethods();
             Traffy.Objects.TrTuple.generated_BindMethods();
             Traffy.Modules.TrModule_abc._Init();

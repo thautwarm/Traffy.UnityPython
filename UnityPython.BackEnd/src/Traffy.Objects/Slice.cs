@@ -6,18 +6,29 @@ namespace Traffy.Objects
 {
     [Serializable]
     [PyBuiltin]
-    public class TrSlice : TrObject
+    public sealed partial class TrSlice : TrObject
     {
-        public TrObject start;
-        public TrObject stop;
-        public TrObject step;
+        public TrObject _start;
+        public TrObject _stop;
+        public TrObject _step;
+
+        [PyBind]
+        public TrObject start => _start;
+
+        [PyBind]
+        public TrObject stop => _stop;
+
+        [PyBind]
+        public TrObject step => _step;
+
+        
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
 
         public override List<TrObject> __array__ => null;
 
-        public override string __repr__() => $"slice({start.__repr__()}:{stop.__repr__()}:{step.__repr__()})";
+        public override string __repr__() => $"slice({_start.__repr__()}:{_stop.__repr__()}:{_step.__repr__()})";
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
@@ -25,19 +36,19 @@ namespace Traffy.Objects
             int narg = args.Count;
             if (narg == 1)
             {
-                return new TrSlice { start = TrNone.Unique, stop = TrNone.Unique, step = TrNone.Unique };
+                return new TrSlice { _start = TrNone.Unique, _stop = TrNone.Unique, _step = TrNone.Unique };
             }
             if (narg == 2)
             {
-                return new TrSlice { start = TrNone.Unique, stop = args[1], step = TrNone.Unique };
+                return new TrSlice { _start = TrNone.Unique, _stop = args[1], _step = TrNone.Unique };
             }
             if (narg == 3)
             {
-                return new TrSlice { start = args[1], stop = args[2], step = TrNone.Unique };
+                return new TrSlice { _start = args[1], _stop = args[2], _step = TrNone.Unique };
             }
             if (narg == 4)
             {
-                return new TrSlice { start = args[1], stop = args[2], step = args[3] };
+                return new TrSlice { _start = args[1], _stop = args[2], _step = args[3] };
             }
             throw new TypeError($"invalid invocation of {args[0].AsClass.Name}");
         }
@@ -61,12 +72,30 @@ namespace Traffy.Objects
             CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
         }
-
-        public (int start, int step, int nstep) mkslice(int count)
+        public override bool __eq__(TrObject other)
         {
-            var start = this.start;
-            var stop = this.stop;
-            var step = this.step;
+            if (other is TrSlice s)
+            {
+                return _start.__eq__(s._start) && _stop.__eq__(s._stop) && _step.__eq__(s._step);
+            }
+            return false;
+        }
+
+        [PyBind(Name = "__hash__")]
+        public static TrObject __hash => RTS.object_none;
+
+        [PyBind]
+        public TrObject indices(int len)
+        {
+            var (istart, istop, iend) = _indices(len);
+            return MK.NTuple(MK.Int(istart), MK.Int(istop), MK.Int(iend));
+        }
+
+        public (int start, int stop, int step) _indices(int count)
+        {
+            var start = this._start;
+            var stop = this._stop;
+            var step = this._step;
             int istart, istop, istep;
             if (step is TrInt istep_o)
             {
@@ -111,7 +140,11 @@ namespace Traffy.Objects
             }
             istop = Math.Max(-1, Math.Min(istop, count));
             istart = Math.Max(Math.Min(istart, count - 1), 0);
-
+            return (istart, istop, istep);
+        }
+        public (int start, int step, int nstep) resolveSlice(int count)
+        {
+            var (istart, istop, istep) = _indices(count);
             int nstep = (istop - istart) / istep;
             return (istart, istep, nstep);
         }

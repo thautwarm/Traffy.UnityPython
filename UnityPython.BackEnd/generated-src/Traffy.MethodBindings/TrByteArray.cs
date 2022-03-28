@@ -5,6 +5,7 @@ namespace Traffy.Objects
 {
     public sealed partial class TrByteArray
     {
+        public override int __hash__() => throw new TypeError($"unhashable type: {CLASS.Name.Escape()}");
         internal static void generated_BindMethods()
         {
             static  Traffy.Objects.TrObject __bind___new__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)

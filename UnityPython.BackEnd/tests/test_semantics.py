@@ -58,7 +58,7 @@ with testsuite("function parameters"):
             def f6(x, y, z=1, a = 2, d = 3):
                 return 0
             try:
-                f6(1)
+                f6(1) # type: ignore
                 assert False, "not enough default, arguments"
             except TypeError:
                 pass
@@ -68,7 +68,7 @@ with testsuite("function parameters"):
                 return x * y ** z
 
             try:    
-                f(1, 2, 3)
+                f(1, 2, 3) # type: ignore
                 assert False, "keyword only 1"
             except TypeError:
                 pass
@@ -143,7 +143,3 @@ with testsuite("classdef"):
 
                 assert C1.f(1, 2, 3) == (C1, 1, 2, 3), "classmethods narg"
     test_class()
-    
-
-
-    

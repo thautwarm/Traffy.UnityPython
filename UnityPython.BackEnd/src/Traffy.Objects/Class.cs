@@ -39,7 +39,7 @@ namespace Traffy.Objects
     [Traffy.Annotations.PyBuiltin]
     public sealed partial class TrClass : TrObject
     {
-    
+
         static IdComparer idComparer = new IdComparer();
         static TrClass MetaClass = null;
 
@@ -373,46 +373,33 @@ namespace Traffy.Objects
 
             if (this.IsSet(i___eq__) && !this.IsSet(i___hash__))
             {
-                static TrObject unhashable(TrObject self)
-                {
-                    throw new TypeError($"unhashable type: '{self.Class.Name}'");
-                }
-                this[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"{Class.Name}.__hash__", unhashable);
+                this[MagicNames.i___hash__] = MK.None();
             }
             if (this.IsSet(i___ne__) && !this.IsSet(i___hash__))
             {
-                static TrObject unhashable(TrObject self)
-                {
-                    throw new TypeError($"unhashable type: '{self.Class.Name}'");
-                }
-                this[MagicNames.i___hash__] = TrSharpFunc.FromFunc($"{Class.Name}.__hash__", unhashable);
+                this[MagicNames.i___hash__] = MK.None();
             }
 
-            if (this.IsSet(i___lt__))
+            if (this.IsSet(i___eq__))
             {
-                if (!this.IsSet(i___ge__))
+                if (!this.IsSet(i___ne__))
                 {
-                    static TrObject default_ge(TrObject self, TrObject other)
+                    static TrObject default_ne(TrObject self, TrObject other)
                     {
-                        return MK.Bool(!self.__lt__(other));
+                        return MK.Bool(!self.__eq__(other));
                     }
-                    this[MagicNames.i___ge__] = TrSharpFunc.FromFunc($"{Class.Name}.__ge__", default_ge);
+                    this[MagicNames.i___ne__] = TrSharpFunc.FromFunc($"{Class.Name}.__ne__", default_ne);
                 }
-                if (!this.IsSet(i___gt__))
+            }
+            else if (this.IsSet(i___ne__))
+            {
+                if (!this.IsSet(i___eq__))
                 {
-                    static TrObject default_gt(TrObject self, TrObject other)
+                    static TrObject default_eq(TrObject self, TrObject other)
                     {
-                        return MK.Bool(!self.__eq__(other) && !self.__lt__(other));
+                        return MK.Bool(!self.__eq__(other));
                     }
-                    this[MagicNames.i___gt__] = TrSharpFunc.FromFunc($"{Class.Name}.__gt__", default_gt);
-                }
-                if (!this.IsSet(i___le__))
-                {
-                    static TrObject default_le(TrObject self, TrObject other)
-                    {
-                        return MK.Bool(self.__lt__(other) || self.__eq__(other));
-                    }
-                    this[MagicNames.i___le__] = TrSharpFunc.FromFunc($"{Class.Name}.__le__", default_le);
+                    this[MagicNames.i___eq__] = TrSharpFunc.FromFunc($"{Class.Name}.__eq__", default_eq);
                 }
             }
 
@@ -424,10 +411,10 @@ namespace Traffy.Objects
                     else
                         throw new Exception($"Invalid keyword argument {kv.Key}");
                 }
-            
+
             HashSet<TrClass> abs_classes = new HashSet<TrClass>(RTS.Py_COMPARER);
             foreach (var cls in __mro)
-            {    
+            {
                 if (cls == this)
                     continue;
                 if (cls.IsAbstract)

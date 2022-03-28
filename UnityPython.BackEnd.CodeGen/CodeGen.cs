@@ -95,6 +95,8 @@ public class CodeGen : Attribute
     public static readonly List<string> Fun_InitRef = new();
     public static readonly Dictionary<Type, string> Fun_SetupRef = new();
 
+    public static readonly HashSet<Type> UnsetDefaultHash = new();
+
     [AllowNull] public string Path;
 
     public static void GenerateAll()
@@ -107,7 +109,7 @@ public class CodeGen : Attribute
             .Where(x => x.IsClass && !x.IsAbstract && x.IsAssignableTo(typeof(TrObject)))
             .ToArray();
 
-        List<Func<(string Path, HasNamespace CodeGenerator)>> makers = new List<Func<(string, HasNamespace)>>();
+        BList<Func<(string Path, HasNamespace CodeGenerator)>> makers = new BList<Func<(string, HasNamespace)>>();
 
         Assembly
         .GetAssembly(typeof(CodeGen))
@@ -127,7 +129,7 @@ public class CodeGen : Attribute
                         CodeGenConfig.RootDir,
                         attr_CodeGen.Path ?? "Parametric"
                     );
-                    makers.Add(() => (dirPath, (HasNamespace)ctor.Invoke(null)));
+                    makers.AddLeft(() => (dirPath, (HasNamespace)ctor.Invoke(null)));
 
                     return;
                 }

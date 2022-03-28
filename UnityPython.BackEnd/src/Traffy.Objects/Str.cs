@@ -54,8 +54,6 @@ namespace Traffy.Objects
 
         public override int __hash__() => value.GetHashCode();
 
-        public override bool __contains__(TrObject other) => value.Contains(other.AsStr());
-
         public override bool __le__(TrObject other)
         {
             if (!(other is TrStr b))
@@ -80,6 +78,15 @@ namespace Traffy.Objects
                 throw new TypeError($"unsupported operand type(s) for >: '{CLASS.Name}' and '{other.Class.Name}'");
             }
             return value.Inline().SeqGt<FString, FString, char>(b.value);
+        }
+
+        public override bool __contains__(TrObject other)
+        {
+            if (!(other is TrStr b))
+            {
+                throw new TypeError($"'in {Class.__repr__()}' requires string as left operand, not '{other.Class.__repr__()}'");
+            }
+            return value.Contains(b.value);
         }
 
 
@@ -130,7 +137,7 @@ namespace Traffy.Objects
                 }
                 case TrSlice o_slice:
                 {
-                    var (istart, istep, nstep) = o_slice.mkslice(value.Length);
+                    var (istart, istep, nstep) = o_slice.resolveSlice(value.Length);
                     var newbuf = new StringBuilder();
                     for (int i = 0, x = istart; i < nstep; i++, x += istep)
                     {

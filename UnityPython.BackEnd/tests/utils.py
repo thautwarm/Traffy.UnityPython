@@ -12,7 +12,7 @@ class testsuite:
         global layout
         head = '----' * layout
         if (exc_type is None):
-            print(head + f"test success: {self.name}");
+            print(head + f"success: {self.name}");
         else:
-            print(head + f"test failed: {self.name}");
+            print(head + f"failed: {self.name}");
         layout -= 1

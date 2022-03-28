@@ -101,7 +101,7 @@ namespace Traffy.Objects
     }
 
     [PyBuiltin]
-    public class TrBaseException : TrExceptionBase
+    public sealed partial class TrBaseException : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
 
@@ -153,7 +153,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(TrBaseException))]
-    public class TrException : TrExceptionBase
+    public sealed partial class TrException : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -201,7 +201,7 @@ namespace Traffy.Objects
     // fields: 'name', 'obj'
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class AttributeError : TrExceptionBase
+    public sealed partial class AttributeError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -260,7 +260,7 @@ namespace Traffy.Objects
     // fields: 'name'
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class NameError : TrExceptionBase
+    public sealed partial class NameError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -315,7 +315,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class TypeError : TrExceptionBase
+    public sealed partial class TypeError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -364,7 +364,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class ValueError : TrExceptionBase
+    public sealed partial class ValueError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -412,7 +412,7 @@ namespace Traffy.Objects
     // fields: 'value'
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class StopIteration : TrExceptionBase
+    public sealed partial class StopIteration : TrExceptionBase
     {
         public override string ToString()
         {
@@ -466,7 +466,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class LookupError : TrExceptionBase
+    public sealed partial class LookupError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -514,7 +514,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(LookupError))]
-    public class KeyError : TrExceptionBase
+    public sealed partial class KeyError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -562,7 +562,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(LookupError))]
-    public class IndexError : TrExceptionBase
+    public sealed partial class IndexError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -611,7 +611,7 @@ namespace Traffy.Objects
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
 
-    public class AssertionError : TrExceptionBase
+    public sealed partial class AssertionError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -661,7 +661,7 @@ namespace Traffy.Objects
     // - 'path': string
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class ImportError : TrExceptionBase
+    public sealed partial class ImportError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -722,7 +722,7 @@ namespace Traffy.Objects
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
 
-    public class RuntimeError : TrExceptionBase
+    public sealed partial class RuntimeError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -769,7 +769,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(RuntimeError))]
-    public class NotImplementError : TrExceptionBase
+    public sealed partial class NotImplementError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -818,7 +818,7 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(TrException))]
-    public class NativeError : TrExceptionBase
+    public sealed partial class NativeError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
@@ -830,14 +830,11 @@ namespace Traffy.Objects
         public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public Exception Error;
         public override object Native => Error;
-        public override bool __eq__(TrObject other)
+        public override int __hash__()
         {
-            if (other is NativeError inner)
-            {
-                return Error == inner.Error;
-            }
-            return false;
+            return this.GetHashCode();
         }
+
         public NativeError(Exception native)
         {
             if (native is TrExceptionWrapper)
@@ -892,7 +889,7 @@ namespace Traffy.Objects
         }
     }
 
-    public class TrExceptionWrapper : Exception
+    public sealed partial class TrExceptionWrapper : Exception
     {
         public TrExceptionBase TrO;
         public TrExceptionWrapper(TrExceptionBase trO) : base(trO.args.Length > 0 ? trO.args[0].__str__() : "")

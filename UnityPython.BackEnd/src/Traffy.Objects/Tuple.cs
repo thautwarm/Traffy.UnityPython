@@ -70,6 +70,11 @@ namespace Traffy.Objects
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
         }
 
+        public override int __hash__() => TrObject.ObjectSequenceHash<FArray<TrObject>>(
+            elts,
+            Initialization.HashConfig.TUPLE_HASH_SEED,
+            Initialization.HashConfig.TUPLE_HASH_PRIME
+        );
         public override TrObject __len__() => MK.Int(elts.Length);
 
         public override TrObject __add__(TrObject other)
@@ -169,7 +174,7 @@ namespace Traffy.Objects
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.mkslice(elts.Length);
+                        var (istart, istep, nstep) = slice.resolveSlice(elts.Length);
                         var newcontainer = new TrObject[nstep];
                         for (int i = 0, x = istart; i < nstep; i++, x += istep)
                         {

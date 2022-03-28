@@ -127,7 +127,7 @@ namespace Traffy.Objects
         public override Int32 __hash__()
         {
             var self_hash = this[Class.ic__hash];
-            if ((object)self_hash == null)
+            if ((object)self_hash == null || self_hash.IsNone())
                 return TrObject.__hash__(this);
             return self_hash.Call().AsInt();
         }

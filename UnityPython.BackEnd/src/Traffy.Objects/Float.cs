@@ -27,6 +27,8 @@ namespace Traffy.Objects
 
         public override string __repr__() => value.ToString();
 
+        public override int __hash__() => value.GetHashCode();
+
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             TrObject clsobj = args[0];
