@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Traffy.Annotations;
 
 namespace Traffy.Objects
@@ -35,8 +36,19 @@ namespace Traffy.Objects
             return value ? HASH_TRUE : HASH_FALSE;
         }
         public override object Native => value;
+
+        public override bool __eq__(TrObject other) => Object.ReferenceEquals(this, other);
+        public override bool __ne__(TrObject other) => !Object.ReferenceEquals(this, other);
         internal static TrBool TrBool_True = new TrBool(true);
         internal static TrBool TrBool_False = new TrBool(false);
+
+        [OnDeserialized]
+        public TrBool OnDeserialized()
+        {
+            if (value)
+                return TrBool_True;
+            return TrBool_False;
+        }
 
         public TrBool(){ }
         private TrBool(bool v)

@@ -186,7 +186,7 @@ public class Gen_PyBind : HasNamespace
             defs.Add($"CLASS[{fieldName.Escape()}] = Traffy.Box.Apply".Doc() * new EType(entry)[field.Name].Doc().SurroundedBy(Parens) * ";".Doc());
         }
 
-        Doc[] outDef = Array.Empty<Doc>();
+        List<Doc> outDef = new();
         if (CodeGen.UnsetDefaultHash.Contains(entry))
         {
             IEnumerable<Doc> def_hash()
@@ -194,7 +194,20 @@ public class Gen_PyBind : HasNamespace
                 yield return "public override int __hash__() => throw new TypeError($\"unhashable type: {CLASS.Name.Escape()}\");".Doc();
                 s_GenerateAny = true;
             }
-            outDef = def_hash().ToArray();
+            outDef.AddRange(def_hash());
+        }
+        if (CodeGen.AutoEq.Contains(entry))
+        {
+
+            outDef.Add("public override bool __eq__(TrObject o) => !__ne__(o);".Doc());
+            s_GenerateAny = true;
+
+        }
+        if (CodeGen.AutoNe.Contains(entry))
+        {
+            outDef.Add("public override bool __ne__(TrObject o) => !__eq__(o);".Doc());
+            s_GenerateAny = true;
+
         }
         if (!s_GenerateAny)
             yield break;
@@ -213,7 +226,7 @@ public class Gen_PyBind : HasNamespace
                     "public sealed partial class".Doc() + entry.Name.Doc(),
                     "{".Doc(),
                         VSep(
-                            VSep(outDef),
+                            VSep(outDef.ToArray()),
                             "internal static void generated_BindMethods()".Doc(),
                             "{".Doc(),
                             VSep(defs.ToArray()).Indent(4),

@@ -68,6 +68,8 @@ namespace Traffy.Objects
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrBool)self).__repr__());
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Objects.TrBool)self).__hash__());
+            cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrBool)self).__eq__(arg0));
+            cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc(cls.Name + ".__ne__", (self,arg0) => ((Traffy.Objects.TrBool)self).__ne__(arg0));
             cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc(cls.Name + ".__bool__", (self) => ((Traffy.Objects.TrBool)self).__bool__());
         }
         static void BuiltinClassInit_TrSharpFunc(TrClass cls)

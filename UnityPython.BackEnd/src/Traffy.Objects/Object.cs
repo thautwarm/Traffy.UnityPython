@@ -287,14 +287,12 @@ namespace Traffy.Objects
 
         // Comparators
         [MagicMethod(Default = true)]
-        public static bool __eq__(TrObject self, TrObject other) =>
-            self.Native == other.Native;
+        public static bool __eq__(TrObject self, TrObject other) => self.Native == other.Native;
 
 
 
         [MagicMethod(Default = true)]
-        public static bool __ne__(TrObject self, TrObject other) =>
-            self.Native != other.Native;
+        public static bool __ne__(TrObject self, TrObject other) => self.Native != other.Native;
 
 
         [MagicMethod]

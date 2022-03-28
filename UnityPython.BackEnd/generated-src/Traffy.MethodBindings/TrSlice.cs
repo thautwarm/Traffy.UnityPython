@@ -6,6 +6,7 @@ namespace Traffy.Objects
     public sealed partial class TrSlice
     {
         public override int __hash__() => throw new TypeError($"unhashable type: {CLASS.Name.Escape()}");
+        public override bool __ne__(TrObject o) => !__eq__(o);
         internal static void generated_BindMethods()
         {
             static  Traffy.Objects.TrObject __bind_indices(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)

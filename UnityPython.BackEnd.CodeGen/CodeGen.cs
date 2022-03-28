@@ -97,6 +97,9 @@ public class CodeGen : Attribute
 
     public static readonly HashSet<Type> UnsetDefaultHash = new();
 
+    public static readonly HashSet<Type> AutoEq = new();
+    public static readonly HashSet<Type> AutoNe = new();
+
     [AllowNull] public string Path;
 
     public static void GenerateAll()

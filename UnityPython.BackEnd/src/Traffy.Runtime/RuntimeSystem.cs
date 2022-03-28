@@ -350,7 +350,7 @@ namespace Traffy
 
         public static TrObject object_eq(TrObject l, TrObject r) => MK.Bool(l.__eq__(r));
 
-        public static TrObject object_ne(TrObject l, TrObject r) => MK.Bool(!l.__ne__(r));
+        public static TrObject object_ne(TrObject l, TrObject r) => MK.Bool(l.__ne__(r));
 
         public static TrObject object_lt(TrObject l, TrObject r) => MK.Bool(l.__lt__(r));
 

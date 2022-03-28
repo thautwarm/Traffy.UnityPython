@@ -98,6 +98,8 @@ public class Gen_Class_ClassInit : HasNamespace
         {
             var default_hashable = true;
             var default_equitable = true;
+            var default_eq = true;
+            var default_ne = true;
 
             yield return $"static void BuiltinClassInit_{builtinPyClass.Name}(TrClass cls)".Doc();
             yield return "{".Doc();
@@ -115,9 +117,15 @@ public class Gen_Class_ClassInit : HasNamespace
                 {
                     default_hashable = false;
                 }
-                else if (meth.Name == "__eq__" || meth.Name == "__ne__")
+                else if (meth.Name == "__eq__")
                 {
                     default_equitable = false;
+                    default_eq = false;
+                }
+                else if (meth.Name == "__ne__")
+                {
+                    default_equitable = false;
+                    default_ne = false;
                 }
                 var args = Enumerable.Range(0, meth.GetParameters().Length - 1).Select(x => $"arg{x}".Doc()).ToArray();
                 yield return $"cls[MagicNames.i_{meth.Name}] = {nameof(TrSharpFunc)}.FromFunc(cls.Name + \".{meth.Name}\", ({args.Prepend("self".Doc()).Join(Comma)}) => (({builtinPyClass.FullName})self).{meth.Name}({args.Join(Comma)}));".Doc() >> 4;
@@ -125,6 +133,14 @@ public class Gen_Class_ClassInit : HasNamespace
             if (default_hashable && !default_equitable)
             {
                 CodeGen.UnsetDefaultHash.Add(builtinPyClass);
+            }
+            if (default_ne && !default_eq)
+            {
+                CodeGen.AutoNe.Add(builtinPyClass);
+            }
+            else if (!default_ne && default_eq)
+            {
+                CodeGen.AutoEq.Add(builtinPyClass);
             }
             yield return "}".Doc();
         }
