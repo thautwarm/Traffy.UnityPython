@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using InlineHelper;
 using Traffy.Annotations;
+using static Traffy.BytesUtils;
 
 namespace Traffy.Objects
 {
@@ -11,19 +12,19 @@ namespace Traffy.Objects
     [PyInherit(typeof(Traffy.Interfaces.Comparable), typeof(Traffy.Interfaces.Sequence))]
     public sealed partial class TrBytes : TrObject, IComparable<TrObject>
     {
-        public byte[] contents;
+        public FArray<byte> contents;
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
             bool isEqual;
             if (other is TrBytes b)
             {
-                if (contents.Inline().SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents, out isEqual))
+                if (contents.SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents, out isEqual))
                     return isEqual ? 0 : -1;
                 return 1;
             }
             if (other is TrByteArray byteArray)
             {
-                if (contents.Inline().SeqLtE<FArray<byte>, FList<byte>, byte>(byteArray.contents, out isEqual))
+                if (contents.SeqLtE<FArray<byte>, FList<byte>, byte>(byteArray.contents, out isEqual))
                     return isEqual ? 0 : -1;
                 return 1;
             }
@@ -32,7 +33,7 @@ namespace Traffy.Objects
 
 
         public override string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("b'").Append("'").By(String.Concat);
-        public override bool __bool__() => contents.Length != 0;
+        public override bool __bool__() => contents.Count != 0;
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
@@ -64,7 +65,7 @@ namespace Traffy.Objects
             if (other is TrBytes b)
             {
 
-                return MK.Bytes(contents.ConcatArray(b.contents));
+                return MK.Bytes(contents.UnList.ConcatArray(b.contents));
             }
             throw new TypeError($"unsupported operand type(s) for +: '{CLASS.Name}' and '{other.Class.Name}'");
         }
@@ -72,53 +73,53 @@ namespace Traffy.Objects
 
         public override bool __le__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents)
+            ? contents.SeqLtE<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqLtE<FArray<byte>, FList<byte>, byte>(byteArray.contents)
+            ? contents.SeqLtE<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <=: '{CLASS.Name}' and '{other.Class.Name}'");
 
         public override bool __lt__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqLt<FArray<byte>, FArray<byte>, byte>(b.contents)
+            ? contents.SeqLt<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqLt<FArray<byte>, FList<byte>, byte>(byteArray.contents)
+            ? contents.SeqLt<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for <: '{CLASS.Name}' and '{other.Class.Name}'");
 
         public override bool __gt__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqGt<FArray<byte>, FArray<byte>, byte>(b.contents)
+            ? contents.SeqGt<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqGt<FArray<byte>, FList<byte>, byte>(byteArray.contents)
+            ? contents.SeqGt<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for >: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
         public override bool __ge__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqGtE<FArray<byte>, FArray<byte>, byte>(b.contents)
+            ? contents.SeqGtE<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqGtE<FArray<byte>, FList<byte>, byte>(byteArray.contents)
+            ? contents.SeqGtE<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for >=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
         public override bool __ne__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqNe<FArray<byte>, FArray<byte>, byte>(b.contents)
+            ? contents.SeqNe<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqNe<FArray<byte>, FList<byte>, byte>(byteArray.contents)
+            ? contents.SeqNe<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for !=: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
         public override bool __eq__(TrObject other) =>
             (other is TrBytes b)
-            ? contents.Inline().SeqEq<FArray<byte>, FArray<byte>, byte>(b.contents)
+            ? contents.SeqEq<FArray<byte>, FArray<byte>, byte>(b.contents)
             : (other is TrByteArray byteArray)
-            ? contents.Inline().SeqEq<FArray<byte>, FList<byte>, byte>(byteArray.contents)
+            ? contents.SeqEq<FArray<byte>, FList<byte>, byte>(byteArray.contents)
             : throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
         public override int __hash__()
         {
-            return contents.Inline().ByteSequenceHash<FArray<byte>>(
+            return contents.ByteSequenceHash<FArray<byte>>(
                 Initialization.HashConfig.BYTE_HASH_SEED,
                 Initialization.HashConfig.BYTE_HASH_PRIME
             );
@@ -126,66 +127,24 @@ namespace Traffy.Objects
 
         [PyBind]
         public long count(TrObject o_elements, int start = 0, int end = -1)
-        {
-            long cnt = 0;
-            if (end == -1)
-            {
-                end = contents.Length;
-            }
-
+        {            
             switch (o_elements)
             {
                 case TrByteArray b:
                 {
-                    while (start < end)
-                    {
-                        if (contents.Inline().StartswithI<FArray<byte>, FList<byte>, byte>(b.contents, start))
-                        {
-                            start += b.contents.Count;
-                            cnt++;
-                        }
-                        else
-                        {
-                            start++;
-                        }
-                    }
-                    return cnt;
+                    return contents.CountSubSeqGenericSimple<FArray<byte>, FList<byte>, byte>(b.contents, start, end);
                 }
                 case TrBytes b:
                 {
-                    while (start < end)
-                    {
-                        if (contents.Inline().StartswithI<FArray<byte>, FArray<byte>, byte>(b.contents, start))
-                        {
-                            start += b.contents.Length;
-                            cnt++;
-                        }
-                        else
-                        {
-                            start++;
-                        }
-                    }
-                    return cnt;
+                    return contents.CountSubSeqGenericSimple<FArray<byte>, FArray<byte>, byte>(b.contents, start, end);
                 }
 
                 case TrInt b:
                 {
-                    if (b.value < 0 || b.value > 255)
-                    {
-                        throw new ValueError($"{Class.Name} must be in range(0, 256)");
-                    }
-                    byte elt = unchecked((byte) b.value);
-                    for(int i = start; i < end; i++)
-                    {
-                        if (contents[i] == elt)
-                        {
-                            cnt++;
-                        }
-                    }
-                    return cnt;
+                    return contents.CountGenericSimple<FArray<byte>, byte>(CheckByte(b), start, end);
                 }
                 default:
-                    throw new TypeError($"{Class.Name}.count() argument must be 'bytes' or 'bytearray', not '{o_elements.Class.Name}'");
+                    throw new TypeError($"{Class.Name}.count() argument must be 'bytes' or 'bytearray' or 'int', not '{o_elements.Class.Name}'");
             }
         }
 
@@ -253,11 +212,7 @@ namespace Traffy.Objects
                             var elt = itr.Current;
                             if (elt is TrInt o_i)
                             {
-                                if (o_i.value > 255 || o_i.value < 0)
-                                {
-                                    throw new ValueError("bytes must be in range(0, 256)");
-                                }
-                                xs.Add((byte) o_i.value);
+                                xs.Add(CheckByte(o_i));
                             }
                             else
                             {

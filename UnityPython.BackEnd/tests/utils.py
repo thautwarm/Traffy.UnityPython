@@ -7,6 +7,8 @@ class testsuite:
     def __enter__(self):
         global layout
         layout += 1
+        head = '----' * layout
+        print(head + f"start testing: {self.name}");
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         global layout

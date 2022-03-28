@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using InlineHelper;
 using Traffy.Annotations;
+using static Traffy.SeqUtils;
 
 namespace Traffy.Objects
 {
@@ -202,24 +203,16 @@ namespace Traffy.Objects
         [PyBind]
         public TrObject index(TrObject x, int start = 0, int end = -1, [PyBind.Keyword(Only = true)] bool noraise = false)
         {
-            if (end == -1)
-                end = container.Count;
-            var index = container.IndexOf(x, start, end - start);
+            var index = container.Inline().IndexEltGenericSimple<FList<TrObject>, TrObject>(x, start, end);
             if (index == -1 && !noraise)
                 throw new ValueError($"list.index(x): x not in list");
             return MK.Int(index);
         }
 
         [PyBind]
-        public long count(TrObject x)
+        public long count(TrObject x, int start = 0, int end = -1)
         {
-            long cnt = 0;
-            for (int i = 0; i < container.Count; i++)
-            {
-                if (container[i].__eq__(x))
-                    cnt++;
-            }
-            return cnt;
+            return container.Inline().CountGenericSimple<FList<TrObject>, TrObject>(x, start, end);
         }
 
         #endregion Sequence
@@ -227,43 +220,7 @@ namespace Traffy.Objects
 
         public override void __delitem__(Traffy.Objects.TrObject item)
         {
-            switch (item)
-            {
-                case TrInt oitem:
-                    {
-                        var i = unchecked((int)oitem.value);
-                        if (i < 0)
-                            i += container.Count;
-                        if (i < 0 || i >= container.Count)
-                            throw new IndexError($"list assignment index out of range");
-                        container.RemoveAt((int)i);
-                        return;
-                    }
-                case TrSlice slice:
-                    {
-                        var (istart, istep, nstep) = slice.resolveSlice(container.Count);
-                        // XXX: can optimize to O(n)
-                        // we may iterate the list, remove the items in the slice, and add the remaining items to the new list
-                        if (istep < 0)
-                        {
-                            for (int x = istart, i = 0; i < nstep; i++, x += istep)
-                            {
-                                container.RemoveAt(x);
-                            }
-                        }
-                        else
-                        {
-                            istart += (nstep - 1) * istep;
-                            for (int x = istart, i = 0; i < nstep; i++, x -= istep)
-                            {
-                                container.RemoveAt(x);
-                            }
-                        }
-                        return;
-                    }
-                default:
-                    throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");
-            }
+            DeleteItemsSupportSlice<FList<TrObject>, TrObject>(container, item, CLASS);
         }
 
         [PyBind]

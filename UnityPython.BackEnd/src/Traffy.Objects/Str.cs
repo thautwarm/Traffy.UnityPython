@@ -162,26 +162,7 @@ namespace Traffy.Objects
         [PyBind]
         public long count(string element, int start = 0, int end = -1)
         {
-            long cnt = 0;
-            if (end == -1)
-            {
-                end = value.Length;
-            }
-
-            while (start < end)
-            {
-                if(value.Inline().StartswithI<FString, FString, char>(element, start))
-                {
-                    start += element.Length;
-                    cnt++;
-                }
-                else
-                {
-                    start++;
-                }
-
-            }
-            return cnt;
+            return value.Inline().CountSubSeqGenericSimple<FString, FString, char>(element, start, end);
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]

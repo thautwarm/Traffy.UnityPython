@@ -88,6 +88,14 @@ namespace Traffy.Objects
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrByteArray)self).__repr__());
             cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__add__(arg0));
+            cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__mul__(arg0));
+            cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc(cls.Name + ".__contains__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__contains__(arg0));
+            cls[MagicNames.i___reversed__] = TrSharpFunc.FromFunc(cls.Name + ".__reversed__", (self) => ((Traffy.Objects.TrByteArray)self).__reversed__());
+            cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__getitem__(arg0));
+            cls[MagicNames.i___delitem__] = TrSharpFunc.FromFunc(cls.Name + ".__delitem__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__delitem__(arg0));
+            cls[MagicNames.i___setitem__] = TrSharpFunc.FromFunc(cls.Name + ".__setitem__", (self,arg0,arg1) => ((Traffy.Objects.TrByteArray)self).__setitem__(arg0,arg1));
+            cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Objects.TrByteArray)self).__iter__());
+            cls[MagicNames.i___len__] = TrSharpFunc.FromFunc(cls.Name + ".__len__", (self) => ((Traffy.Objects.TrByteArray)self).__len__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__eq__(arg0));
             cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc(cls.Name + ".__ne__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__ne__(arg0));
             cls[MagicNames.i___lt__] = TrSharpFunc.FromFunc(cls.Name + ".__lt__", (self,arg0) => ((Traffy.Objects.TrByteArray)self).__lt__(arg0));

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using InlineHelper;
 using Traffy.Annotations;
+using static Traffy.BytesUtils;
+using static Traffy.SeqUtils;
 
 namespace Traffy.Objects
 {
@@ -66,71 +69,6 @@ namespace Traffy.Objects
             : throw new TypeError($"unsupported operand type(s) for ==: '{CLASS.Name}' and '{other.Class.Name}'");
 
 
-        [PyBind]
-        public long count(TrObject o_elements, int start = 0, int end = -1)
-        {
-            long cnt = 0;
-            if (end == -1)
-            {
-                end = contents.Count;
-            }
-
-            switch (o_elements)
-            {
-                case TrByteArray b:
-                {
-                    while (start < end)
-                    {
-                        if (contents.StartswithI<FList<byte>, FList<byte>, byte>(b.contents, start))
-                        {
-                            start += b.contents.Count;
-                            cnt++;
-                        }
-                        else
-                        {
-                            start++;
-                        }
-                    }
-                    return cnt;
-                }
-                case TrBytes b:
-                {
-                    while (start < end)
-                    {
-                        if (contents.StartswithI<FList<byte>, FArray<byte>, byte>(b.contents, start))
-                        {
-                            start += b.contents.Length;
-                            cnt++;
-                        }
-                        else
-                        {
-                            start++;
-                        }
-                    }
-                    return cnt;
-                }
-
-                case TrInt b:
-                {
-                    if (b.value < 0 || b.value > 255)
-                    {
-                        throw new ValueError($"{Class.Name} must be in range(0, 256)");
-                    }
-                    byte elt = unchecked((byte) b.value);
-                    for(int i = start; i < end; i++)
-                    {
-                        if (contents.UnList[i] == elt)
-                        {
-                            cnt++;
-                        }
-                    }
-                    return cnt;
-                }
-                default:
-                    throw new TypeError($"{Class.Name}.count() argument must be 'bytes' or 'bytearray', not '{o_elements.Class.Name}'");
-            }
-        }
-
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
@@ -151,6 +89,21 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
+        public override TrObject __mul__(TrObject other)
+        {
+            if (other is TrInt i)
+            {
+                var result = new TrByteArray();
+                var xs = contents.UnList;
+                result.contents = xs.Repeat(unchecked((int) i.value));
+                return result;
+            }
+            else
+            {
+                throw new TypeError($"unsupported operand type(s) for *: '{CLASS.Name}' and '{other.Class.Name}'");
+            }
+
+        }
         public override TrObject __add__(TrObject other)
         {
             if (other is TrBytes b)
@@ -246,6 +199,394 @@ namespace Traffy.Objects
                     throw new TypeError($"{clsobj.AsClass.Name}.__new__(): argument must be 'bytes' or 'bytearray' or 'str', not '{buffer.Class.Name}'");
             }
         }
-    }
 
+        #region MutableSequence
+
+        #region Sequence
+        #region Collection
+
+        #region Iterable
+        public override IEnumerator<TrObject> __iter__()
+        {
+            return contents.Select(x => MK.Int(x)).GetEnumerator();
+        }
+        #endregion Iterable
+
+        #region Container
+        public override bool __contains__(TrObject a)
+        {
+            switch (a)
+            {
+                case TrInt o_i:
+                {
+                    var i = o_i.value;
+                    if (i < 0 || i > 255)
+                    {
+                        throw new ValueError($"{Class.Name} must be in range(0, 256)");
+                    }
+                    return contents.Contains(unchecked((byte)i));
+                }
+                case TrBytes b:
+                {
+                    return contents.IndexSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents) != -1;
+                }
+                case TrByteArray b:
+                {
+                    return contents.IndexSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents) != -1;
+                }
+                default:
+                    throw new TypeError($"a bytes-like object is required, not '{a.Class.Name}'");
+            }
+        }
+
+        #endregion Container
+        public override TrObject __len__() => MK.Int(contents.Count);
+        #endregion Collection
+
+        #region Reversible
+        static IEnumerator<TrObject> _bytearray_reverse(List<byte> container)
+        {
+            for (int i = container.Count - 1; i >= 0; i--)
+            {
+                yield return MK.Int(container[i]);
+            }
+        }
+
+        public override TrObject __reversed__() => MK.Iter(_bytearray_reverse(contents));
+
+        #endregion Reversible
+
+        public override TrObject __getitem__(TrObject item)
+        {
+            switch (item)
+            {
+                case TrInt ith:
+                {
+                    var i = unchecked((int)ith.value);
+                    if (i < 0)
+                        i += contents.Count;
+                    if (i < 0 || i >= contents.Count)
+                        throw new IndexError($"{Class.Name} index out of range");
+                    return MK.Int(contents[i]);
+                }
+                case TrSlice slice:
+                {
+                    var (istart, istep, nstep) = slice.resolveSlice(contents.Count);
+                    var newcontainer = new List<byte>();
+                    for (int i = 0, x = istart; i < nstep; i++, x += istep)
+                    {
+                        newcontainer.Add(contents[x]);
+                    }
+                    return MK.ByteArray(newcontainer);
+                }
+                default:
+                    throw new TypeError($"{Class.Name} indices must be integers, not '{item.Class.Name}'");
+            }
+        }
+
+        public override void __setitem__(TrObject item, TrObject value)
+        {
+            switch (item)
+            {
+                case TrInt oitem:
+                {
+                    var i = unchecked((int)oitem.value);
+                    if (i < 0)
+                        i += contents.Count;
+                    if (i < 0 || i >= contents.Count)
+                        throw new IndexError($"{Class.Name} assignment index out of range");
+                    contents[i] = CheckByte(value);
+                    return;
+                }
+                case TrSlice slice:
+                {
+                    var (istart, istep, nstep) = slice.resolveSlice(contents.Count);
+                    if (istep == 1 && istart == 0 && nstep == contents.Count)
+                    {
+                        contents.Clear();
+
+                        switch (value)
+                        {
+                            case TrBytes b:
+                                contents.UnList.AddRange(b.contents);
+                                return;
+                            case TrByteArray b:
+                                contents.UnList.AddRange(b.contents);
+                                return;
+                            default:
+                                var itr = value.__iter__();
+                                while (itr.MoveNext())
+                                {
+
+                                    contents.UnList.Add(CheckByte(itr.Current));
+                                }
+                                return;
+                        }
+                    }
+                    else
+                    {
+                        var seq = value.__iter__().ToList();
+                        if (seq.Count != nstep)
+                            throw new ValueError($"attempt to assign sequence of size {seq.Count} to extended slice of size {nstep}");
+                        for (int x = istart, i = 0; i < nstep; i++, x += istep)
+                        {
+                            contents[x] = CheckByte(seq[i]);
+                        }
+                        return;
+                    }
+                }
+                default:
+                    throw new TypeError($"{Class.Name} indices must be integers, not '{item.Class.Name}'");
+            }
+        }
+
+
+        [PyBind]
+        public TrObject index(TrObject x, int start = 0, int end = -1, [PyBind.Keyword(Only = true)] bool noraise = false)
+        {
+            int index;
+            switch (x)
+            {
+                case TrByteArray b:
+                {
+                    index = contents.IndexSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents, start, end);
+                    break;
+                }
+                case TrBytes b:
+                {
+                    index = contents.IndexSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents, start, end);
+                    break;
+                }
+                case TrInt b:
+                {
+                    index = contents.IndexEltGenericSimple<FList<byte>, byte>(CheckByte(b), start, end);
+                    break;
+                }
+                default:
+                    throw new TypeError($"{Class.Name}.index(): a bytes-like object is required, not '{x.Class.Name}'");
+            }
+
+            if (index == -1 && !noraise)
+                throw new ValueError($"{Class.Name}.index(x): x not in {Class.Name}");
+            return MK.Int(index);
+        }
+
+        [PyBind]
+        public long count(TrObject buffer, int start = 0, int end = -1)
+        {
+            switch (buffer)
+            {
+                case TrByteArray b:
+                {
+                    return contents.CountSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents, start, end);
+                }
+                case TrBytes b:
+                {
+                    return contents.CountSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents, start, end);
+                }
+                case TrInt b:
+                {
+                    return contents.CountGenericSimple<FList<byte>, byte>(CheckByte(b), start, end);
+                }
+                default:
+                    throw new TypeError($"{Class.Name}.count() argument must be 'bytes' or 'bytearray' or 'int', not '{buffer.Class.Name}'");
+            }
+        }
+
+        #endregion Sequence
+
+
+        public override void __delitem__(Traffy.Objects.TrObject item)
+        {
+            DeleteItemsSupportSlice<FList<byte>, byte>(contents, item, Class);
+        }
+
+        [PyBind]
+        public void append(TrObject elt)
+        {
+            contents.Add(CheckByte(elt));
+            return;
+        }
+
+        [PyBind]
+        public void extend(TrObject other)
+        {
+            switch (other)
+            {
+                case TrByteArray b:
+                {
+                    contents.UnList.AddRange(b.contents);
+                    return;
+                }
+                case TrBytes b:
+                {
+                    contents.UnList.AddRange(b.contents);
+                    return;
+                }
+                default:
+                {
+                    var itr = other.__iter__();
+                    while (itr.MoveNext())
+                    {
+                        contents.Add(CheckByte(itr.Current));
+                    }
+                    return;
+                }
+            }
+        }
+
+        [PyBind]
+        public void insert(TrObject index, TrObject elt)
+        {
+            if (index is TrInt ith)
+            {
+                var i = unchecked((int)ith.value);
+                if (i < 0)
+                    i += contents.Count;
+                if (i < 0 || i > contents.Count)
+                    throw new IndexError($"{Class.Name} assignment index out of range");
+                contents.Insert(i, CheckByte(elt));
+            }
+            else
+            {
+                throw new TypeError($"'{Class.Name}' object cannot be interpreted as an integer");
+            }
+        }
+
+        [PyBind]
+        public void remove(TrObject value)
+        {
+            var index = contents.IndexOf(CheckByte(value));
+            if (index == -1)
+                throw new ValueError($"{Class.Name}.remove(x): x not in {Class.Name}");
+            contents.RemoveAt(index);
+        }
+
+        [PyBind]
+        public TrObject pop(TrObject index = null)
+        {
+            if (index == null)
+            {
+                if (contents.Count == 0)
+                    throw new IndexError($"pop from empty {Class.Name}");
+                var ret = contents[contents.Count - 1];
+                contents.RemoveAt(contents.Count - 1);
+                return MK.Int(ret);
+            }
+            else if (index is TrInt ith)
+            {
+                var i = unchecked((int)ith.value);
+                if (i < 0)
+                    i += contents.Count;
+                if (i < 0 || i >= contents.Count)
+                    throw new IndexError($"{Class.Name} assignment index out of range");
+                var ret = contents[i];
+                contents.RemoveAt(i);
+                return MK.Int(ret);
+            }
+            else
+            {
+                throw new TypeError($"'{Class.Name}' indices must be integers, not '{index.Class.Name}'");
+            }
+        }
+
+
+        [PyBind]
+        public void clear()
+        {
+            contents.Clear();
+        }
+
+        [PyBind]
+        public void reverse()
+        {
+            contents.UnList.Reverse();
+        }
+
+        #endregion
+
+        [PyBind]
+        public TrObject upper()
+        {
+            var newcontents = new List<byte>();
+            for (int i = 0; i < contents.Count; i++)
+            {
+                newcontents.Add(
+                    contents[i] >= 'a' && contents[i] <= 'z'
+                    ? (byte)(contents[i] - 'a' + 'A')
+                    : contents[i]
+                );
+            }
+            return MK.ByteArray(newcontents);
+        }
+
+        [PyBind]
+        public TrObject lower()
+        {
+            var newcontents = new List<byte>();
+            for (int i = 0; i < contents.Count; i++)
+            {
+                newcontents.Add(
+                    contents[i] >= 'A' && contents[i] <= 'Z'
+                    ? (byte)(contents[i] - 'A' + 'a')
+                    : contents[i]
+                );
+            }
+            return MK.ByteArray(newcontents);
+        }
+
+        [PyBind]
+        public TrObject copy()
+        {
+            return MK.ByteArray(contents.UnList.Copy());
+        }
+
+        [PyBind]
+        public string decode(string encoding = "utf-8")
+        {
+            switch (encoding.ToLowerInvariant())
+            {
+
+                case "utf8":
+                case "utf-8":
+                    return Encoding.UTF8.GetString(contents.UnList.ToArray());
+                case "utf16":
+                case "utf-16":
+                    return Encoding.Unicode.GetString(contents.UnList.ToArray());
+                case "utf32":
+                case "utf-32":
+                    return Encoding.UTF32.GetString(contents.UnList.ToArray());
+                case "latin1":
+                case "latin-1":
+                    return Encoding.ASCII.GetString(contents.UnList.ToArray());
+                case "ascii":
+                    return Encoding.ASCII.GetString(contents.UnList.ToArray());
+                default:
+                    throw new ValueError($"unknown encoding: {encoding}");
+            }
+        }
+        [PyBind]
+        public bool islower()
+        {
+            for (int i = 0; i < contents.Count; i++)
+            {
+                if (contents[i] >= 'a' && contents[i] <= 'z')
+                    continue;
+                return false;
+            }
+            return true;
+        }
+
+        [PyBind]
+        public bool isupper()
+        {
+            for (int i = 0; i < contents.Count; i++)
+            {
+                if (contents[i] >= 'A' && contents[i] <= 'Z')
+                    continue;
+                return false;
+            }
+            return true;
+        }
+    }
 }

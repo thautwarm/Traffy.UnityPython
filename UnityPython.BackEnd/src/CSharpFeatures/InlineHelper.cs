@@ -16,9 +16,13 @@ namespace InlineHelper
 
         public bool IsReadOnly => true;
 
-        public void Add(T item) => throw new NotSupportedException("InlineArrayAsList is read-only");
+        public void Reverse()
+        {
+            _list.Reverse();
+        }
+        public void Add(T item) => _list.Add(item);
 
-        public void Clear() => throw new NotSupportedException("InlineArrayAsList is read-only");
+        public void Clear() => _list.Clear();
         public bool Contains(T item)
         {
             for (int i = 0; i < _list.Count; i++)
@@ -56,11 +60,11 @@ namespace InlineHelper
             return -1;
         }
 
-        public void Insert(int index, T item) => throw new NotSupportedException("InlineArrayAsList is read-only");
+        public void Insert(int index, T item) => _list.Insert(index, item);
 
-        public bool Remove(T item) => throw new NotSupportedException("InlineArrayAsList is read-only");
+        public bool Remove(T item) => _list.Remove(item);
 
-        public void RemoveAt(int index) => throw new NotSupportedException("InlineArrayAsList is read-only");
+        public void RemoveAt(int index) => _list.RemoveAt(index);
 
         IEnumerator IEnumerable.GetEnumerator()
         {

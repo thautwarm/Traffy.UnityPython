@@ -257,6 +257,11 @@ namespace SimpleJSON
                         {
                             return System.Text.Encoding.ASCII.GetBytes(node.Value);
                         }
+                        else if (typeof(InlineHelper.FArray<byte>) == t)
+                        {
+                            return InlineHelper.ExtInlineHelper.Inline(
+                                System.Text.Encoding.ASCII.GetBytes(node.Value));
+                        }
                         throw new InvalidCastException($"expect {t}, got a string");
                     }
                 case JSONNodeType.Boolean:
