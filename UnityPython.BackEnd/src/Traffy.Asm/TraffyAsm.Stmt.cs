@@ -644,6 +644,7 @@ namespace Traffy.Asm
 
         public async MonoAsync<TrObject> cont(Frame frame)
         {
+            frame.traceback.Push(position);
             var rt_bases = new TrObject[bases.Length];
             for (int i = 0; i < bases.Length; i++)
             {
@@ -669,6 +670,7 @@ namespace Traffy.Asm
                 RTS.baredict_set(ns, MK.Str(name), value);
             }
             var rt_cls = RTS.new_class(ufunc.fptr.metadata.codename, rt_bases, ns);
+            frame.traceback.Pop();
             return rt_cls;
         }
     }
