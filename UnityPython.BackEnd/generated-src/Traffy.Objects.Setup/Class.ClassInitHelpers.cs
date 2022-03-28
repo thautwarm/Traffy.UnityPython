@@ -64,6 +64,9 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrModule_types(TrClass cls)
         {
         }
+        static void BuiltinClassInit_TrModule_typing(TrClass cls)
+        {
+        }
         static void BuiltinClassInit_TrABC(TrClass cls)
         {
         }
@@ -260,6 +263,13 @@ namespace Traffy.Objects
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrSharpMethod)self).__repr__());
             cls[MagicNames.i___call__] = TrSharpFunc.FromFunc(cls.Name + ".__call__", (self,arg0,arg1) => ((Traffy.Objects.TrSharpMethod)self).__call__(arg0,arg1));
         }
+        static void BuiltinClassInit_TrAnnotatedType(TrClass cls)
+        {
+            cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Objects.TrAnnotatedType)self).__getitem__(arg0));
+        }
+        static void BuiltinClassInit_TrTypedDict(TrClass cls)
+        {
+        }
         static void BuiltinClassInit_TrModule(TrClass cls)
         {
             cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc(cls.Name + ".__bool__", (self) => ((Traffy.Objects.TrModule)self).__bool__());
@@ -350,6 +360,11 @@ namespace Traffy.Objects
             if (typeof(T) == typeof(Traffy.Modules.TrModule_types))
             {
                 BuiltinClassInit_TrModule_types(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Modules.TrModule_typing))
+            {
+                BuiltinClassInit_TrModule_typing(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Objects.TrABC))
@@ -495,6 +510,16 @@ namespace Traffy.Objects
             if (typeof(T) == typeof(Traffy.Objects.TrSharpMethod))
             {
                 BuiltinClassInit_TrSharpMethod(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Objects.TrAnnotatedType))
+            {
+                BuiltinClassInit_TrAnnotatedType(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Objects.TrTypedDict))
+            {
+                BuiltinClassInit_TrTypedDict(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Objects.TrModule))

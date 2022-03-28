@@ -19,14 +19,14 @@ namespace Traffy.Objects
     [PyInherit(typeof(Traffy.Interfaces.Comparable), typeof(Traffy.Interfaces.Sequence))]
     public partial class TrTuple : TrObject
     {
-        public TrObject[] elts;
+        public FArray<TrObject> elts;
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
 
         public override List<TrObject> __array__ => null;
         public override string __repr__() =>
-            elts.Length == 1 ? $"({elts[0].__repr__()},)" : "(" + String.Join(", ", elts.Select(x => x.__repr__())) + ")";
+            elts.Count == 1 ? $"({elts[0].__repr__()},)" : "(" + String.Join(", ", elts.Select(x => x.__repr__())) + ")";
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
@@ -75,20 +75,20 @@ namespace Traffy.Objects
             Initialization.HashConfig.TUPLE_HASH_SEED,
             Initialization.HashConfig.TUPLE_HASH_PRIME
         );
-        public override TrObject __len__() => MK.Int(elts.Length);
+        public override TrObject __len__() => MK.Int(elts.Count);
 
         public override TrObject __add__(TrObject other)
         {
             if (other is TrTuple otherTuple)
             {
-                var xs = new TrObject[elts.Length + otherTuple.elts.Length];
-                for(int i = 0; i < elts.Length; i++)
+                var xs = new TrObject[elts.Count + otherTuple.elts.Count];
+                for(int i = 0; i < elts.Count; i++)
                 {
                     xs[i] = elts[i];
                 }
-                for(int i = 0; i < otherTuple.elts.Length; i++)
+                for(int i = 0; i < otherTuple.elts.Count; i++)
                 {
-                    xs[i + elts.Length] = otherTuple.elts[i];
+                    xs[i + elts.Count] = otherTuple.elts[i];
                 }
                 return MK.Tuple(xs);
             }
@@ -99,10 +99,10 @@ namespace Traffy.Objects
         {
             if (a is TrInt ai)
             {
-                var xs = new TrObject[elts.Length * ai.value];
+                var xs = new TrObject[elts.Count * ai.value];
                 for (int i = 0; i < xs.Length; i++)
                 {
-                    xs[i] = elts[i % elts.Length];
+                    xs[i] = elts[i % elts.Count];
                 }
                 return MK.Tuple(xs);
             }
@@ -113,7 +113,7 @@ namespace Traffy.Objects
         {
             if (other is TrTuple otherTuple)
             {
-                return elts.Inline().SeqEq<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
+                return elts.SeqEq<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
             }
             return false;
         }
@@ -127,7 +127,7 @@ namespace Traffy.Objects
         {
             if (other is TrTuple otherTuple)
             {
-                return elts.Inline().SeqLt<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
+                return elts.SeqLt<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
             }
             throw new TypeError($"unsupported operand type(s) for <: '{Class.Name}' and '{other.Class.Name}'");
         }
@@ -136,7 +136,7 @@ namespace Traffy.Objects
         {
             if (other is TrTuple otherTuple)
             {
-                return elts.Inline().SeqLtE<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
+                return elts.SeqLtE<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
             }
             throw new TypeError($"unsupported operand type(s) for <=: '{Class.Name}' and '{other.Class.Name}'");
         }
@@ -145,7 +145,7 @@ namespace Traffy.Objects
         {
             if (other is TrTuple otherTuple)
             {
-                return elts.Inline().SeqGt<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
+                return elts.SeqGt<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
             }
             throw new TypeError($"unsupported operand type(s) for >: '{Class.Name}' and '{other.Class.Name}'");
         }
@@ -154,7 +154,7 @@ namespace Traffy.Objects
         {
             if (other is TrTuple otherTuple)
             {
-                return elts.Inline().SeqGtE<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
+                return elts.SeqGtE<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
             }
             throw new TypeError($"unsupported operand type(s) for >=: '{Class.Name}' and '{other.Class.Name}'");
         }
@@ -167,14 +167,14 @@ namespace Traffy.Objects
                     {
                         var i = unchecked((int) ith.value);
                         if (i < 0)
-                            i += elts.Length;
-                        if (i < 0 || i >= elts.Length)
+                            i += elts.Count;
+                        if (i < 0 || i >= elts.Count)
                             throw new IndexError($"list index out of range");
                         return elts[i];
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.resolveSlice(elts.Length);
+                        var (istart, istep, nstep) = slice.resolveSlice(elts.Count);
                         var newcontainer = new TrObject[nstep];
                         for (int i = 0, x = istart; i < nstep; i++, x += istep)
                         {
@@ -191,7 +191,7 @@ namespace Traffy.Objects
         public long count(TrObject item)
         {
             long cnt = 0;
-            for (int i = 0; i < elts.Length; i++)
+            for (int i = 0; i < elts.Count; i++)
             {
                 if (elts[i].__eq__(item))
                     cnt++;
@@ -203,7 +203,7 @@ namespace Traffy.Objects
         public TrObject index(TrObject x, int start = 0, int end = -1)
         {
             if (end == -1)
-                end = elts.Length;
+                end = elts.Count;
             for (int i = start; i < end; i++)
             {
                 if (elts[i].__eq__(x))

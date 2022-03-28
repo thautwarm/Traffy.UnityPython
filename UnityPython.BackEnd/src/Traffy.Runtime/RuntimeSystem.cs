@@ -324,7 +324,7 @@ namespace Traffy
 
         public static void object_setattr(TrObject tos, TrObject name, TrObject value)
         {
-            object_setattr(tos, (TrStr) name, value);
+            object_setattr(tos, (TrStr)name, value);
         }
         public static void object_setattr(TrObject tos, TrStr name, TrObject value)
         {
@@ -333,7 +333,7 @@ namespace Traffy
 
         public static TrObject object_getattr(TrObject tos, TrObject name)
         {
-            return object_getattr(tos, (TrStr) name);
+            return object_getattr(tos, (TrStr)name);
         }
         public static TrObject object_getattr(TrObject tos, TrStr name)
         {
@@ -399,9 +399,9 @@ namespace Traffy
                     var each = itr.Current;
                     if (each is TrTuple tuple)
                     {
-                        if (tuple.elts.Length != 2)
+                        if (tuple.elts.Count != 2)
                         {
-                            throw new ValueError($"updating dictionaries requires a 2-element tuple sequence, got {tuple.elts.Length}-element ones.");
+                            throw new ValueError($"updating dictionaries requires a 2-element tuple sequence, got {tuple.elts.Count}-element ones.");
                         }
                         dict.Add(tuple.elts[0], tuple.elts[1]);
                     }
@@ -521,7 +521,10 @@ namespace Traffy
 
         public static TrClass new_class(string name, TrObject[] rt_bases, Dictionary<TrObject, TrObject> ns)
         {
-            var cls = TrClass.CreateClass(name, rt_bases.Select(x => (TrClass)x).ToArray());
+            var bases = rt_bases
+                .Select(x => x is TrClass cls ? cls : throw new TypeError($"inheritance base should be a class, got {x.Class.Name} object"))
+                .ToArray();
+            var cls = TrClass.CreateClass(name, bases);
             cls.Name = name;
             TrObject new_inst(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
@@ -556,10 +559,10 @@ namespace Traffy
             return MK.Str(rt_value.__repr__());
         }
 
-        public static Stack<(TrStr, TrObject)> import_from_module([AllowNull] string module, int level, Dictionary<TrObject, TrObject> globals, [AllowNull] string[] __all__)
+        public static List<(TrStr, TrObject)> import_from_module([AllowNull] string module, int level, Dictionary<TrObject, TrObject> globals, [AllowNull] string[] __all__)
         {
 
-            var imported = new Stack<(TrStr, TrObject)>();
+            var imported = new List<(TrStr, TrObject)>();
             if (module == null)
             {
                 Func<string, string> resolveName;
@@ -587,7 +590,7 @@ namespace Traffy
                 {
                     var name = MK.Str(each);
                     var value = ModuleSystem.ImportModule(resolveName(each));
-                    imported.Push((name, value));
+                    imported.Add((name, value));
                 }
             }
             else
@@ -612,7 +615,7 @@ namespace Traffy
                             if (x is TrStr key)
                             {
                                 var value = RTS.object_getattr(mod, key);
-                                imported.Push((key, value));
+                                imported.Add((key, value));
                             }
                             else
                             {
@@ -628,7 +631,7 @@ namespace Traffy
                             {
                                 continue;
                             }
-                            imported.Push((key, value));
+                            imported.Add((key, value));
                         }
                     }
 
@@ -639,7 +642,7 @@ namespace Traffy
                     {
                         var name = MK.Str(each);
                         var value = RTS.object_getattr(mod, name);
-                        imported.Push((name, value));
+                        imported.Add((name, value));
                     }
                 }
             }

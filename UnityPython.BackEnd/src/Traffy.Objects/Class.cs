@@ -11,17 +11,17 @@ using static Traffy.MagicNames;
 namespace Traffy.Objects
 {
 
+    using binary_cmp = Func<TrObject, TrObject, TrObject>;
+    using binary_func = Func<TrObject, TrObject, TrObject>;
+    using bool_conv = Func<TrObject, TrObject>;
     using call_func = Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject>;
+    using getter = Func<TrObject, TrObject, TrObject, TrObject>;
+    using int_conv = Func<TrObject, TrObject>;
+    using iter_conv = Func<TrObject, IEnumerator<TrObject>>;
     using method_func = Func<TrObject, BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject>;
+    using setter = Action<TrObject, TrObject, TrObject>;
     using str_func = Func<TrObject, TrObject>;
     using unary_func = Func<TrObject, TrObject>;
-    using binary_func = Func<TrObject, TrObject, TrObject>;
-    using getter = Func<TrObject, TrObject, TrObject, TrObject>;
-    using binary_cmp = Func<TrObject, TrObject, TrObject>;
-    using setter = Action<TrObject, TrObject, TrObject>;
-    using int_conv = Func<TrObject, TrObject>;
-    using bool_conv = Func<TrObject, TrObject>;
-    using iter_conv = Func<TrObject, IEnumerator<TrObject>>;
 
     class IdComparer : IEqualityComparer<TrClass>
     {
@@ -112,6 +112,7 @@ namespace Traffy.Objects
 
         public static TrObject typecall(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
+
             TrClass cls = (TrClass)args[0];
 
             if (cls == MetaClass && args.Count == 2 && kwargs == null)
@@ -123,7 +124,7 @@ namespace Traffy.Objects
                 throw new TypeError($"Fatal: {cls.Name}.__new__() is not defined.");
             var o = cls_new.__call__(args, kwargs);
 
-            if(RTS.isinstanceof(o, cls) && cls.__getic__(cls.ic__init, out var cls_init))
+            if (RTS.isinstanceof(o, cls) && cls.__getic__(cls.ic__init, out var cls_init))
             {
                 args[0] = o;
                 cls_init.__call__(args, kwargs);
@@ -327,7 +328,7 @@ namespace Traffy.Objects
         bool IsSet(string name, out TrObject o)
         {
             var o_name = MK.Str(name);
-            if(__getic_refl__(o_name, out var found))
+            if (__getic_refl__(o_name, out var found))
             {
                 if (TrRawObject.CLASS.__getic_refl__(o_name, out var foundFromObject))
                 {

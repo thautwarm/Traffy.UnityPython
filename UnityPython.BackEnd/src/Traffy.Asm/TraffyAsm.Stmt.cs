@@ -606,11 +606,13 @@ namespace Traffy.Asm
     public sealed class DefClass : TraffyAsm
     {
         public bool hasCont { get; set; }
+        public int position;
         public TraffyAsm[] bases;
         public Lambda body;
 
         public TrObject exec(Frame frame)
         {
+            frame.traceback.Push(position);
             var rt_bases = new TrObject[bases.Length];
             for (int i = 0; i < bases.Length; i++)
             {
@@ -628,10 +630,15 @@ namespace Traffy.Asm
             for(int i = 0; i < localnames.Length; i++)
             {
                 var name = localnames[i];
-                var value = subframe.load_local(i);
+                var value = subframe.localvars[i].Value;
+                if (object.ReferenceEquals(value, null))
+                {
+                    continue;
+                }
                 RTS.baredict_set(ns, MK.Str(name), value);
             }
             var rt_cls = RTS.new_class(ufunc.fptr.metadata.codename, rt_bases, ns);
+            frame.traceback.Pop();
             return rt_cls;
         }
 
@@ -654,7 +661,11 @@ namespace Traffy.Asm
             for (int i = 0; i < localnames.Length; i++)
             {
                 var name = localnames[i];
-                var value = subframe.load_local(i);
+                var value = subframe.localvars[i].Value;
+                if (object.ReferenceEquals(value, null))
+                {
+                    continue;
+                }
                 RTS.baredict_set(ns, MK.Str(name), value);
             }
             var rt_cls = RTS.new_class(ufunc.fptr.metadata.codename, rt_bases, ns);
@@ -671,7 +682,7 @@ namespace Traffy.Asm
         public TrObject exec(Frame frame)
         {
             Exception e = null;
-            TrObject exc = null;
+            TrObject exc;
             Stack<TrObject> context_vars = new Stack<TrObject>();
             try
             {
@@ -726,7 +737,7 @@ namespace Traffy.Asm
         public async MonoAsync<TrObject> cont(Frame frame)
         {
             Exception e = null;
-            TrExceptionBase exc = null;
+            TrExceptionBase exc;
             Stack<TrObject> context_vars = new Stack<TrObject>();
             try
             {

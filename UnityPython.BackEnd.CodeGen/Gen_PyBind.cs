@@ -45,6 +45,7 @@ public class Gen_PyBind : HasNamespace
         }
         (this as HasNamespace).AddNamepace("System");
         (this as HasNamespace).AddNamepace("System.Collections.Generic");
+        (this as HasNamespace).AddNamepace("Traffy.Objects");
 
         List<Doc> defs = new();
         bool s_GenerateAny = false;
@@ -60,6 +61,15 @@ public class Gen_PyBind : HasNamespace
             var methName = attr.Name ?? meth.Name;
             var retType = meth.ReturnType;
             var ps = meth.GetParameters().Select(x => (x.ParameterType, x.Name, x.DefaultValue)).ToArray();
+            if (retType == typeof(TrObject)
+                    && ps.Length == 2
+                    && ps[0].ParameterType == typeof(BList<TrObject>)
+                    && ps[1].ParameterType == typeof(Dictionary<TrObject, TrObject>))
+            {
+                defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, {meth.Name});".Doc());
+                continue;
+            }
+            
             var (nonDefaultArgCount, defaultArgCount) = countPositionalDefault(meth);
             var methExpr = new EType(entry)[meth.Name];
             var cases = Enumerable

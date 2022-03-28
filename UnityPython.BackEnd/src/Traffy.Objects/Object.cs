@@ -10,7 +10,7 @@ namespace Traffy.Objects
     public static class ExtTrObject
     {
         [System.Runtime.CompilerServices.MethodImpl(MethodImplOptionsCompat.Best)]
-        public static TrObject AsObject<T>(this T self) where T: TrObject
+        public static TrObject AsObject<T>(this T self) where T : TrObject
         {
             return self;
         }
@@ -19,7 +19,7 @@ namespace Traffy.Objects
         public static bool IsNone(this TrObject self) => object.ReferenceEquals(self, TrNone.Unique);
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public static bool IsNull(this TrObject self) => object.ReferenceEquals(self, null);
+        public static bool IsNull<T>(this T self) where T : class => object.ReferenceEquals(self, null);
     }
 
     public class TraffyComparer : IEqualityComparer<TrObject>
@@ -44,7 +44,7 @@ namespace Traffy.Objects
             var array = __array__;
             if ((object)array != null)
             {
-                foreach(var fshape in this.Class.__instance_fields__)
+                foreach (var fshape in this.Class.__instance_fields__)
                 {
                     var i = fshape.Get.FieldIndex;
                     if (i < array.Count)
@@ -54,7 +54,7 @@ namespace Traffy.Objects
                 }
             }
             var cls = Class;
-            foreach(var kv in cls.__prototype__)
+            foreach (var kv in cls.__prototype__)
             {
                 var shape = kv.Value;
                 if (InlineCache.PolyIC.ReadClass(cls, shape, out var value))

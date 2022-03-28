@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ast import *
 from cmath import isinf
+from dataclasses import replace
 import functools
 import warnings
 from unitypython.Collections import OrderedSet, OrderedDict
@@ -23,6 +24,7 @@ class IRStmtTransformerInlineCache(NodeTransformer):
         method = getattr(self.__class__, "visit_" + node.__class__.__name__)
         self._dispatch_tables[node.__class__] = method
         return method(self, node)
+
 
 
 class IRExprTransformerInlineCache(NodeTransformer):
@@ -316,6 +318,11 @@ class TranspilerRHS(IRExprTransformerInlineCache):
 
     def visit_many(self, xs: list[expr]):
         return list(map(self.visit, xs))
+
+    def visit_with_pos(self, node: expr):
+        self.root.cur_pos = extract_pos(node)
+        pos = self.root.pos_ind
+        return (pos, self.visit(node))
 
     def instr_offset(self):
         return len(self.root.instructions)
@@ -926,9 +933,14 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         return ir.Return(position=position, hasCont=ir.hasCont(expr), value=expr)
 
     def visit_ClassDef(self, node: ClassDef) -> Any:
-        self.root.cur_pos = extract_pos(node)
+        span = extract_pos(node)
+        if node.bases:
+            last_base_span = extract_pos(node.bases[-1])
+            span = replace(span, end = last_base_span.end)
+        self.root.cur_pos = span
+        head_position = self.root.pos_ind
         rhs_transpiler = self.root.rhs_transpiler
-        decorator_list = list(map(rhs_transpiler.visit, node.decorator_list))
+        decorator_with_pos_list = list(map(rhs_transpiler.visit_with_pos, node.decorator_list))
         bases = list(map(rhs_transpiler.visit, node.bases))
         transpiler = Transpiler(
             self.root.filename,
@@ -937,7 +949,6 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             self.root.scope,
         )
         transpiler.before_visit(node)
-        position = transpiler.pos_ind
         suite = [transpiler.stmt_transpiler.visit(stmt) for stmt in node.body]
         block = ir.Block(hasCont=ir.hasCont(suite), suite=suite)
         freeslots = [self.root.load_derefence(id) for id in transpiler.scope.freevars]
@@ -949,13 +960,13 @@ class TranspileStmt(IRStmtTransformerInlineCache):
             freeslots=freeslots,
         )
         func_body = ir.DefClass(
-            position=position, hasCont=ir.hasCont(bases), bases=bases, body=func_body
+            position=head_position, hasCont=ir.hasCont(bases), bases=bases, body=func_body
         )
 
-        if decorator_list:
-            for each in reversed(decorator_list):
+        if decorator_with_pos_list:
+            for decorator_pos, each in reversed(decorator_with_pos_list):
                 func_body = ir.CallEx(
-                    position=position,
+                    position=decorator_pos,
                     hasCont=ir.hasCont(each, func_body),
                     func=each,
                     args=[ir.SequenceElement(False, func_body)],
@@ -963,7 +974,7 @@ class TranspileStmt(IRStmtTransformerInlineCache):
                 )
         lhs = self.root.store_name_(node.name)
         return ir.Assign(
-            position=position, hasCont=func_body.hasCont, lhs=lhs, rhs=func_body
+            position=head_position, hasCont=func_body.hasCont, lhs=lhs, rhs=func_body
         )
 
     def visit_AsyncFunctionDef(self, node: AsyncFunctionDef) -> Any:

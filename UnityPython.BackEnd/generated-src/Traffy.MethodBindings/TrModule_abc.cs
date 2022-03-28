@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Traffy.Objects;
 using Traffy.Annotations;
 namespace Traffy.Modules
 {

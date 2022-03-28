@@ -98,7 +98,7 @@ public static class Helper
         else
         {
             yield return new SExpr(call);
-            yield return new SReturn();
+            yield return new SReturn(new EId("Traffy.MK")["None"].Call());
         }
     }
 }

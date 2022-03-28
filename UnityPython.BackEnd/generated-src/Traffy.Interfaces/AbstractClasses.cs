@@ -15,6 +15,8 @@ namespace Traffy.Interfaces
             Traffy.Interfaces.Comparable.CLASS["__gt__"] = TrSharpFunc.FromFunc("Comparable.__gt__", Traffy.Interfaces.Comparable.__bind___gt__);
             Traffy.Interfaces.Comparable.CLASS["__le__"] = TrSharpFunc.FromFunc("Comparable.__le__", Traffy.Interfaces.Comparable.__bind___le__);
             Traffy.Interfaces.Container.CLASS["__contains__"] = TrSharpFunc.FromFunc("Container.__contains__", Traffy.Interfaces.Container.__bind___contains__);
+            Traffy.Interfaces.ContextManager.CLASS["__enter__"] = TrSharpFunc.FromFunc("ContextManager.__enter__", Traffy.Interfaces.ContextManager.__bind___enter__);
+            Traffy.Interfaces.ContextManager.CLASS["__exit__"] = TrSharpFunc.FromFunc("ContextManager.__exit__", Traffy.Interfaces.ContextManager.__bind___exit__);
             Traffy.Interfaces.Hashable.CLASS["__hash__"] = TrSharpFunc.FromFunc("Hashable.__hash__", Traffy.Interfaces.Hashable.__bind___hash__);
             Traffy.Interfaces.Iterable.CLASS["__iter__"] = TrSharpFunc.FromFunc("Iterable.__iter__", Traffy.Interfaces.Iterable.__bind___iter__);
             Traffy.Interfaces.Reversible.CLASS["__reversed__"] = TrSharpFunc.FromFunc("Reversible.__reversed__", Traffy.Interfaces.Reversible.__bind___reversed__);
@@ -25,6 +27,7 @@ namespace Traffy.Interfaces
             Traffy.Interfaces.Sequence.CLASS["index"] = TrSharpFunc.FromFunc("Sequence.index", Traffy.Interfaces.Sequence.__bind_index);
             Traffy.Interfaces.Sequence.CLASS["count"] = TrSharpFunc.FromFunc("Sequence.count", Traffy.Interfaces.Sequence.__bind_count);
             Traffy.Interfaces.Sized.CLASS["__len__"] = TrSharpFunc.FromFunc("Sized.__len__", Traffy.Interfaces.Sized.__bind___len__);
+            Traffy.Interfaces.SupportAbs.CLASS["__abs__"] = TrSharpFunc.FromFunc("SupportAbs.__abs__", Traffy.Interfaces.SupportAbs.__bind___abs__);
         }
     }
     public static partial class Awaitable
@@ -174,6 +177,33 @@ namespace Traffy.Interfaces
         public static  Traffy.Objects.TrObject __bind___contains__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
             throw new ValueError( "cannot call abstract method Container.__contains__" );
+        }
+    }
+    public static partial class ContextManager
+    {
+        internal static void _Create()
+        {
+            CLASS = TrClass.CreateClass("ContextManager");
+        }
+        internal static void _Init()
+        {
+            CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
+        }
+
+
+        internal static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            CLASS.IsFixed = true;
+        }
+        public static TrClass CLASS;
+        public static  Traffy.Objects.TrObject __bind___enter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            throw new ValueError( "cannot call abstract method ContextManager.__enter__" );
+        }
+        public static  Traffy.Objects.TrObject __bind___exit__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            throw new ValueError( "cannot call abstract method ContextManager.__exit__" );
         }
     }
     public static partial class Hashable
@@ -402,6 +432,29 @@ namespace Traffy.Interfaces
         public static  Traffy.Objects.TrObject __bind___len__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
             throw new ValueError( "cannot call abstract method Sized.__len__" );
+        }
+    }
+    public static partial class SupportAbs
+    {
+        internal static void _Create()
+        {
+            CLASS = TrClass.CreateClass("SupportAbs");
+        }
+        internal static void _Init()
+        {
+            CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
+        }
+
+
+        internal static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            CLASS.IsFixed = true;
+        }
+        public static TrClass CLASS;
+        public static  Traffy.Objects.TrObject __bind___abs__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            throw new ValueError( "cannot call abstract method SupportAbs.__abs__" );
         }
     }
 }
