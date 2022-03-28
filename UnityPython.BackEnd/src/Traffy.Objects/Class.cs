@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using InlineHelper;
 using Traffy.InlineCache;
 using Traffy.Objects;
 using static Traffy.MagicNames;
@@ -31,15 +32,19 @@ namespace Traffy.Objects
 
         public int GetHashCode([DisallowNull] TrClass obj)
         {
-            return obj.GetHashCode();
+            return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
         }
     }
 
 
     [Traffy.Annotations.PyBuiltin]
-    public sealed partial class TrClass : TrObject
+    public sealed partial class TrClass : TrObject, IEquatable<TrClass>
     {
 
+        bool IEquatable<TrClass>.Equals(Traffy.Objects.TrClass other)
+        {
+            return object.ReferenceEquals(this, other);
+        }
         static IdComparer idComparer = new IdComparer();
         static TrClass MetaClass = null;
 
@@ -71,7 +76,7 @@ namespace Traffy.Objects
 
         // does not contain those that are inherited from '__mro__'
         // values are never null
-        public TrClass[] __base;
+        public FArray<TrClass> __base;
         public TrClass[] __mro;
         public string Name;
         public bool __subclasscheck__(TrClass @class)
@@ -223,7 +228,7 @@ namespace Traffy.Objects
 
                 visited.Add(cls);
                 mro.Add(cls);
-                if (cls.__base.Length == 0)
+                if (cls.__base.Count == 0)
                     continue;
                 foreach (var base_ in cls.__base)
                 {
@@ -342,8 +347,16 @@ namespace Traffy.Objects
             return false;
         }
 
+
         public void SetupUserClass(Dictionary<TrObject, TrObject> kwargs = null)
         {
+            if (kwargs != null
+                && !this.__base.Contains(Traffy.Interfaces.Callable.CLASS)
+                && kwargs.TryGetValue(MagicNames.s_call, out var callmethod)
+                && !callmethod.IsNone())
+            {
+                this.__base = this.__base.Append(Traffy.Interfaces.Callable.CLASS).ToArray();
+            }
             __mro = C3Linearized(this);
             SetupClass(kwargs);
         }

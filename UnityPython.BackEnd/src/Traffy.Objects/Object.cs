@@ -15,7 +15,11 @@ namespace Traffy.Objects
             return self;
         }
 
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static bool IsNone(this TrObject self) => object.ReferenceEquals(self, TrNone.Unique);
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static bool IsNull(this TrObject self) => object.ReferenceEquals(self, null);
     }
 
     public class TraffyComparer : IEqualityComparer<TrObject>
@@ -64,6 +68,17 @@ namespace Traffy.Objects
         {
             return __eq__(other);
         }
+
+        public override bool Equals(object o)
+        {
+            return o is TrObject ob && __eq__(ob);
+        }
+
+        public override int GetHashCode()
+        {
+            return __hash__();
+        }
+
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
             if (__eq__(other)) return 0;
@@ -184,8 +199,7 @@ namespace Traffy.Objects
         // Object protocol
 
         [MagicMethod(Default = true)]
-        public static int __hash__(TrObject self) => self.Native.GetHashCode();
-
+        public static int __hash__(TrObject self) => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(self.Native);
 
         public TrObject Call(params TrObject[] objs)
         {
@@ -287,12 +301,11 @@ namespace Traffy.Objects
 
         // Comparators
         [MagicMethod(Default = true)]
-        public static bool __eq__(TrObject self, TrObject other) => self.Native == other.Native;
-
+        public static bool __eq__(TrObject self, TrObject other) => object.ReferenceEquals(self.Native, other.Native);
 
 
         [MagicMethod(Default = true)]
-        public static bool __ne__(TrObject self, TrObject other) => self.Native != other.Native;
+        public static bool __ne__(TrObject self, TrObject other) => !object.ReferenceEquals(self.Native, other.Native);
 
 
         [MagicMethod]

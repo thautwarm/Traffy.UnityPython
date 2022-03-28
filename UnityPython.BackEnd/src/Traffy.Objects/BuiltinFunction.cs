@@ -6,12 +6,12 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.function))]
-    public sealed class TrSharpFunc : TrObject
+    [PyInherit(typeof(Traffy.Interfaces.Callable))]
+    public sealed partial class TrSharpFunc : TrObject
     {
         public string name;
         [NotNull] public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
-        public override string __repr__() => $"<function {name}>";
+        public override string __repr__() => $"<builtin_function {name}>";
         public override bool __bool__() => true;
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
@@ -35,6 +35,9 @@ namespace Traffy.Objects
             CLASS.SetupClass();
             // Initialization.Prelude(CLASS);
         }
+
+        [PyBind]
+        public TrObject __name__ => MK.Str(name);
 
         public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
@@ -186,7 +189,7 @@ namespace Traffy.Objects
                 RTS.arg_check_positional_atleast(args, 1);
                 var clsobj = args.PopLeft();
                 var cls = clsobj as TrClass;
-                if (cls == null)
+                if (cls.IsNull())
                     throw new TypeError($"{cls.Class.Name} object is not a class");
                 var o = func(cls, args, kwargs);
                 args.AddLeft(cls);

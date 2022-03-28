@@ -9,7 +9,7 @@ namespace Traffy.Objects
 {
     // runtime
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.function))]
+    [PyInherit(typeof(Traffy.Interfaces.Callable))]
     public sealed class TrFunc : TrObject
     {
         public Variable[] freevars;
@@ -31,19 +31,19 @@ namespace Traffy.Objects
 
         public override string __repr__()
         {
-            return $"<userfunction {fptr.metadata.codename}>";
+            return $"<function {fptr.metadata.codename}>";
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrFunc>("userfunction");
+            CLASS = TrClass.FromPrototype<TrFunc>("function");
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("userfunction.__new__", TrFunc.datanew);
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("function.__new__", TrFunc.datanew);
             CLASS.IsSealed = true;
         }
 
@@ -52,6 +52,7 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
+            Initialization.Prelude(CLASS);
         }
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
