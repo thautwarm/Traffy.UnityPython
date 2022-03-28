@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
-    [Traffy.Annotations.PyBuiltin]
+    [PyBuiltin]
+    [PyInherit(typeof(Traffy.Interfaces.function))]
     public sealed class TrSharpFunc : TrObject
     {
         public string name;
@@ -32,7 +33,7 @@ namespace Traffy.Objects
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            Initialization.Prelude(CLASS);
+            // Initialization.Prelude(CLASS);
         }
 
         public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)

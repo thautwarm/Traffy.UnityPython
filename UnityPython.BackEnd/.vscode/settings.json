@@ -3,7 +3,8 @@
     // "python.analysis.autoImportCompletions": false,
     "python.analysis.autoSearchPaths": false,
     "python.analysis.useLibraryCodeForTypes": true,
+    "python.analysis.typeCheckingMode": "basic",
     // "python.analysis.stubPath": "traffy-types"
-    "python.analysis.typeshedPaths": ["unitypython-typeshed"],
+    "python.analysis.typeshedPaths": ["unitypython-typeshed"]
     // "python.analysis.extraPaths": ["unitypython-typeshed/stdlib"],
 }

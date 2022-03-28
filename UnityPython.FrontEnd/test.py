@@ -44,5 +44,11 @@ x = "a" <= "2"
 
 
 
+import abc
+
 class S:
-    __len__ = None
+    def f(self):
+        raise NotImplementedError
+
+class F(S):
+    pass

@@ -15,6 +15,7 @@ namespace Traffy.Interfaces
             Traffy.Interfaces.Comparable.CLASS["__gt__"] = TrSharpFunc.FromFunc("Comparable.__gt__", Traffy.Interfaces.Comparable.__bind___gt__);
             Traffy.Interfaces.Comparable.CLASS["__le__"] = TrSharpFunc.FromFunc("Comparable.__le__", Traffy.Interfaces.Comparable.__bind___le__);
             Traffy.Interfaces.Container.CLASS["__contains__"] = TrSharpFunc.FromFunc("Container.__contains__", Traffy.Interfaces.Container.__bind___contains__);
+            Traffy.Interfaces.function.CLASS["__call__"] = TrSharpFunc.FromFunc("function.__call__", Traffy.Interfaces.function.__bind___call__);
             Traffy.Interfaces.Hashable.CLASS["__hash__"] = TrSharpFunc.FromFunc("Hashable.__hash__", Traffy.Interfaces.Hashable.__bind___hash__);
             Traffy.Interfaces.Iterable.CLASS["__iter__"] = TrSharpFunc.FromFunc("Iterable.__iter__", Traffy.Interfaces.Iterable.__bind___iter__);
             Traffy.Interfaces.Reversible.CLASS["__reversed__"] = TrSharpFunc.FromFunc("Reversible.__reversed__", Traffy.Interfaces.Reversible.__bind___reversed__);
@@ -174,6 +175,29 @@ namespace Traffy.Interfaces
         public static  Traffy.Objects.TrObject __bind___contains__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
             throw new ValueError( "cannot call abstract method Container.__contains__" );
+        }
+    }
+    public static partial class function
+    {
+        internal static void _Create()
+        {
+            CLASS = TrClass.CreateClass("function");
+        }
+        internal static void _Init()
+        {
+            CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
+        }
+
+
+        internal static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            CLASS.IsFixed = true;
+        }
+        public static TrClass CLASS;
+        public static  Traffy.Objects.TrObject __bind___call__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            throw new ValueError( "cannot call abstract method function.__call__" );
         }
     }
     public static partial class Hashable
