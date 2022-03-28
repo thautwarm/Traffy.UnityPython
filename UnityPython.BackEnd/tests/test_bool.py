@@ -59,3 +59,11 @@ with testsuite("bool"):
         assert xs[False] == 2
         xs[(True, False)] = 1231
         assert xs[(True, False)] == 1231
+
+    with testsuite("method existence"):
+        assert bool.__hash__ is not None
+        assert "bool" in str(bool.__hash__)
+        assert bool.__eq__ is not None
+        assert "bool" in str(bool.__eq__)
+        assert bool.__ne__ is not None
+        assert "bool" in str(bool.__ne__)
