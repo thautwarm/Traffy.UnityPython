@@ -36,3 +36,18 @@ with testsuite("bytearray"):
 
     assert bytearray(b'1231').center(10, b'0') == bytearray(b'0001231000')
     assert bytearray(b'fad ksad Il').capitalize() == bytearray(b'Fad ksad il')
+    
+    value = bytearray([0xb9, 0x01, 0xef])
+    assert value.hex() == 'b901ef'
+    assert value.hex(":") == 'b9:01:ef'
+    assert value.hex(":", 2) == 'b9:01ef'
+    assert value.hex(':', -2) == 'b901:ef'
+
+    assert bytearray(b'cc').join(
+        [
+            b"A",
+            b"B",
+            b"b",
+            b"a"
+        ]
+    ) == bytearray(b'AccBccbcca')

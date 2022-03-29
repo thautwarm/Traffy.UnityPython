@@ -95,7 +95,7 @@ namespace Traffy.Objects
             {
                 var result = new TrByteArray();
                 var xs = contents.UnList;
-                result.contents = xs.Repeat(unchecked((int) i.value));
+                result.contents = xs.Repeat(unchecked((int)i.value));
                 return result;
             }
             else
@@ -603,6 +603,181 @@ namespace Traffy.Objects
                 throw new TypeError("center() argument 2 must be a byte string of length 1, not bytes");
             }
             return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.TryCenter(contents.UnList, width, fillchar[0]));
+        }
+
+        [PyBind]
+        public TrObject expandtabs(int tabsize = 8)
+        {
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.ExpandTabs(contents.UnList, tabsize));
+        }
+        [PyBind]
+        public TrObject find(IList<byte> sub, int start = 0, int end = 0)
+        {
+            return MK.Int(
+                IronPython.Runtime.Operations.IListOfByteOps.Find(
+                contents.UnList,
+                sub,
+                start,
+                end
+            ));
+        }
+        [PyBind]
+        public static TrObject fromhex(string s)
+        {
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.FromHex(s));
+        }
+
+        /*
+        Create a str of hexadecimal numbers from a bytearray object.
+        sep
+            An optional single character or byte to separate hex bytes.
+        bytes_per_sep
+            How many bytes between separators.  Positive values count from the
+            right, negative values count from the left. */
+        [PyBind]
+        public TrObject hex(TrObject sep = null, int bytes_per_sep = 0)
+        {
+            var s = new StringBuilder();
+            if (sep != null)
+            {
+                if (bytes_per_sep == 0)
+                {
+                    for (int i = 0; i < contents.Count; i++)
+                    {
+                        if (i != 0)   
+                            s.Append(sep.__str__());
+                        s.Append(contents[i].ToString("x2"));
+                    }
+
+                }
+                else if (bytes_per_sep > 0)
+                {
+                    for (int i = 0; i < contents.Count; i++)
+                    {
+                        if (((i + contents.Count) % bytes_per_sep == 0) && (i != 0))
+                        {
+                            s.Append(sep.__str__());
+                        }
+                        s.Append(contents[i].ToString("x2"));
+                    }
+                }
+                else
+                {
+                    bytes_per_sep = -bytes_per_sep;
+                    for (int i = 0; i < contents.Count; i++)
+                    {
+                        if ((i % bytes_per_sep == 0) && (i != 0))
+                        {
+                            s.Append(sep.__str__());
+                        }
+                        s.Append(contents[i].ToString("x2"));
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < contents.Count; i++)
+                {
+                    s.Append(contents[i].ToString("x2"));
+                }
+            }
+            return MK.Str(s.ToString());
+        }
+
+        [PyBind]
+        public bool endswith(IList<byte> suffix, int start = 0, int end = -1)
+        {
+            if (start == 0)
+            {
+                if (end == -1)
+                {
+                    return IronPython.Runtime.Operations.IListOfByteOps
+                        .EndsWith(contents.UnList, suffix);
+                }
+            }
+            else if (end == -1)
+            {
+                return IronPython.Runtime.Operations.IListOfByteOps
+                    .EndsWith(contents.UnList, suffix, start);
+            }
+            return IronPython.Runtime.Operations.IListOfByteOps
+                .EndsWith(contents.UnList, suffix, start, end);
+        }
+
+        [PyBind]
+        public bool isalnum()
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.IsAlphaNumeric(contents.UnList);
+        }
+
+        [PyBind]
+        /*
+        Return True if all characters in B are alphabetic
+        and there is at least one character in B, False otherwise.
+        */
+        public bool isalpha()
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.IsLetter(contents.UnList);
+        }
+
+        [PyBind]
+        public bool isascii()
+        {
+            for(int i = 0; i < contents.Count; i++)
+            {
+                if (contents[i] > 127)
+                    return false;
+            }
+            return true;
+        }
+
+        [PyBind]
+        public bool isspace()
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.IsWhiteSpace(contents.UnList);
+        }
+
+        [PyBind]
+        public bool istitle()
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.IsTitle(contents.UnList);
+        }
+
+        [PyBind]
+        public TrObject join(IEnumerator<TrObject> iterable_of_bytes)
+        {
+            var newbytearray = new List<byte>();
+            int index = 0;
+            if(iterable_of_bytes.MoveNext())
+            {
+                IronPython.Runtime.Operations.ByteOps.AppendJoin(
+                    iterable_of_bytes.Current,
+                    index++,
+                    newbytearray
+                );
+                while(iterable_of_bytes.MoveNext())
+                {
+                    newbytearray.AddRange(contents.UnList);
+                    IronPython.Runtime.Operations.ByteOps.AppendJoin(
+                        iterable_of_bytes.Current,
+                        index++,
+                        newbytearray
+                    );
+                }
+            }
+            return MK.ByteArray(newbytearray);
+            
+        }
+        [PyBind]
+        public TrObject lstrip(IList<byte> chars = null)
+        {
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.LeftStrip(contents.UnList, chars));
+        }
+
+        [PyBind]
+        public TrObject maketrans(IList<byte> from, IList<byte> to)
+        {
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.Translate(contents.UnList, from, to));
         }
     }
 }

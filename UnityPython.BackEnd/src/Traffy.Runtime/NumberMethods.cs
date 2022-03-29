@@ -9,13 +9,13 @@ namespace Traffy.Objects
     using static System.MathF;
     public static class NumberMethods
     {
-        static int_t s_intmod(int_t a, int_t b)
+        internal static int_t s_intmod(int_t a, int_t b)
         {
             int_t r = a % b;
             return r < 0 ? r + b : r;
         }
 
-        static float s_floatmod(float a, float b)
+        internal static float s_floatmod(float a, float b)
         {
             float r = a % b;
             return r < 0 ? r + b : r;

@@ -58,7 +58,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
-        public override object Native => contents;
+        public override object Native => contents.UnList;
 
         public override TrObject __add__(TrObject other)
         {
