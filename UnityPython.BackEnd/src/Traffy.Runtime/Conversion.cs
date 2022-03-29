@@ -185,5 +185,18 @@ namespace Traffy
             }
             throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to byte");
         }
+
+        public static IList<byte> Apply(THint<IList<byte>> _, TrObject o)
+        {
+            switch(o)
+            {
+                case TrBytes b:
+                    return b.contents.UnList;
+                case TrByteArray l:
+                    return l.contents.UnList;
+                default:
+                    throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to bytes-like");
+            }
+        }
     }
 }

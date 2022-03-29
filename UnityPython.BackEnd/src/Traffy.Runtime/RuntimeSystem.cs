@@ -428,6 +428,11 @@ namespace Traffy
             return new List<TrObject>();
         }
 
+        public static List<TrObject> barelist_create(int capacity)
+        {
+            return new List<TrObject>(capacity);
+        }
+
         public static void barelist_extend(List<TrObject> lst, TrObject rt_seq)
         {
             var itr = rt_seq.__iter__();

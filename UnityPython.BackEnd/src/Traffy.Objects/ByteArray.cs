@@ -15,7 +15,7 @@ namespace Traffy.Objects
     public sealed partial class TrByteArray : TrObject
     {
         public FList<byte> contents;
-        public override object Native => contents;
+        public override object Native => contents.UnList;
         public override string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("bytearray(b'").Append("')").By(String.Concat);
         public override bool __bool__() => contents.Count != 0;
         public override List<TrObject> __array__ => null;
@@ -587,6 +587,22 @@ namespace Traffy.Objects
                 return false;
             }
             return true;
+        }
+
+        [PyBind]
+        public TrObject capitalize()
+        {
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.Capitalize(contents.UnList));
+        }
+
+        [PyBind]
+        public TrObject center(int width, IList<byte> fillchar)
+        {
+            if (fillchar.Count != 1)
+            {
+                throw new TypeError("center() argument 2 must be a byte string of length 1, not bytes");
+            }
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.TryCenter(contents.UnList, width, fillchar[0]));
         }
     }
 }

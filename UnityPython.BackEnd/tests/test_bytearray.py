@@ -33,3 +33,6 @@ with testsuite("bytearray"):
     xs = bytearray(b'abc')
     xs.reverse()
     assert xs == bytearray(b'cba')
+
+    assert bytearray(b'1231').center(10, b'0') == bytearray(b'0001231000')
+    assert bytearray(b'fad ksad Il').capitalize() == bytearray(b'Fad ksad il')

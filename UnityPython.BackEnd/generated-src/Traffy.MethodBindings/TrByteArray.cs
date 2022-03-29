@@ -370,6 +370,36 @@ namespace Traffy.Objects
                 }
             }
             CLASS["isupper"] = TrSharpFunc.FromFunc("isupper", __bind_isupper);
+            static  Traffy.Objects.TrObject __bind_capitalize(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        return Box.Apply(_0.capitalize());
+                    }
+                    default:
+                        throw new ValueError("capitalize() requires 1 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["capitalize"] = TrSharpFunc.FromFunc("capitalize", __bind_capitalize);
+            static  Traffy.Objects.TrObject __bind_center(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Int32>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[2]);
+                        return Box.Apply(_0.center(_1,_2));
+                    }
+                    default:
+                        throw new ValueError("center() requires 3 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["center"] = TrSharpFunc.FromFunc("center", __bind_center);
         }
     }
 }
