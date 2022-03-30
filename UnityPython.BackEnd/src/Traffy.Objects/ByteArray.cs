@@ -772,6 +772,12 @@ namespace Traffy.Objects
         }
 
         [PyBind]
+        public bool isdigit()
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.IsDigit(contents.UnList);
+        }
+
+        [PyBind]
         public TrObject join(IEnumerator<TrObject> iterable_of_bytes)
         {
             var newbytearray = new List<byte>();

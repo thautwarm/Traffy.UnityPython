@@ -641,6 +641,20 @@ namespace Traffy.Objects
                 }
             }
             CLASS["istitle"] = TrSharpFunc.FromFunc("istitle", __bind_istitle);
+            static  Traffy.Objects.TrObject __bind_isdigit(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        return Box.Apply(_0.isdigit());
+                    }
+                    default:
+                        throw new ValueError("isdigit() requires 1 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["isdigit"] = TrSharpFunc.FromFunc("isdigit", __bind_isdigit);
             static  Traffy.Objects.TrObject __bind_join(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
