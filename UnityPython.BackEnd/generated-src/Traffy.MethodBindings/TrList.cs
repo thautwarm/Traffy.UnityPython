@@ -40,7 +40,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = -1;
+                            _3 = _0.s_ContentCount;
                         bool _4;
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
                             _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
@@ -57,7 +57,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = -1;
+                            _3 = _0.s_ContentCount;
                         bool _4;
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("noraise"),out var __keyword__4)))
                             _4 = Unbox.Apply(THint<bool>.Unique,__keyword__4);
@@ -100,7 +100,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = -1;
+                            _3 = _0.s_ContentCount;
                         return Box.Apply(_0.count(_1,start : _2,end : _3));
                     }
                     case 3:
@@ -112,7 +112,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = -1;
+                            _3 = _0.s_ContentCount;
                         return Box.Apply(_0.count(_1,_2,end : _3));
                     }
                     case 4:
@@ -265,7 +265,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = -1;
+                            _3 = _0.s_ContentCount;
                         return Box.Apply(_0.find(_1,start : _2,end : _3));
                     }
                     case 3:
@@ -277,7 +277,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = -1;
+                            _3 = _0.s_ContentCount;
                         return Box.Apply(_0.find(_1,_2,end : _3));
                     }
                     case 4:

@@ -14,6 +14,11 @@ namespace Traffy
         {
             return o;
         }
+        public static TrObject Apply<T>(T o) where T: TrObject
+        {
+            return o;
+        }
+
         public static TrObject Apply(bool o)
         {
             return MK.Bool(o);
@@ -38,6 +43,17 @@ namespace Traffy
         {
             return MK.Int(o);
         }
+
+        public static TrObject Apply(byte[] o)
+        {
+            return MK.Bytes(o);
+        }
+
+        public static TrObject Apply(List<byte> o)
+        {
+            return MK.ByteArray(o);
+        }
+
         public static TrObject Apply(double o)
         {
             return MK.Float(o);
