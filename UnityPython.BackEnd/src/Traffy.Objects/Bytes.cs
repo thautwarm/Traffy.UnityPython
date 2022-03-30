@@ -34,7 +34,8 @@ namespace Traffy.Objects
         }
 
 
-        public override string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("b'").Append("'").By(String.Concat);
+        public override string __repr__() =>
+            IronPython.Runtime.Operations.IListOfByteOps.BytesRepr(contents.UnList);
         public override bool __bool__() => contents.Count != 0;
         public static TrClass CLASS;
         public override TrClass Class => CLASS;

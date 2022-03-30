@@ -95,12 +95,6 @@ namespace Traffy.Objects
         {
             return Traffy.Compatibility.IronPython.PythonOps.FixSlice(count, start, stop, step);
         }
-        public (int start, int step, int nstep) resolveSlice(int count)
-        {
-            var (istart, istop, istep) = _indices(count);
-            int nstep = (istop - istart) / istep;
-            return (istart, istep, nstep);
-        }
     }
 
 }

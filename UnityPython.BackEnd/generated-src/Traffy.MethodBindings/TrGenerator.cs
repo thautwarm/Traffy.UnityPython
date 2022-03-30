@@ -34,6 +34,18 @@ namespace Traffy.Objects
                 }
             }
             CLASS["send"] = TrSharpFunc.FromFunc("send", __bind_send);
+            static  Traffy.Objects.TrObject __read_is_completed(Traffy.Objects.TrObject _arg)
+            {
+                return Box.Apply(((Traffy.Objects.TrGenerator)_arg).is_completed);
+            }
+            Action<TrObject, TrObject> __write_is_completed = null;
+            CLASS["is_completed"] = TrProperty.Create(CLASS.Name + ".is_completed", __read_is_completed, __write_is_completed);
+            static  Traffy.Objects.TrObject __read_result(Traffy.Objects.TrObject _arg)
+            {
+                return Box.Apply(((Traffy.Objects.TrGenerator)_arg).result);
+            }
+            Action<TrObject, TrObject> __write_result = null;
+            CLASS["result"] = TrProperty.Create(CLASS.Name + ".result", __read_result, __write_result);
         }
     }
 }

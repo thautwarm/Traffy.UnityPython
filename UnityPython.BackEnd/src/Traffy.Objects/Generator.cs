@@ -72,6 +72,10 @@ namespace Traffy.Objects
         [MethodImpl(MethodImplOptionsCompat.Best)]
         public override bool __next__(TrRef refval)
         {
+            if (m_Generator.IsCompleted)
+            {
+                return false;
+            }
             m_Generator.m_Result = RTS.object_none;
             if (m_Generator.MoveNext())
             {
@@ -84,6 +88,10 @@ namespace Traffy.Objects
         [PyBind]
         public bool send(TrObject sent, TrRef refval = null)
         {
+            if (m_Generator.IsCompleted)
+            {
+                return false;
+            }
             m_Generator.m_Result = sent;
             if (m_Generator.MoveNext())
             {
@@ -119,10 +127,20 @@ namespace Traffy.Objects
         object IEnumerator.Current => m_Generator.GetResult();
         public bool MoveNext()
         {
+            if (m_Generator.IsCompleted)
+            {
+                return false;
+            }
             m_Generator.m_Result = RTS.object_none;
             return m_Generator.MoveNext();
         }
 
         public void Dispose() { }
+
+        [PyBind]
+        public TrObject is_completed => MK.Bool(m_Generator.IsCompleted);
+
+        [PyBind]
+        public TrObject result => m_Generator.IsCompleted ? m_Generator.GetResult() : RTS.object_none;
     }
 }

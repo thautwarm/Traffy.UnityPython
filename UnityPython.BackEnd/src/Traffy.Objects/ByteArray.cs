@@ -17,7 +17,8 @@ namespace Traffy.Objects
         internal int s_ContentCount => contents.Count;
         public FList<byte> contents;
         public override object Native => contents.UnList;
-        public override string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("bytearray(b'").Append("')").By(String.Concat);
+        public override string __repr__() =>
+            "bytearray(" + IronPython.Runtime.Operations.IListOfByteOps.BytesRepr(contents.UnList) + ")";
         public override bool __bool__() => contents.Count != 0;
         public override List<TrObject> __array__ => null;
 

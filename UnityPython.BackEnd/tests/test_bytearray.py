@@ -1,7 +1,6 @@
 from .utils import testsuite
 
-with testsuite("bytearray"):
-    pass
+with testsuite("bytearray test"):
     xs = bytearray([1, 2, 3])
 
     assert xs == bytearray(b'\1\2\3')

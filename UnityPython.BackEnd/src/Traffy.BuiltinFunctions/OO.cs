@@ -171,5 +171,20 @@ namespace Traffy
             }
         }
 
+        [PyBuiltin]
+        static TrObject next(TrObject supportNext, TrObject __default = null)
+        {
+            var r = MK.Ref();
+            if(supportNext.__next__(r))
+            {
+                return r.value;
+            }
+            if (__default == null)
+            {
+                throw new StopIteration();
+            }
+            return __default;
+        }
+
     }
 }

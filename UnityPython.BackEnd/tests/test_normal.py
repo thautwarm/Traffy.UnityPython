@@ -120,22 +120,22 @@
 # print(xs)
 
 
-# def _test1():
-#     x = 0
-#     for i in range(10000000):
-#         x += 1
-#         yield x
+def _test1():
+    x = 0
+    for i in range(10000000):
+        x += 1
+        yield x
 
-# def test1():
-#     x = list(_test1())
-#     print(x[50])
-#     return len(x)
+def test1():
+    x = list(_test1())
+    print("test1 elt[50]", x[50])
+    return len(x)
 
-# def test2():
-#     x = 0
-#     while x < 10000000:
-#         x += 1
-#     return x
+def test2():
+    x = 0
+    while x < 10000000:
+        x += 1
+    return x
 
 # class XX:
 #     xx =5
@@ -143,14 +143,19 @@
 #         self.x = x
 
 
-# def testfunc(f):
-#     a = time()
-#     print("res", f())
-#     print(time() - a)
+def testfunc(f):
+    a = time()
+    res = f()
+    t = time() - a
+    print("test result of", f, ":", t)
 
 
-# # testfunc(test1)
-# # testfunc(test2)
+# testfunc(test1)
+# testfunc(test2)
+# testfunc(test1)
+# testfunc(test2)
+# testfunc(test1)
+# testfunc(test2)
 
 # # print([[1], 3] < [[1], 3, 1])
 # # print([2, 3] * 2)

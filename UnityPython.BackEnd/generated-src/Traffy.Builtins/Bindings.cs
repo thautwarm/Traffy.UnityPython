@@ -321,6 +321,31 @@ namespace Traffy
                 }
             }
             Initialization.Prelude(TrSharpFunc.FromFunc("issubclass", __bind_issubclass));
+            static  Traffy.Objects.TrObject __bind_next(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                        Traffy.Objects.TrObject _1;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("__default"),out var __keyword__1)))
+                            _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__keyword__1);
+                        else
+                            _1 = null;
+                        return Box.Apply(Traffy.Builtins.next(_0,__default : _1));
+                    }
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                        return Box.Apply(Traffy.Builtins.next(_0,_1));
+                    }
+                    default:
+                        throw new ValueError("next() requires 1 to 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            Initialization.Prelude(TrSharpFunc.FromFunc("next", __bind_next));
         }
 
     
