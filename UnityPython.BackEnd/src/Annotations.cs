@@ -15,6 +15,7 @@ namespace Traffy.Annotations
         public class Keyword: Attribute
         {
             public bool Only;
+            public string Name;
         }
         public string Name;
     }

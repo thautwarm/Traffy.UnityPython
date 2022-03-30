@@ -51,3 +51,6 @@ with testsuite("bytearray"):
             b"a"
         ]
     ) == bytearray(b'AccBccbcca')
+
+    xs = bytearray(b"xs")
+    assert xs.pop() == ord('s')

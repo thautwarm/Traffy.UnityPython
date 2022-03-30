@@ -611,15 +611,14 @@ namespace Traffy.Objects
             return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.ExpandTabs(contents.UnList, tabsize));
         }
         [PyBind]
-        public TrObject find(IList<byte> sub, int start = 0, int end = 0)
+        public int find(IList<byte> sub, int start = 0, int end = -1)
         {
-            return MK.Int(
-                IronPython.Runtime.Operations.IListOfByteOps.Find(
+            return IronPython.Runtime.Operations.IListOfByteOps.Find(
                 contents.UnList,
                 sub,
                 start,
                 end
-            ));
+            );
         }
         [PyBind]
         public static TrObject fromhex(string s)
@@ -644,7 +643,7 @@ namespace Traffy.Objects
                 {
                     for (int i = 0; i < contents.Count; i++)
                     {
-                        if (i != 0)   
+                        if (i != 0)
                             s.Append(sep.__str__());
                         s.Append(contents[i].ToString("x2"));
                     }
@@ -685,23 +684,52 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public bool endswith(IList<byte> suffix, int start = 0, int end = -1)
+        public bool endswith(TrObject suffix, int start = 0, int end = -1)
         {
-            if (start == 0)
+
+            static bool compute(List<byte> seq, IList<byte> sub, int start, int end)
             {
-                if (end == -1)
+                if (start == 0)
+                {
+                    if (end == -1)
+                    {
+                        return IronPython.Runtime.Operations.IListOfByteOps
+                            .EndsWith(seq, sub);
+                    }
+                }
+                else if (end == -1)
                 {
                     return IronPython.Runtime.Operations.IListOfByteOps
-                        .EndsWith(contents.UnList, suffix);
+                        .EndsWith(seq, sub, start);
                 }
-            }
-            else if (end == -1)
-            {
                 return IronPython.Runtime.Operations.IListOfByteOps
-                    .EndsWith(contents.UnList, suffix, start);
+                    .EndsWith(seq, sub, start, end);
             }
-            return IronPython.Runtime.Operations.IListOfByteOps
-                .EndsWith(contents.UnList, suffix, start, end);
+            switch (suffix)
+            {
+                case TrTuple tuple:
+                {
+                    if (start == 0)
+                    {
+                        if (end == -1)
+                            return IronPython.Runtime.Operations.IListOfByteOps
+                            .EndsWith(contents.UnList, tuple);
+                    }
+                    else if (end == -1)
+                    {
+                        return IronPython.Runtime.Operations.IListOfByteOps
+                            .EndsWith(contents.UnList, tuple, start);
+                    }
+                    return IronPython.Runtime.Operations.IListOfByteOps
+                            .EndsWith(contents.UnList, tuple, start, end);
+                }
+                case TrByteArray b:
+                    return compute(contents.UnList, b.contents.UnList, start, end);
+                case TrBytes b:
+                    return compute(contents.UnList, b.contents.UnList, start, end);
+                default:
+                    throw new TypeError("endswith first arg must be a byte string or a tuple of byte strings");
+            }
         }
 
         [PyBind]
@@ -723,7 +751,7 @@ namespace Traffy.Objects
         [PyBind]
         public bool isascii()
         {
-            for(int i = 0; i < contents.Count; i++)
+            for (int i = 0; i < contents.Count; i++)
             {
                 if (contents[i] > 127)
                     return false;
@@ -748,14 +776,14 @@ namespace Traffy.Objects
         {
             var newbytearray = new List<byte>();
             int index = 0;
-            if(iterable_of_bytes.MoveNext())
+            if (iterable_of_bytes.MoveNext())
             {
                 IronPython.Runtime.Operations.ByteOps.AppendJoin(
                     iterable_of_bytes.Current,
                     index++,
                     newbytearray
                 );
-                while(iterable_of_bytes.MoveNext())
+                while (iterable_of_bytes.MoveNext())
                 {
                     newbytearray.AddRange(contents.UnList);
                     IronPython.Runtime.Operations.ByteOps.AppendJoin(
@@ -766,7 +794,7 @@ namespace Traffy.Objects
                 }
             }
             return MK.ByteArray(newbytearray);
-            
+
         }
         [PyBind]
         public TrObject lstrip(IList<byte> chars = null)
@@ -775,9 +803,335 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public TrObject maketrans(IList<byte> from, IList<byte> to)
+        public TrObject ljust(int width, IList<byte> fillchar = null)
         {
-            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.Translate(contents.UnList, from, to));
+            if (fillchar == null)
+                fillchar = new byte[] { (byte)' ' };
+
+            if (fillchar.Count != 1)
+            {
+                throw new ValueError("fillchar must be a single character");
+            }
+
+            var spaces = width - contents.Count;
+            if (spaces <= 0)
+            {
+                return MK.ByteArray(contents.UnList.Copy());
+            }
+            List<byte> ret = new List<byte>(width);
+            ret.AddRange(contents.UnList);
+            var fillchar_first = fillchar[0];
+            for (int i = 0; i < spaces; i++)
+            {
+                ret.Add(fillchar_first);
+            }
+            return MK.ByteArray(ret);
+        }
+
+        [PyBind]
+        public TrObject rjust(int width, IList<byte> fillchar)
+        {
+            if (fillchar == null)
+                fillchar = new byte[] { (byte)' ' };
+
+            if (fillchar.Count != 1)
+            {
+                throw new ValueError("fillchar must be a single character");
+            }
+
+            var spaces = width - contents.Count;
+            if (spaces <= 0)
+            {
+                return MK.ByteArray(contents.UnList.Copy());
+            }
+            List<byte> ret = new List<byte>(width);
+            for (int i = 0; i < spaces; i++)
+            {
+                ret.Add(fillchar[0]);
+            }
+            ret.AddRange(contents.UnList);
+            return MK.ByteArray(ret);
+        }
+
+        [PyBind]
+        public TrObject removeprefix(IList<byte> prefix)
+        {
+            if (prefix.Count > contents.Count)
+            {
+                return MK.ByteArray(contents.UnList.Copy());
+            }
+            for (int i = 0; i < prefix.Count; i++)
+            {
+                if (contents[i] != prefix[i])
+                {
+                    return MK.ByteArray(contents.UnList.Copy());
+                }
+            }
+            var ret = new List<byte>(contents.Count - prefix.Count);
+            for (int i = prefix.Count; i < contents.Count; i++)
+            {
+                ret.Add(contents[i]);
+            }
+            return MK.ByteArray(ret);
+        }
+
+        [PyBind]
+        public TrObject removesuffix(IList<byte> suffix)
+        {
+            if (suffix.Count > contents.Count)
+            {
+                return MK.ByteArray(contents.UnList.Copy());
+            }
+
+            for (int i = 0; i < suffix.Count; i++)
+            {
+
+                if (contents[contents.Count - 1 - i] != suffix[suffix.Count - 1 - i])
+                {
+                    return MK.ByteArray(contents.UnList.Copy());
+                }
+            }
+            var ret = new List<byte>(contents.Count - suffix.Count);
+            for (int i = 0; i < contents.Count - suffix.Count; i++)
+            {
+                ret.Add(contents[i]);
+            }
+            return MK.ByteArray(ret);
+        }
+
+        
+        [PyBind]
+        public TrObject replace(IList<byte> old, IList<byte> new_, int count = -1)
+        {
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.Replace(contents.UnList, old, new_, count));
+        }
+
+        // TODO: support find integer
+        [PyBind]
+        public int rfind(IList<byte> sub, int start = 0, int end = -1)
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.ReverseFind(contents.UnList, sub, start, end);
+        }
+
+        // TODO: support find integer
+        [PyBind]
+        public int rindex(IList<byte> sub, int start = 0, int end = -1)
+        {
+            var ret = IronPython.Runtime.Operations.IListOfByteOps.ReverseFind(contents.UnList, sub, start, end);
+            if (ret == -1)
+            {
+                throw new ValueError("substring not found");
+            }
+            return ret;
+        }
+
+        [PyBind]
+        public TrObject partition(IList<byte>/*!*/ sep)
+        {
+            if (sep.Count == 0)
+            {
+                throw new ValueError("empty separator");
+            }
+
+            TrObject[] obj = new TrObject[3] { MK.Tuple(), MK.Tuple(), MK.Tuple() };
+
+            if (contents.Count != 0)
+            {
+                int index = find(sep);
+                if (index == -1)
+                {
+                    obj[0] = MK.ByteArray(this.contents);
+                }
+                else
+                {
+                    obj[0] = MK.ByteArray(
+                        IronPython.Runtime.Operations.IListOfByteOps.Substring(contents.UnList, 0, index));
+                    obj[1] = MK.ByteArray(sep.ToList());
+                    obj[2] = MK.ByteArray(
+                        IronPython.Runtime.Operations.IListOfByteOps.Substring(contents.UnList, index + sep.Count, contents.Count - index - sep.Count));
+                }
+            }
+
+            return MK.Tuple(obj);
+        }
+
+        [PyBind]
+        public TrObject rpartition(IList<byte>/*!*/ sep)
+        {
+            if (sep.Count == 0)
+            {
+                throw new ValueError("empty separator");
+            }
+
+            TrObject[] obj = new TrObject[3] { MK.Tuple(), MK.Tuple(), MK.Tuple() };
+
+            if (contents.Count != 0)
+            {
+                int index = rfind(sep);
+                if (index == -1)
+                {
+                    obj[0] = MK.ByteArray(this.contents);
+                }
+                else
+                {
+                    obj[0] = MK.ByteArray(
+                        IronPython.Runtime.Operations.IListOfByteOps.Substring(contents.UnList, 0, index));
+                    obj[1] = MK.ByteArray(sep.ToList());
+                    obj[2] = MK.ByteArray(
+                        IronPython.Runtime.Operations.IListOfByteOps.Substring(contents.UnList, index + sep.Count, contents.Count - index - sep.Count));
+                }
+            }
+
+            return MK.Tuple(obj);
+        }
+
+        [PyBind]
+        public TrObject rsplit(IList<byte> sep = null, int maxsplit = -1)
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.RightSplit(
+                contents.UnList,
+                sep,
+                maxsplit,
+                x => MK.ByteArray(x is List<byte> lst ? lst : x.ToList())
+            );
+        }
+
+        [PyBind]
+        public TrObject rstrip(IList<byte> chars = null)
+        {
+            if (chars == null)
+            {
+                return MK.ByteArray(
+                    IronPython.Runtime.Operations.IListOfByteOps.RightStrip(contents.UnList)
+                );
+            }
+            else
+            {
+                return MK.ByteArray(
+                    IronPython.Runtime.Operations.IListOfByteOps.RightStrip(contents.UnList, chars)
+                );
+            }
+        }
+
+        [PyBind]
+        public TrObject split([PyBind.Keyword] IList<byte> sep = null, [PyBind.Keyword] int maxsplit = -1)
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.Split(
+                contents.UnList,
+                sep,
+                maxsplit,
+                x => MK.ByteArray(x is List<byte> lst ? lst : x.ToList())
+            );
+        }
+
+        [PyBind]
+        public TrObject splitlines([PyBind.Keyword] bool keepends = false)
+        {
+            return IronPython.Runtime.Operations.IListOfByteOps.SplitLines(
+                contents.UnList,
+                keepends,
+                x => MK.ByteArray(x is List<byte> lst ? lst : x.ToList())
+            );
+        }
+
+        [PyBind]
+        public bool startswith(TrObject prefix, int start = 0, int end = -1)
+        {
+            static bool compute(List<byte> seq, IList<byte> sub, int start, int end)
+            {
+                if (start == 0)
+                {
+                    if (end == -1)
+                    {
+                        return IronPython.Runtime.Operations.IListOfByteOps
+                            .StartsWith(seq, sub);
+                    }
+                }
+                return IronPython.Runtime.Operations.IListOfByteOps
+                    .StartsWith(seq, sub, start, end);
+            }
+            switch (prefix)
+            {
+                case TrTuple prefixes:
+                    if (start == 0)
+                    {
+                        if (end == -1)
+                        {
+                            return IronPython.Runtime.Operations.IListOfByteOps.StartsWith(contents.UnList, prefixes);
+                        }
+                    }
+                    else if (end == -1)
+                    {
+                        return IronPython.Runtime.Operations.IListOfByteOps.StartsWith(contents.UnList, prefixes, start);
+                    }
+                    return IronPython.Runtime.Operations.IListOfByteOps.StartsWith(contents.UnList, prefixes, start, end);
+
+                case TrByteArray b:
+                    return compute(contents.UnList, b.contents.UnList, start, end);
+
+                case TrBytes b:
+                    return compute(contents.UnList, b.contents.UnList, start, end);
+
+                default:
+                    throw new TypeError("endswith first arg must be a byte string or a tuple of byte strings");
+            }
+        }
+
+        [PyBind]
+        public TrObject strip(IList<byte> chars = null)
+        {
+            if (chars == null)
+            {
+                return MK.ByteArray(
+                    IronPython.Runtime.Operations.IListOfByteOps.Strip(contents.UnList)
+                );
+            }
+            else
+            {
+                return MK.ByteArray(
+                    IronPython.Runtime.Operations.IListOfByteOps.Strip(contents.UnList, chars)
+                );
+            }
+        }
+
+        [PyBind]
+        public TrObject swapcase()
+        {
+            return MK.ByteArray(
+                IronPython.Runtime.Operations.IListOfByteOps.SwapCase(contents.UnList)
+            );
+        }
+
+        [PyBind]
+        public TrObject title()
+        {
+            return MK.ByteArray(
+                IronPython.Runtime.Operations.IListOfByteOps.Title(contents.UnList)
+            );
+        }
+
+        [PyBind]
+        public TrObject translate(byte[] table, [PyBind.Keyword] IList<byte> delete = null)
+        {
+            if (contents.Count == 0)
+                return MK.ByteArray(this.contents.UnList.Copy());
+            return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.Translate(contents.UnList, table, delete));
+        }
+
+        [PyBind]
+        public TrObject zfill(int width)
+        {
+            int spaces = width - contents.Count;
+            if (spaces <= 0)
+            {
+                return MK.ByteArray(this.contents.UnList.Copy());
+            }
+            return MK.ByteArray(
+                IronPython.Runtime.Operations.IListOfByteOps.ZeroFill(
+                    contents.UnList,
+                    width,
+                    spaces)
+            );
         }
     }
 }

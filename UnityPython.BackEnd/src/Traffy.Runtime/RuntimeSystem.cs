@@ -764,11 +764,14 @@ namespace Traffy
         }
         public static TrTuple Tuple(TrObject[] trObjects)
         {
+            if (trObjects.Length == 0)
+                return zero_length_tuple;
             return new TrTuple { elts = trObjects };
         }
 
         static TrObject[] _zeroelts = new TrObject[0];
-        public static TrTuple Tuple() => new TrTuple { elts = _zeroelts };
+        static TrTuple zero_length_tuple = new TrTuple { elts = _zeroelts };
+        public static TrTuple Tuple() => zero_length_tuple;
 
         public static TrObject Iter(IEnumerator<TrObject> v)
         {

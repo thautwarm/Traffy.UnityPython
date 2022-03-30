@@ -456,7 +456,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = 0;
+                            _3 = -1;
                         return Box.Apply(_0.find(_1,start : _2,end : _3));
                     }
                     case 3:
@@ -468,7 +468,7 @@ namespace Traffy.Objects
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
                             _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
                         else
-                            _3 = 0;
+                            _3 = -1;
                         return Box.Apply(_0.find(_1,_2,end : _3));
                     }
                     case 4:
@@ -533,7 +533,7 @@ namespace Traffy.Objects
                     case 2:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         System.Int32 _2;
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("start"),out var __keyword__2)))
                             _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
@@ -549,7 +549,7 @@ namespace Traffy.Objects
                     case 3:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
                         System.Int32 _3;
                         if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
@@ -561,7 +561,7 @@ namespace Traffy.Objects
                     case 4:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
                         var _3 = Unbox.Apply(THint<System.Int32>.Unique,__args[3]);
                         return Box.Apply(_0.endswith(_1,_2,_3));
@@ -681,7 +681,80 @@ namespace Traffy.Objects
                 }
             }
             CLASS["lstrip"] = TrSharpFunc.FromFunc("lstrip", __bind_lstrip);
-            static  Traffy.Objects.TrObject __bind_maketrans(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_ljust(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Int32>.Unique,__args[1]);
+                        System.Collections.Generic.IList<System.Byte> _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("fillchar"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__keyword__2);
+                        else
+                            _2 = null;
+                        return Box.Apply(_0.ljust(_1,fillchar : _2));
+                    }
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Int32>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[2]);
+                        return Box.Apply(_0.ljust(_1,_2));
+                    }
+                    default:
+                        throw new ValueError("ljust() requires 2 to 3 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["ljust"] = TrSharpFunc.FromFunc("ljust", __bind_ljust);
+            static  Traffy.Objects.TrObject __bind_rjust(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Int32>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[2]);
+                        return Box.Apply(_0.rjust(_1,_2));
+                    }
+                    default:
+                        throw new ValueError("rjust() requires 3 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["rjust"] = TrSharpFunc.FromFunc("rjust", __bind_rjust);
+            static  Traffy.Objects.TrObject __bind_removeprefix(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        return Box.Apply(_0.removeprefix(_1));
+                    }
+                    default:
+                        throw new ValueError("removeprefix() requires 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["removeprefix"] = TrSharpFunc.FromFunc("removeprefix", __bind_removeprefix);
+            static  Traffy.Objects.TrObject __bind_removesuffix(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        return Box.Apply(_0.removesuffix(_1));
+                    }
+                    default:
+                        throw new ValueError("removesuffix() requires 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["removesuffix"] = TrSharpFunc.FromFunc("removesuffix", __bind_removesuffix);
+            static  Traffy.Objects.TrObject __bind_replace(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -690,13 +763,420 @@ namespace Traffy.Objects
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[2]);
-                        return Box.Apply(_0.maketrans(_1,_2));
+                        System.Int32 _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("count"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                        else
+                            _3 = -1;
+                        return Box.Apply(_0.replace(_1,_2,count : _3));
+                    }
+                    case 4:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[2]);
+                        var _3 = Unbox.Apply(THint<System.Int32>.Unique,__args[3]);
+                        return Box.Apply(_0.replace(_1,_2,_3));
                     }
                     default:
-                        throw new ValueError("maketrans() requires 3 positional argument(s), got " + __args.Count);
+                        throw new ValueError("replace() requires 3 to 4 positional argument(s), got " + __args.Count);
                 }
             }
-            CLASS["maketrans"] = TrSharpFunc.FromFunc("maketrans", __bind_maketrans);
+            CLASS["replace"] = TrSharpFunc.FromFunc("replace", __bind_replace);
+            static  Traffy.Objects.TrObject __bind_rfind(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        System.Int32 _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("start"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                        else
+                            _2 = 0;
+                        System.Int32 _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                        else
+                            _3 = -1;
+                        return Box.Apply(_0.rfind(_1,start : _2,end : _3));
+                    }
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        System.Int32 _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                        else
+                            _3 = -1;
+                        return Box.Apply(_0.rfind(_1,_2,end : _3));
+                    }
+                    case 4:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        var _3 = Unbox.Apply(THint<System.Int32>.Unique,__args[3]);
+                        return Box.Apply(_0.rfind(_1,_2,_3));
+                    }
+                    default:
+                        throw new ValueError("rfind() requires 2 to 4 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["rfind"] = TrSharpFunc.FromFunc("rfind", __bind_rfind);
+            static  Traffy.Objects.TrObject __bind_rindex(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        System.Int32 _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("start"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                        else
+                            _2 = 0;
+                        System.Int32 _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                        else
+                            _3 = -1;
+                        return Box.Apply(_0.rindex(_1,start : _2,end : _3));
+                    }
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        System.Int32 _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                        else
+                            _3 = -1;
+                        return Box.Apply(_0.rindex(_1,_2,end : _3));
+                    }
+                    case 4:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        var _3 = Unbox.Apply(THint<System.Int32>.Unique,__args[3]);
+                        return Box.Apply(_0.rindex(_1,_2,_3));
+                    }
+                    default:
+                        throw new ValueError("rindex() requires 2 to 4 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["rindex"] = TrSharpFunc.FromFunc("rindex", __bind_rindex);
+            static  Traffy.Objects.TrObject __bind_partition(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        return Box.Apply(_0.partition(_1));
+                    }
+                    default:
+                        throw new ValueError("partition() requires 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["partition"] = TrSharpFunc.FromFunc("partition", __bind_partition);
+            static  Traffy.Objects.TrObject __bind_rpartition(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        return Box.Apply(_0.rpartition(_1));
+                    }
+                    default:
+                        throw new ValueError("rpartition() requires 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["rpartition"] = TrSharpFunc.FromFunc("rpartition", __bind_rpartition);
+            static  Traffy.Objects.TrObject __bind_rsplit(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        System.Collections.Generic.IList<System.Byte> _1;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("sep"),out var __keyword__1)))
+                            _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__keyword__1);
+                        else
+                            _1 = null;
+                        System.Int32 _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("maxsplit"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                        else
+                            _2 = -1;
+                        return Box.Apply(_0.rsplit(sep : _1,maxsplit : _2));
+                    }
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        System.Int32 _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("maxsplit"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                        else
+                            _2 = -1;
+                        return Box.Apply(_0.rsplit(_1,maxsplit : _2));
+                    }
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        return Box.Apply(_0.rsplit(_1,_2));
+                    }
+                    default:
+                        throw new ValueError("rsplit() requires 1 to 3 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["rsplit"] = TrSharpFunc.FromFunc("rsplit", __bind_rsplit);
+            static  Traffy.Objects.TrObject __bind_rstrip(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        System.Collections.Generic.IList<System.Byte> _1;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("chars"),out var __keyword__1)))
+                            _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__keyword__1);
+                        else
+                            _1 = null;
+                        return Box.Apply(_0.rstrip(chars : _1));
+                    }
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        return Box.Apply(_0.rstrip(_1));
+                    }
+                    default:
+                        throw new ValueError("rstrip() requires 1 to 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["rstrip"] = TrSharpFunc.FromFunc("rstrip", __bind_rstrip);
+            static  Traffy.Objects.TrObject __bind_split(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        System.Collections.Generic.IList<System.Byte> _1;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("sep"),out var __keyword__1)))
+                            _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__keyword__1);
+                        else
+                            _1 = null;
+                        System.Int32 _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("maxsplit"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                        else
+                            _2 = -1;
+                        return Box.Apply(_0.split(sep : _1,maxsplit : _2));
+                    }
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        System.Int32 _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("maxsplit"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                        else
+                            _2 = -1;
+                        return Box.Apply(_0.split(_1,maxsplit : _2));
+                    }
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        return Box.Apply(_0.split(_1,_2));
+                    }
+                    default:
+                        throw new ValueError("split() requires 1 to 3 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["split"] = TrSharpFunc.FromFunc("split", __bind_split);
+            static  Traffy.Objects.TrObject __bind_splitlines(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        bool _1;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("keepends"),out var __keyword__1)))
+                            _1 = Unbox.Apply(THint<bool>.Unique,__keyword__1);
+                        else
+                            _1 = false;
+                        return Box.Apply(_0.splitlines(keepends : _1));
+                    }
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<bool>.Unique,__args[1]);
+                        return Box.Apply(_0.splitlines(_1));
+                    }
+                    default:
+                        throw new ValueError("splitlines() requires 1 to 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["splitlines"] = TrSharpFunc.FromFunc("splitlines", __bind_splitlines);
+            static  Traffy.Objects.TrObject __bind_startswith(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                        System.Int32 _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("start"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__2);
+                        else
+                            _2 = 0;
+                        System.Int32 _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                        else
+                            _3 = -1;
+                        return Box.Apply(_0.startswith(_1,start : _2,end : _3));
+                    }
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        System.Int32 _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("end"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<System.Int32>.Unique,__keyword__3);
+                        else
+                            _3 = -1;
+                        return Box.Apply(_0.startswith(_1,_2,end : _3));
+                    }
+                    case 4:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Int32>.Unique,__args[2]);
+                        var _3 = Unbox.Apply(THint<System.Int32>.Unique,__args[3]);
+                        return Box.Apply(_0.startswith(_1,_2,_3));
+                    }
+                    default:
+                        throw new ValueError("startswith() requires 2 to 4 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["startswith"] = TrSharpFunc.FromFunc("startswith", __bind_startswith);
+            static  Traffy.Objects.TrObject __bind_strip(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        System.Collections.Generic.IList<System.Byte> _1;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("chars"),out var __keyword__1)))
+                            _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__keyword__1);
+                        else
+                            _1 = null;
+                        return Box.Apply(_0.strip(chars : _1));
+                    }
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[1]);
+                        return Box.Apply(_0.strip(_1));
+                    }
+                    default:
+                        throw new ValueError("strip() requires 1 to 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["strip"] = TrSharpFunc.FromFunc("strip", __bind_strip);
+            static  Traffy.Objects.TrObject __bind_swapcase(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        return Box.Apply(_0.swapcase());
+                    }
+                    default:
+                        throw new ValueError("swapcase() requires 1 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["swapcase"] = TrSharpFunc.FromFunc("swapcase", __bind_swapcase);
+            static  Traffy.Objects.TrObject __bind_title(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        return Box.Apply(_0.title());
+                    }
+                    default:
+                        throw new ValueError("title() requires 1 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["title"] = TrSharpFunc.FromFunc("title", __bind_title);
+            static  Traffy.Objects.TrObject __bind_translate(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Byte[]>.Unique,__args[1]);
+                        System.Collections.Generic.IList<System.Byte> _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("delete"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__keyword__2);
+                        else
+                            _2 = null;
+                        return Box.Apply(_0.translate(_1,delete : _2));
+                    }
+                    case 3:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Byte[]>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__args[2]);
+                        return Box.Apply(_0.translate(_1,_2));
+                    }
+                    default:
+                        throw new ValueError("translate() requires 2 to 3 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["translate"] = TrSharpFunc.FromFunc("translate", __bind_translate);
+            static  Traffy.Objects.TrObject __bind_zfill(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Int32>.Unique,__args[1]);
+                        return Box.Apply(_0.zfill(_1));
+                    }
+                    default:
+                        throw new ValueError("zfill() requires 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["zfill"] = TrSharpFunc.FromFunc("zfill", __bind_zfill);
         }
     }
 }

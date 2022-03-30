@@ -447,7 +447,7 @@ namespace IronPython.Runtime.Operations {
             return ret;
         }
 
-        internal static int ReverseFind(this IList<byte>/*!*/ bytes, IList<byte>/*!*/ sub, int? start, int? end) {
+        internal static int ReverseFind(this IList<byte>/*!*/ bytes, IList<byte>/*!*/ sub, int start, int end) {
             if (sub == null) {
                 throw PythonOps.TypeError("expected string, got NoneType");
             } else if (start > bytes.Count) {
