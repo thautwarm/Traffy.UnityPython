@@ -20,6 +20,7 @@ namespace Traffy.Objects
     public partial class TrTuple : TrObject
     {
         public FArray<TrObject> elts;
+        internal int s_ContentCount => elts.Count;
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
@@ -200,7 +201,7 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public TrObject index(TrObject x, int start = 0, int end = -1)
+        public TrObject index(TrObject x, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
             if (end == -1)
                 end = elts.Count;

@@ -93,54 +93,7 @@ namespace Traffy.Objects
 
         public (int start, int stop, int step) _indices(int count)
         {
-            var start = this._start;
-            var stop = this._stop;
-            var step = this._step;
-            int istart, istop, istep;
-            if (step is TrInt istep_o)
-            {
-                istep = unchecked((int)istep_o.value);
-                if (istep == 0)
-                    throw new ValueError("slice step cannot be zero");
-            }
-            else
-            {
-                if (!step.IsNone())
-                    throw new TypeError($"slice step must be an integer, not '{step.Class.Name}'");
-                istep = 1;
-            }
-            if (start is TrInt istart_o)
-            {
-                istart = unchecked((int)istart_o.value);
-                if (istart < 0)
-                {
-                    istart = count + istart;
-                }
-            }
-            else
-            {
-                if (!start.IsNone())
-                    throw new TypeError($"slice start must be an integer, not '{start.Class.Name}'");
-                istart = istep > 0 ? 0 : count - 1;
-            }
-
-            if (stop is TrInt istop_o)
-            {
-                istop = unchecked((int)istop_o.value);
-                if (istop < 0)
-                {
-                    istop = count + istop;
-                }
-            }
-            else
-            {
-                if (!stop.IsNone())
-                    throw new TypeError($"slice stop must be an integer, not '{stop.Class.Name}'");
-                istop = istep > 0 ? count : -1;
-            }
-            istop = Math.Max(-1, Math.Min(istop, count));
-            istart = Math.Max(Math.Min(istart, count - 1), 0);
-            return (istart, istop, istep);
+            return Traffy.Compatibility.IronPython.PythonOps.FixSlice(count, start, stop, step);
         }
         public (int start, int step, int nstep) resolveSlice(int count)
         {

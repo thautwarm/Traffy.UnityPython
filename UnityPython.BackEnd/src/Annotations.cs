@@ -17,6 +17,15 @@ namespace Traffy.Annotations
             public bool Only;
             public string Name;
         }
+
+        public class SelfProp: Attribute
+        {
+            public string Name;
+            public SelfProp(string name)
+            {
+                Name = name;
+            }
+        }
         public string Name;
     }
 

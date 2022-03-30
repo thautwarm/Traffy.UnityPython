@@ -6,7 +6,7 @@
 
 
 print(b"q23".count(ord('q')))
-print(b"q2323".count(bytearray(b'23')))
+print("should be 2", b"q2323".count(bytearray(b'23')))
 
 x = "2232211222"
 print(x.count('22'))

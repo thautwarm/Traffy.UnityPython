@@ -136,7 +136,8 @@ namespace Traffy.Objects
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrList>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        return Box.Apply(_0.append(_1));
+                        _0.append(_1);
+                        return Traffy.MK.None();
                     }
                     default:
                         throw new ValueError("append() requires 2 positional argument(s), got " + __args.Count);
@@ -151,7 +152,8 @@ namespace Traffy.Objects
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrList>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        return Box.Apply(_0.extend(_1));
+                        _0.extend(_1);
+                        return Traffy.MK.None();
                     }
                     default:
                         throw new ValueError("extend() requires 2 positional argument(s), got " + __args.Count);
@@ -167,7 +169,8 @@ namespace Traffy.Objects
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrList>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[2]);
-                        return Box.Apply(_0.insert(_1,_2));
+                        _0.insert(_1,_2);
+                        return Traffy.MK.None();
                     }
                     default:
                         throw new ValueError("insert() requires 3 positional argument(s), got " + __args.Count);
@@ -182,7 +185,8 @@ namespace Traffy.Objects
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrList>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        return Box.Apply(_0.remove(_1));
+                        _0.remove(_1);
+                        return Traffy.MK.None();
                     }
                     default:
                         throw new ValueError("remove() requires 2 positional argument(s), got " + __args.Count);
@@ -221,7 +225,8 @@ namespace Traffy.Objects
                     case 1:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrList>.Unique,__args[0]);
-                        return Box.Apply(_0.clear());
+                        _0.clear();
+                        return Traffy.MK.None();
                     }
                     default:
                         throw new ValueError("clear() requires 1 positional argument(s), got " + __args.Count);
@@ -235,7 +240,8 @@ namespace Traffy.Objects
                     case 1:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrList>.Unique,__args[0]);
-                        return Box.Apply(_0.reverse());
+                        _0.reverse();
+                        return Traffy.MK.None();
                     }
                     default:
                         throw new ValueError("reverse() requires 1 positional argument(s), got " + __args.Count);

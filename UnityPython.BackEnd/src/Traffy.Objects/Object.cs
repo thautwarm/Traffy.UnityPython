@@ -9,11 +9,6 @@ namespace Traffy.Objects
 
     public static class ExtTrObject
     {
-        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptionsCompat.Best)]
-        public static TrObject AsObject<T>(this T self) where T : TrObject
-        {
-            return self;
-        }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static bool IsNone(this TrObject self) => object.ReferenceEquals(self, TrNone.Unique);

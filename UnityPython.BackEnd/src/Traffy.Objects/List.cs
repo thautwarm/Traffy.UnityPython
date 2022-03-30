@@ -12,6 +12,7 @@ namespace Traffy.Objects
     public sealed partial class TrList : TrObject, IComparable<TrObject>
     {
         public List<TrObject> container;
+        internal int s_ContentCount => container.Count;
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
@@ -70,9 +71,7 @@ namespace Traffy.Objects
         {
             if (a is TrList lst)
             {
-                var xs = container.Copy();
-                xs.AddRange(lst.container);
-                return MK.List(xs);
+                return MK.List(IronPython.Runtime.Operations.ListOps.Add(container, lst.container));
             }
             throw new TypeError($"unsupported operand type(s) for +: '{CLASS.Name}' and '{a.Class.Name}'");
         }
@@ -81,12 +80,7 @@ namespace Traffy.Objects
         {
             if (a is TrInt integer)
             {
-                var xs = RTS.barelist_create();
-                for (int i = 0; i < integer.value; i++)
-                {
-                    xs.AddRange(container);
-                }
-                return MK.List(xs);
+                return MK.List(IronPython.Runtime.Operations.ListOps.Multiply(container, checked((int) integer.value)));
             }
             throw new TypeError($"unsupported operand type(s) for *: '{CLASS.Name}' and '{a.Class.Name}'");
         }
@@ -94,7 +88,7 @@ namespace Traffy.Objects
 
         public override string __repr__() => "[" + String.Join(",", container.Select((i) => i.__str__())) + "]";
 
-        public override string __str__() => this.AsObject().__repr__();
+        public override string __str__() => __repr__();
 
         #region MutableSequence
 
@@ -133,22 +127,16 @@ namespace Traffy.Objects
             {
                 case TrInt ith:
                     {
-                        var i = unchecked((int)ith.value);
-                        if (i < 0)
-                            i += container.Count;
-                        if (i < 0 || i >= container.Count)
-                            throw new IndexError($"list index out of range");
-                        return container[i];
+                        var i = checked((int)ith.value);
+                        if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, container.Count))
+                        {
+                            return container[i];
+                        }
+                        throw new IndexError($"list index out of range");
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.resolveSlice(container.Count);
-                        var newcontainer = RTS.barelist_create();
-                        for (int i = 0, x = istart; i < nstep; i++, x += istep)
-                        {
-                            RTS.barelist_add(newcontainer, container[x]);
-                        }
-                        return MK.List(newcontainer);
+                        return MK.List(IronPython.Runtime.Operations.ListOps.GetSlice(container, slice));
                     }
                 default:
                     throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");
@@ -161,47 +149,38 @@ namespace Traffy.Objects
             {
                 case TrInt oitem:
                     {
-                        var i = unchecked((int)oitem.value);
-                        if (i < 0)
-                            i += container.Count;
-                        if (i < 0 || i >= container.Count)
-                            throw new IndexError($"list assignment index out of range");
-                        container[i] = value;
-                        return;
+                        var i = checked((int)oitem.value);
+                        if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, container.Count))
+                        {
+                            container[i] = value;
+                            return;
+                        }
+                        throw new IndexError($"list assignment index out of range");
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.resolveSlice(container.Count);
-                        if (istep == 1 && istart == 0 && nstep == container.Count)
+                        List<TrObject> rhs;
+                        if (value is TrList lst)
                         {
-                            container.Clear();
-                            var itr = value.__iter__();
-                            while (itr.MoveNext())
-                            {
-                                RTS.barelist_add(container, itr.Current);
-                            }
-                            return;
+                            rhs = lst.container;
                         }
                         else
                         {
-                            var seq = value.__iter__().ToList();
-                            if (seq.Count != nstep)
-                                throw new ValueError($"attempt to assign sequence of size {seq.Count} to extended slice of size {nstep}");
-                            for (int x = istart, i = 0; i < nstep; i++, x += istep)
-                            {
-                                container[x] = seq[i];
-                            }
-                            return;
+                            rhs = RTS.object_to_list(value);
                         }
+                        IronPython.Runtime.Operations.ListOps.SetItem(
+                            container, slice, rhs
+                        );
+                        return;
                     }
                 default:
-                    throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");
+                    throw new TypeError($"list indices must be integers or slices, not '{item.Class.Name}'");
             }
         }
 
 
         [PyBind]
-        public TrObject index(TrObject x, int start = 0, int end = -1, [PyBind.Keyword(Only = true)] bool noraise = false)
+        public TrObject index(TrObject x, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0, [PyBind.Keyword(Only = true)] bool noraise = false)
         {
             var index = container.Inline().IndexEltGenericSimple<FList<TrObject>, TrObject>(x, start, end);
             if (index == -1 && !noraise)
@@ -210,7 +189,9 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public long count(TrObject x, int start = 0, int end = -1)
+        public long count(
+            TrObject x, int start = 0,
+            [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
             return container.Inline().CountGenericSimple<FList<TrObject>, TrObject>(x, start, end);
         }
@@ -220,18 +201,19 @@ namespace Traffy.Objects
 
         public override void __delitem__(Traffy.Objects.TrObject item)
         {
-            DeleteItemsSupportSlice<FList<TrObject>, TrObject>(container, item, CLASS);
+            // use List instead of FList here, because delete functions check it
+            DeleteItemsSupportSlice(container, item, CLASS);
         }
 
         [PyBind]
-        public TrObject append(TrObject elt)
+        public void append(TrObject elt)
         {
             container.Add(elt);
-            return MK.None();
+            return;
         }
 
         [PyBind]
-        public TrObject extend(TrObject other)
+        public void extend(TrObject other)
         {
             if (other is TrList lst)
             {
@@ -245,38 +227,35 @@ namespace Traffy.Objects
                     container.Add(itr.Current);
                 }
             }
-            return MK.None();
+            return;
         }
 
         [PyBind]
-        public TrObject insert(TrObject index, TrObject elt)
+        public void insert(TrObject index, TrObject elt)
         {
             if (index is TrInt ith)
             {
-                var i = unchecked((int)ith.value);
-                if (i < 0)
-                    i += container.Count;
-                if (i < 0 || i > container.Count)
-                    throw new IndexError($"list assignment index out of range");
-                container.Insert(i, elt);
+                int i = checked((int)ith.value);
+                if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, container.Count))
+                {
+                    container.Insert(i, elt);
+                    return;
+                }
+                throw new IndexError($"list assignment index out of range");
             }
             else
             {
                 throw new TypeError($"list indices must be integers, not '{index.Class.Name}'");
             }
-
-            // read file 'a.txt';
-            return MK.None();
         }
 
         [PyBind]
-        public TrObject remove(TrObject value)
+        public void remove(TrObject value)
         {
             var index = container.IndexOf(value);
             if (index == -1)
                 throw new ValueError($"list.remove(x): x not in list");
             container.RemoveAt(index);
-            return MK.None();
         }
 
         [PyBind]
@@ -292,14 +271,14 @@ namespace Traffy.Objects
             }
             else if (index is TrInt ith)
             {
-                var i = unchecked((int)ith.value);
-                if (i < 0)
-                    i += container.Count;
-                if (i < 0 || i >= container.Count)
-                    throw new IndexError($"list assignment index out of range");
-                var ret = container[i];
-                container.RemoveAt(i);
-                return ret;
+                var i = checked((int)ith.value);
+                if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, container.Count))
+                {
+                    var ret = container[i];
+                    container.RemoveAt(i);
+                    return ret;
+                }
+                throw new IndexError($"list assignment index out of range");
             }
             else
             {
@@ -309,17 +288,15 @@ namespace Traffy.Objects
 
 
         [PyBind]
-        public TrObject clear()
+        public void clear()
         {
             container.Clear();
-            return MK.None();
         }
 
         [PyBind]
-        public TrObject reverse()
+        public void reverse()
         {
             container.Reverse();
-            return MK.None();
         }
 
 
@@ -384,10 +361,10 @@ namespace Traffy.Objects
         #endregion
 
         [PyBind]
-        public TrObject find(TrObject x, int start = 0, int end = -1)
+        public TrObject find(TrObject x, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
-            if (end == -1)
-                end = container.Count;
+            start = Traffy.Compatibility.IronPython.PythonOps.FixSliceIndex(start, container.Count);
+            end = Traffy.Compatibility.IronPython.PythonOps.FixSliceIndex(end, container.Count);
             var index = container.IndexOf(x, start, end - start);
             return MK.Int(index);
         }

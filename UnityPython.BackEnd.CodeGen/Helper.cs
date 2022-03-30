@@ -79,7 +79,11 @@ public static class Helper
 
             CSStmt elsedo = DBNull.Value == ps[i].Default
                 ? new SError(CSExpr.OfConst($"Missing keyword-only argument {ps[i].Name}"))
-                : new SAssign(new EId(variable(i)), CSExpr.OfConst(ps[i].Default));
+                : new SAssign(
+                    new EId(variable(i)),
+                    ps[i].Default is PyBind.SelfProp selfProp
+                    ? new EId(variable(0))[selfProp.Name]
+                    : CSExpr.OfConst(ps[i].Default));
             yield return new SIf(
                 PYKWARGS.IsNotNull().And(
                     PYKWARGS["TryGetValue"].Call(strToPy(ps[i].Name), new EVarOut("__keyword_" + variable(i)))),

@@ -1,7 +1,13 @@
+/* ================================================================================================
+// Modifications Copyright 3/30/2022 thautwarm(Taine Zhao)
+// 1. Uses of 'object' are refactored to fit 'Traffy.Objects.TrObject';
+// 2. The parameter `ctor` used by some ops has type 'Func<IList<byte>, TrObject>'.
+// ================================================================================================
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the Apache 2.0 License.
 // See the LICENSE file in the project root for more information.
-
+// ================================================================================================
+*/
 
 using System;
 using System.Collections;
@@ -481,7 +487,7 @@ namespace IronPython.Runtime.Operations {
             Traffy.Objects.TrList temp = null, ret = null;
             temp = ((IList<byte>)ctor(reversed).Native).Split(sep, maxsplit, x => ctor(x));
             temp.container.Reverse();
-            int resultlen = ((Traffy.Objects.TrInt)temp.__len__()).ToIntUnchecked();
+            int resultlen = ((Traffy.Objects.TrInt)temp.__len__()).ToIntChecked();
             if (resultlen != 0) {
                 ret = PythonOps.MakeEmptyList(resultlen);
                 foreach (var s in temp.container)
@@ -1238,149 +1244,5 @@ namespace IronPython.Runtime.Operations {
             }
             return res;
         }
-
-        #region Conversion and Enumeration
-
-        /* [PythonType("bytes_iterator")] */
-        private class PythonBytesEnumerator<T> : IEnumerable, IEnumerator<T> {
-            private readonly IList<byte>/*!*/ _bytes;
-            private readonly Func<byte, T>/*!*/ _conversion;
-            private int _index;
-
-            public PythonBytesEnumerator(IList<byte> bytes, Func<byte, T> conversion) {
-                ContractUtils.RequiresNotNull(bytes, "bytes");
-                ContractUtils.RequiresNotNull(conversion, "conversion");
-
-                _bytes = bytes;
-                _conversion = conversion;
-                _index = -1;
-            }
-
-            #region IEnumerator<T> Members
-
-            public T Current {
-                get {
-                    if (_index < 0) {
-                        throw PythonOps.SystemError("Enumeration has not started. Call MoveNext.");
-                    } else if (_index >= _bytes.Count) {
-                        throw PythonOps.SystemError("Enumeration already finished.");
-                    }
-                    return _conversion(_bytes[_index]);
-                }
-            }
-
-            #endregion
-
-            #region IDisposable Members
-
-            public void Dispose() { }
-
-            #endregion
-
-            #region IEnumerator Members
-
-            object IEnumerator.Current {
-                get {
-                    return ((IEnumerator<T>)this).Current;
-                }
-            }
-
-            public bool MoveNext() {
-                if (_index >= _bytes.Count) {
-                    return false;
-                }
-                _index++;
-                return _index != _bytes.Count;
-            }
-
-            public void Reset() {
-                _index = -1;
-            }
-
-            #endregion
-
-            #region IEnumerable Members
-
-            public IEnumerator GetEnumerator() {
-                return this;
-            }
-
-            #endregion
-        }
-
-        internal static IEnumerable BytesEnumerable(IList<byte> bytes) {
-            return new PythonBytesEnumerator<Traffy.Objects.TrBytes>(bytes, b => Traffy.MK.Bytes(new byte[] { b }));
-        }
-
-        internal static IEnumerable BytesIntEnumerable(IList<byte> bytes) {
-            return new PythonBytesEnumerator<int>(bytes, b => (int)b);
-        }
-
-        internal static IEnumerator<Traffy.Objects.TrBytes> BytesEnumerator(IList<byte> bytes) {
-            return new PythonBytesEnumerator<Traffy.Objects.TrBytes>(bytes, b => Traffy.MK.Bytes(new byte[] { b }));
-        }
-
-        internal static IEnumerator<int> BytesIntEnumerator(IList<byte> bytes) {
-            return new PythonBytesEnumerator<int>(bytes, b => (int)b);
-        }
-
-        #endregion
     }
-
-    // [PythonHidden]
-    // internal class IListOfBytesBufferProtocol : IBufferProtocol {
-    //     private static readonly PythonTuple strides = PythonTuple.MakeTuple(1);
-    //     private IList<byte> _wrapped;
-
-    //     public IListOfBytesBufferProtocol(IList<byte> wrapped) {
-    //         _wrapped = wrapped;
-    //     }
-
-    //     int IBufferProtocol.ItemCount => _wrapped.Count;
-
-    //     string IBufferProtocol.Format => "B";
-
-    //     BigInteger IBufferProtocol.ItemSize => 1;
-
-    //     BigInteger IBufferProtocol.NumberDimensions => 1;
-
-    //     bool IBufferProtocol.ReadOnly => true;
-
-    //     PythonTuple IBufferProtocol.Strides => strides;
-
-    //     object IBufferProtocol.SubOffsets => null;
-
-    //     Bytes IBufferProtocol.GetItem(int index) {
-    //         lock (this) {
-    //             return Bytes.Make(new byte[] { (byte)_wrapped[PythonOps.FixIndex(index, _wrapped.Count)] });
-    //         }
-    //     }
-
-    //     IList<BigInteger> IBufferProtocol.GetShape(int start, int? end) {
-    //         if (end != null) {
-    //             return new[] { (BigInteger)end - start };
-    //         }
-    //         return new[] { (BigInteger)_wrapped.Count - start };
-    //     }
-
-    //     void IBufferProtocol.SetItem(int index, object value) {
-    //         throw PythonOps.TypeError("cannot modify read-only memory");
-    //     }
-
-    //     void IBufferProtocol.SetSlice(Slice index, object value) {
-    //         throw PythonOps.TypeError("cannot modify read-only memory");
-    //     }
-
-    //     Bytes IBufferProtocol.ToBytes(int start, int? end) {
-    //         if (start == 0 && end == null) {
-    //             return new Bytes(_wrapped);
-    //         }
-
-    //         return new Bytes(_wrapped.Slice(new Slice(start, end)));
-    //     }
-
-    //     List IBufferProtocol.ToList(int start, int? end) {
-    //         return new List(_wrapped.Slice(new Slice(start, end)));
-    //     }
-    // }
 }

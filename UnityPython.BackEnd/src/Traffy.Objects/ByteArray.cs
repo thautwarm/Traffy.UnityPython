@@ -14,6 +14,7 @@ namespace Traffy.Objects
     [PyInherit(typeof(Traffy.Interfaces.Comparable), typeof(Traffy.Interfaces.Sequence))]
     public sealed partial class TrByteArray : TrObject
     {
+        internal int s_ContentCount => contents.Count;
         public FList<byte> contents;
         public override object Native => contents.UnList;
         public override string __repr__() => contents.Select(x => $"\\x{x:X}").Prepend("bytearray(b'").Append("')").By(String.Concat);
@@ -95,7 +96,7 @@ namespace Traffy.Objects
             {
                 var result = new TrByteArray();
                 var xs = contents.UnList;
-                result.contents = xs.Repeat(unchecked((int)i.value));
+                result.contents = xs.Repeat(checked((int)i.value));
                 return result;
             }
             else
@@ -228,11 +229,13 @@ namespace Traffy.Objects
                 }
                 case TrBytes b:
                 {
-                    return contents.IndexSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents) != -1;
+                    return IronPython.Runtime.Operations.IListOfByteOps.IndexOf(contents.UnList, b.contents.UnList, 0, contents.Count) != -1;
+                    // return contents.IndexSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents) != -1;
                 }
                 case TrByteArray b:
                 {
-                    return contents.IndexSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents) != -1;
+                    return IronPython.Runtime.Operations.IListOfByteOps.IndexOf(contents.UnList, b.contents.UnList, 0, contents.Count) != -1;
+                    // return contents.IndexSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents) != -1;
                 }
                 default:
                     throw new TypeError($"a bytes-like object is required, not '{a.Class.Name}'");
@@ -262,22 +265,16 @@ namespace Traffy.Objects
             {
                 case TrInt ith:
                 {
-                    var i = unchecked((int)ith.value);
-                    if (i < 0)
-                        i += contents.Count;
-                    if (i < 0 || i >= contents.Count)
-                        throw new IndexError($"{Class.Name} index out of range");
-                    return MK.Int(contents[i]);
+                    var i = checked((int)ith.value);
+                    if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, contents.Count))
+                    {
+                        return MK.Int(contents[i]);
+                    }
+                    throw new IndexError($"{Class.Name} index out of range");
                 }
                 case TrSlice slice:
                 {
-                    var (istart, istep, nstep) = slice.resolveSlice(contents.Count);
-                    var newcontainer = new List<byte>();
-                    for (int i = 0, x = istart; i < nstep; i++, x += istep)
-                    {
-                        newcontainer.Add(contents[x]);
-                    }
-                    return MK.ByteArray(newcontainer);
+                    return MK.ByteArray(IronPython.Runtime.Operations.ListOps.GetItem(contents.UnList, slice));
                 }
                 default:
                     throw new TypeError($"{Class.Name} indices must be integers, not '{item.Class.Name}'");
@@ -290,49 +287,28 @@ namespace Traffy.Objects
             {
                 case TrInt oitem:
                 {
-                    var i = unchecked((int)oitem.value);
-                    if (i < 0)
-                        i += contents.Count;
-                    if (i < 0 || i >= contents.Count)
-                        throw new IndexError($"{Class.Name} assignment index out of range");
-                    contents[i] = CheckByte(value);
-                    return;
+                    var i = checked((int)oitem.value);
+                    if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, contents.Count))
+                    {
+                        contents[i] = CheckByte(value);
+                        return;
+                    }
+                    throw new IndexError($"{Class.Name} assignment index out of range");
                 }
                 case TrSlice slice:
                 {
-                    var (istart, istep, nstep) = slice.resolveSlice(contents.Count);
-                    if (istep == 1 && istart == 0 && nstep == contents.Count)
+                    switch(value)
                     {
-                        contents.Clear();
-
-                        switch (value)
-                        {
-                            case TrBytes b:
-                                contents.UnList.AddRange(b.contents);
-                                return;
-                            case TrByteArray b:
-                                contents.UnList.AddRange(b.contents);
-                                return;
-                            default:
-                                var itr = value.__iter__();
-                                while (itr.MoveNext())
-                                {
-
-                                    contents.UnList.Add(CheckByte(itr.Current));
-                                }
-                                return;
-                        }
-                    }
-                    else
-                    {
-                        var seq = value.__iter__().ToList();
-                        if (seq.Count != nstep)
-                            throw new ValueError($"attempt to assign sequence of size {seq.Count} to extended slice of size {nstep}");
-                        for (int x = istart, i = 0; i < nstep; i++, x += istep)
-                        {
-                            contents[x] = CheckByte(seq[i]);
-                        }
-                        return;
+                        case TrBytes b:
+                            IronPython.Runtime.Operations.ListOps.SetItem(contents.UnList, slice, b.contents);
+                            return;
+                        case TrByteArray b:
+                            IronPython.Runtime.Operations.ListOps.SetItem(contents.UnList, slice, b.contents);
+                            return;
+                        default:
+                            var lst = BytesUtils.ObjectToByteArray(value);
+                            IronPython.Runtime.Operations.ListOps.SetItem(contents.UnList, slice, lst);
+                            return;
                     }
                 }
                 default:
@@ -342,19 +318,26 @@ namespace Traffy.Objects
 
 
         [PyBind]
-        public TrObject index(TrObject x, int start = 0, int end = -1, [PyBind.Keyword(Only = true)] bool noraise = false)
+        public TrObject index(
+            TrObject x, int start = 0,
+            [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0,
+            [PyBind.Keyword(Only = true)] bool noraise = false)
         {
+            start = Traffy.Compatibility.IronPython.PythonOps.FixSliceIndex(start, contents.Count);
+            end = Traffy.Compatibility.IronPython.PythonOps.FixSliceIndex(end, contents.Count);
             int index;
             switch (x)
             {
                 case TrByteArray b:
                 {
-                    index = contents.IndexSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents, start, end);
+                    index = IronPython.Runtime.Operations.IListOfByteOps.IndexOf(contents.UnList, b.contents.UnList, 0, contents.Count);
+                    // index = contents.IndexSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents, start, end);
                     break;
                 }
                 case TrBytes b:
                 {
-                    index = contents.IndexSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents, start, end);
+                    index = IronPython.Runtime.Operations.IListOfByteOps.IndexOf(contents.UnList, b.contents.UnList, 0, contents.Count);
+                    // index = contents.IndexSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents, start, end);
                     break;
                 }
                 case TrInt b:
@@ -372,17 +355,21 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public long count(TrObject buffer, int start = 0, int end = -1)
+        public long count(
+            TrObject buffer, int start = 0,
+            [PyBind.SelfProp(nameof(s_ContentCount))] int end = /* pseudo */ 0)
         {
             switch (buffer)
             {
                 case TrByteArray b:
                 {
-                    return contents.CountSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents, start, end);
+                    return IronPython.Runtime.Operations.IListOfByteOps.CountOf(contents.UnList, b.contents.UnList, start, end);
+                    // return contents.CountSubSeqGenericSimple<FList<byte>, FList<byte>, byte>(b.contents, start, end);
                 }
                 case TrBytes b:
                 {
-                    return contents.CountSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents, start, end);
+                    return IronPython.Runtime.Operations.IListOfByteOps.CountOf(contents.UnList, b.contents.UnList, start, end);
+                    // return contents.CountSubSeqGenericSimple<FList<byte>, FArray<byte>, byte>(b.contents, start, end);
                 }
                 case TrInt b:
                 {
@@ -398,7 +385,8 @@ namespace Traffy.Objects
 
         public override void __delitem__(Traffy.Objects.TrObject item)
         {
-            DeleteItemsSupportSlice<FList<byte>, byte>(contents, item, Class);
+            // use List instead of FList here, because delete functions check it
+            DeleteItemsSupportSlice(contents.UnList, item, Class);
         }
 
         [PyBind]
@@ -440,12 +428,13 @@ namespace Traffy.Objects
         {
             if (index is TrInt ith)
             {
-                var i = unchecked((int)ith.value);
-                if (i < 0)
-                    i += contents.Count;
-                if (i < 0 || i > contents.Count)
-                    throw new IndexError($"{Class.Name} assignment index out of range");
-                contents.Insert(i, CheckByte(elt));
+                var i = checked((int)ith.value);
+                if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, contents.Count))
+                {
+                    contents.Insert(i, CheckByte(elt));
+                    return;
+                }
+                throw new IndexError($"{Class.Name} assignment index out of range");
             }
             else
             {
@@ -475,14 +464,14 @@ namespace Traffy.Objects
             }
             else if (index is TrInt ith)
             {
-                var i = unchecked((int)ith.value);
-                if (i < 0)
-                    i += contents.Count;
-                if (i < 0 || i >= contents.Count)
-                    throw new IndexError($"{Class.Name} assignment index out of range");
-                var ret = contents[i];
-                contents.RemoveAt(i);
-                return MK.Int(ret);
+                var i = checked((int)ith.value);
+                if (Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, contents.Count))
+                {
+                    var ret = contents[i];
+                    contents.RemoveAt(i);
+                    return MK.Int(ret);
+                }
+                throw new IndexError($"{Class.Name} assignment index out of range");
             }
             else
             {
@@ -611,7 +600,7 @@ namespace Traffy.Objects
             return MK.ByteArray(IronPython.Runtime.Operations.IListOfByteOps.ExpandTabs(contents.UnList, tabsize));
         }
         [PyBind]
-        public int find(IList<byte> sub, int start = 0, int end = -1)
+        public int find(IList<byte> sub, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
             return IronPython.Runtime.Operations.IListOfByteOps.Find(
                 contents.UnList,
@@ -636,68 +625,24 @@ namespace Traffy.Objects
         [PyBind]
         public TrObject hex(TrObject sep = null, int bytes_per_sep = 0)
         {
-            var s = new StringBuilder();
-            if (sep != null)
-            {
-                if (bytes_per_sep == 0)
-                {
-                    for (int i = 0; i < contents.Count; i++)
-                    {
-                        if (i != 0)
-                            s.Append(sep.__str__());
-                        s.Append(contents[i].ToString("x2"));
-                    }
-
-                }
-                else if (bytes_per_sep > 0)
-                {
-                    for (int i = 0; i < contents.Count; i++)
-                    {
-                        if (((i + contents.Count) % bytes_per_sep == 0) && (i != 0))
-                        {
-                            s.Append(sep.__str__());
-                        }
-                        s.Append(contents[i].ToString("x2"));
-                    }
-                }
-                else
-                {
-                    bytes_per_sep = -bytes_per_sep;
-                    for (int i = 0; i < contents.Count; i++)
-                    {
-                        if ((i % bytes_per_sep == 0) && (i != 0))
-                        {
-                            s.Append(sep.__str__());
-                        }
-                        s.Append(contents[i].ToString("x2"));
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < contents.Count; i++)
-                {
-                    s.Append(contents[i].ToString("x2"));
-                }
-            }
-            return MK.Str(s.ToString());
+            return MK.Str(BytesUtils.Hex(contents, sep, bytes_per_sep));
         }
 
         [PyBind]
-        public bool endswith(TrObject suffix, int start = 0, int end = -1)
+        public bool endswith(TrObject suffix, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
 
-            static bool compute(List<byte> seq, IList<byte> sub, int start, int end)
+            static bool compute(List<byte> seq, IList<byte> sub, int start, int end, int count)
             {
                 if (start == 0)
                 {
-                    if (end == -1)
+                    if (end == count)
                     {
                         return IronPython.Runtime.Operations.IListOfByteOps
                             .EndsWith(seq, sub);
                     }
                 }
-                else if (end == -1)
+                else if (end == count)
                 {
                     return IronPython.Runtime.Operations.IListOfByteOps
                         .EndsWith(seq, sub, start);
@@ -711,11 +656,11 @@ namespace Traffy.Objects
                 {
                     if (start == 0)
                     {
-                        if (end == -1)
+                        if (end == s_ContentCount)
                             return IronPython.Runtime.Operations.IListOfByteOps
                             .EndsWith(contents.UnList, tuple);
                     }
-                    else if (end == -1)
+                    else if (end == s_ContentCount)
                     {
                         return IronPython.Runtime.Operations.IListOfByteOps
                             .EndsWith(contents.UnList, tuple, start);
@@ -724,9 +669,9 @@ namespace Traffy.Objects
                             .EndsWith(contents.UnList, tuple, start, end);
                 }
                 case TrByteArray b:
-                    return compute(contents.UnList, b.contents.UnList, start, end);
+                    return compute(contents.UnList, b.contents.UnList, start, end, s_ContentCount);
                 case TrBytes b:
-                    return compute(contents.UnList, b.contents.UnList, start, end);
+                    return compute(contents.UnList, b.contents.UnList, start, end, s_ContentCount);
                 default:
                     throw new TypeError("endswith first arg must be a byte string or a tuple of byte strings");
             }
@@ -914,14 +859,14 @@ namespace Traffy.Objects
 
         // TODO: support find integer
         [PyBind]
-        public int rfind(IList<byte> sub, int start = 0, int end = -1)
+        public int rfind(IList<byte> sub, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
             return IronPython.Runtime.Operations.IListOfByteOps.ReverseFind(contents.UnList, sub, start, end);
         }
 
         // TODO: support find integer
         [PyBind]
-        public int rindex(IList<byte> sub, int start = 0, int end = -1)
+        public int rindex(IList<byte> sub, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
             var ret = IronPython.Runtime.Operations.IListOfByteOps.ReverseFind(contents.UnList, sub, start, end);
             if (ret == -1)
@@ -939,7 +884,7 @@ namespace Traffy.Objects
                 throw new ValueError("empty separator");
             }
 
-            TrObject[] obj = new TrObject[3] { MK.Tuple(), MK.Tuple(), MK.Tuple() };
+            TrObject[] obj = new TrObject[3] { MK.ByteArray(), MK.ByteArray(), MK.ByteArray() };
 
             if (contents.Count != 0)
             {
@@ -969,7 +914,7 @@ namespace Traffy.Objects
                 throw new ValueError("empty separator");
             }
 
-            TrObject[] obj = new TrObject[3] { MK.Tuple(), MK.Tuple(), MK.Tuple() };
+            TrObject[] obj = new TrObject[3] { MK.ByteArray(), MK.ByteArray(), MK.ByteArray() };
 
             if (contents.Count != 0)
             {
@@ -1041,13 +986,13 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public bool startswith(TrObject prefix, int start = 0, int end = -1)
+        public bool startswith(TrObject prefix, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
         {
-            static bool compute(List<byte> seq, IList<byte> sub, int start, int end)
+            static bool compute(List<byte> seq, IList<byte> sub, int start, int end, int count)
             {
                 if (start == 0)
                 {
-                    if (end == -1)
+                    if (end == count)
                     {
                         return IronPython.Runtime.Operations.IListOfByteOps
                             .StartsWith(seq, sub);
@@ -1061,22 +1006,22 @@ namespace Traffy.Objects
                 case TrTuple prefixes:
                     if (start == 0)
                     {
-                        if (end == -1)
+                        if (end == s_ContentCount)
                         {
                             return IronPython.Runtime.Operations.IListOfByteOps.StartsWith(contents.UnList, prefixes);
                         }
                     }
-                    else if (end == -1)
+                    else if (end == s_ContentCount)
                     {
                         return IronPython.Runtime.Operations.IListOfByteOps.StartsWith(contents.UnList, prefixes, start);
                     }
                     return IronPython.Runtime.Operations.IListOfByteOps.StartsWith(contents.UnList, prefixes, start, end);
 
                 case TrByteArray b:
-                    return compute(contents.UnList, b.contents.UnList, start, end);
+                    return compute(contents.UnList, b.contents.UnList, start, end, s_ContentCount);
 
                 case TrBytes b:
-                    return compute(contents.UnList, b.contents.UnList, start, end);
+                    return compute(contents.UnList, b.contents.UnList, start, end, s_ContentCount);
 
                 default:
                     throw new TypeError("endswith first arg must be a byte string or a tuple of byte strings");

@@ -10,7 +10,15 @@ namespace Traffy.Objects
     {
         public static TrStr ToTr(this string self) => MK.Str(self);
 
-        public static string AsStr(this TrObject self) => ((TrStr)self).value;
+        public static string AsStr(this TrObject self)
+        {
+            var o_str = self as TrStr;
+            if (o_str == null)
+            {
+                throw new TypeError($"Expected a string, got a {self.Class.Name}");
+            }
+            return o_str.value;
+        }
 
         public static bool IsStr(this TrObject self) => self is TrStr;
     }
@@ -21,6 +29,8 @@ namespace Traffy.Objects
     public partial class TrStr : TrObject, IComparable<TrObject>
     {
         public string value;
+        internal int s_ContentCount => value.Length;
+
         public bool isInterned = false;
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
@@ -137,13 +147,7 @@ namespace Traffy.Objects
                 }
                 case TrSlice o_slice:
                 {
-                    var (istart, istep, nstep) = o_slice.resolveSlice(value.Length);
-                    var newbuf = new StringBuilder();
-                    for (int i = 0, x = istart; i < nstep; i++, x += istep)
-                    {
-                        newbuf.Append(value[x]);
-                    }
-                    return MK.Str(newbuf.ToString());
+                    return MK.Str(IronPython.Runtime.Operations.StringOps.GetSlice(value, o_slice));
                 }
                 default:
                     throw new TypeError($"str indices must be integers, not '{item.Class.Name}'");
@@ -157,12 +161,6 @@ namespace Traffy.Objects
                 return MK.Str(value.Repeat(unchecked((int)o_times.value)));
             }
             throw new TypeError($"can't multiply sequence by non-int of type '{a.Class.Name}'");
-        }
-
-        [PyBind]
-        public long count(string element, int start = 0, int end = -1)
-        {
-            return value.Inline().CountSubSeqGenericSimple<FString, FString, char>(element, start, end);
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
@@ -209,6 +207,13 @@ namespace Traffy.Objects
                 return MK.Str(arg.__str__());
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
+        }
+
+        [PyBind]
+        public int count(string element, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
+        {
+            return IronPython.Runtime.Operations.StringOps.count(value, element, start, end);
+            // return value.Inline().CountSubSeqGenericSimple<FString, FString, char>(element, start, end);
         }
     }
 

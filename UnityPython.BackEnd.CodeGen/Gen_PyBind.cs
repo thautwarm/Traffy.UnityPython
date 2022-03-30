@@ -105,7 +105,7 @@ public class Gen_PyBind : HasNamespace
             var (nonDefaultArgCount, defaultArgCount) = countPositionalDefault(meth);
             var args = new EId(CSExpr.ARGS);
             var ps = meth.GetParameters()
-                .Select(x => (x.ParameterType, x.Name, x.DefaultValue))
+                .Select(x => (x.ParameterType, x.Name, x.GetCustomAttribute<PyBind.SelfProp>() ?? x.DefaultValue))
                 .Prepend((entry, "__self", DBNull.Value))
                 .ToArray();
 

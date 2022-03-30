@@ -743,6 +743,8 @@ namespace Traffy
             return new TrSet { container = hashset };
         }
 
+        static TrStr _empty_str = new TrStr { value = String.Empty };
+        public static TrStr Str() => _empty_str;
         public static TrStr Str(string v) => new TrStr { value = v };
 
         public static TrStr IStr(InternedString v) => new TrStr { value = v.Value, isInterned = true };

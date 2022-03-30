@@ -13,6 +13,7 @@ namespace Traffy.Objects
     public sealed partial class TrBytes : TrObject, IComparable<TrObject>
     {
         public FArray<byte> contents;
+        internal int s_ContentCount => contents.Count;
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
             bool isEqual;
@@ -126,17 +127,21 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public long count(TrObject o_elements, int start = 0, int end = -1)
+        public long count(
+            TrObject o_elements, int start = 0,
+            [PyBind.SelfProp(nameof(s_ContentCount))] int end = /* pseudo */ 0)
         {            
             switch (o_elements)
             {
                 case TrByteArray b:
                 {
-                    return contents.CountSubSeqGenericSimple<FArray<byte>, FList<byte>, byte>(b.contents, start, end);
+                    return IronPython.Runtime.Operations.IListOfByteOps.CountOf(contents.UnList, b.contents.UnList, start, end);
+                    // return contents.CountSubSeqGenericSimple<FArray<byte>, FList<byte>, byte>(b.contents, start, end);
                 }
                 case TrBytes b:
                 {
-                    return contents.CountSubSeqGenericSimple<FArray<byte>, FArray<byte>, byte>(b.contents, start, end);
+                    return IronPython.Runtime.Operations.IListOfByteOps.CountOf(contents.UnList, b.contents.UnList, start, end);
+                    // return contents.CountSubSeqGenericSimple<FArray<byte>, FArray<byte>, byte>(b.contents, start, end);
                 }
 
                 case TrInt b:
