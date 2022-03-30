@@ -6,7 +6,7 @@ using Traffy.Annotations;
 namespace Traffy.Objects
 {
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.Collection))]
+    [PyInherit(typeof(Traffy.Interfaces.Mapping))]
     public sealed partial class TrDict : TrObject
     {
         public Dictionary<TrObject, TrObject> container;
@@ -36,6 +36,11 @@ namespace Traffy.Objects
         public override void __delitem__(TrObject key)
         {
             container.Remove(key);
+        }
+
+        public override bool __finditem__(TrObject key, TrRef refval)
+        {
+            return container.TryGetValue(key, out refval.value);
         }
 
         public override TrObject __reversed__()

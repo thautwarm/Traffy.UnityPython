@@ -281,6 +281,10 @@ namespace Traffy.Objects
         public static void __setitem__(TrObject self, TrObject key, TrObject value) =>
             throw self.unsupported(nameof(__setitem__));
 
+        [MagicMethod]
+        public static bool __finditem__(TrObject self, TrObject key, TrRef refval) =>
+            throw self.unsupported(nameof(__finditem__));
+
         // default '__iter__'
         [MagicMethod]
         public static IEnumerator<TrObject> __iter__(TrObject self) =>

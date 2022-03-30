@@ -1,5 +1,6 @@
-from typing import TypedDict, Generic, TypeVar
+from typing import Any, TypedDict, Generic, TypeVar
 from .utils import testsuite
+from typing import Mapping
 
 import abc
 
@@ -37,3 +38,23 @@ next(xs, None)
 print(xs.is_completed)
 print(xs.result)
 print(task1.result)
+
+
+print(list({1: 5}.items()), 'get')
+
+class M(Mapping[int, int]):
+    def __finditem__(self, __k: int, __v_ref: ref[Any]):
+        if __k == 1:
+            __v_ref.value = 5
+            return True
+        return False
+    def __len__(self) -> int:
+        return 1
+    def __iter__(self):
+        yield 1
+
+xs = M()
+
+ys = M()
+
+print(xs == ys)

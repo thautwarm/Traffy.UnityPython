@@ -30,6 +30,7 @@ namespace Traffy.Objects
         public PolyIC ic__getitem = new PolyIC(MagicNames.i___getitem__);
         public PolyIC ic__delitem = new PolyIC(MagicNames.i___delitem__);
         public PolyIC ic__setitem = new PolyIC(MagicNames.i___setitem__);
+        public PolyIC ic__finditem = new PolyIC(MagicNames.i___finditem__);
         public PolyIC ic__iter = new PolyIC(MagicNames.i___iter__);
         public PolyIC ic__await = new PolyIC(MagicNames.i___await__);
         public PolyIC ic__len = new PolyIC(MagicNames.i___len__);
@@ -140,6 +141,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Objects.TrDict)self).__getitem__(arg0));
             cls[MagicNames.i___delitem__] = TrSharpFunc.FromFunc(cls.Name + ".__delitem__", (self,arg0) => ((Traffy.Objects.TrDict)self).__delitem__(arg0));
             cls[MagicNames.i___setitem__] = TrSharpFunc.FromFunc(cls.Name + ".__setitem__", (self,arg0,arg1) => ((Traffy.Objects.TrDict)self).__setitem__(arg0,arg1));
+            cls[MagicNames.i___finditem__] = TrSharpFunc.FromFunc(cls.Name + ".__finditem__", (self,arg0,arg1) => ((Traffy.Objects.TrDict)self).__finditem__(arg0,arg1));
             cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Objects.TrDict)self).__iter__());
             cls[MagicNames.i___len__] = TrSharpFunc.FromFunc(cls.Name + ".__len__", (self) => ((Traffy.Objects.TrDict)self).__len__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrDict)self).__eq__(arg0));
@@ -632,6 +634,7 @@ namespace Traffy.Objects
             ic__getitem = new PolyIC(MagicNames.i___getitem__);
             ic__delitem = new PolyIC(MagicNames.i___delitem__);
             ic__setitem = new PolyIC(MagicNames.i___setitem__);
+            ic__finditem = new PolyIC(MagicNames.i___finditem__);
             ic__iter = new PolyIC(MagicNames.i___iter__);
             ic__await = new PolyIC(MagicNames.i___await__);
             ic__len = new PolyIC(MagicNames.i___len__);

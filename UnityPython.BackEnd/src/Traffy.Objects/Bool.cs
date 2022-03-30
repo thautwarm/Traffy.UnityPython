@@ -14,7 +14,12 @@ namespace Traffy.Objects
 
         public static bool AsBool(this TrObject o)
         {
-            return ((TrBool)o).value;
+            var b = o as TrBool;
+            if ((object)b == null)
+            {
+                throw new TypeError($"expect a boolean value, got {o.Class.Name} object");
+            }
+            return b.value;
         }
     }
 

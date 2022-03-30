@@ -104,6 +104,10 @@ namespace Traffy.Objects
         {
             TrObject.__setitem__(this,key,value);
         }
+        public virtual  Boolean __finditem__(TrObject key,TrRef refval)
+        {
+            return TrObject.__finditem__(this,key,refval);
+        }
         public virtual  IEnumerator<TrObject> __iter__()
         {
             return TrObject.__iter__(this);

@@ -191,6 +191,16 @@ namespace Traffy.Objects
             self_delitem.Call(key);
         }
 
+        public override bool __finditem__(TrObject key, TrRef refval)
+        {
+            var self_finditem = this[Class.ic__finditem];
+            if ((object)self_finditem == null)
+            {
+                return TrObject.__finditem__(this, key, refval);
+            }
+            return self_finditem.Call(key, refval).AsBool();
+        }
+
         public override IEnumerator<TrObject> __iter__()
         {
             var self_iter = this[Class.ic__iter];

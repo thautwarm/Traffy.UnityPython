@@ -342,8 +342,8 @@ namespace Traffy
                 return o;
             }
             if (tos is TrClass cls)
-                throw new AttributeError(tos, name, $"class {cls.Name} has no attribute {name}");
-            throw new AttributeError(tos, name, $"{tos.Class.Name} object has no attribute {name}");
+                throw new AttributeError(tos, name, $"class {cls.Name} has no attribute {name.__repr__()}");
+            throw new AttributeError(tos, name, $"{tos.Class.Name} object has no attribute {name.__repr__()}");
         }
 
         public static TrObject object_call(TrObject f, BList<TrObject> args) => f.__call__(args, null);

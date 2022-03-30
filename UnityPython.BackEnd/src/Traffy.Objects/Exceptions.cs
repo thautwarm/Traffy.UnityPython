@@ -521,9 +521,9 @@ namespace Traffy.Objects
         public override int IndexArgs => _IndexArgs;
 
         public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
-        public KeyError(TrObject value)
+        public KeyError(TrObject key)
         {
-            this.Base().args = new TrObject[] { value };
+            this.Base().args = new TrObject[] { key };
         }
         public KeyError() : base()
         {

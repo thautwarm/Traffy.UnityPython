@@ -31,6 +31,7 @@ namespace Traffy
         public static TrStr s_getitem = MK.Str("__getitem__");
         public static TrStr s_delitem = MK.Str("__delitem__");
         public static TrStr s_setitem = MK.Str("__setitem__");
+        public static TrStr s_finditem = MK.Str("__finditem__");
         public static TrStr s_iter = MK.Str("__iter__");
         public static TrStr s_await = MK.Str("__await__");
         public static TrStr s_len = MK.Str("__len__");
@@ -74,6 +75,7 @@ namespace Traffy
         public static InternedString i___getitem__ = InternedString.FromString("__getitem__");
         public static InternedString i___delitem__ = InternedString.FromString("__delitem__");
         public static InternedString i___setitem__ = InternedString.FromString("__setitem__");
+        public static InternedString i___finditem__ = InternedString.FromString("__finditem__");
         public static InternedString i___iter__ = InternedString.FromString("__iter__");
         public static InternedString i___await__ = InternedString.FromString("__await__");
         public static InternedString i___len__ = InternedString.FromString("__len__");
@@ -90,7 +92,7 @@ namespace Traffy
         public static InternedString i___abs__ = InternedString.FromString("__abs__");
         public static InternedString i___enter__ = InternedString.FromString("__enter__");
         public static InternedString i___exit__ = InternedString.FromString("__exit__");
-        public static HashSet<string> ALL = new string[] { "__new__", "__init_subclass__", "__init__", "__str__", "__repr__", "__next__", "__add__", "__sub__", "__mul__", "__matmul__", "__floordiv__", "__truediv__", "__mod__", "__pow__", "__bitand__", "__bitor__", "__bitxor__", "__lshift__", "__rshift__", "__hash__", "__call__", "__contains__", "__round__", "__reversed__", "__getitem__", "__delitem__", "__setitem__", "__iter__", "__await__", "__len__", "__eq__", "__ne__", "__lt__", "__le__", "__gt__", "__ge__", "__neg__", "__invert__", "__pos__", "__bool__", "__abs__", "__enter__", "__exit__" }.ToHashSet();
+        public static HashSet<string> ALL = new string[] { "__new__", "__init_subclass__", "__init__", "__str__", "__repr__", "__next__", "__add__", "__sub__", "__mul__", "__matmul__", "__floordiv__", "__truediv__", "__mod__", "__pow__", "__bitand__", "__bitor__", "__bitxor__", "__lshift__", "__rshift__", "__hash__", "__call__", "__contains__", "__round__", "__reversed__", "__getitem__", "__delitem__", "__setitem__", "__finditem__", "__iter__", "__await__", "__len__", "__eq__", "__ne__", "__lt__", "__le__", "__gt__", "__ge__", "__neg__", "__invert__", "__pos__", "__bool__", "__abs__", "__enter__", "__exit__" }.ToHashSet();
     }
 }
 

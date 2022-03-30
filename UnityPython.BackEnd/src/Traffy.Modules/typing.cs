@@ -29,6 +29,8 @@ namespace Traffy.Modules
             return args[0];
         }
 
+        [PyBind]
+        public static TrObject Any => TrRawObject.CLASS;
         static TrObject _cache_AnyStr = null;
         [PyBind]
         public static TrObject AnyStr =>
@@ -45,6 +47,30 @@ namespace Traffy.Modules
 
         [PyBind]
         public static TrObject TypedDict => TrTypedDict.CLASS;
+
+        [PyBind]
+        public static TrClass Awaitable => Traffy.Interfaces.Awaitable.CLASS;
+        [PyBind]
+        public static TrClass Callable => Traffy.Interfaces.Callable.CLASS;
+        [PyBind]
+        public static TrClass Collection => Traffy.Interfaces.Collection.CLASS;
+        [PyBind]
+        public static TrClass Comparable => Traffy.Interfaces.Comparable.CLASS;
+        [PyBind]
+        public static TrClass Container => Traffy.Interfaces.Container.CLASS;
+        [PyBind]
+        public static TrClass Hashable => Traffy.Interfaces.Hashable.CLASS;
+        [PyBind]
+        public static TrClass Iterable => Traffy.Interfaces.Iterable.CLASS;
+        [PyBind]
+        public static TrClass Reversible => Traffy.Interfaces.Reversible.CLASS;
+        [PyBind]
+        public static TrClass Sequence => Traffy.Interfaces.Sequence.CLASS;
+        [PyBind]
+        public static TrClass Sized => Traffy.Interfaces.Sized.CLASS;
+
+        [PyBind]
+        public static TrClass Mapping => Traffy.Interfaces.Mapping.CLASS;
 
     
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]

@@ -58,7 +58,7 @@ namespace Traffy.InlineCache
         public static void WriteClass_refl(TrClass Class, TrStr s, TrObject value)
         {
             if (Class.IsFixed)
-                throw new AttributeError(Class, s, $"class {Class.Name} has no attribute {s}");
+                throw new AttributeError(Class, s, $"class {Class.Name} has no attribute {s.__repr__()}");
 
             if (Class.LoadCachedShape_TryWriteClass(s.value, out var ad))
             {
@@ -155,7 +155,7 @@ namespace Traffy.InlineCache
                 return;
             }
             if (self.__array__ == null)
-                throw new AttributeError(self, s, $"object {self.Class.Name} has no attribute {s} (immutable)");
+                throw new AttributeError(self, s, $"object {self.Class.Name} has no attribute {s.__repr__()} (immutable)");
 
             int index = self.Class.AddField(s.value);
             self.SetInstField(index, s.value, value);

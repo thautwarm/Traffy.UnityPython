@@ -60,6 +60,8 @@ namespace Traffy.Objects
                 this[MagicNames.i___delitem__] = o_delitem;
             if (cp_kwargs.TryPop(MagicNames.s_setitem, out var o_setitem))
                 this[MagicNames.i___setitem__] = o_setitem;
+            if (cp_kwargs.TryPop(MagicNames.s_finditem, out var o_finditem))
+                this[MagicNames.i___finditem__] = o_finditem;
             if (cp_kwargs.TryPop(MagicNames.s_iter, out var o_iter))
                 this[MagicNames.i___iter__] = o_iter;
             if (cp_kwargs.TryPop(MagicNames.s_await, out var o_await))
