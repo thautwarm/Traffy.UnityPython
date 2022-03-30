@@ -688,11 +688,12 @@ namespace Traffy
         {
             return new TrFloat { value = (float)v };
         }
-
         public static TrInt Int(long p)
         {
             return new TrInt { value = p };
         }
+
+        public static TrInt IntZero = Int(0);
 
         public static TrInt Int(ulong p)
         {

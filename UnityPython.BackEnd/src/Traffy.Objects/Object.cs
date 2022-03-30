@@ -124,8 +124,10 @@ namespace Traffy.Objects
 
 
         [MagicMethod]
-        public static bool __next__(TrObject self, TrRef refval) =>
-            throw self.unsupported(nameof(__next__));
+        public static bool __trynext__(TrObject self, TrRef refval) =>
+            throw self.unsupported(nameof(__trynext__));
+
+        
 
         [MagicMethod]
         public static TrObject __add__(TrObject self, TrObject a) =>

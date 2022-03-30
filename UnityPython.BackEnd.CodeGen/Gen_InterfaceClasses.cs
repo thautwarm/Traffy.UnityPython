@@ -134,11 +134,11 @@ public class Gen_InterfaceClasses : HasNamespace
                 && ps[1].ParameterType == typeof(BList<TrObject>)
                 && ps[2].ParameterType == typeof(Dictionary<TrObject, TrObject>))
             {
-                binding_defs.Add($"{t.Namespace}.{t.Name}.CLASS[{methName.Escape()}] = {nameof(TrSharpFunc)}.FromFunc(\"{t.Name}.{methName}\", {t.Namespace}.{t.Name}.{methName});".Doc());
+                binding_defs.Add($"{t.Namespace}.{t.Name}.CLASS[{methName.Escape()}] = {nameof(TrSharpFunc)}.FromFunc(\"{t.Name}.{methName}\", {t.Namespace}.{t.Name}.{methName.ValidName()});".Doc());
                 continue;
             }
             var (nonDefaultArgCount, defaultArgCount) = countPositionalDefault(meth);
-            var methExpr = new EType(t)[meth.Name];
+            var methExpr = new EType(t)[meth.Name.ValidName()];
             var cases = Enumerable
                     .Range(nonDefaultArgCount, defaultArgCount + 1)
                     .Select(n =>

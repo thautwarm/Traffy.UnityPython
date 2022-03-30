@@ -13,6 +13,97 @@ using static PrettyDoc.ExtPrettyDoc;
 
 public static class Helper
 {
+    static HashSet<string> _Keywords = new HashSet<string>{
+        "abstract",
+        "as",
+        "base",
+        "bool",
+        "break",
+        "byte",
+        "case",
+        "catch",
+        "char",
+        "checked",
+        "class",
+        "const",
+        "continue",
+        "decimal",
+        "default",
+        "delegate",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "event",
+        "explicit",
+        "extern",
+        "false",
+        "finally",
+        "fixed",
+        "float",
+        "for",
+        "foreach",
+        "goto",
+        "if",
+        "implicit",
+        "in",
+        "int",
+        "interface",
+        "internal",
+        "is",
+        "lock",
+        "long",
+        "namespace",
+        "new",
+        "null",
+        "object",
+        "operator",
+        "out",
+        "override",
+        "params",
+        "private",
+        "protected",
+        "public",
+        "readonly",
+        "ref",
+        "return",
+        "sbyte",
+        "sealed",
+        "short",
+        "sizeof",
+        "stackalloc",
+        "static",
+        "string",
+        "struct",
+        "switch",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "typeof",
+        "uint",
+        "ulong",
+        "unchecked",
+        "unsafe",
+        "ushort",
+        "using",
+        "virtual",
+        "void",
+        "volatile",
+        "while",
+    };
+    public static bool IsKeyword(string s)
+    {
+        return _Keywords.Contains(s);
+    }
+    public static string ValidName(this string s)
+    {
+        // if 's' is a C# keyword
+        // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/
+        if (IsKeyword(s))
+            return $"@{s}";
+        return s;
+    }
     public static CSExpr THint(Type t) => new EType((new TId("THint"))[t])["Unique"];
     public static CSExpr Unbox = (new EId("Unbox"))["Apply"];
     public static CSExpr Box = (new EId("Box"))["Apply"];
@@ -82,7 +173,7 @@ public static class Helper
                 : new SAssign(
                     new EId(variable(i)),
                     ps[i].Default is PyBind.SelfProp selfProp
-                    ? new EId(variable(0))[selfProp.Name]
+                    ? new EId(variable(0))[ValidName(selfProp.Name)]
                     : CSExpr.OfConst(ps[i].Default));
             yield return new SIf(
                 PYKWARGS.IsNotNull().And(
@@ -90,7 +181,7 @@ public static class Helper
                 new SAssign(new EId(variable(i)), Unbox.Call(THint(ps[i].t), new EId("__keyword_" + variable(i)))).SingletonArray(),
                 elsedo.SingletonArray()
             );
-            keywords.Add((ps[i].Name, new EId(variable(i))));
+            keywords.Add((ValidName(ps[i].Name), new EId(variable(i))));
         }
         var call = invoke(args.ToArray(), keywords.ToArray());
         if (retType != typeof(void))

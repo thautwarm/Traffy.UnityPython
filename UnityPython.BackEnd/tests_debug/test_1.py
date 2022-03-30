@@ -30,6 +30,7 @@ def f():
     return 100
 xs = f()
 
+
 next(xs)
 next(xs)
 next(xs)
@@ -58,3 +59,10 @@ xs = M()
 ys = M()
 
 print(xs == ys)
+
+
+print(type((i for i in range(10))).mro())
+
+
+print(range(10).sum())
+print(range(10).map(lambda x: "a" * x).map(len).tolist())

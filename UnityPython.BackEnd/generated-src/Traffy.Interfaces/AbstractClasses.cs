@@ -19,6 +19,20 @@ namespace Traffy.Interfaces
             Traffy.Interfaces.ContextManager.CLASS["__exit__"] = TrSharpFunc.FromFunc("ContextManager.__exit__", Traffy.Interfaces.ContextManager.__bind___exit__);
             Traffy.Interfaces.Hashable.CLASS["__hash__"] = TrSharpFunc.FromFunc("Hashable.__hash__", Traffy.Interfaces.Hashable.__bind___hash__);
             Traffy.Interfaces.Iterable.CLASS["__iter__"] = TrSharpFunc.FromFunc("Iterable.__iter__", Traffy.Interfaces.Iterable.__bind___iter__);
+            Traffy.Interfaces.Iterator.CLASS["__trynext__"] = TrSharpFunc.FromFunc("Iterator.__trynext__", Traffy.Interfaces.Iterator.__bind___trynext__);
+            Traffy.Interfaces.Iterator.CLASS["__next__"] = TrSharpFunc.FromFunc("Iterator.__next__", Traffy.Interfaces.Iterator.__bind___next__);
+            Traffy.Interfaces.Iterator.CLASS["map"] = TrSharpFunc.FromFunc("Iterator.map", Traffy.Interfaces.Iterator.__bind_map);
+            Traffy.Interfaces.Iterator.CLASS["mapi"] = TrSharpFunc.FromFunc("Iterator.mapi", Traffy.Interfaces.Iterator.__bind_mapi);
+            Traffy.Interfaces.Iterator.CLASS["filter"] = TrSharpFunc.FromFunc("Iterator.filter", Traffy.Interfaces.Iterator.__bind_filter);
+            Traffy.Interfaces.Iterator.CLASS["filteri"] = TrSharpFunc.FromFunc("Iterator.filteri", Traffy.Interfaces.Iterator.__bind_filteri);
+            Traffy.Interfaces.Iterator.CLASS["skip"] = TrSharpFunc.FromFunc("Iterator.skip", Traffy.Interfaces.Iterator.__bind_skip);
+            Traffy.Interfaces.Iterator.CLASS["append"] = TrSharpFunc.FromFunc("Iterator.append", Traffy.Interfaces.Iterator.__bind_append);
+            Traffy.Interfaces.Iterator.CLASS["prepend"] = TrSharpFunc.FromFunc("Iterator.prepend", Traffy.Interfaces.Iterator.__bind_prepend);
+            Traffy.Interfaces.Iterator.CLASS["foreach"] = TrSharpFunc.FromFunc("Iterator.foreach", Traffy.Interfaces.Iterator.__bind_foreach);
+            Traffy.Interfaces.Iterator.CLASS["foreachi"] = TrSharpFunc.FromFunc("Iterator.foreachi", Traffy.Interfaces.Iterator.__bind_foreachi);
+            Traffy.Interfaces.Iterator.CLASS["concat"] = TrSharpFunc.FromFunc("Iterator.concat", Traffy.Interfaces.Iterator.__bind_concat);
+            Traffy.Interfaces.Iterator.CLASS["sum"] = TrSharpFunc.FromFunc("Iterator.sum", Traffy.Interfaces.Iterator.__bind_sum);
+            Traffy.Interfaces.Iterator.CLASS["tolist"] = TrSharpFunc.FromFunc("Iterator.tolist", Traffy.Interfaces.Iterator.__bind_tolist);
             Traffy.Interfaces.Mapping.CLASS["__iter__"] = TrSharpFunc.FromFunc("Mapping.__iter__", Traffy.Interfaces.Mapping.__bind___iter__);
             Traffy.Interfaces.Mapping.CLASS["__finditem__"] = TrSharpFunc.FromFunc("Mapping.__finditem__", Traffy.Interfaces.Mapping.__bind___finditem__);
             Traffy.Interfaces.Mapping.CLASS["__getitem__"] = TrSharpFunc.FromFunc("Mapping.__getitem__", Traffy.Interfaces.Mapping.__bind___getitem__);
@@ -260,6 +274,221 @@ namespace Traffy.Interfaces
         public static  Traffy.Objects.TrObject __bind___iter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
             throw new ValueError( "cannot call abstract method Iterable.__iter__" );
+        }
+    }
+    public static partial class Iterator
+    {
+        internal static void _Create()
+        {
+            CLASS = TrClass.CreateClass("Iterator");
+        }
+        internal static void _Init()
+        {
+            CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
+        }
+
+
+        internal static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            CLASS.IsFixed = true;
+        }
+        public static TrClass CLASS;
+        public static  Traffy.Objects.TrObject __bind___trynext__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            throw new ValueError( "cannot call abstract method Iterator.__trynext__" );
+        }
+        public static  Traffy.Objects.TrObject __bind___next__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 1:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.__next__(_0));
+                }
+                default:
+                    throw new ValueError("__next__() requires 1 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_map(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.map(_0,_1));
+                }
+                default:
+                    throw new ValueError("map() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_mapi(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.mapi(_0,_1));
+                }
+                default:
+                    throw new ValueError("mapi() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_filter(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.filter(_0,_1));
+                }
+                default:
+                    throw new ValueError("filter() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_filteri(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.filteri(_0,_1));
+                }
+                default:
+                    throw new ValueError("filteri() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_skip(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.skip(_0,_1));
+                }
+                default:
+                    throw new ValueError("skip() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_append(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.append(_0,_1));
+                }
+                default:
+                    throw new ValueError("append() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_prepend(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.prepend(_0,_1));
+                }
+                default:
+                    throw new ValueError("prepend() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_foreach(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    Traffy.Interfaces.Iterator.@foreach(_0,_1);
+                    return Traffy.MK.None();
+                }
+                default:
+                    throw new ValueError("foreach() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_foreachi(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    Traffy.Interfaces.Iterator.foreachi(_0,_1);
+                    return Traffy.MK.None();
+                }
+                default:
+                    throw new ValueError("foreachi() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_concat(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.concat(_0,_1));
+                }
+                default:
+                    throw new ValueError("concat() requires 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_sum(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 1:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    Traffy.Objects.TrObject _1;
+                    if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("__init"),out var __keyword__1)))
+                        _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__keyword__1);
+                    else
+                        _1 = null;
+                    return Box.Apply(Traffy.Interfaces.Iterator.sum(_0,__init : _1));
+                }
+                case 2:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.sum(_0,_1));
+                }
+                default:
+                    throw new ValueError("sum() requires 1 to 2 positional argument(s), got " + __args.Count);
+            }
+        }
+        public static  Traffy.Objects.TrObject __bind_tolist(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 1:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    return Box.Apply(Traffy.Interfaces.Iterator.tolist(_0));
+                }
+                default:
+                    throw new ValueError("tolist() requires 1 positional argument(s), got " + __args.Count);
+            }
         }
     }
     public static partial class Mapping

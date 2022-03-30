@@ -175,7 +175,7 @@ namespace Traffy
         static TrObject next(TrObject supportNext, TrObject __default = null)
         {
             var r = MK.Ref();
-            if(supportNext.__next__(r))
+            if(supportNext.__trynext__(r))
             {
                 return r.value;
             }

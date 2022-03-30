@@ -7,7 +7,7 @@ namespace Traffy.Objects
 {
 
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.Iterable))]
+    [PyInherit(typeof(Traffy.Interfaces.Iterator))]
     public sealed partial class TrIter : TrObject, IEnumerator<TrObject>
     {
         public IEnumerator<TrObject> iter;
@@ -33,7 +33,7 @@ namespace Traffy.Objects
             return MK.Iter(obj.__iter__());
         }
 
-        public override bool __next__(TrRef refval)
+        public override bool __trynext__(TrRef refval)
         {
             if (iter.MoveNext())
             {

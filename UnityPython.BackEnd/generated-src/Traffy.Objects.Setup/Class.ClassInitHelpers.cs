@@ -8,7 +8,7 @@ namespace Traffy.Objects
         public PolyIC ic__init = new PolyIC(MagicNames.i___init__);
         public PolyIC ic__str = new PolyIC(MagicNames.i___str__);
         public PolyIC ic__repr = new PolyIC(MagicNames.i___repr__);
-        public PolyIC ic__next = new PolyIC(MagicNames.i___next__);
+        public PolyIC ic__trynext = new PolyIC(MagicNames.i___trynext__);
         public PolyIC ic__add = new PolyIC(MagicNames.i___add__);
         public PolyIC ic__sub = new PolyIC(MagicNames.i___sub__);
         public PolyIC ic__mul = new PolyIC(MagicNames.i___mul__);
@@ -218,7 +218,7 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit_TrGenerator(TrClass cls)
         {
-            cls[MagicNames.i___next__] = TrSharpFunc.FromFunc(cls.Name + ".__next__", (self,arg0) => ((Traffy.Objects.TrGenerator)self).__next__(arg0));
+            cls[MagicNames.i___trynext__] = TrSharpFunc.FromFunc(cls.Name + ".__trynext__", (self,arg0) => ((Traffy.Objects.TrGenerator)self).__trynext__(arg0));
             cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Objects.TrGenerator)self).__iter__());
             cls[MagicNames.i___await__] = TrSharpFunc.FromFunc(cls.Name + ".__await__", (self) => ((Traffy.Objects.TrGenerator)self).__await__());
         }
@@ -251,7 +251,7 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit_TrIter(TrClass cls)
         {
-            cls[MagicNames.i___next__] = TrSharpFunc.FromFunc(cls.Name + ".__next__", (self,arg0) => ((Traffy.Objects.TrIter)self).__next__(arg0));
+            cls[MagicNames.i___trynext__] = TrSharpFunc.FromFunc(cls.Name + ".__trynext__", (self,arg0) => ((Traffy.Objects.TrIter)self).__trynext__(arg0));
             cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Objects.TrIter)self).__iter__());
         }
         static void BuiltinClassInit_TrList(TrClass cls)
@@ -612,7 +612,7 @@ namespace Traffy.Objects
             ic__init = new PolyIC(MagicNames.i___init__);
             ic__str = new PolyIC(MagicNames.i___str__);
             ic__repr = new PolyIC(MagicNames.i___repr__);
-            ic__next = new PolyIC(MagicNames.i___next__);
+            ic__trynext = new PolyIC(MagicNames.i___trynext__);
             ic__add = new PolyIC(MagicNames.i___add__);
             ic__sub = new PolyIC(MagicNames.i___sub__);
             ic__mul = new PolyIC(MagicNames.i___mul__);

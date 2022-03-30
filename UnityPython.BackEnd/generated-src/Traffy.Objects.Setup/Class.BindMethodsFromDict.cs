@@ -16,8 +16,8 @@ namespace Traffy.Objects
                 this[MagicNames.i___str__] = o_str;
             if (cp_kwargs.TryPop(MagicNames.s_repr, out var o_repr))
                 this[MagicNames.i___repr__] = o_repr;
-            if (cp_kwargs.TryPop(MagicNames.s_next, out var o_next))
-                this[MagicNames.i___next__] = o_next;
+            if (cp_kwargs.TryPop(MagicNames.s_trynext, out var o_trynext))
+                this[MagicNames.i___trynext__] = o_trynext;
             if (cp_kwargs.TryPop(MagicNames.s_add, out var o_add))
                 this[MagicNames.i___add__] = o_add;
             if (cp_kwargs.TryPop(MagicNames.s_sub, out var o_sub))

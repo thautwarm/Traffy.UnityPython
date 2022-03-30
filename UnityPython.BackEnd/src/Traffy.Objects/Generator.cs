@@ -8,7 +8,7 @@ namespace Traffy.Objects
 {
 
     [PyBuiltin]
-    [PyInherit(typeof(Traffy.Interfaces.Iterable), typeof(Traffy.Interfaces.Awaitable))]
+    [PyInherit(typeof(Traffy.Interfaces.Iterator), typeof(Traffy.Interfaces.Awaitable))]
     public sealed partial class TrGenerator : TrObject, IEnumerator<TrObject>
     {
         // at the end of such generator, result is set.
@@ -70,7 +70,7 @@ namespace Traffy.Objects
         public override IEnumerator<TrObject> __iter__() => this;
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
-        public override bool __next__(TrRef refval)
+        public override bool __trynext__(TrRef refval)
         {
             if (m_Generator.IsCompleted)
             {

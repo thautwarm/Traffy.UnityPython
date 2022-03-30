@@ -18,6 +18,7 @@ namespace Traffy
             Traffy.Interfaces.ContextManager._Create();
             Traffy.Interfaces.Hashable._Create();
             Traffy.Interfaces.Sized._Create();
+            Traffy.Interfaces.Iterator._Create();
             Traffy.Interfaces.Collection._Create();
             Traffy.Interfaces.Reversible._Create();
             Traffy.Interfaces.Sequence._Create();
@@ -78,6 +79,7 @@ namespace Traffy
             Traffy.Interfaces.ContextManager.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Hashable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Sized.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
+            Traffy.Interfaces.Iterator.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Iterable.CLASS };
             Traffy.Interfaces.Collection.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Sized.CLASS,Traffy.Interfaces.Iterable.CLASS,Traffy.Interfaces.Container.CLASS };
             Traffy.Interfaces.Reversible.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Iterable.CLASS };
             Traffy.Interfaces.Sequence.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Reversible.CLASS,Traffy.Interfaces.Collection.CLASS };
@@ -107,9 +109,9 @@ namespace Traffy
             Traffy.Objects.NotImplementError.CLASS.__base = new TrClass[] { Traffy.Objects.RuntimeError.CLASS };
             Traffy.Objects.NativeError.CLASS.__base = new TrClass[] { Traffy.Objects.TrException.CLASS };
             Traffy.Objects.TrFloat.CLASS.__base = new TrClass[] { Traffy.Interfaces.Comparable.CLASS };
-            Traffy.Objects.TrGenerator.CLASS.__base = new TrClass[] { Traffy.Interfaces.Iterable.CLASS,Traffy.Interfaces.Awaitable.CLASS };
+            Traffy.Objects.TrGenerator.CLASS.__base = new TrClass[] { Traffy.Interfaces.Iterator.CLASS,Traffy.Interfaces.Awaitable.CLASS };
             Traffy.Objects.TrInt.CLASS.__base = new TrClass[] { Traffy.Interfaces.Comparable.CLASS };
-            Traffy.Objects.TrIter.CLASS.__base = new TrClass[] { Traffy.Interfaces.Iterable.CLASS };
+            Traffy.Objects.TrIter.CLASS.__base = new TrClass[] { Traffy.Interfaces.Iterator.CLASS };
             Traffy.Objects.TrList.CLASS.__base = new TrClass[] { Traffy.Interfaces.Comparable.CLASS,Traffy.Interfaces.Sequence.CLASS };
             Traffy.Objects.TrSharpMethod.CLASS.__base = new TrClass[] { Traffy.Interfaces.Callable.CLASS };
             Traffy.Objects.TrAnnotatedType.CLASS.__base = new TrClass[] {  };
@@ -138,6 +140,7 @@ namespace Traffy
             Traffy.Interfaces.ContextManager.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.ContextManager.CLASS);
             Traffy.Interfaces.Hashable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Hashable.CLASS);
             Traffy.Interfaces.Sized.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Sized.CLASS);
+            Traffy.Interfaces.Iterator.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Iterator.CLASS);
             Traffy.Interfaces.Collection.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Collection.CLASS);
             Traffy.Interfaces.Reversible.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Reversible.CLASS);
             Traffy.Interfaces.Sequence.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Sequence.CLASS);
@@ -195,6 +198,7 @@ namespace Traffy
             Traffy.Interfaces.ContextManager._Init();
             Traffy.Interfaces.Hashable._Init();
             Traffy.Interfaces.Iterable._Init();
+            Traffy.Interfaces.Iterator._Init();
             Traffy.Interfaces.Mapping._Init();
             Traffy.Interfaces.Reversible._Init();
             Traffy.Interfaces.Sequence._Init();
@@ -279,6 +283,7 @@ namespace Traffy
             Traffy.Interfaces.ContextManager._SetupClasses();
             Traffy.Interfaces.Hashable._SetupClasses();
             Traffy.Interfaces.Sized._SetupClasses();
+            Traffy.Interfaces.Iterator._SetupClasses();
             Traffy.Interfaces.Collection._SetupClasses();
             Traffy.Interfaces.Reversible._SetupClasses();
             Traffy.Interfaces.Sequence._SetupClasses();

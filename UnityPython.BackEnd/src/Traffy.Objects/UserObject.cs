@@ -25,11 +25,11 @@ namespace Traffy.Objects
                 return TrObject.__repr__(this);
             return self_repr.Call().AsStr();
         }
-        public override Boolean __next__(TrRef refval)
+        public override Boolean __trynext__(TrRef refval)
         {
-            var self_next = this[Class.ic__next];
+            var self_next = this[Class.ic__trynext];
             if ((object)self_next == null)
-                return TrObject.__next__(this, refval);
+                return TrObject.__trynext__(this, refval);
             return self_next.Call(refval).AsBool();
         }
 

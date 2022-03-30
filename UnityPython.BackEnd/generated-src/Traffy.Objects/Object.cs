@@ -16,9 +16,9 @@ namespace Traffy.Objects
         {
             return TrObject.__repr__(this);
         }
-        public virtual  Boolean __next__(TrRef refval)
+        public virtual  Boolean __trynext__(TrRef refval)
         {
-            return TrObject.__next__(this,refval);
+            return TrObject.__trynext__(this,refval);
         }
         public virtual  TrObject __add__(TrObject a)
         {
