@@ -3,7 +3,7 @@ Modification Copyright 2022
 Adapted for use with the Traffy.UnityPython project by:
   thautwarm(Taine Zhao)
 The original source can be found at:
-    github.com/IronLanguages/ironpython2/master/Src/IronPython/Runtime/Operations/ArrayOps.cs
+    https://github.com/IronLanguages/ironpython2/blob/master/Src/IronPython/Runtime/Operations/ArrayOps.cs
 Specifically, the function 'DelSlice' is abstracted from
     shttps://github.com/IronLanguages/ironpython2/blob/aa0526d4b786ad1fabbedbf91459903b8dc01ba3/Src/IronPython/Runtime/ByteArray.cs#L1155
 // ================================================================
@@ -88,7 +88,7 @@ namespace IronPython.Runtime.Operations {
             if (size <= 0) return new List<T>();
 
             List<T> res = new List<T>(size);
-            for (int i = 0, index = start; i < res.Count; i++, index += step) {
+            for (int i = 0, index = start; i < size; i++, index += step) {
                 res.Add(data[index]);
             }
             return res;

@@ -175,13 +175,7 @@ namespace Traffy.Objects
                     }
                 case TrSlice slice:
                     {
-                        var (istart, istep, nstep) = slice.resolveSlice(elts.Count);
-                        var newcontainer = new TrObject[nstep];
-                        for (int i = 0, x = istart; i < nstep; i++, x += istep)
-                        {
-                            newcontainer[i] = elts[x];
-                        }
-                        return MK.Tuple(newcontainer);
+                        return MK.Tuple(IronPython.Runtime.Operations.ArrayOps.GetSlice(elts.UnList, slice));
                     }
                 default:
                     throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");

@@ -19,8 +19,9 @@ with testsuite("bytearray"):
 
     del xs[::]
     assert xs == bytearray()
-
+    
     xs.extend((i for i in [0, 1, 2, 3, 4, 5]))
+
     assert xs[1:5:2] == bytearray([1, 3])
     assert xs is not xs.copy()
     assert xs == xs.copy()
