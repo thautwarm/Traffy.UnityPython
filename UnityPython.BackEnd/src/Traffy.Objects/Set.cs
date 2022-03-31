@@ -12,9 +12,19 @@ namespace Traffy.Objects
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
+        public override object Native => container;
 
         public override List<TrObject> __array__ => null;
         public override IEnumerator<TrObject> __iter__() => container.GetEnumerator();
+
+        public override bool __eq__(TrObject other)
+        {
+            if (other is TrSet otherSet)
+            {
+                return container.SetEquals(otherSet.container);
+            }
+            return false;
+        }
 
         public override string __repr__() => "{" + string.Join(", ", container.Select(x => x.__repr__())) + "}";
 
@@ -51,6 +61,12 @@ namespace Traffy.Objects
                 return MK.Set(res);
             }
             throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
+        }
+
+        [PyBind]
+        public void add(TrObject elt)
+        {
+            container.Add(elt);
         }
     }
 

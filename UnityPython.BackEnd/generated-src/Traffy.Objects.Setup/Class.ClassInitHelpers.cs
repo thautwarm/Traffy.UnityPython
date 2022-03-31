@@ -311,6 +311,7 @@ namespace Traffy.Objects
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrSet)self).__repr__());
             cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Objects.TrSet)self).__iter__());
+            cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrSet)self).__eq__(arg0));
         }
         static void BuiltinClassInit_TrSlice(TrClass cls)
         {
