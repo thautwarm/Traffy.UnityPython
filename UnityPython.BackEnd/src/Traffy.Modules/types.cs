@@ -22,10 +22,27 @@ namespace Traffy.Modules
         [PyBind]
         public static TrObject ModuleType => TrModule.CLASS;
 
+        [PyBind]
+        public static TrObject MethodType => TrSharpMethod.CLASS;
+
+        [PyBind]
+        public static TrObject __dict__
+        {
+            get
+            {
+                var d = RTS.baredict_create();
+                foreach(var (k, v) in CLASS.GetDictItems())
+                {
+                    d[k] = v;
+                }
+                return MK.Dict(d);
+            }
+        }
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrModule_abc>("module_types");
+            CLASS = TrClass.FromPrototype<TrModule_types>("module_types");
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]

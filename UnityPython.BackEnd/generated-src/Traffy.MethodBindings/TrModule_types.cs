@@ -11,6 +11,8 @@ namespace Traffy.Modules
             CLASS["BuiltinFunctionType"] = Traffy.Box.Apply(Traffy.Modules.TrModule_types.BuiltinFunctionType);
             CLASS["FunctionType"] = Traffy.Box.Apply(Traffy.Modules.TrModule_types.FunctionType);
             CLASS["ModuleType"] = Traffy.Box.Apply(Traffy.Modules.TrModule_types.ModuleType);
+            CLASS["MethodType"] = Traffy.Box.Apply(Traffy.Modules.TrModule_types.MethodType);
+            CLASS["__dict__"] = Traffy.Box.Apply(Traffy.Modules.TrModule_types.__dict__);
         }
     }
 }

@@ -66,3 +66,8 @@ print(type((i for i in range(10))).mro())
 
 print(range(10).sum())
 print(range(10).map(lambda x: "a" * x).map(len).tolist())
+
+from . import utils
+
+print(utils.__dict__)
+print(utils.__name__)

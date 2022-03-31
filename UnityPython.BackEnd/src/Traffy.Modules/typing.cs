@@ -76,7 +76,7 @@ namespace Traffy.Modules
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrModule_abc>("module_typing");
+            CLASS = TrClass.FromPrototype<TrModule_types>("module_typing");
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
