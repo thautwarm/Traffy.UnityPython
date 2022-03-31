@@ -83,6 +83,7 @@ namespace Traffy.Objects
 
         // if the object is a class, cast it.
         public TrClass AsClass => (TrClass)this;
+        public TrObject Upcast => this;
         public abstract List<TrObject> __array__ { get; }
         public virtual object Native => this;
         public abstract TrClass Class { get; }
@@ -302,11 +303,11 @@ namespace Traffy.Objects
 
         // Comparators
         [MagicMethod(Default = true)]
-        public static bool __eq__(TrObject self, TrObject other) => object.ReferenceEquals(self.Native, other.Native);
+        public static bool __eq__(TrObject self, TrObject other) => object.ReferenceEquals(self, other);
 
 
         [MagicMethod(Default = true)]
-        public static bool __ne__(TrObject self, TrObject other) => !object.ReferenceEquals(self.Native, other.Native);
+        public static bool __ne__(TrObject self, TrObject other) => !object.ReferenceEquals(self, other);
 
 
         [MagicMethod]

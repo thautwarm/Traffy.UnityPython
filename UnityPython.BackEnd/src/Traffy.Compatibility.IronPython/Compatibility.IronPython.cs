@@ -1,13 +1,51 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using IronPython.Runtime.Operations;
 using Traffy.Objects;
 
 namespace Traffy.Compatibility.IronPython
 {
 
+    public struct PythonContext
+    {
+        public static PythonContext Current => s_SharedContext;
+        static PythonContext s_SharedContext = new PythonContext();
+        public PythonContext SharedContext => s_SharedContext;
+    }
+
+    public static class Builtin
+    {
+        public static string format(PythonContext _, TrObject value, string formatSpec)
+        {
+            return value.__str__();
+        }
+    }
+    public static class ScriptingRuntimeHelpers
+    {
+        public static TrObject Int32ToObject(int i)
+        {
+            return MK.Int(i);
+        }
+
+        public static TrObject BooleanToObject(bool b)
+        {
+            return MK.Bool(b);
+        }
+    }
+    public static class Assert
+    {
+        public static void NotNull(params object[] xs)
+        {
+#if DEBUG
+            foreach (var x in xs)
+                Debug.Assert(x != null);
+#endif
+        }
+    }
     public static class IronPythonCompatExtras
     {
         public static bool IsNone(TrObject self) => self.IsNone();
@@ -73,6 +111,16 @@ namespace Traffy.Compatibility.IronPython
     }
     public static class PythonOps
     {
+        public static TrObject GetBoundAttr(PythonContext _, TrObject self, string name)
+        {
+            return RTS.object_getattr(self, MK.Str(name));
+        }
+
+        public static TrObject GetIndex(PythonContext _, TrObject self, TrObject index)
+        {
+            return RTS.object_getitem(self, index);
+        }
+
         public static Exception ValueError(string msg) => new Traffy.Objects.ValueError(msg);
         public static Exception ValueError(string msg, params object[] formatArgs) =>
             new Traffy.Objects.ValueError(String.Format(msg, formatArgs));
@@ -250,10 +298,13 @@ namespace Traffy.Compatibility.IronPython
             return MK.Str(s);
         }
 
+
         public static TrInt BoxInt(int s)
         {
             return MK.Int(s);
         }
+
+        public static TrStr EmptyStr => MK.Str();
 
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
@@ -278,6 +329,40 @@ namespace Traffy.Compatibility.IronPython
         {
             var (ostart, ostop, ostep) = FixSlice(self.Count, slice.start, slice.stop, slice.step);
             DoSliceAssign<TList1, TList2, T>(self, ostart, ostop, ostep, lst);
+        }
+
+        public static string ToString(PythonContext _, TrObject s)
+        {
+            return s.__str__();
+        }
+
+        public static string Repr(PythonContext _, TrObject s)
+        {
+            return s.__repr__();
+        }
+
+        public static string Ascii(PythonContext _, TrObject s)
+        {
+            var orig = s.__str__();
+            var xs = new System.Text.StringBuilder();
+            foreach (var c in orig)
+            {
+                if (c > 255)
+                {
+                    xs.Append("\\u");
+                    xs.Append(((int)c).ToString("X4"));
+                }
+
+                else if (c >= 32 && c < 127)
+                {
+                    xs.Append(c);
+                }
+                else
+                {
+                    xs.Append("\\x" + ((int)c).ToString("X2"));
+                }
+            }
+            return xs.ToString();
         }
     }
 
@@ -347,6 +432,11 @@ namespace Traffy.Compatibility.IronPython
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _GetEnumerator();
+        }
+
+        public static PythonTuple MakeTuple(params TrObject[] xs)
+        {
+            return MK.NTuple(xs);
         }
     }
 

@@ -726,6 +726,17 @@ namespace Traffy.Objects
             {
                 switch(__args.Count)
                 {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<System.Int32>.Unique,__args[1]);
+                        System.Collections.Generic.IList<System.Byte> _2;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("fillchar"),out var __keyword__2)))
+                            _2 = Unbox.Apply(THint<System.Collections.Generic.IList<System.Byte>>.Unique,__keyword__2);
+                        else
+                            _2 = null;
+                        return Box.Apply(_0.rjust(_1,fillchar : _2));
+                    }
                     case 3:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Objects.TrByteArray>.Unique,__args[0]);
@@ -734,7 +745,7 @@ namespace Traffy.Objects
                         return Box.Apply(_0.rjust(_1,_2));
                     }
                     default:
-                        throw new ValueError("rjust() requires 3 positional argument(s), got " + __args.Count);
+                        throw new ValueError("rjust() requires 2 to 3 positional argument(s), got " + __args.Count);
                 }
             }
             CLASS["rjust"] = TrSharpFunc.FromFunc("rjust", __bind_rjust);

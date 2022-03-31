@@ -629,7 +629,7 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public byte[] rjust(int width, IList<byte> fillchar)
+        public byte[] rjust(int width, IList<byte> fillchar = null)
         {
             if (fillchar == null)
                 fillchar = new byte[] { (byte)' ' };
@@ -787,7 +787,7 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public TrObject rsplit(IList<byte> sep = null, int maxsplit = -1)
+        public TrObject rsplit([PyBind.Keyword] IList<byte> sep = null, [PyBind.Keyword] int maxsplit = -1)
         {
             return IronPython.Runtime.Operations.IListOfByteOps.RightSplit(
                 contents.UnList,
@@ -870,7 +870,7 @@ namespace Traffy.Objects
                     return compute(contents.UnList, b.contents.UnList, start, end, s_ContentCount);
 
                 default:
-                    throw new TypeError("endswith first arg must be a byte string or a tuple of byte strings");
+                    throw new TypeError("startswith first arg must be a byte string or a tuple of byte strings");
             }
         }
 

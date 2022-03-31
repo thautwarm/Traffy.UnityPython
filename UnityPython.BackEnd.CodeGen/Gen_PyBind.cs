@@ -66,7 +66,7 @@ public class Gen_PyBind : HasNamespace
                     && ps[0].ParameterType == typeof(BList<TrObject>)
                     && ps[1].ParameterType == typeof(Dictionary<TrObject, TrObject>))
             {
-                defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, {meth.Name});".Doc());
+                defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, {meth.Name.ValidName()});".Doc());
                 continue;
             }
             
@@ -108,6 +108,15 @@ public class Gen_PyBind : HasNamespace
                 .Select(x => (x.ParameterType, x.Name, x.GetCustomAttribute<PyBind.SelfProp>() ?? x.DefaultValue))
                 .Prepend((entry, "__self", DBNull.Value))
                 .ToArray();
+
+            if (retType == typeof(TrObject)
+                    && ps.Length == 3
+                    && ps[1].ParameterType == typeof(BList<TrObject>)
+                    && ps[2].ParameterType == typeof(Dictionary<TrObject, TrObject>))
+            {
+                defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, (self, args, kwargs) => (({entry.Name}) self).{meth.Name.ValidName()}(args, kwargs));".Doc());
+                continue;
+            }
 
             var methNameSplit = meth.Name.Split('.');
             Func<CSExpr, CSExpr> getMeth = self => self[meth.Name];

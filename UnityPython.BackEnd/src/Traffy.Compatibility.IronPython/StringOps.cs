@@ -288,6 +288,46 @@ namespace IronPython.Runtime.Operations {
             return true;
         }
 
+        // non-ASCII characters are valid under Python 3 (PEP 3131)
+        // see https://docs.python.org/3/reference/lexical_analysis.html#identifiers for the list of valid identifiers
+        public static bool isidentifier(this string self) {
+            if (self.Length == 0) return false;
+            char c = self[0];
+            if (!char.IsLetter(c) && c != '_') return false;
+            for (int i = 1; i < self.Length; i++) {
+                c = self[i];
+                if (!char.IsLetterOrDigit(c) && c != '_') return false;
+            }
+            return true;
+        }
+
+        internal static bool IsPrintable(char c) {
+            // fast path for latin characters
+            if (0x1f < c && c < 0x7f) return true;
+            if (c <= 0xa0 || c == 0xad) return false;
+            if (c <= 0xff) return true;
+
+            switch (CharUnicodeInfo.GetUnicodeCategory(c)) {
+                case UnicodeCategory.Control: // Cc
+                case UnicodeCategory.Format: // Cf
+                case UnicodeCategory.Surrogate: // Cs
+                case UnicodeCategory.OtherNotAssigned: // Cn
+                case UnicodeCategory.LineSeparator: // Zl
+                case UnicodeCategory.ParagraphSeparator: // Zp
+                case UnicodeCategory.SpaceSeparator: // Zs
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        public static bool isprintable(this string self) {
+            foreach (char c in self) {
+                if (!IsPrintable(c)) return false;
+            }
+            return true;
+        }
+
         public static bool isspace(this string self) {
             if (self.Length == 0) return false;
             string v = self;
@@ -459,6 +499,23 @@ namespace IronPython.Runtime.Operations {
         public static string lstrip(this string self, string chars) {
             if (chars == null) return lstrip(self);
             return self.TrimStart(chars.ToCharArray());
+        }
+        public static Traffy.Objects.TrDict maketrans(string from, string to) {
+            if (from.Length != to.Length) throw PythonOps.ValueError("maketrans arguments must have same length");
+
+            var res = Traffy.MK.Dict();
+            for (var i = 0; i < from.Length; i++) {
+                res.container[PythonOps.BoxInt((int)from[i])] = PythonOps.BoxInt((int)to[i]);
+            }
+            return res;
+        }
+
+        public static Traffy.Objects.TrDict maketrans(string x, string y, string z) {
+            var res = maketrans(x, y);
+            foreach (var c in z) {
+                res.container[PythonOps.BoxInt((int)c)] = Traffy.MK.None();
+            }
+            return res;
         }
 
         public static (string, string, string) partition(this string self, string sep) {
@@ -915,22 +972,66 @@ namespace IronPython.Runtime.Operations {
 
         #region Internal implementation details
         internal static string Quote(string s) {
-
-            bool isUnicode = false;
             StringBuilder b = new StringBuilder(s.Length + 5);
             char quote = '\'';
             if (s.IndexOf('\'') != -1 && s.IndexOf('\"') == -1) {
                 quote = '\"';
             }
             b.Append(quote);
-            b.Append(ReprEncode(s, quote, ref isUnicode));
+            b.Append(ReprEncode(s, quote));
             b.Append(quote);
-            if (isUnicode) return "u" + b.ToString();
             return b.ToString();
         }
 
-        internal static string ReprEncode(string s, ref bool isUnicode) {
-            return ReprEncode(s, (char)0, ref isUnicode);
+        internal static string ReprEncode(string s, char quote) {
+            return ReprEncode(s, 0, s.Length, isUniEscape: false, quote);
+        }
+
+        private static string ReprEncode(string s, int start, int count, bool isUniEscape, char quote = default) {
+            // in the common case we don't need to encode anything, so we
+            // lazily create the StringBuilder only if necessary.
+            StringBuilder b = null;
+            int i = start;
+            int end = start + count;
+            while (i < end) {
+                char ch = s[i++];
+                switch (ch) {
+                    case '\\': StringBuilderInit(ref b, s, start, i - 1); b.Append("\\\\"); break;
+                    case '\t': StringBuilderInit(ref b, s, start, i - 1); b.Append("\\t"); break;
+                    case '\n': StringBuilderInit(ref b, s, start, i - 1); b.Append("\\n"); break;
+                    case '\r': StringBuilderInit(ref b, s, start, i - 1); b.Append("\\r"); break;
+                    default:
+                        if (quote != default && ch == quote) {
+                            StringBuilderInit(ref b, s, start, i - 1);
+                            b.Append('\\'); b.Append(ch);
+                        } else if (ch <= 0x1F || ch == 0x7F) {
+                            StringBuilderInit(ref b, s, start, i - 1);
+                            b.AppendFormat("\\x{0:x2}", (int)ch);
+                        } else if (ch > 0x7F && (isUniEscape || !IsPrintable(ch))) {
+                            StringBuilderInit(ref b, s, start, i - 1);
+                            if ((ch & 0xFC00) == 0xD800 && i < end && (s[i] & 0xFC00) == 0xDC00) {
+                                b.AppendFormat("\\U{0:x8}", char.ConvertToUtf32(ch, s[i++]));
+                            } else if (ch > 0xFF) {
+                                b.AppendFormat("\\u{0:x4}", (int)ch);
+                            } else {
+                                b.AppendFormat("\\x{0:x2}", (int)ch);
+                            }
+                        } else {
+                            b?.Append(ch);
+                        }
+
+                        break;
+                }
+            }
+
+            return b?.ToString() ?? s.Substring(start, count);
+        }
+
+        private static void StringBuilderInit(ref StringBuilder sb, string s, int start, int end) {
+            if (sb != null) return;
+
+            sb = new StringBuilder(s.Length);
+            sb.Append(s, start, end - start);
         }
 
         internal static string RawUnicodeEscapeEncode(string s) {
@@ -1149,7 +1250,7 @@ namespace IronPython.Runtime.Operations {
             }
         }
 
-        private static string GetString(Traffy.Objects.TrObject obj) {
+        internal static string GetString(Traffy.Objects.TrObject obj) {
             return Traffy.Objects.TrObjectFromString.AsStr(obj);
         }
 

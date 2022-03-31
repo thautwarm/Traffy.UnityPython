@@ -310,6 +310,7 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrSet(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrSet)self).__repr__());
+            cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Objects.TrSet)self).__add__(arg0));
             cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((Traffy.Objects.TrSet)self).__sub__(arg0));
             cls[MagicNames.i___and__] = TrSharpFunc.FromFunc(cls.Name + ".__and__", (self,arg0) => ((Traffy.Objects.TrSet)self).__and__(arg0));
             cls[MagicNames.i___or__] = TrSharpFunc.FromFunc(cls.Name + ".__or__", (self,arg0) => ((Traffy.Objects.TrSet)self).__or__(arg0));

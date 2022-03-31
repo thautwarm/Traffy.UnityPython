@@ -1,0 +1,21 @@
+Several files under 'UnityPython.BackEnd/Traffy.Compatibility.IronPython' are from IronPython Project and licensed under Apache License 2.0.
+
+- from https://github.com/IronLanguages/ironpython2/
+    - IListOfByteOps.cs
+        source: https://github.com/IronLanguages/ironpython2/blob/master/Src/IronPython/Runtime/Operations/IListOfByteOps.cs
+    - ArrayOps.cs
+        source: https://github.com/IronLanguages/ironpython2/blob/master/Src/IronPython/Runtime/Operations/ArrayOps.cs
+    - ArrayOps.List.cs
+        source: https://github.com/IronLanguages/ironpython2/blob/master/Src/IronPython/Runtime/Operations/ArrayOps.cs
+        comments: it's modified for List<T> use
+    - BytesOps.cs
+        source: https://github.com/IronLanguages/ironpython2/blob/master/Src/IronPython/Runtime/Operations/BytesOps.cs
+    - StringOps.cs
+        source:
+        - https://github.com/IronLanguages/ironpython2/blob/master/Src/IronPython/Runtime/Operations/StringOps.cs
+        - https://github.com/IronLanguages/ironpython3/blob/master/Src/IronPython/Runtime/Operations/StringOps.cs
+- https://github.com/IronLanguages/ironpython3/
+    - NewStringFormatter.cs
+        source: https://github.com/IronLanguages/ironpython3/blob/master/Src/IronPython/Runtime/NewStringFormatter.cs
+ 
+
