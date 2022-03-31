@@ -169,7 +169,7 @@ namespace Traffy.Objects
             return this;
         }
 
-        public override TrObject __bitor__(Traffy.Objects.TrObject a)
+        public override TrObject __or__(Traffy.Objects.TrObject a)
         {
             if (a.IsNone())
             {

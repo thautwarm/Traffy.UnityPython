@@ -35,6 +35,7 @@ namespace Traffy.Modules
             CLASS["Container"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Container);
             CLASS["Hashable"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Hashable);
             CLASS["Iterable"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Iterable);
+            CLASS["Iterator"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Iterator);
             CLASS["Reversible"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Reversible);
             CLASS["Sequence"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Sequence);
             CLASS["Sized"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Sized);

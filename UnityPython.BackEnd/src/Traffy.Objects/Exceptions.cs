@@ -525,6 +525,10 @@ namespace Traffy.Objects
         {
             this.Base().args = new TrObject[] { key };
         }
+        public KeyError(string msg)
+        {
+            this.Base().args = new TrObject[] { MK.Str(msg) };
+        }
         public KeyError() : base()
         {
             this.Base().args = new TrObject[0];

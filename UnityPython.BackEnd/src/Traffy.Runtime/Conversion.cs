@@ -69,6 +69,11 @@ namespace Traffy
             return MK.Dict(o);
         }
 
+        public static TrObject Apply(HashSet<TrObject> o)
+        {
+            return MK.Set(o);
+        }
+
         public static TrObject Apply(Awaitable<TrObject> awaitable)
         {
             return TrGenerator.Create(awaitable);
@@ -190,6 +195,16 @@ namespace Traffy
                 return d_o.container;
             }
             throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to dict");
+        }
+
+        public static HashSet<TrObject> Apply(THint<HashSet<TrObject>> _, TrObject o)
+        {
+            var s_o = o as TrSet;
+            if (s_o != null)
+            {
+                return s_o.container;
+            }
+            throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to set");   
         }
 
         public static byte Apply(THint<byte> _, TrObject o)

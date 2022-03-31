@@ -17,9 +17,9 @@ namespace Traffy.Objects
         public PolyIC ic__truediv = new PolyIC(MagicNames.i___truediv__);
         public PolyIC ic__mod = new PolyIC(MagicNames.i___mod__);
         public PolyIC ic__pow = new PolyIC(MagicNames.i___pow__);
-        public PolyIC ic__bitand = new PolyIC(MagicNames.i___bitand__);
-        public PolyIC ic__bitor = new PolyIC(MagicNames.i___bitor__);
-        public PolyIC ic__bitxor = new PolyIC(MagicNames.i___bitxor__);
+        public PolyIC ic__and = new PolyIC(MagicNames.i___and__);
+        public PolyIC ic__or = new PolyIC(MagicNames.i___or__);
+        public PolyIC ic__xor = new PolyIC(MagicNames.i___xor__);
         public PolyIC ic__lshift = new PolyIC(MagicNames.i___lshift__);
         public PolyIC ic__rshift = new PolyIC(MagicNames.i___rshift__);
         public PolyIC ic__hash = new PolyIC(MagicNames.i___hash__);
@@ -127,7 +127,7 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrClass(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrClass)self).__repr__());
-            cls[MagicNames.i___bitor__] = TrSharpFunc.FromFunc(cls.Name + ".__bitor__", (self,arg0) => ((Traffy.Objects.TrClass)self).__bitor__(arg0));
+            cls[MagicNames.i___or__] = TrSharpFunc.FromFunc(cls.Name + ".__or__", (self,arg0) => ((Traffy.Objects.TrClass)self).__or__(arg0));
             cls[MagicNames.i___call__] = TrSharpFunc.FromFunc(cls.Name + ".__call__", (self,arg0,arg1) => ((Traffy.Objects.TrClass)self).__call__(arg0,arg1));
             cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Objects.TrClass)self).__getitem__(arg0));
         }
@@ -232,9 +232,9 @@ namespace Traffy.Objects
             cls[MagicNames.i___truediv__] = TrSharpFunc.FromFunc(cls.Name + ".__truediv__", (self,arg0) => ((Traffy.Objects.TrInt)self).__truediv__(arg0));
             cls[MagicNames.i___mod__] = TrSharpFunc.FromFunc(cls.Name + ".__mod__", (self,arg0) => ((Traffy.Objects.TrInt)self).__mod__(arg0));
             cls[MagicNames.i___pow__] = TrSharpFunc.FromFunc(cls.Name + ".__pow__", (self,arg0) => ((Traffy.Objects.TrInt)self).__pow__(arg0));
-            cls[MagicNames.i___bitand__] = TrSharpFunc.FromFunc(cls.Name + ".__bitand__", (self,arg0) => ((Traffy.Objects.TrInt)self).__bitand__(arg0));
-            cls[MagicNames.i___bitor__] = TrSharpFunc.FromFunc(cls.Name + ".__bitor__", (self,arg0) => ((Traffy.Objects.TrInt)self).__bitor__(arg0));
-            cls[MagicNames.i___bitxor__] = TrSharpFunc.FromFunc(cls.Name + ".__bitxor__", (self,arg0) => ((Traffy.Objects.TrInt)self).__bitxor__(arg0));
+            cls[MagicNames.i___and__] = TrSharpFunc.FromFunc(cls.Name + ".__and__", (self,arg0) => ((Traffy.Objects.TrInt)self).__and__(arg0));
+            cls[MagicNames.i___or__] = TrSharpFunc.FromFunc(cls.Name + ".__or__", (self,arg0) => ((Traffy.Objects.TrInt)self).__or__(arg0));
+            cls[MagicNames.i___xor__] = TrSharpFunc.FromFunc(cls.Name + ".__xor__", (self,arg0) => ((Traffy.Objects.TrInt)self).__xor__(arg0));
             cls[MagicNames.i___lshift__] = TrSharpFunc.FromFunc(cls.Name + ".__lshift__", (self,arg0) => ((Traffy.Objects.TrInt)self).__lshift__(arg0));
             cls[MagicNames.i___rshift__] = TrSharpFunc.FromFunc(cls.Name + ".__rshift__", (self,arg0) => ((Traffy.Objects.TrInt)self).__rshift__(arg0));
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Objects.TrInt)self).__hash__());
@@ -310,8 +310,18 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrSet(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrSet)self).__repr__());
+            cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((Traffy.Objects.TrSet)self).__sub__(arg0));
+            cls[MagicNames.i___and__] = TrSharpFunc.FromFunc(cls.Name + ".__and__", (self,arg0) => ((Traffy.Objects.TrSet)self).__and__(arg0));
+            cls[MagicNames.i___or__] = TrSharpFunc.FromFunc(cls.Name + ".__or__", (self,arg0) => ((Traffy.Objects.TrSet)self).__or__(arg0));
+            cls[MagicNames.i___xor__] = TrSharpFunc.FromFunc(cls.Name + ".__xor__", (self,arg0) => ((Traffy.Objects.TrSet)self).__xor__(arg0));
+            cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc(cls.Name + ".__contains__", (self,arg0) => ((Traffy.Objects.TrSet)self).__contains__(arg0));
             cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Objects.TrSet)self).__iter__());
+            cls[MagicNames.i___len__] = TrSharpFunc.FromFunc(cls.Name + ".__len__", (self) => ((Traffy.Objects.TrSet)self).__len__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrSet)self).__eq__(arg0));
+            cls[MagicNames.i___lt__] = TrSharpFunc.FromFunc(cls.Name + ".__lt__", (self,arg0) => ((Traffy.Objects.TrSet)self).__lt__(arg0));
+            cls[MagicNames.i___le__] = TrSharpFunc.FromFunc(cls.Name + ".__le__", (self,arg0) => ((Traffy.Objects.TrSet)self).__le__(arg0));
+            cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc(cls.Name + ".__gt__", (self,arg0) => ((Traffy.Objects.TrSet)self).__gt__(arg0));
+            cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc(cls.Name + ".__ge__", (self,arg0) => ((Traffy.Objects.TrSet)self).__ge__(arg0));
         }
         static void BuiltinClassInit_TrSlice(TrClass cls)
         {
@@ -625,9 +635,9 @@ namespace Traffy.Objects
             ic__truediv = new PolyIC(MagicNames.i___truediv__);
             ic__mod = new PolyIC(MagicNames.i___mod__);
             ic__pow = new PolyIC(MagicNames.i___pow__);
-            ic__bitand = new PolyIC(MagicNames.i___bitand__);
-            ic__bitor = new PolyIC(MagicNames.i___bitor__);
-            ic__bitxor = new PolyIC(MagicNames.i___bitxor__);
+            ic__and = new PolyIC(MagicNames.i___and__);
+            ic__or = new PolyIC(MagicNames.i___or__);
+            ic__xor = new PolyIC(MagicNames.i___xor__);
             ic__lshift = new PolyIC(MagicNames.i___lshift__);
             ic__rshift = new PolyIC(MagicNames.i___rshift__);
             ic__hash = new PolyIC(MagicNames.i___hash__);

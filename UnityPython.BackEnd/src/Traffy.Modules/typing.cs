@@ -63,6 +63,8 @@ namespace Traffy.Modules
         [PyBind]
         public static TrClass Iterable => Traffy.Interfaces.Iterable.CLASS;
         [PyBind]
+        public static TrClass Iterator => Traffy.Interfaces.Iterator.CLASS;
+        [PyBind]
         public static TrClass Reversible => Traffy.Interfaces.Reversible.CLASS;
         [PyBind]
         public static TrClass Sequence => Traffy.Interfaces.Sequence.CLASS;

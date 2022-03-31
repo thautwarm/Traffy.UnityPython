@@ -34,12 +34,12 @@ namespace Traffy.Objects
                 this[MagicNames.i___mod__] = o_mod;
             if (cp_kwargs.TryPop(MagicNames.s_pow, out var o_pow))
                 this[MagicNames.i___pow__] = o_pow;
-            if (cp_kwargs.TryPop(MagicNames.s_bitand, out var o_bitand))
-                this[MagicNames.i___bitand__] = o_bitand;
-            if (cp_kwargs.TryPop(MagicNames.s_bitor, out var o_bitor))
-                this[MagicNames.i___bitor__] = o_bitor;
-            if (cp_kwargs.TryPop(MagicNames.s_bitxor, out var o_bitxor))
-                this[MagicNames.i___bitxor__] = o_bitxor;
+            if (cp_kwargs.TryPop(MagicNames.s_and, out var o_and))
+                this[MagicNames.i___and__] = o_and;
+            if (cp_kwargs.TryPop(MagicNames.s_or, out var o_or))
+                this[MagicNames.i___or__] = o_or;
+            if (cp_kwargs.TryPop(MagicNames.s_xor, out var o_xor))
+                this[MagicNames.i___xor__] = o_xor;
             if (cp_kwargs.TryPop(MagicNames.s_lshift, out var o_lshift))
                 this[MagicNames.i___lshift__] = o_lshift;
             if (cp_kwargs.TryPop(MagicNames.s_rshift, out var o_rshift))

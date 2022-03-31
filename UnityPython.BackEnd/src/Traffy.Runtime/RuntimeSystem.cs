@@ -240,17 +240,17 @@ namespace Traffy
 
         public static TrObject object_bitand(TrObject arg1, TrObject arg2)
         {
-            return arg1.__bitand__(arg2);
+            return arg1.__and__(arg2);
         }
 
         public static TrObject object_bitor(TrObject arg1, TrObject arg2)
         {
-            return arg1.__bitor__(arg2);
+            return arg1.__or__(arg2);
         }
 
         public static TrObject object_bitxor(TrObject arg1, TrObject arg2)
         {
-            return arg1.__bitxor__(arg2);
+            return arg1.__xor__(arg2);
         }
 
         public static TrObject object_matmul(TrObject arg1, TrObject arg2)
@@ -462,6 +462,11 @@ namespace Traffy
         public static HashSet<TrObject> bareset_create()
         {
             return new HashSet<TrObject>(Py_COMPARER);
+        }
+
+        public static HashSet<TrObject> bareset_create(TrSet copy_from)
+        {
+            return new HashSet<TrObject>(copy_from.container, Py_COMPARER);
         }
 
         public static void bareset_extend(HashSet<TrObject> set, TrObject rt_each)

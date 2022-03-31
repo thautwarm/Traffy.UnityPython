@@ -52,17 +52,17 @@ namespace Traffy.Objects
         {
             return TrObject.__pow__(this,a);
         }
-        public virtual  TrObject __bitand__(TrObject a)
+        public virtual  TrObject __and__(TrObject a)
         {
-            return TrObject.__bitand__(this,a);
+            return TrObject.__and__(this,a);
         }
-        public virtual  TrObject __bitor__(TrObject a)
+        public virtual  TrObject __or__(TrObject a)
         {
-            return TrObject.__bitor__(this,a);
+            return TrObject.__or__(this,a);
         }
-        public virtual  TrObject __bitxor__(TrObject a)
+        public virtual  TrObject __xor__(TrObject a)
         {
-            return TrObject.__bitxor__(this,a);
+            return TrObject.__xor__(this,a);
         }
         public virtual  TrObject __lshift__(TrObject a)
         {

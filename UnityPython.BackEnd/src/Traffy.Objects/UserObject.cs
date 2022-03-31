@@ -89,26 +89,26 @@ namespace Traffy.Objects
                 return TrObject.__pow__(this, a);
             return self_pow.Call(a);
         }
-        public override TrObject __bitand__(TrObject a)
+        public override TrObject __and__(TrObject a)
         {
-            var self_bitand = this[Class.ic__bitand];
-            if ((object)self_bitand == null)
-                return TrObject.__bitand__(this, a);
-            return self_bitand.Call(a);
+            var self_and = this[Class.ic__and];
+            if ((object)self_and == null)
+                return TrObject.__and__(this, a);
+            return self_and.Call(a);
         }
-        public override TrObject __bitor__(TrObject a)
+        public override TrObject __or__(TrObject a)
         {
-            var self_bitor = this[Class.ic__bitor];
-            if ((object)self_bitor == null)
-                return TrObject.__bitor__(this, a);
-            return self_bitor.Call(a);
+            var self_or = this[Class.ic__or];
+            if ((object)self_or == null)
+                return TrObject.__or__(this, a);
+            return self_or.Call(a);
         }
-        public override TrObject __bitxor__(TrObject a)
+        public override TrObject __xor__(TrObject a)
         {
-            var self_bitxor = this[Class.ic__bitxor];
-            if ((object)self_bitxor == null)
-                return TrObject.__bitxor__(this, a);
-            return self_bitxor.Call(a);
+            var self_xor = this[Class.ic__xor];
+            if ((object)self_xor == null)
+                return TrObject.__xor__(this, a);
+            return self_xor.Call(a);
         }
         public override TrObject __lshift__(TrObject a)
         {

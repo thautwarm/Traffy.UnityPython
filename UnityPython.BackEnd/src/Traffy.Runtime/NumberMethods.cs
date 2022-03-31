@@ -474,9 +474,9 @@ namespace Traffy.Objects
 
         public override bool __ge__(TrObject o) => NumberMethods.int_t_ge(this, o);
 
-        public override TrObject __bitand__(TrObject o) => NumberMethods.int_t_bitand(this, o);
-        public override TrObject __bitor__(TrObject o) => NumberMethods.int_t_bitor(this, o);
-        public override TrObject __bitxor__(TrObject o) => NumberMethods.int_t_bitxor(this, o);
+        public override TrObject __and__(TrObject o) => NumberMethods.int_t_bitand(this, o);
+        public override TrObject __or__(TrObject o) => NumberMethods.int_t_bitor(this, o);
+        public override TrObject __xor__(TrObject o) => NumberMethods.int_t_bitxor(this, o);
 
         public override TrObject __neg__() => MK.Int(-value);
         public override TrObject __pos__() => this;

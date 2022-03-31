@@ -167,17 +167,17 @@ namespace Traffy.Objects
 
         // Bitwise logic operations
         [MagicMethod]
-        public static TrObject __bitand__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__bitand__));
+        public static TrObject __and__(TrObject self, TrObject a) =>
+            throw self.unsupported(nameof(__and__));
 
         [MagicMethod]
-        public static TrObject __bitor__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__bitor__));
+        public static TrObject __or__(TrObject self, TrObject a) =>
+            throw self.unsupported(nameof(__or__));
 
 
         [MagicMethod]
-        public static TrObject __bitxor__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__bitxor__));
+        public static TrObject __xor__(TrObject self, TrObject a) =>
+            throw self.unsupported(nameof(__xor__));
 
 
 
