@@ -288,6 +288,7 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit_TrModule(TrClass cls)
         {
+            cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrModule)self).__repr__());
             cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc(cls.Name + ".__bool__", (self) => ((Traffy.Objects.TrModule)self).__bool__());
         }
         static void BuiltinClassInit_TrNone(TrClass cls)

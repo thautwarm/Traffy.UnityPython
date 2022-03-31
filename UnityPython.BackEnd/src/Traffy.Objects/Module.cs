@@ -10,7 +10,7 @@ namespace Traffy.Objects
     {
         public override IEnumerable<(TrStr, TrObject)> GetDictItems()
         {
-            foreach(var kv in Namespace)
+            foreach (var kv in Namespace)
             {
                 if (kv.Key is TrStr s)
                 {
@@ -48,6 +48,7 @@ namespace Traffy.Objects
         public override List<TrObject> __array__ => null;
 
         public override bool __bool__() => true;
+        public override string __repr__() => $"<module '{m_Name}'>";
         public override bool __getic__(Traffy.InlineCache.PolyIC ic, out Traffy.Objects.TrObject found) =>
             _read_module(ic.attribute, out found) || CLASS.__getic__(ic, out found);
         public override void __setic__(Traffy.InlineCache.PolyIC ic, Traffy.Objects.TrObject value) => _write_module(ic.attribute, value);
@@ -68,7 +69,7 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrModule>("module");
+            CLASS = TrClass.FromPrototype<TrModule>("ModuleType");
         }
 
 
@@ -77,8 +78,12 @@ namespace Traffy.Objects
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            Initialization.Prelude(CLASS);
+            // Initialization.Prelude(CLASS);
         }
+        [PyBind]
+        public TrObject __name__ => MK.Str(m_Name);
 
+        [PyBind]
+        public TrObject __dict__ => MK.Dict(Namespace);
     }
 }
