@@ -210,6 +210,8 @@ namespace Traffy
             return TrObject.__instancecheck__(o, cls);
         }
 
+        public static TrClass class_BaseException => TrBaseException.CLASS;
+
         public static TrObject[] object_as_array(TrObject trObject)
         {
             if (trObject is TrTuple tuple)

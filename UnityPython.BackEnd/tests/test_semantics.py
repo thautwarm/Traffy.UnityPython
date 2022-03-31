@@ -143,3 +143,22 @@ with testsuite("classdef"):
 
                 assert C1.f(1, 2, 3) == (C1, 1, 2, 3), "classmethods narg"
     test_class()
+
+
+with testsuite("raise"):
+    
+    ok = False
+    try:
+        raise 1
+    except TypeError as e:
+        ok =  "exception value must be an instance of BaseException, not" in e.args[0]
+    assert ok
+
+    ok = False
+    try:
+        raise ValueError
+    except ValueError:
+        ok = True
+    assert ok
+
+    

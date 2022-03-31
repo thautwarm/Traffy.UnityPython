@@ -571,7 +571,23 @@ namespace Traffy.Asm
             Exception e;
             if (exc != null)
             {
-                var rt_exc = exc.exec(frame);
+                TrObject rt_exc;
+                var rt_maybe_exc = exc.exec(frame);
+                if (!(rt_maybe_exc is TrBaseException rt_exc_typed))
+                {
+                    if (rt_maybe_exc is TrClass rt_exc_class && RTS.class_BaseException.__subclasscheck__(rt_exc_class))
+                    {
+                        rt_exc = rt_exc_class.Call();
+                    }
+                    else
+                    {
+                        throw new TypeError("exception value must be an instance of BaseException, not '" + rt_maybe_exc.Class.Name + "'");
+                    }
+                }
+                else
+                {
+                    rt_exc = rt_exc_typed;
+                }
                 e = RTS.exc_tobare(rt_exc);
                 throw e;
             }
@@ -589,7 +605,23 @@ namespace Traffy.Asm
             Exception e;
             if (exc != null)
             {
-                var rt_exc = exc.hasCont ? await exc.cont(frame) : exc.exec(frame);
+                TrObject rt_exc;
+                var rt_maybe_exc = await exc.cont(frame);
+                if (!(rt_maybe_exc is TrBaseException rt_exc_typed))
+                {
+                    if (rt_maybe_exc is TrClass rt_exc_class && RTS.class_BaseException.__subclasscheck__(rt_exc_class))
+                    {
+                        rt_exc = rt_exc_class.Call();
+                    }
+                    else
+                    {
+                        throw new TypeError("exception value must be an instance of BaseException, not '" + rt_maybe_exc.Class.Name + "'");
+                    }
+                }
+                else
+                {
+                    rt_exc = rt_exc_typed;
+                }
                 e = RTS.exc_tobare(rt_exc);
                 throw e;
             }
