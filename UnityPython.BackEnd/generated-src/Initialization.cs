@@ -222,7 +222,6 @@ namespace Traffy
             Traffy.Objects.TrSharpMethod.generated_BindMethods();
             Traffy.Objects.TrTypedDict.generated_BindMethods();
             Traffy.Objects.TrModule.generated_BindMethods();
-            Traffy.Objects.TrNone.generated_BindMethods();
             Traffy.Objects.TrProperty.generated_BindMethods();
             Traffy.Objects.TrSlice.generated_BindMethods();
             Traffy.Objects.TrStr.generated_BindMethods();

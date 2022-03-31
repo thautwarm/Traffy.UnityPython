@@ -293,8 +293,10 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit_TrNone(TrClass cls)
         {
+            cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrNone)self).__repr__());
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Objects.TrNone)self).__hash__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrNone)self).__eq__(arg0));
+            cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc(cls.Name + ".__ne__", (self,arg0) => ((Traffy.Objects.TrNone)self).__ne__(arg0));
         }
         static void BuiltinClassInit_TrRawObject(TrClass cls)
         {
