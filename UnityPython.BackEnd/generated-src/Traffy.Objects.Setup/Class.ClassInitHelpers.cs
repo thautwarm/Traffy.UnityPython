@@ -137,6 +137,8 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrDict(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrDict)self).__repr__());
+            cls[MagicNames.i___or__] = TrSharpFunc.FromFunc(cls.Name + ".__or__", (self,arg0) => ((Traffy.Objects.TrDict)self).__or__(arg0));
+            cls[MagicNames.i___contains__] = TrSharpFunc.FromFunc(cls.Name + ".__contains__", (self,arg0) => ((Traffy.Objects.TrDict)self).__contains__(arg0));
             cls[MagicNames.i___reversed__] = TrSharpFunc.FromFunc(cls.Name + ".__reversed__", (self) => ((Traffy.Objects.TrDict)self).__reversed__());
             cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Objects.TrDict)self).__getitem__(arg0));
             cls[MagicNames.i___delitem__] = TrSharpFunc.FromFunc(cls.Name + ".__delitem__", (self,arg0) => ((Traffy.Objects.TrDict)self).__delitem__(arg0));

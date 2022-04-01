@@ -53,18 +53,40 @@ namespace Traffy.Objects
             return MK.Int(container.Count);
         }
 
-        public override bool __eq__(TrObject eq)
+        public override bool __eq__(TrObject other)
         {
-            if (eq is TrDict other)
+            if (other is TrDict dict)
             {
-                return container.Count == other.container.Count && container.All(kv => other.container.TryGetValue(kv.Key, out var value) && value.__eq__(kv.Value));
+                return container.Count == dict.container.Count && container.All(kv => dict.container.TryGetValue(kv.Key, out var value) && value.__eq__(kv.Value));
             }
-            throw new TypeError($"unsupported comparison for '{CLASS.Name}' and '{eq.Class.Name}'");
+            throw new TypeError($"unsupported operand type(s) for ==: '{Class.Name}' and '{other.Class.Name}'");
         }
 
         public override bool __ne__(TrObject other)
         {
-            return !__eq__(other);
+            if (other is TrDict dict)
+            {
+                return container.Count != dict.container.Count || container.Any(kv => !dict.container.TryGetValue(kv.Key, out var value) || !value.__eq__(kv.Value));
+            }
+            throw new TypeError($"unsupported operand type(s) for !=: '{Class.Name}' and '{other.Class.Name}'");
+        }
+
+        public override TrObject __or__(TrObject a)
+        {
+            if (a is TrDict dict)
+            {
+                var res = RTS.baredict_create();
+                foreach (var kv in container)
+                {
+                    res[kv.Key] = kv.Value;
+                }
+                foreach (var kv in dict.container)
+                {
+                    res[kv.Key] = kv.Value;
+                }
+                return MK.Dict(res);
+            }
+            throw new TypeError($"unsupported operand type(s) for |: '{Class.Name}' and '{a.Class.Name}'");
         }
 
         public override IEnumerator<TrObject> __iter__()
@@ -72,38 +94,19 @@ namespace Traffy.Objects
             return keys();
         }
 
-        [PyBind]
-        public IEnumerator<TrObject> keys()
+        public override bool __contains__(TrObject a)
         {
-            foreach(var kv in container)
-            {
-                yield return kv.Key;
-            }
+            return container.ContainsKey(a);
         }
 
-        [PyBind]
-        public IEnumerator<TrObject> values()
-        {
-            foreach(var kv in container)
-            {
-                yield return kv.Value;
-            }
-        }
 
-        [PyBind]
-        public IEnumerator<TrObject> items()
-        {
-            foreach(var kv in container)
-            {
-                yield return MK.NTuple( kv.Key, kv.Value );
-            }
-        }
+
 
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-           CLASS = TrClass.FromPrototype<TrDict>("dict");
+            CLASS = TrClass.FromPrototype<TrDict>("dict");
         }
 
 
@@ -140,6 +143,99 @@ namespace Traffy.Objects
             RTS.baredict_extend(res, args[1]);
             return MK.Dict(res);
         }
-    }
 
+        [PyBind]
+        public void clear()
+        {
+            container.Clear();
+        }
+
+        [PyBind]
+        public TrDict copy()
+        {
+            return MK.Dict(container.Copy());
+        }
+
+        [PyBind]
+        public static TrDict fromkeys(TrObject iterable, TrObject value = null)
+        {
+            value = value ?? MK.None();
+            var itr = iterable.__iter__();
+            var res = RTS.baredict_create();
+            while (itr.MoveNext())
+            {
+                res[itr.Current] = value;
+            }
+            return MK.Dict(res);
+        }
+
+        [PyBind]
+        public TrObject get(TrObject key, TrObject defaultVal = null)
+        {
+            if (container.TryGetValue(key, out var value))
+            {
+                return value;
+            }
+            return defaultVal ?? MK.None();
+        }
+
+        [PyBind]
+        public IEnumerator<TrObject> keys()
+        {
+            foreach (var kv in container)
+            {
+                yield return kv.Key;
+            }
+        }
+
+        [PyBind]
+        public IEnumerator<TrObject> values()
+        {
+            foreach (var kv in container)
+            {
+                yield return kv.Value;
+            }
+        }
+
+        [PyBind]
+        public IEnumerator<TrObject> items()
+        {
+            foreach (var kv in container)
+            {
+                yield return MK.NTuple(kv.Key, kv.Value);
+            }
+        }
+
+        [PyBind]
+        public TrObject pop(TrObject key, TrObject defaultVal = null)
+        {
+            if (container.TryGetValue(key, out var value))
+            {
+                container.Remove(key);
+                return value;
+            }
+            if (defaultVal == null)
+            {
+                throw new KeyError(key);
+            }
+            return defaultVal;
+        }
+
+        [PyBind]
+        public TrObject setdefault(TrObject key, TrObject defaultVal)
+        {
+            if (container.TryGetValue(key, out var value))
+            {
+                return value;
+            }
+            container[key] = defaultVal;
+            return defaultVal;
+        }
+
+        [PyBind]
+        public void update(TrObject values)
+        {
+            RTS.baredict_extend(container, values);
+        }
+    }
 }

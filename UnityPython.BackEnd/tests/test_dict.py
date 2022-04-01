@@ -12,5 +12,16 @@ with testsuite("dict"):
     z: dict[int | str, int | str] = {1: 1, 3: "2", 'x': 1, 'y': 1.0} # type: ignore
     assert yyy == z # type: ignore
 
+    try:
+        hash({})
+        raise RuntimeError
+    except TypeError:
+        pass
 
-    
+    assert {1: 2, 3: 4, 5: 6} != {1: 2, 3: 4}
+
+    assert not ({1: 2, 3: 4, 5: 6} == {1: 2, 3: 4})
+
+    zzz = dict(x = 3)
+    zzz.update({'y': 3})
+    assert zzz == {'x': 3, 'y': 3}
