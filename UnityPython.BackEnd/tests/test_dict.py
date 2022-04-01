@@ -25,3 +25,4 @@ with testsuite("dict"):
     zzz = dict(x = 3)
     zzz.update({'y': 3})
     assert zzz == {'x': 3, 'y': 3}
+    

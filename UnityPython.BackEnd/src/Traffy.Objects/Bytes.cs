@@ -384,7 +384,6 @@ namespace Traffy.Objects
         {
             switch (encoding.ToLowerInvariant())
             {
-
                 case "utf8":
                 case "utf-8":
                     return Encoding.UTF8.GetString(contents.UnList);

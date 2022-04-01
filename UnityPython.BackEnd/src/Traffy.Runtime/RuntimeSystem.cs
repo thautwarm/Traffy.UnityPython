@@ -207,7 +207,12 @@ namespace Traffy
 
         public static bool isinstanceof(TrObject o, TrObject cls)
         {
-            return TrObject.__instancecheck__(o, cls);
+            return TrObject.isinstanceof(o, cls);
+        }
+
+        public static bool issubclassof(TrObject o, TrObject cls)
+        {
+            return TrObject.issubclassof(o, cls);
         }
 
         public static TrClass class_BaseException => TrBaseException.CLASS;
@@ -434,7 +439,7 @@ namespace Traffy
 
         private static bool object_is_mapping(TrObject other)
         {
-            return RTS.isinstanceof(other, Traffy.Interfaces.Mapping.CLASS);
+            return isinstanceof(other, Traffy.Interfaces.Mapping.CLASS);
         }
 
         public static void baredict_add(Dictionary<TrObject, TrObject> dict, TrObject rt_key, TrObject rt_value)

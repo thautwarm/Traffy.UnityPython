@@ -142,33 +142,13 @@ namespace Traffy
         [PyBuiltin]
         static bool isinstance(TrObject x, TrObject type)
         {
-            return x.__instancecheck__(type);
+            return RTS.isinstanceof(x, type);
         }
 
         [PyBuiltin]
         static bool issubclass(TrObject x, TrObject type)
         {
-            if (type is TrTuple tup)
-            {
-                foreach(var elt in tup.elts)
-                {
-                    if(issubclass(x, elt))
-                        return true;
-                }
-                return false;
-            }
-            else if (type is TrClass cls)
-            {
-                return cls.__subclasscheck__((TrClass) x);
-            }
-            else if (type is TrUnionType union)
-            {
-                return issubclass(x, union.left) || issubclass(x, union.right);
-            }
-            else
-            {
-                throw new TypeError($"issubclass() arg 2 must be a class, type, or tuple of classes, or a uniontype, not {type}");
-            }
+            return RTS.issubclassof(x, type);
         }
 
         [PyBuiltin]

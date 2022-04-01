@@ -9,7 +9,7 @@ namespace Traffy.Objects
             unchecked
             {
                 int hash = seed;
-                for(int i = 0; i < xs.Count; i++)
+                for (int i = 0; i < xs.Count; i++)
                 {
                     hash = hash * primSeed ^ xs[i].__hash__();
                 }
@@ -17,8 +17,7 @@ namespace Traffy.Objects
             }
         }
 
-
-        public static bool __instancecheck__(TrObject obj, TrObject classes)
+        public static bool isinstanceof(TrObject obj, TrObject classes)
         {
             if (classes is TrClass cls)
             {
@@ -26,13 +25,13 @@ namespace Traffy.Objects
             }
             else if (classes is TrUnionType union)
             {
-                return __instancecheck__(obj, union.left) || __instancecheck__(obj, union.right);
+                return isinstanceof(obj, union.left) || isinstanceof(obj, union.right);
             }
             else if (classes is TrTuple tup)
             {
                 foreach (var cls_ in tup.elts)
                 {
-                    if (__instancecheck__(obj, cls_))
+                    if (isinstanceof(obj, cls_))
                     {
                         return true;
                     }
@@ -45,6 +44,30 @@ namespace Traffy.Objects
             }
         }
 
-        public bool __instancecheck__(TrObject classes) => __instancecheck__(this, classes);
+        public static bool issubclassof(TrObject x, TrObject type)
+        {
+            if (type is TrTuple tup)
+            {
+                foreach (var elt in tup.elts)
+                {
+                    if (issubclassof(x, elt))
+                        return true;
+                }
+                return false;
+            }
+            else if (type is TrClass cls)
+            {
+                return cls.__subclasscheck__((TrClass)x);
+            }
+            else if (type is TrUnionType union)
+            {
+                return issubclassof(x, union.left) || issubclassof(x, union.right);
+            }
+            else
+            {
+                throw new TypeError($"issubclass() arg 2 must be a class, type, or tuple of classes, or a uniontype, not {type}");
+            }
+        }
+        public bool __instancecheck__(TrObject classes) => isinstanceof(this, classes);
     }
 }

@@ -12,6 +12,7 @@
 	],
 	"settings": {
 		"cSpell.words": [
+			"isinstance",
 			"newbuf",
 			"rsplit"
 		]
