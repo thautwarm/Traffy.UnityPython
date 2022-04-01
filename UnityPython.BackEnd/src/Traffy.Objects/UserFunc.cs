@@ -13,6 +13,9 @@ namespace Traffy.Objects
     public sealed class TrFunc : TrObject
     {
         public Variable[] freevars;
+        
+        [PyBind]
+        public TrObject __globals__ => MK.Dict(globals);
         public Dictionary<TrObject, TrObject> globals;
         public (int slot, TrObject value)[] default_args;
         public TrFuncPointer fptr;
@@ -58,7 +61,7 @@ namespace Traffy.Objects
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             var clsobj = args[0];
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
+            throw new TypeError($"{clsobj.AsClass.Name} has no constructor");
         }
         TrObject AsObject => this;
 
@@ -196,7 +199,4 @@ namespace Traffy.Objects
             return TrGenerator.Create(coroutine, frame);
         }
     }
-
-
-
 }
