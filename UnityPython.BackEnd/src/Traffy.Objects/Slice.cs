@@ -22,7 +22,7 @@ namespace Traffy.Objects
         [PyBind]
         public TrObject step => _step;
 
-        
+
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
@@ -35,23 +35,19 @@ namespace Traffy.Objects
         {
             RTS.arg_check_positional_range(args, 1, 4);
             int narg = args.Count;
-            if (narg == 1)
+            switch (narg)
             {
-                return new TrSlice { _start = TrNone.Unique, _stop = TrNone.Unique, _step = TrNone.Unique };
+                case 1:
+                    return new TrSlice { _start = TrNone.Unique, _stop = TrNone.Unique, _step = TrNone.Unique };
+                case 2:
+                    return new TrSlice { _start = TrNone.Unique, _stop = args[1], _step = TrNone.Unique };
+                case 3:
+                    return new TrSlice { _start = args[1], _stop = args[2], _step = TrNone.Unique };
+                case 4:
+                    return new TrSlice { _start = args[1], _stop = args[2], _step = args[3] };
+                default:
+                    throw new TypeError($"slice() takes 0 to 3 positional arguments but {narg - 1} were given");
             }
-            if (narg == 2)
-            {
-                return new TrSlice { _start = TrNone.Unique, _stop = args[1], _step = TrNone.Unique };
-            }
-            if (narg == 3)
-            {
-                return new TrSlice { _start = args[1], _stop = args[2], _step = TrNone.Unique };
-            }
-            if (narg == 4)
-            {
-                return new TrSlice { _start = args[1], _stop = args[2], _step = args[3] };
-            }
-            throw new TypeError($"invalid invocation of {args[0].AsClass.Name}");
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
