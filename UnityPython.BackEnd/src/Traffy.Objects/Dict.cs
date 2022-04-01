@@ -125,23 +125,20 @@ namespace Traffy.Objects
         {
             // XXX: more argument validation
             TrObject clsobj = args[0];
+            if (!object.ReferenceEquals(clsobj, CLASS))
+            {
+                throw new TypeError($"{clsobj.__repr__()} is not {CLASS.Name}");
+            }
             var narg = args.Count;
             if (narg == 1)
-                return MK.Dict();
-            if (narg == 2 && kwargs == null)
+                return MK.Dict(kwargs ?? RTS.baredict_create());
+            if (narg != 2)
             {
-                Dictionary<TrObject, TrObject> res = RTS.baredict_create();
-                RTS.baredict_extend(res, args[1]);
-                return MK.Dict(res);
+                throw new TypeError($"dict expected 0 or 1 arguments, got {narg}");
             }
-            else if (kwargs != null)
-            {
-                Dictionary<TrObject, TrObject> res = RTS.baredict_create();
-                foreach (var kv in kwargs)
-                    res.Add(kv.Key, kv.Value);
-                return MK.Dict(res);
-            }
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
+            Dictionary<TrObject, TrObject> res = kwargs ?? RTS.baredict_create();
+            RTS.baredict_extend(res, args[1]);
+            return MK.Dict(res);
         }
     }
 

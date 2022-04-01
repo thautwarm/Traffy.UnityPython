@@ -228,6 +228,7 @@ namespace Traffy
             Traffy.Objects.TrStaticMethod.generated_BindMethods();
             Traffy.Objects.TrStr.generated_BindMethods();
             Traffy.Objects.TrTuple.generated_BindMethods();
+            Traffy.Objects.TrFunc.generated_BindMethods();
             Traffy.Modules.TrModule_abc._Init();
             Traffy.Modules.TrModule_types._Init();
             Traffy.Modules.TrModule_typing._Init();

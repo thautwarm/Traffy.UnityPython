@@ -10,7 +10,7 @@ namespace Traffy.Objects
     // runtime
     [PyBuiltin]
     [PyInherit(typeof(Traffy.Interfaces.Callable))]
-    public sealed class TrFunc : TrObject
+    public sealed partial class TrFunc : TrObject
     {
         public Variable[] freevars;
         
