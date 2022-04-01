@@ -201,7 +201,6 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit_NativeError(TrClass cls)
         {
-            cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Objects.NativeError)self).__hash__());
         }
         static void BuiltinClassInit_TrFloat(TrClass cls)
         {
@@ -261,6 +260,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc(cls.Name + ".__neg__", (self) => ((Traffy.Objects.TrInt)self).__neg__());
             cls[MagicNames.i___invert__] = TrSharpFunc.FromFunc(cls.Name + ".__invert__", (self) => ((Traffy.Objects.TrInt)self).__invert__());
             cls[MagicNames.i___pos__] = TrSharpFunc.FromFunc(cls.Name + ".__pos__", (self) => ((Traffy.Objects.TrInt)self).__pos__());
+            cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc(cls.Name + ".__bool__", (self) => ((Traffy.Objects.TrInt)self).__bool__());
         }
         static void BuiltinClassInit_TrIter(TrClass cls)
         {
@@ -286,6 +286,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___le__] = TrSharpFunc.FromFunc(cls.Name + ".__le__", (self,arg0) => ((Traffy.Objects.TrList)self).__le__(arg0));
             cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc(cls.Name + ".__gt__", (self,arg0) => ((Traffy.Objects.TrList)self).__gt__(arg0));
             cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc(cls.Name + ".__ge__", (self,arg0) => ((Traffy.Objects.TrList)self).__ge__(arg0));
+            cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc(cls.Name + ".__bool__", (self) => ((Traffy.Objects.TrList)self).__bool__());
         }
         static void BuiltinClassInit_TrSharpMethod(TrClass cls)
         {
@@ -336,6 +337,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___le__] = TrSharpFunc.FromFunc(cls.Name + ".__le__", (self,arg0) => ((Traffy.Objects.TrSet)self).__le__(arg0));
             cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc(cls.Name + ".__gt__", (self,arg0) => ((Traffy.Objects.TrSet)self).__gt__(arg0));
             cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc(cls.Name + ".__ge__", (self,arg0) => ((Traffy.Objects.TrSet)self).__ge__(arg0));
+            cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc(cls.Name + ".__bool__", (self) => ((Traffy.Objects.TrSet)self).__bool__());
         }
         static void BuiltinClassInit_TrSlice(TrClass cls)
         {
@@ -387,6 +389,7 @@ namespace Traffy.Objects
             cls[MagicNames.i___le__] = TrSharpFunc.FromFunc(cls.Name + ".__le__", (self,arg0) => ((Traffy.Objects.TrTuple)self).__le__(arg0));
             cls[MagicNames.i___gt__] = TrSharpFunc.FromFunc(cls.Name + ".__gt__", (self,arg0) => ((Traffy.Objects.TrTuple)self).__gt__(arg0));
             cls[MagicNames.i___ge__] = TrSharpFunc.FromFunc(cls.Name + ".__ge__", (self,arg0) => ((Traffy.Objects.TrTuple)self).__ge__(arg0));
+            cls[MagicNames.i___bool__] = TrSharpFunc.FromFunc(cls.Name + ".__bool__", (self) => ((Traffy.Objects.TrTuple)self).__bool__());
         }
         static void BuiltinClassInit_TrUnionType(TrClass cls)
         {

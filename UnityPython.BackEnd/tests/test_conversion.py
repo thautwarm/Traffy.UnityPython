@@ -22,6 +22,12 @@ with testsuite("conversion"):
     assert float("1") == 1
     assert float(1.02) == 1.02
     assert float(False) == 0.0
+    
+    assert bool() is False
+    assert float() == 0.0
+    assert int() == 0
+    assert str() == ""
+
 
 
 

@@ -105,6 +105,8 @@ namespace Traffy.Objects
             return MK.Int(container.Count);
         }
 
+        public override bool __bool__() => container.Count != 0;
+
         public override TrObject __sub__(TrObject a)
         {
             if (a is TrSet otherSet)

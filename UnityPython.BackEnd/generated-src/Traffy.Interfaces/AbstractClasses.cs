@@ -51,6 +51,7 @@ namespace Traffy.Interfaces
             Traffy.Interfaces.Sequence.CLASS["index"] = TrSharpFunc.FromFunc("Sequence.index", Traffy.Interfaces.Sequence.__bind_index);
             Traffy.Interfaces.Sequence.CLASS["count"] = TrSharpFunc.FromFunc("Sequence.count", Traffy.Interfaces.Sequence.__bind_count);
             Traffy.Interfaces.Sized.CLASS["__len__"] = TrSharpFunc.FromFunc("Sized.__len__", Traffy.Interfaces.Sized.__bind___len__);
+            Traffy.Interfaces.Sized.CLASS["__bool__"] = TrSharpFunc.FromFunc("Sized.__bool__", Traffy.Interfaces.Sized.__bind___bool__);
         }
     }
     public static partial class Awaitable
@@ -818,6 +819,19 @@ namespace Traffy.Interfaces
         public static  Traffy.Objects.TrObject __bind___len__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
             throw new ValueError( "cannot call abstract method Sized.__len__" );
+        }
+        public static  Traffy.Objects.TrObject __bind___bool__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+        {
+            switch(__args.Count)
+            {
+                case 1:
+                {
+                    var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                    return Box.Apply(Traffy.Interfaces.Sized.__bool__(_0));
+                }
+                default:
+                    throw new ValueError("__bool__() requires 1 positional argument(s), got " + __args.Count);
+            }
         }
     }
 }

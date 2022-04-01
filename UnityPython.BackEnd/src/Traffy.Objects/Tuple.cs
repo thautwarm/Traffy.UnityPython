@@ -59,6 +59,7 @@ namespace Traffy.Objects
             Initialization.Prelude(CLASS);
         }
 
+        public override bool __bool__() => elts.UnList.Length != 0;
         public override IEnumerator<TrObject> __iter__()
         {
             for(int i = 0; i < elts.UnList.Length; i++)

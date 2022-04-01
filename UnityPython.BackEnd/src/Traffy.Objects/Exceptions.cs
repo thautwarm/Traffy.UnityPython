@@ -839,10 +839,6 @@ namespace Traffy.Objects
         public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
         public Exception Error;
         public override object Native => Error;
-        public override int __hash__()
-        {
-            return this.GetHashCode();
-        }
 
         public NativeError(Exception native)
         {
@@ -870,7 +866,6 @@ namespace Traffy.Objects
             CLASS.Name = "NativeError";
 
             CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NativeError.__new__", NativeError.datanew);
-            CLASS[CLASS.ic__eq] = TrSharpFunc.FromFunc("NativeError.__eq__", (o, r) => o.__eq__(r));
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
             _IndexMsg = CLASS.AddField("msg");

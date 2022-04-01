@@ -12,6 +12,12 @@ namespace Traffy.Interfaces
         {
             return TrObject.__len__(self);
         }
+
+        [MixinMember]
+        public static bool __bool__(TrObject self)
+        {
+            return self.__len__().AsInt() != 0;
+        }
     }
     
 

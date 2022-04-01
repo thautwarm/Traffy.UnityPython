@@ -19,6 +19,8 @@ namespace Traffy.Objects
 
         public override List<TrObject> __array__ => null;
 
+        public override bool __bool__() => container.Count != 0;
+
         [PyBind(Name = "compare")]
         int IComparable<TrObject>.CompareTo(TrObject other)
         {
