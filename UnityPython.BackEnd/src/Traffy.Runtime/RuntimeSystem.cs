@@ -390,7 +390,24 @@ namespace Traffy
             {
                 foreach (var kv in map.container)
                 {
-                    dict.Add(kv.Key, kv.Value);
+                    dict[kv.Key] = kv.Value;
+                }
+            }
+            else if (RTS.object_is_mapping(other))
+            {
+                var itr = other.__iter__();
+                var refval = MK.Ref();
+                while (itr.MoveNext())
+                {
+                    var key = itr.Current;
+                    if(other.__finditem__(key, refval))
+                    {
+                        dict[key] = refval.value;
+                    }
+                    else
+                    {
+                        throw new TypeError($"unable to find key, is your Mapping implementation for {other.Class.Name} buggy?");
+                    }
                 }
             }
             else
@@ -405,7 +422,7 @@ namespace Traffy
                         {
                             throw new ValueError($"updating dictionaries requires a 2-element tuple sequence, got {tuple.elts.Count}-element ones.");
                         }
-                        dict.Add(tuple.elts[0], tuple.elts[1]);
+                        dict[tuple.elts[0]] = tuple.elts[1];
                     }
                     else
                     {
@@ -415,9 +432,14 @@ namespace Traffy
             }
         }
 
+        private static bool object_is_mapping(TrObject other)
+        {
+            return RTS.isinstanceof(other, Traffy.Interfaces.Mapping.CLASS);
+        }
+
         public static void baredict_add(Dictionary<TrObject, TrObject> dict, TrObject rt_key, TrObject rt_value)
         {
-            dict.Add(rt_key, rt_value);
+            dict[rt_key] = rt_value;
         }
 
         public static TrObject object_from_baredict(Dictionary<TrObject, TrObject> dict)

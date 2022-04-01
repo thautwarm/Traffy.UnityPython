@@ -8,9 +8,27 @@ with testsuite("list packing"):
     x, *z, y = (1, 2, 3)
     assert z == [2], "list packing from tuple"
 
-    xs = [3, 6, 6, 1, 1, 2, 0, 0, 1, 1, 2, 3]
+    data_for_generator_test = [3, 6, 6, 1, 1, 2, 0, 0, 1, 1, 2, 3]
     assert [3, *[*[6, 6], 1, *[1, 2]], *[*[0, 0], 1, *[1, 2]], 3]\
-        == xs, "list unpack"
+        == data_for_generator_test, "list unpack"
+
+with testsuite("dict packing"):
+    q = {1: 5, 3: 7}
+    qs = {1: 2, **q}
+    assert qs == {1: 5, 3: 7}, "dict packing"
+    from typing import Mapping, Iterator, Any
+    class S(Mapping[int, int]):
+        def __finditem__(self, k: int, vref: ref[Any]):
+            if k == 2:
+                vref.value = 8
+                return True
+            return False
+        def __len__(self) -> int:
+            return 1
+        
+        def __iter__(self):
+            yield 2
+    assert {1: 2, **S()} == {1: 2, 2: 8}
 
 with testsuite("first-class functions"):
     def fcf_0(u):
@@ -98,8 +116,8 @@ with testsuite("async + generators"):
         yield x
         await f01(x)
         yield x
-        
-    assert list(f00(3)) == xs, "generator1"
+
+    assert list(f00(3)) == data_for_generator_test, "generator1"
 
     async def f000(x):
         yield x
