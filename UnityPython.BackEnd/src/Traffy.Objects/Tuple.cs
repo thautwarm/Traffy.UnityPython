@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Traffy.Annotations;
 using InlineHelper;
+using Traffy.Annotations;
 
 namespace Traffy.Objects
 {
@@ -11,7 +11,15 @@ namespace Traffy.Objects
     {
         public static TrObject ToTr(this TrObject[] arr) => RTS.tuple_construct(arr);
 
-        public static TrTuple AsTuple(this TrObject tuple) => (TrTuple)tuple;
+        public static TrTuple AsTuple(this TrObject o)
+        {
+            var tuple = o as TrTuple;
+            if (tuple != null)
+            {
+                return tuple;
+            }
+            throw new TypeError("Expected tuple, got " + o.Class.Name);
+        }
     }
 
     [Serializable]
@@ -53,10 +61,23 @@ namespace Traffy.Objects
 
         public override IEnumerator<TrObject> __iter__()
         {
-            return elts.AsEnumerable().GetEnumerator();
+            for(int i = 0; i < elts.UnList.Length; i++)
+            {
+                yield return elts[i];
+            }
         }
 
-        
+        public override bool __contains__(TrObject o)
+        {
+            for (int i = 0; i < elts.Count; i++)
+            {
+                if (elts[i].__eq__(o))
+                    return true;
+            }
+            return false;
+        }
+
+
 
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
@@ -68,7 +89,7 @@ namespace Traffy.Objects
             {
                 return MK.Tuple(RTS.object_as_array(args[1]));
             }
-            throw new TypeError($"invalid invocation of {clsobj.AsClass.Name}");
+            throw new TypeError($"tuple() takes at most 1 argument ({narg} given)");
         }
 
         public override int __hash__() => TrObject.ObjectSequenceHash<FArray<TrObject>>(
@@ -83,14 +104,8 @@ namespace Traffy.Objects
             if (other is TrTuple otherTuple)
             {
                 var xs = new TrObject[elts.Count + otherTuple.elts.Count];
-                for(int i = 0; i < elts.Count; i++)
-                {
-                    xs[i] = elts[i];
-                }
-                for(int i = 0; i < otherTuple.elts.Count; i++)
-                {
-                    xs[i + elts.Count] = otherTuple.elts[i];
-                }
+                Array.Copy(elts.UnList, xs, elts.Count);
+                Array.Copy(otherTuple.elts.UnList, 0, xs, elts.Count, otherTuple.elts.Count);
                 return MK.Tuple(xs);
             }
             throw new TypeError($"unsupported operand type(s) for +: '{Class.Name}' and '{other.Class.Name}'");
@@ -100,12 +115,7 @@ namespace Traffy.Objects
         {
             if (a is TrInt ai)
             {
-                var xs = new TrObject[elts.Count * ai.value];
-                for (int i = 0; i < xs.Length; i++)
-                {
-                    xs[i] = elts[i % elts.Count];
-                }
-                return MK.Tuple(xs);
+                return MK.Tuple(IronPython.Runtime.Operations.ArrayOps.Multiply(elts.UnList, (int)ai.value));
             }
             throw new TypeError($"unsupported operand type(s) for *: '{Class.Name}' and '{a.Class.Name}'");
         }
@@ -121,7 +131,11 @@ namespace Traffy.Objects
 
         public override bool __ne__(TrObject other)
         {
-            return !__eq__(other);
+            if (other is TrTuple otherTuple)
+            {
+                return elts.SeqNe<FArray<TrObject>, FArray<TrObject>, TrObject>(otherTuple.elts);
+            }
+            return false;
         }
 
         public override bool __lt__(TrObject other)
@@ -165,18 +179,18 @@ namespace Traffy.Objects
             switch (item)
             {
                 case TrInt ith:
+                {
+                    var i = unchecked((int)ith.value);
+                    if(Traffy.Compatibility.IronPython.PythonOps.TryFixIndex(ref i, s_ContentCount))
                     {
-                        var i = unchecked((int) ith.value);
-                        if (i < 0)
-                            i += elts.Count;
-                        if (i < 0 || i >= elts.Count)
-                            throw new IndexError($"list index out of range");
                         return elts[i];
                     }
+                    throw new IndexError($"list index out of range");
+                }
                 case TrSlice slice:
-                    {
-                        return MK.Tuple(IronPython.Runtime.Operations.ArrayOps.GetSlice(elts.UnList, slice));
-                    }
+                {
+                    return MK.Tuple(IronPython.Runtime.Operations.ArrayOps.GetSlice(elts.UnList, slice));
+                }
                 default:
                     throw new TypeError($"list indices must be integers, not '{item.Class.Name}'");
             }
@@ -195,15 +209,17 @@ namespace Traffy.Objects
         }
 
         [PyBind]
-        public TrObject index(TrObject x, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0)
+        public int index(TrObject x, int start = 0, [PyBind.SelfProp(nameof(s_ContentCount))] int end = 0, [PyBind.Keyword(Only = true)] bool noraise = false)
         {
             if (end == -1)
                 end = elts.Count;
             for (int i = start; i < end; i++)
             {
                 if (elts[i].__eq__(x))
-                    return MK.Int(i);
+                    return i;
             }
+            if (noraise)
+                return -1;
             throw new ValueError($"tuple.index(x): x not in tuple");
         }
     }
