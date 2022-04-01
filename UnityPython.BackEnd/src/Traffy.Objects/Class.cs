@@ -23,19 +23,6 @@ namespace Traffy.Objects
     using str_func = Func<TrObject, TrObject>;
     using unary_func = Func<TrObject, TrObject>;
 
-    class IdComparer : IEqualityComparer<TrClass>
-    {
-        public bool Equals(TrClass x, TrClass y)
-        {
-            return object.ReferenceEquals(x, y);
-        }
-
-        public int GetHashCode([DisallowNull] TrClass obj)
-        {
-            return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
-        }
-    }
-
 
     [Traffy.Annotations.PyBuiltin]
     public sealed partial class TrClass : TrObject, IEquatable<TrClass>
@@ -175,9 +162,9 @@ namespace Traffy.Objects
             {
                 return MK.UnionType(this, TrNone.CLASS);
             }
-            if (a is TrClass cls)
+            if (a is TrClass || a is TrUnionType)
             {
-                return MK.UnionType(this, cls);
+                return MK.UnionType(this, a);
             }
             throw new TypeError($"unsupported operand type(s) for |: class '{this.Name}' and '{a.Class.Name}' object");
         }

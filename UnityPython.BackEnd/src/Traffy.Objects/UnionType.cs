@@ -9,15 +9,24 @@ namespace Traffy.Objects
     [PyBuiltin]
     public partial class TrUnionType : TrObject
     {
-        public TrClass left;
-        public TrClass right;
+        public TrObject left;
+        public TrObject right;
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
 
         public override List<TrObject> __array__ => null;
         public override string __repr__() => left.__repr__() + "|" + right.__repr__();
 
-        public TrUnionType(TrClass left, TrClass right)
+        public override TrObject __or__(TrObject right)
+        {
+            if (right is TrClass || right is TrNone || right is TrUnionType)
+            {
+                return MK.UnionType(this, right);
+            }
+            throw new TypeError($"UnionType can only be used with classes, None, or UnionType, not {right.__repr__()}");
+        }
+
+        public TrUnionType(TrObject left, TrObject right)
         {
             this.left = left;
             this.right = right;

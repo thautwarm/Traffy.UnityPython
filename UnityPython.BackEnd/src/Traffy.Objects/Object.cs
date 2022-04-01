@@ -17,6 +17,19 @@ namespace Traffy.Objects
         public static bool IsNull<T>(this T self) where T : class => object.ReferenceEquals(self, null);
     }
 
+    public class IdComparer : IEqualityComparer<TrObject>
+    {
+        public bool Equals(TrObject x, TrObject y)
+        {
+            return object.ReferenceEquals(x, y);
+        }
+
+        public int GetHashCode([DisallowNull] TrObject obj)
+        {
+            return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
+        }
+    }
+
     public class TraffyComparer : IEqualityComparer<TrObject>
     {
         public bool Equals(TrObject x, TrObject y)

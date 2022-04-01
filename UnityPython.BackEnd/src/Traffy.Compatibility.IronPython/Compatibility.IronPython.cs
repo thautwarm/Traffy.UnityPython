@@ -23,6 +23,11 @@ namespace Traffy.Compatibility.IronPython
         {
             return value.__str__();
         }
+
+        internal static string hex(uint flags)
+        {
+            return flags.ToString("X");
+        }
     }
     public static class ScriptingRuntimeHelpers
     {

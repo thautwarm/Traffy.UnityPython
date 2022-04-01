@@ -269,7 +269,8 @@ namespace SimpleJSON
                         checkType<bool>(t);
                         return node.AsBool;
                     }
-                case JSONNodeType.Number:
+                case JSONNodeType.Int:
+                case JSONNodeType.Float:
                     {
                         if (t == typeof(int))
                         {

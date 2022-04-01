@@ -8,6 +8,7 @@ namespace Traffy
         public static void InitRuntime()
         {
             Traffy.Objects.TrRawObject._Create();
+            Traffy.Modules.TrModule_json._Create();
             Traffy.Modules.TrModule_types._Create();
             Traffy.Modules.TrModule_typing._Create();
             Traffy.Interfaces.Awaitable._Create();
@@ -69,6 +70,7 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Create();
             Traffy.Objects.TrFunc._Create();
             Traffy.Objects.TrRawObject.CLASS.__base = new TrClass[] {  };
+            Traffy.Modules.TrModule_json.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_types.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_typing.CLASS.__base = new TrClass[] {  };
             Traffy.Interfaces.Awaitable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
@@ -130,6 +132,7 @@ namespace Traffy
             Traffy.Objects.TrUnionType.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrFunc.CLASS.__base = new TrClass[] { Traffy.Interfaces.Callable.CLASS };
             Traffy.Objects.TrRawObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRawObject.CLASS);
+            Traffy.Modules.TrModule_json.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_json.CLASS);
             Traffy.Modules.TrModule_types.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_types.CLASS);
             Traffy.Modules.TrModule_typing.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_typing.CLASS);
             Traffy.Interfaces.Awaitable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Awaitable.CLASS);
@@ -207,6 +210,7 @@ namespace Traffy
             Traffy.Interfaces.AbstractClass.generated_BindMethods();
             Traffy.Builtins.InitBuiltins();
             Traffy.Modules.TrModule_abc.generated_BindMethods();
+            Traffy.Modules.TrModule_json.generated_BindMethods();
             Traffy.Modules.TrModule_types.generated_BindMethods();
             Traffy.Modules.TrModule_typing.generated_BindMethods();
             Traffy.Objects.TrABC.generated_BindMethods();
@@ -230,6 +234,7 @@ namespace Traffy
             Traffy.Objects.TrTuple.generated_BindMethods();
             Traffy.Objects.TrFunc.generated_BindMethods();
             Traffy.Modules.TrModule_abc._Init();
+            Traffy.Modules.TrModule_json._Init();
             Traffy.Modules.TrModule_types._Init();
             Traffy.Modules.TrModule_typing._Init();
             Traffy.Objects.TrABC._Init();
@@ -276,6 +281,7 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Init();
             Traffy.Objects.TrFunc._Init();
             Traffy.Objects.TrRawObject._SetupClasses();
+            Traffy.Modules.TrModule_json._SetupClasses();
             Traffy.Modules.TrModule_types._SetupClasses();
             Traffy.Modules.TrModule_typing._SetupClasses();
             Traffy.Interfaces.Awaitable._SetupClasses();

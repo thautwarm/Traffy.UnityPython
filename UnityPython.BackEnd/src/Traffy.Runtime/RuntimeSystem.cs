@@ -823,7 +823,7 @@ namespace Traffy
             return new TrIter(v);
         }
 
-        public static TrObject UnionType(TrClass left, TrClass right)
+        public static TrObject UnionType(TrObject left, TrObject right)
         {
             return new TrUnionType(left, right);
         }

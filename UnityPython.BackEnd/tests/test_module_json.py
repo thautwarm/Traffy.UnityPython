@@ -3,9 +3,14 @@ print(json.JSON)
 
 orig = "{\"sada\": [1, 2, 3, {}]}"
 xs = json.loads('{"sada": [1, 2, 3, {}]}')
-print(type(xs))
-print(orig)
 
+assert isinstance("", json.JSON)
+assert isinstance({}, json.JSON)
+assert isinstance(1, json.JSON)
+assert isinstance(True, json.JSON)
+assert isinstance(1.0, json.JSON)
+assert isinstance(None, json.JSON)
+assert isinstance([], json.JSON)
 
 
 expect = r"""{
