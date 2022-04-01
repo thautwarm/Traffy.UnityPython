@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Traffy.Annotations;
 
 namespace Traffy.Objects
@@ -91,6 +92,7 @@ namespace Traffy.Objects
             return MK.NTuple(MK.Int(istart), MK.Int(istop), MK.Int(iend));
         }
 
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         public (int start, int stop, int step) _indices(int count)
         {
             return Traffy.Compatibility.IronPython.PythonOps.FixSlice(count, start, stop, step);
