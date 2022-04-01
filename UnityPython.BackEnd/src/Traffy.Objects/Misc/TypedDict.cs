@@ -12,7 +12,6 @@ namespace Traffy.Objects
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
-
         public static TrObject typed_dict_instance_new(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             if (args.Count != 1)

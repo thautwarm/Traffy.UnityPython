@@ -45,6 +45,7 @@ namespace Traffy.Objects
 
     public abstract partial class TrObject : IEquatable<TrObject>, IComparable<TrObject>
     {
+        public const string name_ClassAnnotation = "__class_annotations__";
         public static TrObject[] EmptyObjectArray = new TrObject[0];
 
         public virtual IEnumerable<(TrStr, TrObject)> GetDictItems()
@@ -413,6 +414,7 @@ namespace Traffy.Objects
         internal static void _Init()
         {
             CLASS[CLASS.ic__new] = TrSharpFunc.FromFunc("object.__new__", TrRawObject.datanew);
+            CLASS[name_ClassAnnotation] = MK.Tuple();
             CLASS["mro"] = TrClassMethod.Bind(TrSharpFunc.FromFunc("object.mro", mro));
 
         }

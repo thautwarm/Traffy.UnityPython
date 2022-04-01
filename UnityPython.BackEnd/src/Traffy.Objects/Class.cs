@@ -59,6 +59,9 @@ namespace Traffy.Objects
         // include itself
         public HashSet<TrClass> __subclasses = new HashSet<TrClass>(idComparer);
 
+        // use for enumerations
+        public (TrStr Name, TrObject Value)[] EnumHelperField = null;
+
         public override List<TrObject> __array__ => null;
 
         // does not contain those that are inherited from '__mro__'

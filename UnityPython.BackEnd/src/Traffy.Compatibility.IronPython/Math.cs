@@ -8,46 +8,38 @@
 // using System.Diagnostics;
 // using System.Linq;
 // using System.Numerics;
+// using Traffy.Compatibility.IronPython;
 
-// using Microsoft.Scripting;
-// using Microsoft.Scripting.Runtime;
-// using Microsoft.Scripting.Utils;
-
-// using IronPython.Runtime;
-// using IronPython.Runtime.Operations;
-// using IronPython.Runtime.Types;
-
-// [assembly: PythonModule("math", typeof(IronPython.Modules.PythonMath))]
 // namespace IronPython.Modules {
 //     public static partial class PythonMath {
 //         public const string __doc__ = "Provides common mathematical functions.";
 
-//         public const double pi = Math.PI;
-//         public const double e = Math.E;
+//         public const float pi = MathF.PI;
+//         public const float e = MathF.E;
 
-//         private const double degreesToRadians = Math.PI / 180.0;
+//         private const float degreesToRadians = MathF.PI / 180.0f;
 //         private const int Bias = 0x3FE;
 
-//         public static double degrees(double radians) {
+//         public static float degrees(float radians) {
 //             return Check(radians, radians / degreesToRadians);
 //         }
 
-//         public static double radians(double degrees) {
+//         public static float radians(float degrees) {
 //             return Check(degrees, degrees * degreesToRadians);
 //         }
 
-//         public static double fmod(double v, double w) {
+//         public static float fmod(float v, float w) {
 //             return Check(v, w, v % w);
 //         }
 
-//         private static double sum(List<double> partials) {
+//         private static float sum(List<float> partials) {
 //             // sum the partials the same was as CPython does
 //             var n = partials.Count;
-//             var hi = 0.0;
+//             var hi = 0.0f;
 
 //             if (n == 0) return hi;
 
-//             var lo = 0.0;
+//             var lo = 0.0f;
 
 //             // sum exact
 //             while (n > 0) {
@@ -55,15 +47,15 @@
 //                 var y = partials[--n];
 //                 hi = x + y;
 //                 lo = y - (hi - x);
-//                 if (lo != 0.0)
+//                 if (lo != 0.0f)
 //                     break;
 //             }
 
 //             if (n == 0) return hi;
 
 //             // half-even rounding
-//             if (lo < 0.0 && partials[n - 1] < 0.0 || lo > 0.0 && partials[n - 1] > 0.0) {
-//                 var y = lo * 2.0;
+//             if (lo < 0.0f && partials[n - 1] < 0.0f || lo > 0.0f && partials[n - 1] > 0.0f) {
+//                 var y = lo * 2.0f;
 //                 var x = hi + y;
 //                 var yr = x - hi;
 //                 if (y == yr)
@@ -72,15 +64,17 @@
 //             return hi;
 //         }
 
-//         public static double fsum(IEnumerable e) {
+//         public static float fsum(IEnumerator<Traffy.Objects.TrObject> e) {
 //             // msum from https://code.activestate.com/recipes/393090/
-//             var partials = new List<double>();
-//             foreach (var v in e.Cast<object>().Select(o => Converter.ConvertToDouble(o))) {
+//             var partials = new List<float>();
+//             while (e.MoveNext())
+//             {
+//                 var v = e.Current.__float__().AsFloat();
 //                 var x = v;
 //                 var i = 0;
 //                 for (var j = 0; j < partials.Count; j++) {
 //                     var y = partials[j];
-//                     if (Math.Abs(x) < Math.Abs(y)) {
+//                     if (MathF.Abs(x) < MathF.Abs(y)) {
 //                         var t = x;
 //                         x = y;
 //                         y = t;
@@ -99,207 +93,127 @@
 //             return sum(partials);
 //         }
 
-//         public static PythonTuple frexp(double v) {
-//             if (Double.IsInfinity(v) || Double.IsNaN(v)) {
-//                 return PythonTuple.MakeTuple(v, 0.0);
+//         public static Traffy.Objects.TrTuple modf(float v) {
+//             if (float.IsInfinity(v)) {
+//                 return PythonOps.MakeNTuple(Traffy.Box.Apply(0.0f), Traffy.Box.Apply(v));
 //             }
-//             int exponent = 0;
-//             double mantissa = 0;
-
-//             if (v == 0) {
-//                 mantissa = 0;
-//                 exponent = 0;
-//             } else {
-//                 byte[] vb = BitConverter.GetBytes(v);
-//                 if (BitConverter.IsLittleEndian) {
-//                     DecomposeLe(vb, out mantissa, out exponent);
-//                 } else {
-//                     throw new NotImplementedException();
-//                 }
-//             }
-
-//             return PythonTuple.MakeTuple(mantissa, exponent);
-//         }
-
-//         public static PythonTuple modf(double v) {
-//             if (double.IsInfinity(v)) {
-//                 return PythonTuple.MakeTuple(0.0, v);
-//             }
-//             double w = v % 1.0;
+//             float w = v % 1.0f;
 //             v -= w;
-//             return PythonTuple.MakeTuple(w, v);
+//             return PythonOps.MakeNTuple(Traffy.Box.Apply(w), Traffy.Box.Apply(v));
 //         }
 
-//         public static double ldexp(double v, BigInteger w) {
-//             if (v == 0.0 || double.IsInfinity(v)) {
+//         public static float ldexp(float v, int w) {
+//             if (v == 0.0f || float.IsInfinity(v)) {
 //                 return v;
 //             }
-//             return Check(v, v * Math.Pow(2.0, (double)w));
+//             return Check(v, v * MathF.Pow(2.0f, (float) w));
 //         }
 
-//         public static double hypot(double v, double w) {
-//             if (double.IsInfinity(v) || double.IsInfinity(w)) {
-//                 return double.PositiveInfinity;
+//         public static float hypot(float v, float w) {
+//             if (float.IsInfinity(v) || float.IsInfinity(w)) {
+//                 return float.PositiveInfinity;
 //             }
 //             return Check(v, w, MathUtils.Hypot(v, w));
 //         }
 
-//         public static double pow(double v, double exp) {
-//             if (v == 1.0 || exp == 0.0) {
-//                 return 1.0;
-//             } else if (double.IsNaN(v) || double.IsNaN(exp)) {
-//                 return double.NaN;
-//             } else if (v == 0.0) {
-//                 if (exp > 0.0) {
-//                     return 0.0;
+//         public static float pow(float v, float exp) {
+//             if (v == 1.0f || exp == 0.0f) {
+//                 return 1.0f;
+//             } else if (float.IsNaN(v) || float.IsNaN(exp)) {
+//                 return float.NaN;
+//             } else if (v == 0.0f) {
+//                 if (exp > 0.0f) {
+//                     return 0.0f;
 //                 }
 //                 throw PythonOps.ValueError("math domain error");
-//             } else if (double.IsPositiveInfinity(exp)) {
+//             } else if (float.IsPositiveInfinity(exp)) {
 //                 if (v > 1.0 || v < -1.0) {
-//                     return double.PositiveInfinity;
+//                     return float.PositiveInfinity;
 //                 } else if (v == -1.0) {
-//                     return 1.0;
+//                     return 1.0f;
 //                 } else {
-//                     return 0.0;
+//                     return 0.0f;
 //                 }
-//             } else if (double.IsNegativeInfinity(exp)) {
-//                 if (v > 1.0 || v < -1.0) {
-//                     return 0.0;
-//                 } else if (v == -1.0) {
-//                     return 1.0;
+//             } else if (float.IsNegativeInfinity(exp)) {
+//                 if (v > 1.0f || v < -1.0f) {
+//                     return 0.0f;
+//                 } else if (v == -1.0f) {
+//                     return 1.0f;
 //                 } else {
-//                     return double.PositiveInfinity;
+//                     return float.PositiveInfinity;
 //                 }
 //             }
-//             return Check(v, exp, Math.Pow(v, exp));
+//             return Check(v, exp, MathF.Pow(v, exp));
 //         }
 
-//         public static double log(double v0) {
-//             if (v0 <= 0.0) {
+//         public static float log(float v0) {
+//             if (v0 <= 0.0f) {
 //                 throw PythonOps.ValueError("math domain error");
 //             }
-//             return Check(v0, Math.Log(v0));
+//             return Check(v0, MathF.Log(v0));
 //         }
 
-//         public static double log(double v0, double v1) {
-//             if (v0 <= 0.0 || v1 == 0.0) {
+//         public static float log(float v0, float v1) {
+//             if (v0 <= 0.0f || v1 == 0.0f) {
 //                 throw PythonOps.ValueError("math domain error");
-//             } else if (v1 == 1.0) {
+//             } else if (v1 == 1.0f) {
 //                 throw PythonOps.ZeroDivisionError("float division");
 //             } else if (v1 == Double.PositiveInfinity) {
-//                 return 0.0;
+//                 return 0.0f;
 //             }
-//             return Check(Math.Log(v0, v1));
+//             return Check(MathF.Log(v0, v1));
 //         }
 
-//         public static double log(BigInteger value) {
-//             if (value.Sign <= 0) {
+//         public static float log(int value) {
+            
+//             return log((float) value);
+//         }
+
+//         public static float log(int value, float newBase) {
+//             if (newBase <= 0.0f || value <= 0f) {
 //                 throw PythonOps.ValueError("math domain error");
-//             }
-//             return value.Log();
-//         }
-
-//         public static double log(object value) {
-//             // CPython tries float first, then double, so we need
-//             // an explicit overload which properly matches the order here
-//             double val;
-//             if (Converter.TryConvertToDouble(value, out val)) {
-//                 return log(val);
-//             } else {
-//                 return log(Converter.ConvertToBigInteger(value));
-//             }
-//         }
-
-//         public static double log(BigInteger value, double newBase) {
-//             if (newBase <= 0.0 || value <= 0) {
-//                 throw PythonOps.ValueError("math domain error");
-//             } else if (newBase == 1.0) {
+//             } else if (newBase == 1.0f) {
 //                 throw PythonOps.ZeroDivisionError("float division");
 //             } else if (newBase == Double.PositiveInfinity) {
-//                 return 0.0;
+//                 return 0.0f;
 //             }
-//             return Check(value.Log(newBase));
+//             return Check(MathF.Log(value, newBase));
 //         }
 
-//         public static double log(object value, double newBase) {
-//             // CPython tries float first, then double, so we need
-//             // an explicit overload which properly matches the order here
-//             double val;
-//             if (Converter.TryConvertToDouble(value, out val)) {
-//                 return log(val, newBase);
-//             } else {
-//                 return log(Converter.ConvertToBigInteger(value), newBase);
-//             }
-//         }
-
-//         public static double log2(double x) {
+//         public static float log2(float x) {
 //             if (x <= 0) throw PythonOps.ValueError("math domain error");
-//             if (double.IsPositiveInfinity(x) || double.IsNaN(x)) return x;
-
-//             if (!BitConverter.IsLittleEndian) return Math.Log(x, 2);
-
-//             int exponent = 0;
-//             double mantissa = 0;
-
-//             byte[] vb = BitConverter.GetBytes(x);
-//             DecomposeLe(vb, out mantissa, out exponent);
-
-//             if (x >= 1)
-//                 return Math.Log(mantissa * 2, 2) + (exponent - 1); // similar to CPython for precision
-//             else
-//                 return Math.Log(mantissa, 2) + exponent;
+//             if (float.IsPositiveInfinity(x) || float.IsNaN(x)) return x;
+//             return MathF.Log(x, 2);
 //         }
 
-//         public static double log2(BigInteger x) {
+//         public static float log2(int x) {
 //             if (x <= 0) throw PythonOps.ValueError("math domain error");
-
-//             // cast to double if we can
-//             var d = (double)x;
-//             if (!double.IsPositiveInfinity(d)) return log2(d);
-
-//             // bring to into double range and try again
-//             var y = BigInteger.Log(x, 2);
-//             var z = (int)Math.Ceiling(y) - 1023;
-//             x >>= z;
-
-//             Debug.Assert(!double.IsPositiveInfinity((double)x));
-
-//             return log2((double)x) + z;
+//             var d = (float)x;
+//             return log2(d);
 //         }
 
-//         public static double log10(double v0) {
+//         public static float log10(float v0) {
 //             if (v0 <= 0.0) {
 //                 throw PythonOps.ValueError("math domain error");
 //             }
-//             return Check(v0, Math.Log10(v0));
+//             return Check(v0, MathF.Log10(v0));
 //         }
 
-//         public static double log10(BigInteger value) {
-//             if (value.Sign <= 0) {
+//         public static float log10(int value) {
+//             if (value <= 0) {
 //                 throw PythonOps.ValueError("math domain error");
 //             }
-//             return value.Log10();
+//             return MathF.Log10(value);
 //         }
 
-//         public static double log10(object value) {
-//             // CPython tries float first, then double, so we need
-//             // an explicit overload which properly matches the order here
-//             double val;
-//             if (Converter.TryConvertToDouble(value, out val)) {
-//                 return log10(val);
-//             } else {
-//                 return log10(Converter.ConvertToBigInteger(value));
-//             }
-//         }
-
-//         public static double log1p(double v0) {
+//         public static float log1p(float v0) {
 //             // Calculate log(1.0 + v0) using William Kahan's algorithm for numerical precision
 
-//             if (double.IsPositiveInfinity(v0)) {
-//                 return double.PositiveInfinity;
+//             if (float.IsPositiveInfinity(v0)) {
+//                 return float.PositiveInfinity;
 //             }
 
-//             double v1 = v0 + 1.0;
+//             float v1 = v0 + 1.0f;
 
 //             // Linear approximation for very small v0
 //             if (v1 == 1.0) {
@@ -307,74 +221,43 @@
 //             }
 
 //             // Apply correction factor
-//             return log(v1) * (v0 / (v1 - 1.0));
+//             return log(v1) * (v0 / (v1 - 1.0f));
 //         }
 
-//         public static double log1p(BigInteger value) {
-//             return log(value + BigInteger.One);
+//         public static float log1p(int value) {
+//             return log(value + 1);
 //         }
 
-//         public static double log1p(object value) {
-//             // CPython tries float first, then double, so we need
-//             // an explicit overload which properly matches the order here
-//             double val;
-//             if (Converter.TryConvertToDouble(value, out val)) {
-//                 return log1p(val);
-//             } else {
-//                 return log1p(Converter.ConvertToBigInteger(value));
-//             }
+
+//         public static float expm1(float v0) {
+//             return Check(v0, MathF.Tanh(v0 / 2.0f) * (MathF.Exp(v0) + 1.0f));
 //         }
 
-//         public static double expm1(double v0) {
-//             return Check(v0, Math.Tanh(v0 / 2.0) * (Math.Exp(v0) + 1.0));
-//         }
-
-//         public static double asinh(double v0) {
-//             if (v0 == 0.0 || double.IsInfinity(v0)) {
+//         public static float asinh(float v0) {
+//             if (v0 == 0.0 || float.IsInfinity(v0)) {
 //                 return v0;
 //             }
 //             // rewrote ln(v0 + sqrt(v0**2 + 1)) for precision
-//             if (Math.Abs(v0) > 1.0) {
-//                 return Math.Sign(v0) * (Math.Log(Math.Abs(v0)) + Math.Log(1.0 + MathUtils.Hypot(1.0, 1.0 / v0)));
+//             if (MathF.Abs(v0) > 1.0) {
+//                 return MathF.Sign(v0) * (MathF.Log(MathF.Abs(v0)) + MathF.Log(1.0 + MathUtils.Hypot(1.0f, 1.0f / v0)));
 //             } else {
-//                 return Math.Log(v0 + MathUtils.Hypot(1.0, v0));
+//                 return MathF.Log(v0 + MathUtils.Hypot(1.0f, v0));
 //             }
 //         }
 
-//         public static double asinh(object value) {
-//             // CPython tries float first, then double, so we need
-//             // an explicit overload which properly matches the order here
-//             double val;
-//             if (Converter.TryConvertToDouble(value, out val)) {
-//                 return asinh(val);
-//             } else {
-//                 return asinh(Converter.ConvertToBigInteger(value));
-//             }
-//         }
-
-//         public static double acosh(double v0) {
+//         public static float acosh(float v0) {
 //             if (v0 < 1.0) {
 //                 throw PythonOps.ValueError("math domain error");
-//             } else if (double.IsPositiveInfinity(v0)) {
-//                 return double.PositiveInfinity;
+//             } else if (float.IsPositiveInfinity(v0)) {
+//                 return float.PositiveInfinity;
 //             }
 //             // rewrote ln(v0 + sqrt(v0**2 - 1)) for precision
-//             double c = Math.Sqrt(v0 + 1.0);
-//             return Math.Log(c) + Math.Log(v0 / c + Math.Sqrt(v0 - 1.0));
+//             float c = MathF.Sqrt(v0 + 1.0f);
+//             return MathF.Log(c) + MathF.Log(v0 / c + MathF.Sqrt(v0 - 1.0f));
 //         }
 
-//         public static double acosh(object value) {
-//             // CPython tries float first, then double, so we need
-//             // an explicit overload which properly matches the order here
-//             double val;
-//             if (Converter.TryConvertToDouble(value, out val)) {
-//                 return acosh(val);
-//             } else {
-//                 return acosh(Converter.ConvertToBigInteger(value));
-//             }
-//         }
 
-//         public static double atanh(double v0) {
+//         public static float atanh(float v0) {
 //             if (v0 >= 1.0 || v0 <= -1.0) {
 //                 throw PythonOps.ValueError("math domain error");
 //             } else if (v0 == 0.0) {
@@ -382,10 +265,10 @@
 //                 return v0;
 //             }
 
-//             return Math.Log((1.0 + v0) / (1.0 - v0)) * 0.5;
+//             return MathF.Log((1.0f + v0) / (1.0f - v0)) * 0.5f;
 //         }
 
-//         public static double atanh(BigInteger value) {
+//         public static float atanh(int value) {
 //             if (value == 0) {
 //                 return 0;
 //             } else {
@@ -393,32 +276,21 @@
 //             }
 //         }
 
-//         public static double atanh(object value) {
-//             // CPython tries float first, then double, so we need
-//             // an explicit overload which properly matches the order here
-//             double val;
-//             if (Converter.TryConvertToDouble(value, out val)) {
-//                 return atanh(val);
-//             } else {
-//                 return atanh(Converter.ConvertToBigInteger(value));
-//             }
-//         }
-
-//         public static double atan2(double v0, double v1) {
-//             if (double.IsNaN(v0) || double.IsNaN(v1)) {
-//                 return double.NaN;
-//             } else if (double.IsInfinity(v0)) {
-//                 if (double.IsPositiveInfinity(v1)) {
-//                     return pi * 0.25 * Math.Sign(v0);
-//                 } else if (double.IsNegativeInfinity(v1)) {
-//                     return pi * 0.75 * Math.Sign(v0);
+//         public static float atan2(float v0, float v1) {
+//             if (float.IsNaN(v0) || float.IsNaN(v1)) {
+//                 return float.NaN;
+//             } else if (float.IsInfinity(v0)) {
+//                 if (float.IsPositiveInfinity(v1)) {
+//                     return pi * 0.25f * MathF.Sign(v0);
+//                 } else if (float.IsNegativeInfinity(v1)) {
+//                     return pi * 0.75f * MathF.Sign(v0);
 //                 } else {
-//                     return pi * 0.5 * Math.Sign(v0);
+//                     return pi * 0.5f * MathF.Sign(v0);
 //                 }
-//             } else if (double.IsInfinity(v1)) {
-//                 return v1 > 0.0 ? 0.0 : pi * DoubleOps.Sign(v0);
+//             } else if (float.IsInfinity(v1)) {
+//                 return v1 > 0.0f ? 0.0f : pi * MathF.Sign(v0);
 //             }
-//             return Math.Atan2(v0, v1);
+//             return MathF.Atan2(v0, v1);
 //         }
 
 //         public static object ceil(CodeContext context, object x) {
@@ -430,11 +302,11 @@
 //             throw PythonOps.TypeError("a float is required");
 //         }
 
-//         public static object ceil(double v0) {
-//             if (double.IsInfinity(v0)) throw PythonOps.OverflowError("cannot convert float infinity to integer");
-//             if (double.IsNaN(v0)) throw PythonOps.ValueError("cannot convert float NaN to integer");
+//         public static object ceil(float v0) {
+//             if (float.IsInfinity(v0)) throw PythonOps.OverflowError("cannot convert float infinity to integer");
+//             if (float.IsNaN(v0)) throw PythonOps.ValueError("cannot convert float NaN to integer");
 
-//             var res = Math.Ceiling(v0);
+//             var res = MathF.Ceiling(v0);
 //             if (res < int.MinValue || res > int.MaxValue) {
 //                 return (BigInteger)res;
 //             }
@@ -444,18 +316,18 @@
 //         /// <summary>
 //         /// Error function on real values
 //         /// </summary>
-//         public static double erf(double v0) {
+//         public static float erf(float v0) {
 //             return MathUtils.Erf(v0);
 //         }
 
 //         /// <summary>
 //         /// Complementary error function on real values: erfc(x) =  1 - erf(x)
 //         /// </summary>
-//         public static double erfc(double v0) {
+//         public static float erfc(float v0) {
 //             return MathUtils.ErfComplement(v0);
 //         }
 
-//         public static object factorial(double v0) {
+//         public static object factorial(float v0) {
 //             if (v0 % 1.0 != 0.0) {
 //                 throw PythonOps.ValueError("factorial() only accepts integral values");
 //             }
@@ -482,9 +354,9 @@
 //         }
 
 //         public static object factorial(object value) {
-//             // CPython tries float first, then double, so we need
+//             // CPython tries float first, then float, so we need
 //             // an explicit overload which properly matches the order here
-//             double val;
+//             float val;
 //             if (Converter.TryConvertToDouble(value, out val)) {
 //                 return factorial(val);
 //             } else {
@@ -501,11 +373,11 @@
 //             throw PythonOps.TypeError("a float is required");
 //         }
 
-//         public static object floor(double v0) {
-//             if (double.IsInfinity(v0)) throw PythonOps.OverflowError("cannot convert float infinity to integer");
-//             if (double.IsNaN(v0)) throw PythonOps.ValueError("cannot convert float NaN to integer");
+//         public static object floor(float v0) {
+//             if (float.IsInfinity(v0)) throw PythonOps.OverflowError("cannot convert float infinity to integer");
+//             if (float.IsNaN(v0)) throw PythonOps.ValueError("cannot convert float NaN to integer");
 
-//             var res = Math.Floor(v0);
+//             var res = MathF.Floor(v0);
 //             if (res < int.MinValue || res > int.MaxValue) {
 //                 return (BigInteger)res;
 //             }
@@ -515,14 +387,14 @@
 //         /// <summary>
 //         /// Gamma function on real values
 //         /// </summary>
-//         public static double gamma(double v0) {
+//         public static float gamma(float v0) {
 //             return Check(v0, MathUtils.Gamma(v0));
 //         }
 
 //         /// <summary>
 //         /// Natural log of absolute value of Gamma function
 //         /// </summary>
-//         public static double lgamma(double v0) {
+//         public static float lgamma(float v0) {
 //             return Check(v0, MathUtils.LogGamma(v0));
 //         }
 
@@ -535,12 +407,12 @@
 //             }
 //         }
 
-//         public static bool isfinite(double x) {
-//             return !double.IsInfinity(x) && !double.IsNaN(x);
+//         public static bool isfinite(float x) {
+//             return !float.IsInfinity(x) && !float.IsNaN(x);
 //         }
 
-//         public static bool isinf(double v0) {
-//             return double.IsInfinity(v0);
+//         public static bool isinf(float v0) {
+//             return float.IsInfinity(v0);
 //         }
 
 //         public static bool isinf(BigInteger value) {
@@ -548,17 +420,17 @@
 //         }
 
 //         public static bool isinf(object value) {
-//             // CPython tries float first, then double, so we need
+//             // CPython tries float first, then float, so we need
 //             // an explicit overload which properly matches the order here
-//             double val;
+//             float val;
 //             if (Converter.TryConvertToDouble(value, out val)) {
 //                 return isinf(val);
 //             }
 //             return false;
 //         }
 
-//         public static bool isnan(double v0) {
-//             return double.IsNaN(v0);
+//         public static bool isnan(float v0) {
+//             return float.IsNaN(v0);
 //         }
 
 //         public static bool isnan(BigInteger value) {
@@ -566,21 +438,21 @@
 //         }
 
 //         public static bool isnan(object value) {
-//             // CPython tries float first, then double, so we need
+//             // CPython tries float first, then float, so we need
 //             // an explicit overload which properly matches the order here
-//             double val;
+//             float val;
 //             if (Converter.TryConvertToDouble(value, out val)) {
 //                 return isnan(val);
 //             }
 //             return false;
 //         }
 
-//         public static double copysign(double x, double y) {
+//         public static float copysign(float x, float y) {
 //             return DoubleOps.CopySign(x, y);
 //         }
 
-//         public static double copysign(object x, object y) {
-//             double val, sign;
+//         public static float copysign(object x, object y) {
+//             float val, sign;
 //             if (!Converter.TryConvertToDouble(x, out val) ||
 //                 !Converter.TryConvertToDouble(y, out sign)) {
 //                 throw PythonOps.TypeError("TypeError: a float is required");
@@ -615,17 +487,17 @@
 //             }
 //         }
 
-//         public static readonly double nan = double.NaN; // new in CPython 3.5
+//         public static readonly float nan = float.NaN; // new in CPython 3.5
 
-//         public static readonly double inf = double.PositiveInfinity; // new in CPython 3.5
+//         public static readonly float inf = float.PositiveInfinity; // new in CPython 3.5
 
 //         // new in CPython 3.5
-//         public static bool isclose(double a, double b, double rel_tol = 1e-09, double abs_tol = 0.0) {
+//         public static bool isclose(float a, float b, float rel_tol = 1e-09, float abs_tol = 0.0) {
 //             if (rel_tol < 0 || abs_tol < 0) throw PythonOps.ValueError("tolerances must be non-negative");
-//             //if (double.IsNaN(a) || double.IsNaN(b)) return false;
+//             //if (float.IsNaN(a) || float.IsNaN(b)) return false;
 //             if (a == b) return true;
-//             if (double.IsInfinity(a) || double.IsInfinity(b)) return false;
-//             return Math.Abs(a - b) <= Math.Max(rel_tol * Math.Max(Math.Abs(a), Math.Abs(b)), abs_tol);
+//             if (float.IsInfinity(a) || float.IsInfinity(b)) return false;
+//             return MathF.Abs(a - b) <= MathF.Max(rel_tol * MathF.Max(MathF.Abs(a), MathF.Abs(b)), abs_tol);
 //         }
 
 //         #region Private Implementation Details
@@ -665,10 +537,10 @@
 //             return ((exp & 0x7FF0) == 0 && (man != 0));
 //         }
 
-//         private static void DecomposeLe(byte[] v, out double m, out int e) {
+//         private static void DecomposeLe(byte[] v, out float m, out int e) {
 //             if (IsDenormalizedLe(v)) {
-//                 m = BitConverter.ToDouble(v, 0);
-//                 m *= Math.Pow(2.0, 1022);
+//                 m = BitConverter.ToSingle(v, 0);
+//                 m *= MathF.Pow(2.0f, 1022);
 //                 v = BitConverter.GetBytes(m);
 //                 e = IntExponentLe(v) - 1022;
 //             } else {
@@ -679,15 +551,15 @@
 //             m = BitConverter.ToDouble(v, 0);
 //         }
 
-//         private static double Check(double v) {
+//         private static float Check(float v) {
 //             return PythonOps.CheckMath(v);
 //         }
 
-//         private static double Check(double input, double output) {
+//         private static float Check(float input, float output) {
 //             return PythonOps.CheckMath(input, output);
 //         }
 
-//         private static double Check(double in0, double in1, double output) {
+//         private static float Check(float in0, float in1, float output) {
 //             return PythonOps.CheckMath(in0, in1, output);
 //         }
 

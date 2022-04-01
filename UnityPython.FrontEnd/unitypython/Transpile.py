@@ -1,8 +1,6 @@
 from __future__ import annotations
 from ast import *
-from cmath import isinf
 from dataclasses import replace
-import functools
 import warnings
 from unitypython.Collections import OrderedSet, OrderedDict
 from . import TraffyAsm as ir
@@ -11,6 +9,7 @@ from typing import Any
 from .Scoper import get_position_string, ConciseSymtable, ScoperStmt, ScoperClassStmt
 import typing
 
+name_ClassAnnotations = "__class_annotations__"
 
 class IRStmtTransformerInlineCache(NodeTransformer):
     _dispatch_tables: dict[type, typing.Callable]
@@ -122,6 +121,7 @@ class Transpiler:
         self.rhs_transpiler = TranspilerRHS(self)
         self.lhs_transpiler = TranspilerLHS(self)
         self.stmt_transpiler = TranspileStmt(self)
+        self.class_annotations: OrderedSet[str] = OrderedSet()
 
         self.flag = 0
         self._cur_pos: ir.Span = init_pos
@@ -243,6 +243,7 @@ class Transpiler:
             self.scope = ConciseSymtable.new(self.parent_scope)
         elif isinstance(node, ClassDef):
             scoper = ScoperClassStmt(self.filename, self.parent_scope)
+            scoper.symtable_builder.mut_var(name_ClassAnnotations)
             for each in node.body:
                 scoper.visit(each)
             self.scope = scoper.solve()
@@ -941,6 +942,7 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         head_position = self.root.pos_ind
         rhs_transpiler = self.root.rhs_transpiler
         decorator_with_pos_list = list(map(rhs_transpiler.visit_with_pos, node.decorator_list))
+        
         bases = list(map(rhs_transpiler.visit, node.bases))
         transpiler = Transpiler(
             self.root.filename,
@@ -950,6 +952,21 @@ class TranspileStmt(IRStmtTransformerInlineCache):
         )
         transpiler.before_visit(node)
         suite = [transpiler.stmt_transpiler.visit(stmt) for stmt in node.body]
+        
+        suite.reverse()
+        ann_rhs = ir.Tuple(head_position, False, [
+            ir.SequenceElement(False, ir.Constant(_const_to_variant(each)))
+            for each in transpiler.class_annotations
+        ])
+        ann_lhs = ir.Assign(
+            head_position,
+            False,
+            transpiler.store_name_(name_ClassAnnotations),
+            ann_rhs
+        )
+        suite.append(ann_lhs)
+        suite.reverse()
+
         block = ir.Block(hasCont=ir.hasCont(suite), suite=suite)
         freeslots = [self.root.load_derefence(id) for id in transpiler.scope.freevars]
         fptr = transpiler.create_fptr_builder(block, node.name)
@@ -1060,6 +1077,9 @@ class TranspileStmt(IRStmtTransformerInlineCache):
     def visit_AnnAssign(self, node: AnnAssign) -> ir.TraffyIR:
         self.root.cur_pos = extract_pos(node)
         position = self.root.pos_ind
+        if self.root.scope.is_class_level:
+            if isinstance(node.target, Name):
+                self.root.class_annotations.add(node.target.id)
         if not node.value:
             return ir.Constant(o=const_to_variant(None))
         value = self.root.rhs_transpiler.visit(node.value)

@@ -7,16 +7,6 @@ namespace Traffy.Objects
     public static class TrObjectFromInt
     {
         public static TrObject ToTr(this int self) => MK.Int(self);
-
-        public static int AsInt(this TrObject self)
-        {
-            var i = self as TrInt;
-            if (i == null)
-            {
-                throw new TypeError($"'{self.Class.Name}' object cannot be interpreted as an integer");
-            }
-            return unchecked((int) i.value);
-        }
     }
     [PyBuiltin]
     [Serializable]

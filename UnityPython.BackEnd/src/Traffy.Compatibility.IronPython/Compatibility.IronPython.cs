@@ -51,6 +51,14 @@ namespace Traffy.Compatibility.IronPython
 #endif
         }
     }
+
+    public static class MathUtils
+    {
+        public static float Hypot(float v, float w)
+        {
+            return MathF.Sqrt(v * v + w * w);
+        }
+    }
     public static class IronPythonCompatExtras
     {
         public static bool IsNone(TrObject self) => self.IsNone();
@@ -116,6 +124,34 @@ namespace Traffy.Compatibility.IronPython
     }
     public static class PythonOps
     {
+        public static float CheckMath(float v) {
+            if (float.IsInfinity(v)) {
+                throw PythonOps.OverflowError("math range error");
+            } else if (double.IsNaN(v)) {
+                throw PythonOps.ValueError("math domain error");
+            } else {
+                return v;
+            }
+        }
+
+        public static float CheckMath(float input, float output) {
+            if (float.IsInfinity(input) && float.IsInfinity(output) ||
+                float.IsNaN(input) && float.IsNaN(output)) {
+                return output;
+            } else {
+                return CheckMath(output);
+            }
+        }
+
+        public static float CheckMath(float in0, float in1, float output) {
+            if ((float.IsInfinity(in0) || float.IsInfinity(in1)) && float.IsInfinity(output) ||
+                (float.IsNaN(in0) || float.IsNaN(in1)) && float.IsNaN(output)) {
+                return output;
+            } else {
+                return CheckMath(output);
+            }
+        }
+
         public static TrObject GetBoundAttr(PythonContext _, TrObject self, string name)
         {
             return RTS.object_getattr(self, MK.Str(name));
@@ -134,6 +170,11 @@ namespace Traffy.Compatibility.IronPython
             new Traffy.Objects.TypeError(String.Format(msg, formatArgs));
 
         public static Exception SystemError(string msg) => new Traffy.Objects.RuntimeError(msg);
+
+        internal static Exception ZeroDivisionError(string v)
+        {
+            throw new ValueError(v);
+        }
 
         private static Exception IndexError(string msg, params object[] formatArgs)
         {
@@ -157,6 +198,10 @@ namespace Traffy.Compatibility.IronPython
             return MK.List(RTS.barelist_create(c));
         }
 
+        public static TrTuple MakeNTuple(params TrObject[] elements)
+        {
+            return MK.NTuple(elements);
+        }
 
 
         /* ================================================================================================================================================================================================

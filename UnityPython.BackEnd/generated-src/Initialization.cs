@@ -8,9 +8,11 @@ namespace Traffy
         public static void InitRuntime()
         {
             Traffy.Objects.TrRawObject._Create();
+            Traffy.Modules.TrModule_enum._Create();
             Traffy.Modules.TrModule_json._Create();
             Traffy.Modules.TrModule_types._Create();
             Traffy.Modules.TrModule_typing._Create();
+            Traffy.Modules.TrModule_future._Create();
             Traffy.Interfaces.Awaitable._Create();
             Traffy.Interfaces.Callable._Create();
             Traffy.Interfaces.Container._Create();
@@ -54,6 +56,7 @@ namespace Traffy
             Traffy.Objects.TrList._Create();
             Traffy.Objects.TrSharpMethod._Create();
             Traffy.Objects.TrAnnotatedType._Create();
+            Traffy.Objects.TrEnum._Create();
             Traffy.Objects.TrTypedDict._Create();
             Traffy.Objects.TrModule._Create();
             Traffy.Objects.TrNone._Create();
@@ -69,9 +72,11 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Create();
             Traffy.Objects.TrFunc._Create();
             Traffy.Objects.TrRawObject.CLASS.__base = new TrClass[] {  };
+            Traffy.Modules.TrModule_enum.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_json.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_types.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_typing.CLASS.__base = new TrClass[] {  };
+            Traffy.Modules.TrModule_future.CLASS.__base = new TrClass[] {  };
             Traffy.Interfaces.Awaitable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Callable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Container.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
@@ -115,6 +120,7 @@ namespace Traffy
             Traffy.Objects.TrList.CLASS.__base = new TrClass[] { Traffy.Interfaces.Comparable.CLASS,Traffy.Interfaces.Sequence.CLASS };
             Traffy.Objects.TrSharpMethod.CLASS.__base = new TrClass[] { Traffy.Interfaces.Callable.CLASS };
             Traffy.Objects.TrAnnotatedType.CLASS.__base = new TrClass[] {  };
+            Traffy.Objects.TrEnum.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrTypedDict.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrModule.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrNone.CLASS.__base = new TrClass[] {  };
@@ -130,9 +136,11 @@ namespace Traffy
             Traffy.Objects.TrUnionType.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrFunc.CLASS.__base = new TrClass[] { Traffy.Interfaces.Callable.CLASS };
             Traffy.Objects.TrRawObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRawObject.CLASS);
+            Traffy.Modules.TrModule_enum.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_enum.CLASS);
             Traffy.Modules.TrModule_json.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_json.CLASS);
             Traffy.Modules.TrModule_types.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_types.CLASS);
             Traffy.Modules.TrModule_typing.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_typing.CLASS);
+            Traffy.Modules.TrModule_future.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_future.CLASS);
             Traffy.Interfaces.Awaitable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Awaitable.CLASS);
             Traffy.Interfaces.Callable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Callable.CLASS);
             Traffy.Interfaces.Container.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Container.CLASS);
@@ -176,6 +184,7 @@ namespace Traffy
             Traffy.Objects.TrList.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrList.CLASS);
             Traffy.Objects.TrSharpMethod.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrSharpMethod.CLASS);
             Traffy.Objects.TrAnnotatedType.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrAnnotatedType.CLASS);
+            Traffy.Objects.TrEnum.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrEnum.CLASS);
             Traffy.Objects.TrTypedDict.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrTypedDict.CLASS);
             Traffy.Objects.TrModule.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrModule.CLASS);
             Traffy.Objects.TrNone.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNone.CLASS);
@@ -206,9 +215,11 @@ namespace Traffy
             Traffy.Interfaces.AbstractClass.generated_BindMethods();
             Traffy.Builtins.InitBuiltins();
             Traffy.Modules.TrModule_abc.generated_BindMethods();
+            Traffy.Modules.TrModule_enum.generated_BindMethods();
             Traffy.Modules.TrModule_json.generated_BindMethods();
             Traffy.Modules.TrModule_types.generated_BindMethods();
             Traffy.Modules.TrModule_typing.generated_BindMethods();
+            Traffy.Modules.TrModule_future.generated_BindMethods();
             Traffy.Objects.TrABC.generated_BindMethods();
             Traffy.Objects.TrSharpFunc.generated_BindMethods();
             Traffy.Objects.TrByteArray.generated_BindMethods();
@@ -221,6 +232,7 @@ namespace Traffy
             Traffy.Objects.TrIter.generated_BindMethods();
             Traffy.Objects.TrList.generated_BindMethods();
             Traffy.Objects.TrSharpMethod.generated_BindMethods();
+            Traffy.Objects.TrEnum.generated_BindMethods();
             Traffy.Objects.TrTypedDict.generated_BindMethods();
             Traffy.Objects.TrModule.generated_BindMethods();
             Traffy.Objects.TrProperty.generated_BindMethods();
@@ -231,9 +243,11 @@ namespace Traffy
             Traffy.Objects.TrTuple.generated_BindMethods();
             Traffy.Objects.TrFunc.generated_BindMethods();
             Traffy.Modules.TrModule_abc._Init();
+            Traffy.Modules.TrModule_enum._Init();
             Traffy.Modules.TrModule_json._Init();
             Traffy.Modules.TrModule_types._Init();
             Traffy.Modules.TrModule_typing._Init();
+            Traffy.Modules.TrModule_future._Init();
             Traffy.Objects.TrABC._Init();
             Traffy.Objects.TrBool._Init();
             Traffy.Objects.TrSharpFunc._Init();
@@ -264,6 +278,7 @@ namespace Traffy
             Traffy.Objects.TrList._Init();
             Traffy.Objects.TrSharpMethod._Init();
             Traffy.Objects.TrAnnotatedType._Init();
+            Traffy.Objects.TrEnum._Init();
             Traffy.Objects.TrTypedDict._Init();
             Traffy.Objects.TrNone._Init();
             Traffy.Objects.TrRawObject._Init();
@@ -278,9 +293,11 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Init();
             Traffy.Objects.TrFunc._Init();
             Traffy.Objects.TrRawObject._SetupClasses();
+            Traffy.Modules.TrModule_enum._SetupClasses();
             Traffy.Modules.TrModule_json._SetupClasses();
             Traffy.Modules.TrModule_types._SetupClasses();
             Traffy.Modules.TrModule_typing._SetupClasses();
+            Traffy.Modules.TrModule_future._SetupClasses();
             Traffy.Interfaces.Awaitable._SetupClasses();
             Traffy.Interfaces.Callable._SetupClasses();
             Traffy.Interfaces.Container._SetupClasses();
@@ -324,6 +341,7 @@ namespace Traffy
             Traffy.Objects.TrList._SetupClasses();
             Traffy.Objects.TrSharpMethod._SetupClasses();
             Traffy.Objects.TrAnnotatedType._SetupClasses();
+            Traffy.Objects.TrEnum._SetupClasses();
             Traffy.Objects.TrTypedDict._SetupClasses();
             Traffy.Objects.TrModule._SetupClasses();
             Traffy.Objects.TrNone._SetupClasses();

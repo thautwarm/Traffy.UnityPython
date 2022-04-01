@@ -69,5 +69,35 @@ namespace Traffy.Objects
             }
         }
         public bool __instancecheck__(TrObject classes) => isinstanceof(this, classes);
+
+        public int AsInt()
+        {
+            var i = this as TrInt;
+            if (i == null)
+            {
+                throw new TypeError($"'{this.Class.Name}' object cannot be interpreted as an integer");
+            }
+            return unchecked((int) i.value);
+        }
+
+        public float AsFloat()
+        {
+            var i = this as TrFloat;
+            if (i == null)
+            {
+                throw new TypeError($"'{this.Class.Name}' object cannot be interpreted as an float");
+            }
+            return i.value;
+        }
+
+        public long AsLong()
+        {
+            var i = this as TrInt;
+            if (i == null)
+            {
+                throw new TypeError($"'{this.Class.Name}' object cannot be interpreted as an integer");
+            }
+            return i.value;
+        }
     }
 }

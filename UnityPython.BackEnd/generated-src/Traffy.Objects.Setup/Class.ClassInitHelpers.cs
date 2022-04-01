@@ -64,6 +64,9 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrModule_abc(TrClass cls)
         {
         }
+        static void BuiltinClassInit_TrModule_enum(TrClass cls)
+        {
+        }
         static void BuiltinClassInit_TrModule_json(TrClass cls)
         {
         }
@@ -71,6 +74,9 @@ namespace Traffy.Objects
         {
         }
         static void BuiltinClassInit_TrModule_typing(TrClass cls)
+        {
+        }
+        static void BuiltinClassInit_TrModule_future(TrClass cls)
         {
         }
         static void BuiltinClassInit_TrABC(TrClass cls)
@@ -297,6 +303,10 @@ namespace Traffy.Objects
         {
             cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Objects.TrAnnotatedType)self).__getitem__(arg0));
         }
+        static void BuiltinClassInit_TrEnum(TrClass cls)
+        {
+            cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrEnum)self).__repr__());
+        }
         static void BuiltinClassInit_TrTypedDict(TrClass cls)
         {
         }
@@ -408,6 +418,11 @@ namespace Traffy.Objects
                 BuiltinClassInit_TrModule_abc(cls);
                 return;
             }
+            if (typeof(T) == typeof(Traffy.Modules.TrModule_enum))
+            {
+                BuiltinClassInit_TrModule_enum(cls);
+                return;
+            }
             if (typeof(T) == typeof(Traffy.Modules.TrModule_json))
             {
                 BuiltinClassInit_TrModule_json(cls);
@@ -421,6 +436,11 @@ namespace Traffy.Objects
             if (typeof(T) == typeof(Traffy.Modules.TrModule_typing))
             {
                 BuiltinClassInit_TrModule_typing(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Modules.TrModule_future))
+            {
+                BuiltinClassInit_TrModule_future(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Objects.TrABC))
@@ -571,6 +591,11 @@ namespace Traffy.Objects
             if (typeof(T) == typeof(Traffy.Objects.TrAnnotatedType))
             {
                 BuiltinClassInit_TrAnnotatedType(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Objects.TrEnum))
+            {
+                BuiltinClassInit_TrEnum(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Objects.TrTypedDict))

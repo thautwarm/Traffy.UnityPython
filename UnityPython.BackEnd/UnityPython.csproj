@@ -12,15 +12,15 @@
      <TargetFramework>netstandard2.1</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>NUNITY;TESTS</DefineConstants>
+     <DefineConstants>TESTS</DefineConstants>
     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 
-  <!-- <ItemGroup>
+  <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>./UnityEngine.dll</HintPath>
     </Reference>
-  </ItemGroup> -->
+  </ItemGroup>
 
   <!-- <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />

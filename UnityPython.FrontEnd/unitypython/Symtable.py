@@ -12,12 +12,12 @@ class ConciseSymtable:
     localvars: OrderedSet[str]
     freevars: OrderedSet[str]
     unknown_vars: OrderedSet[str] # used by class body
-
+    is_class_level: bool
     parent: ConciseSymtable | None
 
     @classmethod
     def new(cls, parent: ConciseSymtable | None):
-        return cls(OrderedSet(), OrderedSet(), OrderedSet(), parent)
+        return cls(OrderedSet(), OrderedSet(), OrderedSet(), False, parent)
 
     def find_local_or_free(self, x: str):
         if x in self.localvars or x in self.freevars:
@@ -89,4 +89,4 @@ class Symtable:
             if not self.find_local_or_free(enter):
                 if do_write:
                     self.localvars.add(enter)
-        return ConciseSymtable(self.localvars, self.freevars, self.unknown_vars, self.parent)
+        return ConciseSymtable(self.localvars, self.freevars, self.unknown_vars, self.is_class_level, self.parent)

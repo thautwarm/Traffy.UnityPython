@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityPython.Tests", "UnityPython.Tests.csproj", "{E641B74B-0B4F-439F-8E39-2806F10EB31B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityPython.BackEnd.CodeGen", "..\UnityPython.BackEnd.CodeGen\UnityPython.BackEnd.CodeGen.csproj", "{0205485E-A4A7-4F36-B11B-60D411E0F778}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityPython", "UnityPython.csproj", "{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}"
 EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
@@ -44,5 +42,17 @@ Global
 		{0205485E-A4A7-4F36-B11B-60D411E0F778}.Release|x64.Build.0 = Release|Any CPU
 		{0205485E-A4A7-4F36-B11B-60D411E0F778}.Release|x86.ActiveCfg = Release|Any CPU
 		{0205485E-A4A7-4F36-B11B-60D411E0F778}.Release|x86.Build.0 = Release|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Debug|x64.Build.0 = Debug|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Debug|x86.Build.0 = Debug|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Release|x64.ActiveCfg = Release|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Release|x64.Build.0 = Release|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Release|x86.ActiveCfg = Release|Any CPU
+		{088D3DF1-BBB3-463E-A3AA-FEB2F92A097D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
