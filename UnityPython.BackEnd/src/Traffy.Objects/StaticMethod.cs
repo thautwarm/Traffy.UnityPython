@@ -6,7 +6,7 @@ namespace Traffy.Objects
 {
     [PyBuiltin]
     [PyInherit(typeof(Traffy.Interfaces.Callable))]
-    public class TrStaticMethod : TrObject
+    public sealed partial class TrStaticMethod : TrObject
     {
         public TrObject func;
 
@@ -68,5 +68,8 @@ namespace Traffy.Objects
             RTS.arg_check_positional_only(args, 2);
             return Bind(args[1]);
         }
+
+        [PyBind]
+        public TrObject __func__ => func;
     }
 }

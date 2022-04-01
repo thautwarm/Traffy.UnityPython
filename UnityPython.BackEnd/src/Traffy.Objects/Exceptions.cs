@@ -224,9 +224,14 @@ namespace Traffy.Objects
             Init(obj, attr, msg);
         }
 
-        public AttributeError() : base()
+        public AttributeError()
         {
             Init(RTS.object_none, RTS.object_none, "");
+        }
+
+        public AttributeError(string msg)
+        {
+            Init(RTS.object_none, RTS.object_none, msg);
         }
 
         public static TrClass CLASS;

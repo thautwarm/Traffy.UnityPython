@@ -423,7 +423,7 @@ namespace Traffy.Objects
                     if (kv.Key.IsStr())
                         RTS.object_setattr(this, kv.Key, kv.Value);
                     else
-                        throw new Exception($"Invalid keyword argument {kv.Key}");
+                        throw new TypeError($"Invalid keyword argument {kv.Key}");
                 }
 
             HashSet<TrClass> abs_classes = new HashSet<TrClass>(RTS.Py_COMPARER);

@@ -64,14 +64,22 @@ namespace Traffy.Objects
         internal TrObject Get(TrObject o)
         {
             if (_getter == null)
-                throw new Exception("property has no getter");
+            {
+                if (setter != null)
+                    throw new AttributeError("write-only property");
+                throw new AttributeError("cannot read property");
+            }
             return _getter.Call(o);
         }
 
         internal void Set(TrObject trObject, TrObject value)
         {
             if (_setter == null)
-                throw new Exception("property has no setter");
+            {
+                if (getter != null)
+                    throw new AttributeError($"readonly property");
+                throw new AttributeError($"cannot set property");
+            }
             _setter.Call(trObject, value);
         }
 

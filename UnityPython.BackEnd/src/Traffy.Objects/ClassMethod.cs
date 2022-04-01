@@ -14,18 +14,7 @@ namespace Traffy.Objects
         public override List<TrObject> __array__ => null;
 
         [PyBind]
-        public TrObject __func__
-        {
-            get
-            {
-                return func;
-            }
-
-            set
-            {
-                func = value;
-            }
-        }
+        public TrObject __func__ => func;
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()

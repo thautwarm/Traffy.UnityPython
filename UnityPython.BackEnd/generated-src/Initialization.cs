@@ -225,6 +225,7 @@ namespace Traffy
             Traffy.Objects.TrProperty.generated_BindMethods();
             Traffy.Objects.TrSet.generated_BindMethods();
             Traffy.Objects.TrSlice.generated_BindMethods();
+            Traffy.Objects.TrStaticMethod.generated_BindMethods();
             Traffy.Objects.TrStr.generated_BindMethods();
             Traffy.Objects.TrTuple.generated_BindMethods();
             Traffy.Modules.TrModule_abc._Init();
