@@ -17,6 +17,9 @@ namespace Traffy.Modules
         public static TrObject BuiltinFunctionType => TrSharpFunc.CLASS;
 
         [PyBind]
+        public static TrObject BuiltinMethodType => TrSharpFunc.CLASS;
+
+        [PyBind]
         public static TrObject FunctionType => TrFunc.CLASS;
 
         [PyBind]

@@ -43,6 +43,11 @@ namespace Traffy.Objects
 
         public override string __repr__() => IronPython.Runtime.Operations.StringOps.__repr__(value);
         public override string __str__() => value;
+
+        public override TrObject __int__() => RTS.parse_int(value);
+
+        public override TrObject __float__() => RTS.parse_float(value);
+
         public override bool __bool__() => value.Length != 0;
         public override List<TrObject> __array__ => null;
         public override IEnumerator<TrObject> __iter__()

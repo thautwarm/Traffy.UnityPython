@@ -136,6 +136,12 @@ namespace Traffy.Objects
         [MagicMethod(Default = true)]
         public static string __repr__(TrObject self) => $"<{self.Class.Name} object>";
 
+        [MagicMethod]
+        public static TrObject __int__(TrObject self) => throw new TypeError($"{self.Class.Name} object does not support int conversion (__int__)");
+
+        [MagicMethod]
+        public static TrObject __float__(TrObject self) => throw new TypeError($"{self.Class.Name} object does not support __float__ conversion (__float__)");
+
 
         [MagicMethod]
         public static bool __trynext__(TrObject self, TrRef refval) =>

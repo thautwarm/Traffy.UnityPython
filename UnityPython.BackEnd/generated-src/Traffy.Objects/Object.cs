@@ -16,6 +16,14 @@ namespace Traffy.Objects
         {
             return TrObject.__repr__(this);
         }
+        public virtual  TrObject __int__()
+        {
+            return TrObject.__int__(this);
+        }
+        public virtual  TrObject __float__()
+        {
+            return TrObject.__float__(this);
+        }
         public virtual  Boolean __trynext__(TrRef refval)
         {
             return TrObject.__trynext__(this,refval);

@@ -15,6 +15,18 @@ namespace Traffy.Modules
 
         [PyBind]
         public static TrClass ABC => TrABC.CLASS;
+        [PyBind]
+        // 'ABCMeta' does nothing at runtime!
+        // This is useful at compile time, so please use an IDE (especially, VSCode Pylance)!
+        public static TrClass ABCMeta => TrRawObject.CLASS;
+
+        [PyBind]
+        public static TrObject abstractmethod(TrObject func)
+        {
+            // 'abstractmethod' does nothing at runtime!
+            // This is useful at compile time, so please use an IDE (especially, VSCode Pylance)!
+            return func;
+        }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()

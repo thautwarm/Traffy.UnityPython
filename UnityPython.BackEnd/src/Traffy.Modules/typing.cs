@@ -5,7 +5,7 @@ using Traffy.Objects;
 namespace Traffy.Modules
 {
     [PyBuiltin]
-    public sealed partial class TrModule_typing: TrObject
+    public sealed partial class TrModule_typing : TrObject
     {
         public override List<TrObject> __array__ => null;
 
@@ -14,10 +14,48 @@ namespace Traffy.Modules
         public static TrClass CLASS;
 
         [PyBind]
-        public static TrObject runtime_checkable(TrObject f)
-        {
-            return f;
-        }
+        public static TrObject runtime_checkable(TrObject f) => f;
+
+        [PyBind]
+        public static TrObject overload(TrObject f) => f;
+
+        [PyBind]
+        public static TrObject cast(TrObject o) => o;
+
+        [PyBind]
+        public static TrObject reveal_type(TrObject o) => o;
+
+        [PyBind]
+        public static TrObject assert_never(TrObject o) => o;
+
+        [PyBind]
+        public static TrObject type_check_only(TrObject o) => o;
+
+        [PyBind]
+        public static TrObject no_type_check(TrObject o) => o;
+
+        [PyBind]
+        public static TrObject no_type_check_decorator(TrObject o) => o;
+
+        [PyBind]
+        public static TrObject NewType(string name, TrObject cls) => cls;
+
+        [PyBind]
+        public static TrObject TypeGuard => TrBool.CLASS;
+
+        [PyBind]
+        public static TrObject TypeAlias => TrClass.CLASS;
+
+
+        [PyBind]
+        public static TrObject ForwardRef => TrStr.CLASS;
+
+        [PyBind]
+        public static TrObject TYPE_CHECKING => TrBool.TrBool_False;
+
+
+        [PyBind]
+        public static TrObject Type => TrClass.CLASS;
 
         [PyBind]
         public static TrObject TypeVar(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -31,6 +69,16 @@ namespace Traffy.Modules
 
         [PyBind]
         public static TrObject Any => TrRawObject.CLASS;
+        [PyBind]
+        public static TrObject Never => TrRawObject.CLASS;
+        [PyBind]
+        public static TrObject Self => TrRawObject.CLASS;
+        [PyBind]
+        public static TrObject Final => TrRawObject.CLASS;
+        [PyBind]
+        public static TrObject Literal => TrRawObject.CLASS;
+        [PyBind]
+        public static TrObject final(TrObject cls) => cls;
         static TrObject _cache_AnyStr = null;
         [PyBind]
         public static TrObject AnyStr =>
@@ -44,6 +92,12 @@ namespace Traffy.Modules
         // so that 'Generic' can be inherited without restrictions.
         [PyBind]
         public static TrObject Generic => TrRawObject.CLASS;
+
+        [PyBind]
+        public static TrObject NoReturn => MK.None();
+
+        [PyBind]
+        public static TrObject Protocol => TrRawObject.CLASS;
 
         [PyBind]
         public static TrObject TypedDict => TrTypedDict.CLASS;
@@ -74,7 +128,18 @@ namespace Traffy.Modules
         [PyBind]
         public static TrClass Mapping => Traffy.Interfaces.Mapping.CLASS;
 
-    
+        [PyBind]
+        public static TrClass ContextManager => Traffy.Interfaces.ContextManager.CLASS;
+
+        [PyBind]
+        public static TrClass Coroutine => TrGenerator.CLASS;
+        [PyBind]
+        public static TrClass AsyncGenerator => TrGenerator.CLASS;
+
+
+
+
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {

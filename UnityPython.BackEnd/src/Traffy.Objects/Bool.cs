@@ -36,6 +36,10 @@ namespace Traffy.Objects
 
         public override string __repr__() => value ? "True" : "False";
 
+        public override TrObject __int__() => MK.Int(value ? 1 : 0);
+
+        public override TrObject __float__() => MK.Float(value ? 1.0f : 0.0f);
+
         public override int __hash__()
         {
             return value ? HASH_TRUE : HASH_FALSE;
@@ -75,15 +79,7 @@ namespace Traffy.Objects
             if (narg == 2 && kwargs == null)
             {
                 var arg = args[1];
-                switch (arg)
-                {
-                    case TrFloat _: return arg;
-                    case TrInt v: return MK.Float(v.value);
-                    case TrStr v: return RTS.parse_float(v.value);
-                    case TrBool v: return MK.Float(v.value ? 1.0f : 0.0f);
-                    default:
-                        throw new InvalidCastException($"cannot cast {arg.Class.Name} objects to {clsobj.AsClass.Name}");
-                }
+                return MK.Bool(arg.__bool__());
             }
             throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
         }

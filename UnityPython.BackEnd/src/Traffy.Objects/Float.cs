@@ -17,6 +17,9 @@ namespace Traffy.Objects
         public override object Native => value;
         public override List<TrObject> __array__ => null;
 
+        public override TrObject __int__() => MK.Int((long)value);
+        public override TrObject __float__() => this;
+
         public override TrObject __round__(TrObject ndigits)
         {
             if (ndigits.IsNone())
@@ -29,26 +32,12 @@ namespace Traffy.Objects
 
         public override int __hash__() => value.GetHashCode();
 
-        public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        [PyBind]
+        public static TrObject __new__(TrObject clsobj, TrObject value = null)
         {
-            TrObject clsobj = args[0];
-            var narg = args.Count;
-            if (narg == 1)
-                return MK.Float(0.0f);
-            if (narg == 2 && kwargs == null)
-            {
-                var arg = args[1];
-                switch (arg)
-                {
-                    case TrFloat _: return arg;
-                    case TrInt v: return MK.Float(v.value);
-                    case TrStr v: return RTS.parse_float(v.value);
-                    case TrBool v: return MK.Float(v.value ? 1.0f : 0.0f);
-                    default:
-                        throw new InvalidCastException($"cannot cast {arg.Class.Name} objects to {clsobj.AsClass.Name}");
-                }
-            }
-            throw new TypeError($"{clsobj.AsClass.Name}.__new__() takes 1 or 2 positional argument(s) but {narg} were given");
+            if (value == null)
+                return MK.Float(0.0);
+            return value.__float__();
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
@@ -60,7 +49,6 @@ namespace Traffy.Objects
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("float.__new__", TrFloat.datanew);
             CLASS.IsSealed = true;
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]

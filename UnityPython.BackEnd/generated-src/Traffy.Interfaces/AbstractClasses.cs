@@ -51,7 +51,6 @@ namespace Traffy.Interfaces
             Traffy.Interfaces.Sequence.CLASS["index"] = TrSharpFunc.FromFunc("Sequence.index", Traffy.Interfaces.Sequence.__bind_index);
             Traffy.Interfaces.Sequence.CLASS["count"] = TrSharpFunc.FromFunc("Sequence.count", Traffy.Interfaces.Sequence.__bind_count);
             Traffy.Interfaces.Sized.CLASS["__len__"] = TrSharpFunc.FromFunc("Sized.__len__", Traffy.Interfaces.Sized.__bind___len__);
-            Traffy.Interfaces.SupportAbs.CLASS["__abs__"] = TrSharpFunc.FromFunc("SupportAbs.__abs__", Traffy.Interfaces.SupportAbs.__bind___abs__);
         }
     }
     public static partial class Awaitable
@@ -819,29 +818,6 @@ namespace Traffy.Interfaces
         public static  Traffy.Objects.TrObject __bind___len__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
         {
             throw new ValueError( "cannot call abstract method Sized.__len__" );
-        }
-    }
-    public static partial class SupportAbs
-    {
-        internal static void _Create()
-        {
-            CLASS = TrClass.CreateClass("SupportAbs");
-        }
-        internal static void _Init()
-        {
-            CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];
-        }
-
-
-        internal static void _SetupClasses()
-        {
-            CLASS.SetupClass();
-            CLASS.IsFixed = true;
-        }
-        public static TrClass CLASS;
-        public static  Traffy.Objects.TrObject __bind___abs__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-        {
-            throw new ValueError( "cannot call abstract method SupportAbs.__abs__" );
         }
     }
 }

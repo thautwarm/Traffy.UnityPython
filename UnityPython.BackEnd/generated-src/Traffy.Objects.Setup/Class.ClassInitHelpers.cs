@@ -8,6 +8,8 @@ namespace Traffy.Objects
         public PolyIC ic__init = new PolyIC(MagicNames.i___init__);
         public PolyIC ic__str = new PolyIC(MagicNames.i___str__);
         public PolyIC ic__repr = new PolyIC(MagicNames.i___repr__);
+        public PolyIC ic__int = new PolyIC(MagicNames.i___int__);
+        public PolyIC ic__float = new PolyIC(MagicNames.i___float__);
         public PolyIC ic__trynext = new PolyIC(MagicNames.i___trynext__);
         public PolyIC ic__add = new PolyIC(MagicNames.i___add__);
         public PolyIC ic__sub = new PolyIC(MagicNames.i___sub__);
@@ -77,6 +79,8 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrBool(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrBool)self).__repr__());
+            cls[MagicNames.i___int__] = TrSharpFunc.FromFunc(cls.Name + ".__int__", (self) => ((Traffy.Objects.TrBool)self).__int__());
+            cls[MagicNames.i___float__] = TrSharpFunc.FromFunc(cls.Name + ".__float__", (self) => ((Traffy.Objects.TrBool)self).__float__());
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Objects.TrBool)self).__hash__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrBool)self).__eq__(arg0));
             cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc(cls.Name + ".__ne__", (self,arg0) => ((Traffy.Objects.TrBool)self).__ne__(arg0));
@@ -202,6 +206,8 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrFloat(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrFloat)self).__repr__());
+            cls[MagicNames.i___int__] = TrSharpFunc.FromFunc(cls.Name + ".__int__", (self) => ((Traffy.Objects.TrFloat)self).__int__());
+            cls[MagicNames.i___float__] = TrSharpFunc.FromFunc(cls.Name + ".__float__", (self) => ((Traffy.Objects.TrFloat)self).__float__());
             cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Objects.TrFloat)self).__add__(arg0));
             cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((Traffy.Objects.TrFloat)self).__sub__(arg0));
             cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((Traffy.Objects.TrFloat)self).__mul__(arg0));
@@ -230,6 +236,8 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrInt(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrInt)self).__repr__());
+            cls[MagicNames.i___int__] = TrSharpFunc.FromFunc(cls.Name + ".__int__", (self) => ((Traffy.Objects.TrInt)self).__int__());
+            cls[MagicNames.i___float__] = TrSharpFunc.FromFunc(cls.Name + ".__float__", (self) => ((Traffy.Objects.TrInt)self).__float__());
             cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Objects.TrInt)self).__add__(arg0));
             cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((Traffy.Objects.TrInt)self).__sub__(arg0));
             cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((Traffy.Objects.TrInt)self).__mul__(arg0));
@@ -343,6 +351,8 @@ namespace Traffy.Objects
         {
             cls[MagicNames.i___str__] = TrSharpFunc.FromFunc(cls.Name + ".__str__", (self) => ((Traffy.Objects.TrStr)self).__str__());
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrStr)self).__repr__());
+            cls[MagicNames.i___int__] = TrSharpFunc.FromFunc(cls.Name + ".__int__", (self) => ((Traffy.Objects.TrStr)self).__int__());
+            cls[MagicNames.i___float__] = TrSharpFunc.FromFunc(cls.Name + ".__float__", (self) => ((Traffy.Objects.TrStr)self).__float__());
             cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Objects.TrStr)self).__add__(arg0));
             cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((Traffy.Objects.TrStr)self).__mul__(arg0));
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Objects.TrStr)self).__hash__());
@@ -381,6 +391,7 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrUnionType(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrUnionType)self).__repr__());
+            cls[MagicNames.i___or__] = TrSharpFunc.FromFunc(cls.Name + ".__or__", (self,arg0) => ((Traffy.Objects.TrUnionType)self).__or__(arg0));
         }
         static void BuiltinClassInit_TrFunc(TrClass cls)
         {
@@ -638,6 +649,8 @@ namespace Traffy.Objects
             ic__init = new PolyIC(MagicNames.i___init__);
             ic__str = new PolyIC(MagicNames.i___str__);
             ic__repr = new PolyIC(MagicNames.i___repr__);
+            ic__int = new PolyIC(MagicNames.i___int__);
+            ic__float = new PolyIC(MagicNames.i___float__);
             ic__trynext = new PolyIC(MagicNames.i___trynext__);
             ic__add = new PolyIC(MagicNames.i___add__);
             ic__sub = new PolyIC(MagicNames.i___sub__);

@@ -314,5 +314,21 @@ namespace Traffy.Objects
                 return TrObject.__exit__(this, exc_type, exc_value, traceback);
             return self_exit.Call(exc_type, exc_value, traceback);
         }
+
+        public override TrObject __int__()
+        {
+            var self_int = this[Class.ic__int];
+            if ((object)self_int == null)
+                return self_int.Call();
+            return TrObject.__int__(this);
+        }
+
+        public override TrObject __float__()
+        {
+            var self_float = this[Class.ic__float];
+            if ((object)self_float == null)
+                return self_float.Call();
+            return TrObject.__float__(this);
+        }
     }
 }

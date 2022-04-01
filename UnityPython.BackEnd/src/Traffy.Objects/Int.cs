@@ -31,6 +31,12 @@ namespace Traffy.Objects
 
         public override int __hash__() => value.GetHashCode();
 
+        public override bool __bool__() => value != 0;
+
+        public override TrObject __int__() => this;
+
+        public override TrObject __float__() => MK.Float(value);
+
         // XXX: CPython behavior: check 'ndigit' should be int
         public override TrObject __round__(TrObject _) => this;
 
@@ -40,17 +46,11 @@ namespace Traffy.Objects
         public override List<TrObject> __array__ => null;
 
         [PyBind]
-        public static TrObject __new__(TrObject clsobj, TrObject value)
+        public static TrObject __new__(TrObject clsobj, TrObject value = null)
         {
-            switch (value)
-            {
-                case TrInt _: return value;
-                case TrFloat v: return MK.Int((int)v.value);
-                case TrStr v: return RTS.parse_int(v.value);
-                case TrBool v: return MK.Int(v.value ? 1L : 0L);
-                default:
-                    throw new InvalidCastException($"cannot cast {value.Class.Name} objects to {clsobj.AsClass.Name}");
-            }
+            if (value == null)
+                return MK.IntZero;
+            return value.__int__();
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]

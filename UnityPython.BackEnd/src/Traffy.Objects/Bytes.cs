@@ -37,6 +37,7 @@ namespace Traffy.Objects
         public override string __repr__() =>
             IronPython.Runtime.Operations.IListOfByteOps.BytesRepr(contents.UnList);
         public override bool __bool__() => contents.Count != 0;
+
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
