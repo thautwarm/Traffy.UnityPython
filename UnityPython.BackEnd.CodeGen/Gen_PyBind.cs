@@ -114,7 +114,7 @@ public class Gen_PyBind : HasNamespace
                     && ps[1].ParameterType == typeof(BList<TrObject>)
                     && ps[2].ParameterType == typeof(Dictionary<TrObject, TrObject>))
             {
-                defs.Add($"CLASS[{methName.Escape()}] = TrStaticMethod.Bind(CLASS.Name + \".\" + {methName.Escape()}, (self, args, kwargs) => (({entry.Name}) self).{meth.Name.ValidName()}(args, kwargs));".Doc());
+                defs.Add($"CLASS[{methName.Escape()}] = TrSharpFunc.FromFunc(CLASS.Name + \".\" + {methName.Escape()}, (self, args, kwargs) => (({entry.Name}) self).{meth.Name.ValidName()}(args, kwargs));".Doc());
                 continue;
             }
 

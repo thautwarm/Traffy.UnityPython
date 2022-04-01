@@ -247,7 +247,7 @@ namespace Traffy.Objects
                 }
             }
             CLASS["find"] = TrSharpFunc.FromFunc("find", __bind_find);
-            CLASS["format"] = TrStaticMethod.Bind(CLASS.Name + "." + "format", (self, args, kwargs) => ((TrStr) self).format(args, kwargs));
+            CLASS["format"] = TrSharpFunc.FromFunc(CLASS.Name + "." + "format", (self, args, kwargs) => ((TrStr) self).format(args, kwargs));
             static  Traffy.Objects.TrObject __bind_format_map(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)

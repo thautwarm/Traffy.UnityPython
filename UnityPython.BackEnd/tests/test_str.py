@@ -13,4 +13,6 @@ with testsuite("str"):
         assert xs.split("a", 1) ==  ['', 'bdasdadasdakjfjvjskjcnsajcnacn']
         assert  xs.split('a', -1) == ['', 'bd', 'sd', 'd', 'sd', 'kjfjvjskjcns', 'jcn', 'cn']
 
-    xs.format_map({'a': 'b'})
+
+    assert "{a}bb".format_map({'a': 'b'}) == "bbb"
+    assert """{a}{b!r}{c!a}""".format(a=1, b="aaa", c="ccc") == "1'aaa'ccc"

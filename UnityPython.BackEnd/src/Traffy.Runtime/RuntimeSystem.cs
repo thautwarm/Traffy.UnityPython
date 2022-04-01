@@ -94,7 +94,7 @@ namespace Traffy
         public static void arg_check_positional_atleast(BList<TrObject> args, int v)
         {
             if (args.Count < v)
-                throw new ValueError($"requires atleast {v} argument(s), got {args.Count}");
+                throw new ValueError($"requires at least {v} argument(s), got {args.Count}");
         }
 
         public static void arg_check_positional_range(BList<TrObject> args, int least, int most)
