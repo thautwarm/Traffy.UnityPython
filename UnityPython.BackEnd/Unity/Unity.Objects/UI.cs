@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 namespace Traffy.Unity2D
 {
-    public class TrUI : TrUnityComponent
+    [PyBuiltin]
+    public sealed partial class TrUI : TrUnityComponent
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
@@ -26,6 +27,20 @@ namespace Traffy.Unity2D
             CLASS.SetupClass();
             CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
+        }
+        public static TrUI GetComponent(TrUnityObject uo)
+        {
+            var rect = uo.Raw.GetComponent<RectTransform>();
+            if (rect == null)
+                return new TrUI { rect = rect };
+            return null;
+        }
+        public static TrUI AddComponent(TrUnityObject uo)
+        {
+            var rect = uo.Raw.gameObject.AddComponent<RectTransform>();
+            if (rect == null)
+                return new TrUI { rect = rect };
+            return null;
         }
         RectTransform rect;
         public static TrClass CLASS;

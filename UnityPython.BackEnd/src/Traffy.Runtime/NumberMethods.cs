@@ -6,7 +6,12 @@ using uint_t = System.UInt64;
 namespace Traffy.Objects
 {
 
+#if NETSTANDARD2_1
     using static System.MathF;
+#else
+    using static UnityEngine.Mathf;
+#endif
+    
     public static class NumberMethods
     {
         internal static int_t s_intmod(int_t a, int_t b)

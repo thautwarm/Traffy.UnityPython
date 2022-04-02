@@ -31,25 +31,25 @@ public class App
         return MK.Int(System.DateTime.Now.Ticks);
     }
 #if TESTS
-    public static int Main_(string[] argv)
+    public static int Main(string[] argv)
     {
-        return 0;
-        // Initialization.InitRuntime();
-        // Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
-
-        // ModuleSystem.LoadDirectory(argv.Length == 0 ? "out" : argv[0]);
-        // var test_modules = ModuleSystem.Modules.Keys.Where(x => x.Split(".").Last().StartsWith("test_")).ToList();
-        // try
-        // {
-        //     foreach (var module_name in test_modules)
-        //         ModuleSystem.ImportModule(module_name);
-        // }
-        // catch (Exception e)
-        // {
-        //     Console.WriteLine(e.StackTrace);
-        //     return 1;
-        // }
         // return 0;
+        Initialization.InitRuntime();
+        Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
+
+        ModuleSystem.LoadDirectory(argv.Length == 0 ? "out" : argv[0]);
+        var test_modules = ModuleSystem.Modules.Keys.Where(x => x.Split(".").Last().StartsWith("test_")).ToList();
+        try
+        {
+            foreach (var module_name in test_modules)
+                ModuleSystem.ImportModule(module_name);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.StackTrace);
+            return 1;
+        }
+        return 0;
     }
 #else
     public static int Main()

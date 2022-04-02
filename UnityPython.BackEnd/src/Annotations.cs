@@ -1,24 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Traffy.Annotations
 {
-    public class MagicMethod: Attribute
+    public class MagicMethod : Attribute
     {
         public bool Default = false;
         public bool NonInstance = false;
     }
 
-    public class PyBind: Attribute
+    public class PyBind : Attribute
     {
-        public class Keyword: Attribute
+        public class Keyword : Attribute
         {
             public bool Only;
             public string Name;
         }
 
-        public class SelfProp: Attribute
+        public class SelfProp : Attribute
         {
             public string Name;
             public SelfProp(string name)
@@ -29,10 +27,10 @@ namespace Traffy.Annotations
         public string Name;
     }
 
-    public class PyBuiltin: Attribute { }
+    public class PyBuiltin : Attribute { }
 
     [AttributeUsage(AttributeTargets.Class)]
-    public class PyInherit: Attribute
+    public class PyInherit : Attribute
     {
         public Type[] Parents;
         public PyInherit(params Type[] parents)
@@ -48,12 +46,12 @@ namespace Traffy.Annotations
         InitRef = 1, // setup methods
         // setup builtins
         SetupRef = 2, // method setup (do nothing for builtins)
-        
+
     }
 
-    public class SetupMark: Attribute
+    public class SetupMark : Attribute
     {
-        public SetupMarkKind Kind;   
+        public SetupMarkKind Kind;
 
         public SetupMark(SetupMarkKind kind)
         {

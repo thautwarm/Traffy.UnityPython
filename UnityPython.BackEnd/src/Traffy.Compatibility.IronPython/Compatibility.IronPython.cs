@@ -7,6 +7,12 @@ using System.Runtime.CompilerServices;
 using IronPython.Runtime.Operations;
 using Traffy.Objects;
 
+#if NETSTANDARD2_1
+    using MathF = System.MathF;
+#else
+    using MathF = UnityEngine.Mathf;
+#endif
+
 namespace Traffy.Compatibility.IronPython
 {
 

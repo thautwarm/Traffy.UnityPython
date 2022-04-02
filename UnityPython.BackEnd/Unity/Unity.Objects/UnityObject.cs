@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace Traffy.Unity2D
 {
-    public class TrUnityObject : TrUnityComponent
+    [PyBuiltin]
+    public sealed partial class TrUnityObject : TrUnityComponent
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
@@ -26,6 +27,7 @@ namespace Traffy.Unity2D
             Initialization.Prelude(CLASS);
         }
         TraffyBehaviour traffy;
+        public TraffyBehaviour Raw => traffy;
         public static TrClass CLASS;
         public override TrClass Class => CLASS;public override bool IsUserObject() => true;
         public override GameObject gameObject => traffy.gameObject;

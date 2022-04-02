@@ -8,13 +8,19 @@
      <TargetFramework>net6.0</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>TESTS;DEV</DefineConstants>
+     <DefineConstants>TESTS;DEV;NUNITY</DefineConstants>
      <!-- <RuntimeIdentifier>win10-x64</RuntimeIdentifier> -->
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>./UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>./UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
 

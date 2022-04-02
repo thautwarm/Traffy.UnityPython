@@ -9,10 +9,10 @@
   <PropertyGroup>
      <OutputType>Library</OutputType>
      <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-     <TargetFramework>netstandard2.1</TargetFramework>
+     <TargetFramework>netstandard2.0</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>TESTS</DefineConstants>
+     <DefineConstants>TESTS;NUNITY</DefineConstants>
     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Eltons.ReflectionKit" Version="1.2.0" />
+    <!-- <PackageReference Include="Eltons.ReflectionKit" Version="1.2.0" /> -->
     <!-- <PackageReference Include="BenchmarkDotNet" Version="0.13.1" /> -->
   </ItemGroup>
   <!-- <ItemGroup>

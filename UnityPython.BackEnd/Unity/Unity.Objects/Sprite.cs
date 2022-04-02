@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace Traffy.Unity2D
 {
-    public class TrSprite : TrUnityComponent
+    [PyBuiltin]
+    public sealed partial class TrSprite : TrUnityComponent
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
@@ -24,6 +25,20 @@ namespace Traffy.Unity2D
             CLASS.SetupClass();
             CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
+        }
+        public static TrSprite GetComponent(TrUnityObject uo)
+        {
+            var render = uo.Raw.GetComponent<SpriteRenderer>();
+            if (render == null)
+                return new TrSprite { render = render };
+            return null;
+        }
+        public static TrSprite AddComponent(TrUnityObject uo)
+        {
+            var render = uo.Raw.gameObject.AddComponent<SpriteRenderer>();
+            if (render == null)
+                return new TrSprite { render = render };
+            return null;
         }
         SpriteRenderer render;
         public static TrClass CLASS;
