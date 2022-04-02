@@ -8,18 +8,19 @@
      <TargetFramework>net6.0</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>NUNITY;TESTS;DEV</DefineConstants>
+     <DefineConstants>TESTS;DEV</DefineConstants>
      <!-- <RuntimeIdentifier>win10-x64</RuntimeIdentifier> -->
   </PropertyGroup>
 
-  <!-- <ItemGroup>
+  <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>./UnityEngine.dll</HintPath>
     </Reference>
-  </ItemGroup> -->
+  </ItemGroup>
 
-  <!-- <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-  </ItemGroup> -->
+  <ItemGroup>
+    <PackageReference Include="Eltons.ReflectionKit" Version="1.2.0" />
+    <!-- <PackageReference Include="BenchmarkDotNet" Version="0.13.1" /> -->
+  </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@
 		},
 		{
 			"path": "UnityPython.BackEnd.CodeGen"
-		},
+		}
 	],
 	"settings": {
 		"cSpell.words": [

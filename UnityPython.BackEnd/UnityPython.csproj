@@ -22,6 +22,16 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>./UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eltons.ReflectionKit" Version="1.2.0" />
+    <!-- <PackageReference Include="BenchmarkDotNet" Version="0.13.1" /> -->
+  </ItemGroup>
   <!-- <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
   </ItemGroup> -->

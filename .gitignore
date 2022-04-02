@@ -9,6 +9,7 @@ out/
 **.py.json
 BenchmarkDotNet.Artifacts/
 **/UnityEngine.dll
+**/UnityEngine.UI.dll
 /cross-editor-highlighter/
 .antlr/
 /parser-data/
