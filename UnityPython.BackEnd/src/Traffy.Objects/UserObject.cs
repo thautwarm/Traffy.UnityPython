@@ -1,333 +1,477 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 namespace Traffy.Objects
 {
-    public abstract class TrUserObjectBase: TrObject
+    public abstract class TrUserObjectBase : TrObject
     {
         public override TrObject __init__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
-            var self_init = this[Class.ic__init];
-            if ((object)self_init == null)
-                return TrObject.__init__(this, args, kwargs);
-            return self_init.__call__(args, kwargs);
+            if (__getic__(Class.ic__init, out var self_init))
+            {
+                return self_init.__call__(args, kwargs);
+            }
+            return TrObject.__init__(this, args, kwargs);
         }
         public override string __str__()
         {
-            var self_str = this[Class.ic__str];
-            if ((object)self_str == null)
-                return TrObject.__str__(this);
-            return self_str.Call().AsStr();
+            if (__getic__(Class.ic__str, out var self_str))
+            {
+                return self_str.Call().AsStr();
+            }
+            return TrObject.__str__(this);
         }
         public override String __repr__()
         {
-            var self_repr = this[Class.ic__repr];
-            if ((object)self_repr == null)
-                return TrObject.__repr__(this);
-            return self_repr.Call().AsStr();
+            if (__getic__(Class.ic__repr, out var self_repr))
+            {
+                return self_repr.Call().AsStr();
+            }
+            return TrObject.__repr__(this);
         }
         public override Boolean __trynext__(TrRef refval)
         {
-            var self_next = this[Class.ic__trynext];
-            if ((object)self_next == null)
-                return TrObject.__trynext__(this, refval);
-            return self_next.Call(refval).AsBool();
+            if (__getic__(Class.ic__trynext, out var self_next))
+            {
+                return self_next.Call(refval).AsBool();
+            }
+            return TrObject.__trynext__(this, refval);
         }
 
         public override TrObject __add__(TrObject a)
         {
-            var self_add = this[Class.ic__add];
-            if ((object)self_add == null)
-                return TrObject.__add__(this, a);
-            return self_add.Call(a);
+            if (__getic__(Class.ic__add, out var self_add))
+            {
+                return self_add.Call(a);
+            }
+            return TrObject.__add__(this, a);
+        }
+
+        public override TrObject __radd__(TrObject a)
+        {
+            if (__getic__(Class.ic__radd, out var self_radd))
+            {
+                return self_radd.Call(a);
+            }
+            return TrObject.__radd__(this, a);
         }
         public override TrObject __sub__(TrObject a)
         {
-            var self_sub = this[Class.ic__sub];
-            if ((object)self_sub == null)
-                return TrObject.__sub__(this, a);
-            return self_sub.Call(a);
+            if (__getic__(Class.ic__sub, out var self_sub))
+            {
+                return self_sub.Call(a);
+            }
+            return TrObject.__sub__(this, a);
+        }
+        public override TrObject __rsub__(TrObject a)
+        {
+            if (__getic__(Class.ic__rsub, out var self_rsub))
+            {
+                return self_rsub.Call(a);
+            }
+            return TrObject.__rsub__(this, a);
         }
         public override TrObject __mul__(TrObject a)
         {
-            var self_mul = this[Class.ic__mul];
-            if ((object)self_mul == null)
-                return TrObject.__mul__(this, a);
-            return self_mul.Call(a);
+            if (__getic__(Class.ic__mul, out var self_mul))
+            {
+                return self_mul.Call(a);
+            }
+            return TrObject.__mul__(this, a);
+        }
+        public override TrObject __rmul__(TrObject a)
+        {
+            if (__getic__(Class.ic__rmul, out var self_rmul))
+            {
+                return self_rmul.Call(a);
+            }
+            return TrObject.__rmul__(this, a);
         }
         public override TrObject __matmul__(TrObject a)
         {
-            var self_matmul = this[Class.ic__matmul];
-            if ((object)self_matmul == null)
-                return TrObject.__matmul__(this, a);
-            return self_matmul.Call(a);
+            if (__getic__(Class.ic__matmul, out var self_matmul))
+            {
+                return self_matmul.Call(a);
+            }
+            return TrObject.__matmul__(this, a);
+        }
+        public override TrObject __rmatmul__(TrObject a)
+        {
+            if (__getic__(Class.ic__rmatmul, out var self_rmatmul))
+            {
+                return self_rmatmul.Call(a);
+            }
+            return TrObject.__rmatmul__(this, a);
         }
         public override TrObject __floordiv__(TrObject a)
         {
-            var self_floordiv = this[Class.ic__floordiv];
-            if ((object)self_floordiv == null)
-                return TrObject.__floordiv__(this, a);
-            return self_floordiv.Call(a);
+            if (__getic__(Class.ic__floordiv, out var self_floordiv))
+            {
+                return self_floordiv.Call(a);
+            }
+            return TrObject.__floordiv__(this, a);
+        }
+
+        public override TrObject __rfloordiv__(TrObject a)
+        {
+            if (__getic__(Class.ic__rfloordiv, out var self_rfloordiv))
+            {
+                return self_rfloordiv.Call(a);
+            }
+            return TrObject.__rfloordiv__(this, a);
         }
         public override TrObject __truediv__(TrObject a)
         {
-            var self_truediv = this[Class.ic__truediv];
-            if ((object)self_truediv == null)
-                return TrObject.__truediv__(this, a);
-            return self_truediv.Call(a);
+            if (__getic__(Class.ic__truediv, out var self_truediv))
+            {
+                return self_truediv.Call(a);
+            }
+            return TrObject.__truediv__(this, a);
+        }
+        public override TrObject __rtruediv__(TrObject a)
+        {
+            if (__getic__(Class.ic__rtruediv, out var self_rtruediv))
+            {
+                return self_rtruediv.Call(a);
+            }
+            return TrObject.__rtruediv__(this, a);
         }
         public override TrObject __mod__(TrObject a)
         {
-            var self_mod = this[Class.ic__mod];
-            if ((object)self_mod == null)
-                return TrObject.__mod__(this, a);
-            return self_mod.Call(a);
+            if (__getic__(Class.ic__mod, out var self_mod))
+            {
+                return self_mod.Call(a);
+            }
+            return TrObject.__mod__(this, a);
+        }
+        public override TrObject __rmod__(TrObject a)
+        {
+            if (__getic__(Class.ic__rmod, out var self_rmod))
+            {
+                return self_rmod.Call(a);
+            }
+            return TrObject.__rmod__(this, a);
         }
         public override TrObject __pow__(TrObject a)
         {
-            var self_pow = this[Class.ic__pow];
-            if ((object)self_pow == null)
-                return TrObject.__pow__(this, a);
-            return self_pow.Call(a);
+            if (__getic__(Class.ic__pow, out var self_pow))
+            {
+                return self_pow.Call(a);
+            }
+            return TrObject.__pow__(this, a);
+        }
+        public override TrObject __rpow__(TrObject a)
+        {
+            if (__getic__(Class.ic__rpow, out var self_rpow))
+            {
+                return self_rpow.Call(a);
+            }
+            return TrObject.__rpow__(this, a);
         }
         public override TrObject __and__(TrObject a)
         {
-            var self_and = this[Class.ic__and];
-            if ((object)self_and == null)
-                return TrObject.__and__(this, a);
-            return self_and.Call(a);
+            if (__getic__(Class.ic__and, out var self_and))
+            {
+                return self_and.Call(a);
+            }
+            return TrObject.__and__(this, a);
+        }
+        public override TrObject __rand__(TrObject a)
+        {
+            if (__getic__(Class.ic__rand, out var self_rand))
+            {
+                return self_rand.Call(a);
+            }
+            return TrObject.__rand__(this, a);
         }
         public override TrObject __or__(TrObject a)
         {
-            var self_or = this[Class.ic__or];
-            if ((object)self_or == null)
-                return TrObject.__or__(this, a);
-            return self_or.Call(a);
+            if (__getic__(Class.ic__or, out var self_or))
+            {
+                return self_or.Call(a);
+            }
+            return TrObject.__or__(this, a);
+        }
+        public override TrObject __ror__(TrObject a)
+        {
+            if (__getic__(Class.ic__ror, out var self_ror))
+            {
+                return self_ror.Call(a);
+            }
+            return TrObject.__ror__(this, a);
         }
         public override TrObject __xor__(TrObject a)
         {
-            var self_xor = this[Class.ic__xor];
-            if ((object)self_xor == null)
-                return TrObject.__xor__(this, a);
-            return self_xor.Call(a);
+            if (__getic__(Class.ic__xor, out var self_xor))
+            {
+                return self_xor.Call(a);
+            }
+            return TrObject.__xor__(this, a);
+        }
+        public override TrObject __rxor__(TrObject a)
+        {
+            if (__getic__(Class.ic__rxor, out var self_rxor))
+            {
+                return self_rxor.Call(a);
+            }
+            return TrObject.__rxor__(this, a);
         }
         public override TrObject __lshift__(TrObject a)
         {
-            var self_lshift = this[Class.ic__lshift];
-            if ((object)self_lshift == null)
-                return TrObject.__lshift__(this, a);
-            return self_lshift.Call(a);
+            if (__getic__(Class.ic__lshift, out var self_lshift))
+            {
+                return self_lshift.Call(a);
+            }
+            return TrObject.__lshift__(this, a);
+        }
+        public override TrObject __rlshift__(TrObject a)
+        {
+            if (__getic__(Class.ic__rlshift, out var self_rlshift))
+            {
+                return self_rlshift.Call(a);
+            }
+            return TrObject.__rlshift__(this, a);
         }
         public override TrObject __rshift__(TrObject a)
         {
-            var self_rshift = this[Class.ic__rshift];
-            if ((object)self_rshift == null)
-                return TrObject.__rshift__(this, a);
-            return self_rshift.Call(a);
+            if (__getic__(Class.ic__rshift, out var self_rshift))
+            {
+                return self_rshift.Call(a);
+            }
+            return TrObject.__rshift__(this, a);
+        }
+        public override TrObject __rrshift__(TrObject a)
+        {
+            if (__getic__(Class.ic__rrshift, out var self_rrshift))
+            {
+                return self_rrshift.Call(a);
+            }
+            return TrObject.__rrshift__(this, a);
         }
         public override Int32 __hash__()
         {
-            var self_hash = this[Class.ic__hash];
-            if ((object)self_hash == null || self_hash.IsNone())
-                return TrObject.__hash__(this);
-            return self_hash.Call().AsInt();
+            if (__getic__(Class.ic__hash, out var self_hash))
+            {
+                return self_hash.Call().AsInt();
+            }
+            return TrObject.__hash__(this);
         }
         public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
-            var self_call = this[Class.ic__call];
-            if ((object)self_call == null)
-                return TrObject.__call__(this, args, kwargs);
-            return self_call.__call__(args, kwargs);
+            if (__getic__(Class.ic__call, out var self_call))
+            {
+                return self_call.__call__(args, kwargs);
+            }
+            return TrObject.__call__(this, args, kwargs);
         }
-        public override Boolean __contains__(TrObject a)
+        public override bool __contains__(TrObject a)
         {
-            var self_contains = this[Class.ic__contains];
-            if ((object)self_contains == null)
-                return TrObject.__contains__(this, a);
-            return self_contains.Call(a).AsBool();
+            if (__getic__(Class.ic__contains, out var self_contains))
+            {
+                return self_contains.Call(a).AsBool();
+            }
+            return TrObject.__contains__(this, a);
         }
 
         public override TrObject __round__(TrObject ndigits)
         {
-            var self_round = this[Class.ic__round];
-            if ((object)self_round == null)
-                return TrObject.__round__(this, ndigits);
-            return self_round.Call(ndigits);
+            if (__getic__(Class.ic__round, out var self_round))
+            {
+                return self_round.Call(ndigits);
+            }
+            return TrObject.__round__(this, ndigits);
         }
 
         public override TrObject __reversed__()
         {
-            var self_reversed = this[Class.ic__reversed];
-            if ((object)self_reversed == null)
-                return TrObject.__reversed__(this);
-            return self_reversed.Call();
+            if (__getic__(Class.ic__reversed, out var self_reversed))
+            {
+                return self_reversed.Call();
+            }
+            return TrObject.__reversed__(this);
         }
         public override TrObject __getitem__(TrObject item)
         {
-            var self_getitem = this[Class.ic__getitem];
-            if ((object)self_getitem == null)
-                return TrObject.__getitem__(this, item);
-            return self_getitem.Call(item);
+            if (__getic__(Class.ic__getitem, out var self_getitem))
+            {
+                return self_getitem.Call(item);
+            }
+            return TrObject.__getitem__(this, item);
         }
 
         public override void __setitem__(TrObject key, TrObject value)
         {
-            var self_setitem = this[Class.ic__setitem];
-            if ((object)self_setitem == null)
+            if (__getic__(Class.ic__setitem, out var self_setitem))
             {
-                TrObject.__setitem__(this, key, value);
+                self_setitem.Call(key, value);
                 return;
             }
-            self_setitem.Call(key, value);
+            TrObject.__setitem__(this, key, value);
         }
 
         public override void __delitem__(TrObject key)
         {
-            var self_delitem = this[Class.ic__delitem];
-            if ((object)self_delitem == null)
+            if (__getic__(Class.ic__delitem, out var self_delitem))
             {
-                TrObject.__delitem__(this, key);
+                self_delitem.Call(key);
                 return;
             }
-            self_delitem.Call(key);
+            TrObject.__delitem__(this, key);
         }
 
         public override bool __finditem__(TrObject key, TrRef refval)
         {
-            var self_finditem = this[Class.ic__finditem];
-            if ((object)self_finditem == null)
+            if (__getic__(Class.ic__finditem, out var self_finditem))
             {
-                return TrObject.__finditem__(this, key, refval);
+                return self_finditem.Call(key, refval).AsBool();
             }
-            return self_finditem.Call(key, refval).AsBool();
+            return TrObject.__finditem__(this, key, refval);
         }
 
         public override IEnumerator<TrObject> __iter__()
         {
-            var self_iter = this[Class.ic__iter];
-            if ((object)self_iter == null)
-                return TrObject.__iter__(this);
-            return self_iter.Call().__iter__();
+            if (__getic__(Class.ic__iter, out var self_iter))
+            {
+                return self_iter.Call().__iter__();
+            }
+            return TrObject.__iter__(this);
         }
-        
+
         public override Awaitable<TrObject> __await__()
         {
-            var self_await = this[Class.ic__await];
-            if ((object)self_await == null)
-                return TrObject.__await__(this);
-            return RTS.object_yield_from(self_await.Call());
+            if (__getic__(Class.ic__await, out var self_await))
+            {
+                return RTS.object_yield_from(self_await.Call());
+            }
+            return TrObject.__await__(this);   
         }
         public override TrObject __len__()
         {
-            var self_len = this[Class.ic__len];
-            if ((object)self_len == null)
-                return TrObject.__len__(this);
-            return self_len.Call();
+            if (__getic__(Class.ic__len, out var self_len))
+            {
+                return self_len.Call();
+            }
+            return TrObject.__len__(this);
         }
-        public override Boolean __eq__(TrObject other)
+        public override bool __eq__(TrObject other)
         {
-            var self_eq = this[Class.ic__eq];
-            if ((object)self_eq == null)
-                return TrObject.__eq__(this, other);
-            return self_eq.Call(other).AsBool();
+            if (__getic__(Class.ic__eq, out var self_eq))
+            {
+                return self_eq.Call(other).AsBool();
+            }
+            return TrObject.__eq__(this, other);
         }
-        public override Boolean __ne__(TrObject other)
+        public override bool __ne__(TrObject other)
         {
-            var self_ne = this[Class.ic__ne];
-            if ((object)self_ne == null)
-                return TrObject.__ne__(this, other);
-            return self_ne.Call(other).AsBool();
+            if (__getic__(Class.ic__ne, out var self_ne))
+            {
+                return self_ne.Call(other).AsBool();
+            }
+            return TrObject.__ne__(this, other);
         }
-        public override Boolean __lt__(TrObject other)
+        public override bool __lt__(TrObject other)
         {
-            var self_lt = this[Class.ic__lt];
-            if ((object)self_lt == null)
-                return TrObject.__lt__(this, other);
-            return self_lt.Call(other).AsBool();
+            if (__getic__(Class.ic__lt, out var self_lt))
+            {
+                return self_lt.Call(other).AsBool();
+            }
+            return TrObject.__lt__(this, other);
         }
-        public override Boolean __le__(TrObject other)
+        public override bool __le__(TrObject other)
         {
-            var self_le = this[Class.ic__le];
-            if ((object)self_le == null)
-                return TrObject.__le__(this, other);
-            return self_le.Call(other).AsBool();
+            if (__getic__(Class.ic__le, out var self_le))
+            {
+                return self_le.Call(other).AsBool();
+            }
+            return TrObject.__le__(this, other);
         }
-        public override Boolean __gt__(TrObject other)
+        public override bool __gt__(TrObject other)
         {
-            var self_gt = this[Class.ic__gt];
-            if ((object)self_gt == null)
-                return TrObject.__gt__(this, other);
-            return self_gt.Call(other).AsBool();
+            if (__getic__(Class.ic__gt, out var self_gt))
+            {
+                return self_gt.Call(other).AsBool();
+            }
+            return TrObject.__gt__(this, other);
         }
         public override Boolean __ge__(TrObject other)
         {
-            var self_ge = this[Class.ic__ge];
-            if ((object)self_ge == null)
-                return TrObject.__ge__(this, other);
-            return self_ge.Call(other).AsBool();
+            if (__getic__(Class.ic__ge, out var self_ge))
+            {
+                return self_ge.Call(other).AsBool();
+            }
+            return TrObject.__ge__(this, other);
         }
         public override TrObject __neg__()
         {
-            var self_neg = this[Class.ic__neg];
-            if ((object)self_neg == null)
-                return TrObject.__neg__(this);
-            return self_neg.Call();
+            if (__getic__(Class.ic__neg, out var self_neg))
+            {
+                return self_neg.Call();
+            }
+            return TrObject.__neg__(this);
         }
         public override TrObject __invert__()
         {
-            var self_invert = this[Class.ic__invert];
-            if ((object)self_invert == null)
-                return TrObject.__invert__(this);
-            return self_invert.Call();
+            if (__getic__(Class.ic__invert, out var self_invert))
+            {
+                return self_invert.Call();
+            }
+            return TrObject.__invert__(this);
         }
         public override TrObject __pos__()
         {
-            var self_pos = this[Class.ic__pos];
-            if ((object)self_pos == null)
-                return TrObject.__pos__(this);
-            return self_pos.Call();
+            if (__getic__(Class.ic__pos, out var self_pos))
+            {
+                return self_pos.Call();
+            }
+            return TrObject.__pos__(this);
         }
         public override Boolean __bool__()
         {
-            var self_bool = this[Class.ic__bool];
-            if ((object)self_bool == null)
-                return TrObject.__bool__(this);
-            return self_bool.Call().AsBool();
+            if (__getic__(Class.ic__bool, out var self_bool))
+            {
+                return self_bool.Call().AsBool();
+            }
+            return TrObject.__bool__(this);
         }
         public override TrObject __abs__()
         {
-            var self_abs = this[Class.ic__abs];
-            if ((object)self_abs == null)
-                return TrObject.__abs__(this);
-            return self_abs.Call();
+            if (__getic__(Class.ic__abs, out var self_abs))
+            {
+                return self_abs.Call();
+            }
+            return TrObject.__abs__(this);
         }
         public override TrObject __enter__()
         {
-            var self_enter = this[Class.ic__enter];
-            if ((object)self_enter == null)
-                return TrObject.__enter__(this);
-            return self_enter.Call();
+            if (__getic__(Class.ic__enter, out var self_enter))
+            {
+                return self_enter.Call();
+            }
+            return TrObject.__enter__(this);
         }
         public override TrObject __exit__(TrObject exc_type, TrObject exc_value, TrObject traceback)
         {
-            var self_exit = this[Class.ic__exit];
-            if ((object)self_exit == null)
-                return TrObject.__exit__(this, exc_type, exc_value, traceback);
-            return self_exit.Call(exc_type, exc_value, traceback);
+            if (__getic__(Class.ic__exit, out var self_exit))
+            {
+                return self_exit.Call(exc_type, exc_value, traceback);
+            }
+            return TrObject.__exit__(this, exc_type, exc_value, traceback);
         }
 
         public override TrObject __int__()
         {
-            var self_int = this[Class.ic__int];
-            if ((object)self_int == null)
+            if (__getic__(Class.ic__int, out var self_int))
+            {
                 return self_int.Call();
+            }
             return TrObject.__int__(this);
         }
 
         public override TrObject __float__()
         {
-            var self_float = this[Class.ic__float];
-            if ((object)self_float == null)
+            if (__getic__(Class.ic__float, out var self_float))
+            {
                 return self_float.Call();
+            }
             return TrObject.__float__(this);
         }
     }

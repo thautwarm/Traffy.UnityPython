@@ -17,6 +17,11 @@ namespace Traffy.Objects
         public override object Native => value;
         public override List<TrObject> __array__ => null;
 
+        public TrFloat(){ }
+        public TrFloat(float floatValue)
+        {
+            value = floatValue;
+        }
         public override TrObject __int__() => MK.Int((long)value);
         public override TrObject __float__() => this;
 

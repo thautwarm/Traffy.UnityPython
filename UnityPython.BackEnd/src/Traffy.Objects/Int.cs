@@ -17,6 +17,12 @@ namespace Traffy.Objects
         public Int64 value;
         public override object Native => value;
 
+        public TrInt(){ }
+        public TrInt(long longValue)
+        {
+            value = longValue;
+        }
+
         public override string __repr__() => value.ToString();
 
         public override int __hash__() => value.GetHashCode();

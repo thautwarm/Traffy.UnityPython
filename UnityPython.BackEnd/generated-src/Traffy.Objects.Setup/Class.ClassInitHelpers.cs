@@ -12,18 +12,31 @@ namespace Traffy.Objects
         public PolyIC ic__float = new PolyIC(MagicNames.i___float__);
         public PolyIC ic__trynext = new PolyIC(MagicNames.i___trynext__);
         public PolyIC ic__add = new PolyIC(MagicNames.i___add__);
+        public PolyIC ic__radd = new PolyIC(MagicNames.i___radd__);
         public PolyIC ic__sub = new PolyIC(MagicNames.i___sub__);
+        public PolyIC ic__rsub = new PolyIC(MagicNames.i___rsub__);
         public PolyIC ic__mul = new PolyIC(MagicNames.i___mul__);
+        public PolyIC ic__rmul = new PolyIC(MagicNames.i___rmul__);
         public PolyIC ic__matmul = new PolyIC(MagicNames.i___matmul__);
+        public PolyIC ic__rmatmul = new PolyIC(MagicNames.i___rmatmul__);
         public PolyIC ic__floordiv = new PolyIC(MagicNames.i___floordiv__);
+        public PolyIC ic__rfloordiv = new PolyIC(MagicNames.i___rfloordiv__);
         public PolyIC ic__truediv = new PolyIC(MagicNames.i___truediv__);
+        public PolyIC ic__rtruediv = new PolyIC(MagicNames.i___rtruediv__);
         public PolyIC ic__mod = new PolyIC(MagicNames.i___mod__);
+        public PolyIC ic__rmod = new PolyIC(MagicNames.i___rmod__);
         public PolyIC ic__pow = new PolyIC(MagicNames.i___pow__);
+        public PolyIC ic__rpow = new PolyIC(MagicNames.i___rpow__);
         public PolyIC ic__and = new PolyIC(MagicNames.i___and__);
+        public PolyIC ic__rand = new PolyIC(MagicNames.i___rand__);
         public PolyIC ic__or = new PolyIC(MagicNames.i___or__);
+        public PolyIC ic__ror = new PolyIC(MagicNames.i___ror__);
         public PolyIC ic__xor = new PolyIC(MagicNames.i___xor__);
+        public PolyIC ic__rxor = new PolyIC(MagicNames.i___rxor__);
         public PolyIC ic__lshift = new PolyIC(MagicNames.i___lshift__);
+        public PolyIC ic__rlshift = new PolyIC(MagicNames.i___rlshift__);
         public PolyIC ic__rshift = new PolyIC(MagicNames.i___rshift__);
+        public PolyIC ic__rrshift = new PolyIC(MagicNames.i___rrshift__);
         public PolyIC ic__hash = new PolyIC(MagicNames.i___hash__);
         public PolyIC ic__call = new PolyIC(MagicNames.i___call__);
         public PolyIC ic__contains = new PolyIC(MagicNames.i___contains__);
@@ -171,6 +184,7 @@ namespace Traffy.Objects
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrClass)self).__repr__());
             cls[MagicNames.i___or__] = TrSharpFunc.FromFunc(cls.Name + ".__or__", (self,arg0) => ((Traffy.Objects.TrClass)self).__or__(arg0));
+            cls[MagicNames.i___ror__] = TrSharpFunc.FromFunc(cls.Name + ".__ror__", (self,arg0) => ((Traffy.Objects.TrClass)self).__ror__(arg0));
             cls[MagicNames.i___call__] = TrSharpFunc.FromFunc(cls.Name + ".__call__", (self,arg0,arg1) => ((Traffy.Objects.TrClass)self).__call__(arg0,arg1));
             cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Objects.TrClass)self).__getitem__(arg0));
         }
@@ -351,6 +365,10 @@ namespace Traffy.Objects
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Objects.TrNone)self).__hash__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Objects.TrNone)self).__eq__(arg0));
             cls[MagicNames.i___ne__] = TrSharpFunc.FromFunc(cls.Name + ".__ne__", (self,arg0) => ((Traffy.Objects.TrNone)self).__ne__(arg0));
+        }
+        static void BuiltinClassInit_TrNotImplemented(TrClass cls)
+        {
+            cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrNotImplemented)self).__repr__());
         }
         static void BuiltinClassInit_TrRawObject(TrClass cls)
         {
@@ -683,6 +701,11 @@ namespace Traffy.Objects
                 BuiltinClassInit_TrNone(cls);
                 return;
             }
+            if (typeof(T) == typeof(Traffy.Objects.TrNotImplemented))
+            {
+                BuiltinClassInit_TrNotImplemented(cls);
+                return;
+            }
             if (typeof(T) == typeof(Traffy.Objects.TrRawObject))
             {
                 BuiltinClassInit_TrRawObject(cls);
@@ -751,18 +774,31 @@ namespace Traffy.Objects
             ic__float = new PolyIC(MagicNames.i___float__);
             ic__trynext = new PolyIC(MagicNames.i___trynext__);
             ic__add = new PolyIC(MagicNames.i___add__);
+            ic__radd = new PolyIC(MagicNames.i___radd__);
             ic__sub = new PolyIC(MagicNames.i___sub__);
+            ic__rsub = new PolyIC(MagicNames.i___rsub__);
             ic__mul = new PolyIC(MagicNames.i___mul__);
+            ic__rmul = new PolyIC(MagicNames.i___rmul__);
             ic__matmul = new PolyIC(MagicNames.i___matmul__);
+            ic__rmatmul = new PolyIC(MagicNames.i___rmatmul__);
             ic__floordiv = new PolyIC(MagicNames.i___floordiv__);
+            ic__rfloordiv = new PolyIC(MagicNames.i___rfloordiv__);
             ic__truediv = new PolyIC(MagicNames.i___truediv__);
+            ic__rtruediv = new PolyIC(MagicNames.i___rtruediv__);
             ic__mod = new PolyIC(MagicNames.i___mod__);
+            ic__rmod = new PolyIC(MagicNames.i___rmod__);
             ic__pow = new PolyIC(MagicNames.i___pow__);
+            ic__rpow = new PolyIC(MagicNames.i___rpow__);
             ic__and = new PolyIC(MagicNames.i___and__);
+            ic__rand = new PolyIC(MagicNames.i___rand__);
             ic__or = new PolyIC(MagicNames.i___or__);
+            ic__ror = new PolyIC(MagicNames.i___ror__);
             ic__xor = new PolyIC(MagicNames.i___xor__);
+            ic__rxor = new PolyIC(MagicNames.i___rxor__);
             ic__lshift = new PolyIC(MagicNames.i___lshift__);
+            ic__rlshift = new PolyIC(MagicNames.i___rlshift__);
             ic__rshift = new PolyIC(MagicNames.i___rshift__);
+            ic__rrshift = new PolyIC(MagicNames.i___rrshift__);
             ic__hash = new PolyIC(MagicNames.i___hash__);
             ic__call = new PolyIC(MagicNames.i___call__);
             ic__contains = new PolyIC(MagicNames.i___contains__);

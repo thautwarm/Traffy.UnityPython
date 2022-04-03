@@ -163,7 +163,7 @@ namespace Traffy.Objects
             return this;
         }
 
-        public override TrObject __or__(Traffy.Objects.TrObject a)
+        TrObject type_union(TrObject a)
         {
             if (a.IsNone())
             {
@@ -173,10 +173,11 @@ namespace Traffy.Objects
             {
                 return MK.UnionType(this, a);
             }
-            throw new TypeError($"unsupported operand type(s) for |: class '{this.Name}' and '{a.Class.Name}' object");
+            return TrNotImplemented.Unique;
         }
+        public override TrObject __or__(Traffy.Objects.TrObject a) => type_union(a);
+        public override TrObject __ror__(TrObject a) => type_union(a);
         public override string __repr__() => Name;
-
         public override TrObject __call__(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             // XXX: should we support metaclasses other than 'type'?

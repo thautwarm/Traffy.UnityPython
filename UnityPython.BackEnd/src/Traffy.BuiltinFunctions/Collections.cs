@@ -237,7 +237,7 @@ namespace Traffy
                 {
                     return sum;
                 }
-                sum = sum.__add__(iter.Current);
+                sum = RTS.object_add(sum, iter.Current);
             }
         }
     }

@@ -68,6 +68,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict._Create();
             Traffy.Objects.TrModule._Create();
             Traffy.Objects.TrNone._Create();
+            Traffy.Objects.TrNotImplemented._Create();
             Traffy.Unity2D.TrEventData._Create();
             Traffy.Objects.TrProperty._Create();
             Traffy.Objects.TrRef._Create();
@@ -142,6 +143,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrModule.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrNone.CLASS.__base = new TrClass[] {  };
+            Traffy.Objects.TrNotImplemented.CLASS.__base = new TrClass[] {  };
             Traffy.Unity2D.TrEventData.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrProperty.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrRef.CLASS.__base = new TrClass[] {  };
@@ -214,6 +216,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrTypedDict.CLASS);
             Traffy.Objects.TrModule.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrModule.CLASS);
             Traffy.Objects.TrNone.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNone.CLASS);
+            Traffy.Objects.TrNotImplemented.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNotImplemented.CLASS);
             Traffy.Unity2D.TrEventData.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrEventData.CLASS);
             Traffy.Objects.TrProperty.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrProperty.CLASS);
             Traffy.Objects.TrRef.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRef.CLASS);
@@ -268,6 +271,7 @@ namespace Traffy
             Traffy.Objects.TrEnum.generated_BindMethods();
             Traffy.Objects.TrTypedDict.generated_BindMethods();
             Traffy.Objects.TrModule.generated_BindMethods();
+            Traffy.Objects.TrNotImplemented.generated_BindMethods();
             Traffy.Objects.TrProperty.generated_BindMethods();
             Traffy.Objects.TrSet.generated_BindMethods();
             Traffy.Objects.TrSlice.generated_BindMethods();
@@ -393,6 +397,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict._SetupClasses();
             Traffy.Objects.TrModule._SetupClasses();
             Traffy.Objects.TrNone._SetupClasses();
+            Traffy.Objects.TrNotImplemented._SetupClasses();
             Traffy.Unity2D.TrEventData._SetupClasses();
             Traffy.Objects.TrProperty._SetupClasses();
             Traffy.Objects.TrRef._SetupClasses();

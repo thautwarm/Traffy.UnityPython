@@ -124,7 +124,14 @@ namespace Traffy
         [PyBuiltin]
         static TrObject pow(TrObject x, TrObject y)
         {
-            return x.__pow__(y);
+            var res = x.__pow__(y);
+            if (res.IsNotImplemented())
+            {
+                res = y.__rpow__(x);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for ** or pow(): '{x.Class.Name}' and '{y.Class.Name}'");
+            }
+            return res;
         }
 
         [PyBuiltin]

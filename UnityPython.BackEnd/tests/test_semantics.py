@@ -180,3 +180,15 @@ with testsuite("raise"):
     assert ok
 
     
+with testsuite("roperators"):
+    class Inc:
+        def __radd__(self, a):
+            if isinstance(a, int):
+                return a + 1
+            return NotImplemented
+
+    
+    a = Inc()
+    x = 1 + a
+    assert x == 2
+

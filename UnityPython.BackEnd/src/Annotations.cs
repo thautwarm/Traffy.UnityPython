@@ -41,11 +41,12 @@ namespace Traffy.Annotations
 
     public enum SetupMarkKind
     {
-        CreateRef = 0, // create classes and static objects
+        StaticInit = 0,
+        CreateRef = 1, // create classes and static objects
         // setup mro
-        InitRef = 1, // setup methods
+        InitRef = 2, // setup methods
         // setup builtins
-        SetupRef = 2, // method setup (do nothing for builtins)
+        SetupRef = 3, // method setup (do nothing for builtins)
 
     }
 
@@ -58,29 +59,4 @@ namespace Traffy.Annotations
             Kind = kind;
         }
     }
-
-    // public class Mark : Attribute
-    // {
-    //     public object Token;
-    //     public Mark(object token = null)
-    //     {
-    //         Token = token;
-    //     }
-    //     public static IEnumerable<(Type t, Mark attr, Action method)> Query(Type entry, Func<object, bool> predicate)
-    //     {
-    //         return Assembly
-    //             .GetAssembly(entry)
-    //             .GetTypes()
-    //             .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).Select(x => (t, x)))
-    //             .Where(((Type t, MethodInfo mi) pair) =>
-    //             {
-    //                 var attr = pair.mi.GetCustomAttribute<Mark>();
-    //                 return attr != null && pair.mi.GetParameters().Length == 0 && predicate(attr.Token);
-    //             })
-    //             .Select(((Type t, MethodInfo mi) pair) => (
-    //                 pair.t,
-    //                 pair.mi.GetCustomAttribute<Mark>(),
-    //                 (Action)Delegate.CreateDelegate(typeof(Action), null, pair.mi)));
-    //     }
-    // }
 }

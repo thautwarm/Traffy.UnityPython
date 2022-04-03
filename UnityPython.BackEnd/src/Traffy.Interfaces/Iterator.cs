@@ -133,7 +133,7 @@ namespace Traffy.Interfaces
             var itr = self.__iter__();
             TrObject s = __init ?? MK.IntZero;
             while (itr.MoveNext())
-                s = s.__add__(itr.Current);
+                s = RTS.object_add(s, itr.Current);
             return s;
         }
 

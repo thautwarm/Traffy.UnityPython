@@ -233,70 +233,162 @@ namespace Traffy
             return res.ToArray();
         }
 
+        public static TrObject object_add(TrObject arg1, TrObject arg2)
+        {
+            var res = arg1.__add__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__radd__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for +: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
+        }
+
         public static TrObject object_lshift(TrObject arg1, TrObject arg2)
         {
-            return arg1.__lshift__(arg2);
+            var res = arg1.__lshift__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rlshift__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for <<: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_rshift(TrObject arg1, TrObject arg2)
         {
-            return arg1.__rshift__(arg2);
+            var res = arg1.__rshift__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rrshift__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for >>: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_bitand(TrObject arg1, TrObject arg2)
         {
-            return arg1.__and__(arg2);
+            var res = arg1.__and__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rand__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for &: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_bitor(TrObject arg1, TrObject arg2)
         {
-            return arg1.__or__(arg2);
+            var res = arg1.__or__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__ror__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for |: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_bitxor(TrObject arg1, TrObject arg2)
         {
-            return arg1.__xor__(arg2);
+            var res = arg1.__xor__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rxor__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for ^: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_matmul(TrObject arg1, TrObject arg2)
         {
-            return arg1.__matmul__(arg2);
+            var res = arg1.__matmul__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rmatmul__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for @: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_mod(TrObject arg1, TrObject arg2)
         {
-            return arg1.__mod__(arg2);
+            var res = arg1.__mod__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rmod__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for %: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_pow(TrObject arg1, TrObject arg2)
         {
-            return arg1.__pow__(arg2);
+            var res = arg1.__pow__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rpow__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for **: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_floordiv(TrObject arg1, TrObject arg2)
         {
-            return arg1.__floordiv__(arg2);
+            var res = arg1.__floordiv__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rfloordiv__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for //: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_truediv(TrObject arg1, TrObject arg2)
         {
-            return arg1.__truediv__(arg2);
+            var res = arg1.__truediv__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rtruediv__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for /: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_mul(TrObject arg1, TrObject arg2)
         {
-            return arg1.__mul__(arg2);
+            var res = arg1.__mul__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rmul__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for *: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
         public static TrObject object_sub(TrObject arg1, TrObject arg2)
         {
-            return arg1.__sub__(arg2);
+            var res = arg1.__sub__(arg2);
+            if (res.IsNotImplemented())
+            {
+                res = arg2.__rsub__(arg1);
+                if (res.IsNotImplemented())
+                    throw new TypeError($"unsupported operand type(s) for -: '{arg1.Class.Name}' and '{arg2.Class.Name}'");
+            }
+            return res;
         }
 
-        public static TrObject object_add(TrObject arg1, TrObject arg2)
-        {
-            return arg1.__add__(arg2);
-        }
 
         public static TrObject object_getitem(TrObject tos, TrObject item)
         {
@@ -715,32 +807,32 @@ namespace Traffy
 
         public static TrFloat Float(float v)
         {
-            return new TrFloat { value = v };
+            return new TrFloat(v);
         }
 
         public static TrFloat Float(double v)
         {
-            return new TrFloat { value = (float)v };
+            return new TrFloat ((float)v);
         }
         public static TrInt Int(long p)
         {
-            return new TrInt { value = p };
+            return new TrInt(p);
         }
 
         public static TrInt IntZero = Int(0);
 
         public static TrInt Int(ulong p)
         {
-            return new TrInt { value = unchecked((long)p) };
+            return new TrInt(unchecked((long)p));
         }
         public static TrInt Int(int p)
         {
-            return new TrInt { value = unchecked((long)p) };
+            return new TrInt(unchecked((long)p));
         }
 
         public static TrInt Int(bool p)
         {
-            return new TrInt { value = p ? 1L : 0L };
+            return new TrInt(p ? 1L : 0L);
         }
 
         public static TrList List(List<TrObject> trObjects)
@@ -823,7 +915,7 @@ namespace Traffy
             return new TrIter(v);
         }
 
-        public static TrObject UnionType(TrObject left, TrObject right)
+        public static TrUnionType UnionType(TrObject left, TrObject right)
         {
             return new TrUnionType(left, right);
         }

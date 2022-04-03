@@ -1,18 +1,39 @@
-from __future__ import annotations
-from typing import TypedDict
+def _test1():
+    x = 0
+    for i in range(10000000):
+        x += 1
+        yield x
 
-from enum import Enum, auto
+def test1():
+    x = list(_test1())
+    print("test1 elt[50]", x[50])
+    return len(x)
 
-class S(Enum):
-    a: S
-    b: S
-    c: S = auto()
+def test2():
+    x = 0
+    while x < 10000000:
+        x += 1
+    return x
 
-assert S.a.value == 0
-assert S.a.name == "a"
+# class XX:
+#     xx =5
+#     def __init__(self, x):
+#         self.x = x
 
-print(S.a)
-print(S.c)
+
+def testfunc(f):
+    a = time()
+    res = f()
+    t = time() - a
+    print("test result of", f, ":", t)
+
+
+testfunc(test1)
+testfunc(test2)
+testfunc(test1)
+testfunc(test2)
+testfunc(test1)
+testfunc(test2)
 
 # class K(TypedDict):
 #     x: int

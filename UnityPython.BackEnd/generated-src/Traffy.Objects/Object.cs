@@ -32,53 +32,105 @@ namespace Traffy.Objects
         {
             return TrObject.__add__(this,a);
         }
+        public virtual  TrObject __radd__(TrObject a)
+        {
+            return TrObject.__radd__(this,a);
+        }
         public virtual  TrObject __sub__(TrObject a)
         {
             return TrObject.__sub__(this,a);
+        }
+        public virtual  TrObject __rsub__(TrObject a)
+        {
+            return TrObject.__rsub__(this,a);
         }
         public virtual  TrObject __mul__(TrObject a)
         {
             return TrObject.__mul__(this,a);
         }
+        public virtual  TrObject __rmul__(TrObject a)
+        {
+            return TrObject.__rmul__(this,a);
+        }
         public virtual  TrObject __matmul__(TrObject a)
         {
             return TrObject.__matmul__(this,a);
+        }
+        public virtual  TrObject __rmatmul__(TrObject a)
+        {
+            return TrObject.__rmatmul__(this,a);
         }
         public virtual  TrObject __floordiv__(TrObject a)
         {
             return TrObject.__floordiv__(this,a);
         }
+        public virtual  TrObject __rfloordiv__(TrObject a)
+        {
+            return TrObject.__rfloordiv__(this,a);
+        }
         public virtual  TrObject __truediv__(TrObject a)
         {
             return TrObject.__truediv__(this,a);
+        }
+        public virtual  TrObject __rtruediv__(TrObject a)
+        {
+            return TrObject.__rtruediv__(this,a);
         }
         public virtual  TrObject __mod__(TrObject a)
         {
             return TrObject.__mod__(this,a);
         }
+        public virtual  TrObject __rmod__(TrObject a)
+        {
+            return TrObject.__rmod__(this,a);
+        }
         public virtual  TrObject __pow__(TrObject a)
         {
             return TrObject.__pow__(this,a);
+        }
+        public virtual  TrObject __rpow__(TrObject a)
+        {
+            return TrObject.__rpow__(this,a);
         }
         public virtual  TrObject __and__(TrObject a)
         {
             return TrObject.__and__(this,a);
         }
+        public virtual  TrObject __rand__(TrObject a)
+        {
+            return TrObject.__rand__(this,a);
+        }
         public virtual  TrObject __or__(TrObject a)
         {
             return TrObject.__or__(this,a);
+        }
+        public virtual  TrObject __ror__(TrObject a)
+        {
+            return TrObject.__ror__(this,a);
         }
         public virtual  TrObject __xor__(TrObject a)
         {
             return TrObject.__xor__(this,a);
         }
+        public virtual  TrObject __rxor__(TrObject a)
+        {
+            return TrObject.__rxor__(this,a);
+        }
         public virtual  TrObject __lshift__(TrObject a)
         {
             return TrObject.__lshift__(this,a);
         }
+        public virtual  TrObject __rlshift__(TrObject a)
+        {
+            return TrObject.__rlshift__(this,a);
+        }
         public virtual  TrObject __rshift__(TrObject a)
         {
             return TrObject.__rshift__(this,a);
+        }
+        public virtual  TrObject __rrshift__(TrObject a)
+        {
+            return TrObject.__rrshift__(this,a);
         }
         public virtual  Int32 __hash__()
         {

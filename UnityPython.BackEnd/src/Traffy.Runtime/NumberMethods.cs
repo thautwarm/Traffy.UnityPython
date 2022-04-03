@@ -11,7 +11,7 @@ namespace Traffy.Objects
 #else
     using static System.MathF;
 #endif
-    
+
     public static class NumberMethods
     {
         internal static int_t s_intmod(int_t a, int_t b)
@@ -27,7 +27,7 @@ namespace Traffy.Objects
         }
 
         public static Exception unsupported_ops(TrObject lhs, string op, TrObject rhs) =>
-            new InvalidOperationException($"'unsupported operation: '{lhs.Class.Name}' {op} '{rhs.Class.Name}'.");
+            new TypeError($"'unsupported operation: '{lhs.Class.Name}' {op} '{rhs.Class.Name}'.");
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
         public static TrObject int_t_add(TrInt self, TrObject other)
@@ -36,8 +36,7 @@ namespace Traffy.Objects
             {
                 case TrInt v: return MK.Int(self.value + v.value);
                 case TrFloat v: return MK.Float(self.value + v.value);
-                default:
-                    throw unsupported_ops(self, "+", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -47,8 +46,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: return MK.Float(self.value + v.value);
                 case TrInt v: return MK.Float(self.value + v.value);
-                default:
-                    throw unsupported_ops(self, "+", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -59,8 +57,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: return MK.Float(self.value - v.value);
                 case TrInt v: return MK.Int(self.value - v.value);
-                default:
-                    throw unsupported_ops(self, "-", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -70,8 +67,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: return MK.Float(self.value - v.value);
                 case TrInt v: return MK.Float(self.value - v.value);
-                default:
-                    throw unsupported_ops(self, "-", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -81,8 +77,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: return MK.Float(self.value * v.value);
                 case TrInt v: return MK.Int(self.value * v.value);
-                default:
-                    throw unsupported_ops(self, "*", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -92,8 +87,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: return MK.Float(self.value * v.value);
                 case TrInt v: return MK.Float(self.value * v.value);
-                default:
-                    throw unsupported_ops(self, "*", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -101,10 +95,9 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return MK.Int((int_t) (self.value / v.value));
+                case TrFloat v: return MK.Int((int_t)(self.value / v.value));
                 case TrInt v: return MK.Int(self.value / v.value);
-                default:
-                    throw unsupported_ops(self, "/", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -112,10 +105,9 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return MK.Int((int_t) (self.value / v.value));
-                case TrInt v: return MK.Int((int_t) (self.value / v.value));
-                default:
-                    throw unsupported_ops(self, "/", other);
+                case TrFloat v: return MK.Int((int_t)(self.value / v.value));
+                case TrInt v: return MK.Int((int_t)(self.value / v.value));
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -124,9 +116,8 @@ namespace Traffy.Objects
             switch (other)
             {
                 case TrFloat v: return MK.Float(self.value / v.value);
-                case TrInt v: return MK.Float(((float) self.value) / v.value);
-                default:
-                    throw unsupported_ops(self, "/", other);
+                case TrInt v: return MK.Float(((float)self.value) / v.value);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -136,8 +127,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: return MK.Float(self.value / v.value);
                 case TrInt v: return MK.Float(self.value / v.value);
-                default:
-                    throw unsupported_ops(self, "/", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -146,10 +136,9 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return MK.Float(s_floatmod(((float) self.value), v.value));
+                case TrFloat v: return MK.Float(s_floatmod(((float)self.value), v.value));
                 case TrInt v: return MK.Int(s_intmod(self.value, v.value));
-                default:
-                    throw unsupported_ops(self, "%", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -159,8 +148,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: return MK.Float(s_floatmod(self.value, v.value));
                 case TrInt v: return MK.Float(s_floatmod(self.value, v.value));
-                default:
-                    throw unsupported_ops(self, "%", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -210,8 +198,7 @@ namespace Traffy.Objects
                         return MK.Float(Pow(self.value, v.value));
 
                     return MK.Int(s_intpow(self.value, v.value));
-                default:
-                    throw unsupported_ops(self, "**", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -225,8 +212,7 @@ namespace Traffy.Objects
                     if (i < 0)
                         return MK.Float(Pow(self.value, v.value));
                     return MK.Float(f_intpow(self.value, v.value));
-                default:
-                    throw unsupported_ops(self, "**", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -236,11 +222,10 @@ namespace Traffy.Objects
             {
                 case TrFloat v: throw unsupported_ops(self, "<<", other);
                 case TrInt v:
-                    return MK.Int(unchecked((uint_t) self.value << (int) v.value));
+                    return MK.Int(unchecked((uint_t)self.value << (int)v.value));
 
 
-                default:
-                    throw unsupported_ops(self, "<<", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -250,9 +235,8 @@ namespace Traffy.Objects
             {
                 case TrFloat v: throw unsupported_ops(self, ">>", other);
                 case TrInt v:
-                    return MK.Int(unchecked((uint_t) self.value >> (int) v.value));
-                default:
-                    throw unsupported_ops(self, ">>", other);
+                    return MK.Int(unchecked((uint_t)self.value >> (int)v.value));
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -262,8 +246,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: throw unsupported_ops(self, "&", other);
                 case TrInt v: return MK.Int(self.value & v.value);
-                default:
-                    throw unsupported_ops(self, "&", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -273,8 +256,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: throw unsupported_ops(self, "|", other);
                 case TrInt v: return MK.Int(self.value | v.value);
-                default:
-                    throw unsupported_ops(self, "|", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -284,8 +266,7 @@ namespace Traffy.Objects
             {
                 case TrFloat v: throw unsupported_ops(self, "^", other);
                 case TrInt v: return MK.Int(self.value ^ v.value);
-                default:
-                    throw unsupported_ops(self, "^", other);
+                default: return TrNotImplemented.Unique;
             }
         }
 
@@ -294,7 +275,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float) self.value < v.value;
+                case TrFloat v: return (float)self.value < v.value;
                 case TrInt v: return self.value < v.value;
                 default:
                     throw unsupported_ops(self, "<", other);
@@ -316,7 +297,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float) self.value <= v.value;
+                case TrFloat v: return (float)self.value <= v.value;
                 case TrInt v: return self.value <= v.value;
                 default:
                     throw unsupported_ops(self, "<=", other);
@@ -338,7 +319,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float) self.value > v.value;
+                case TrFloat v: return (float)self.value > v.value;
                 case TrInt v: return self.value > v.value;
                 default:
                     throw unsupported_ops(self, ">", other);
@@ -360,7 +341,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float) self.value >= v.value;
+                case TrFloat v: return (float)self.value >= v.value;
                 case TrInt v: return self.value >= v.value;
                 default:
                     throw unsupported_ops(self, ">=", other);

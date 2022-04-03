@@ -24,30 +24,56 @@ namespace Traffy.Objects
                 this[MagicNames.i___trynext__] = o_trynext;
             if (cp_kwargs.TryPop(MagicNames.s_add, out var o_add))
                 this[MagicNames.i___add__] = o_add;
+            if (cp_kwargs.TryPop(MagicNames.s_radd, out var o_radd))
+                this[MagicNames.i___radd__] = o_radd;
             if (cp_kwargs.TryPop(MagicNames.s_sub, out var o_sub))
                 this[MagicNames.i___sub__] = o_sub;
+            if (cp_kwargs.TryPop(MagicNames.s_rsub, out var o_rsub))
+                this[MagicNames.i___rsub__] = o_rsub;
             if (cp_kwargs.TryPop(MagicNames.s_mul, out var o_mul))
                 this[MagicNames.i___mul__] = o_mul;
+            if (cp_kwargs.TryPop(MagicNames.s_rmul, out var o_rmul))
+                this[MagicNames.i___rmul__] = o_rmul;
             if (cp_kwargs.TryPop(MagicNames.s_matmul, out var o_matmul))
                 this[MagicNames.i___matmul__] = o_matmul;
+            if (cp_kwargs.TryPop(MagicNames.s_rmatmul, out var o_rmatmul))
+                this[MagicNames.i___rmatmul__] = o_rmatmul;
             if (cp_kwargs.TryPop(MagicNames.s_floordiv, out var o_floordiv))
                 this[MagicNames.i___floordiv__] = o_floordiv;
+            if (cp_kwargs.TryPop(MagicNames.s_rfloordiv, out var o_rfloordiv))
+                this[MagicNames.i___rfloordiv__] = o_rfloordiv;
             if (cp_kwargs.TryPop(MagicNames.s_truediv, out var o_truediv))
                 this[MagicNames.i___truediv__] = o_truediv;
+            if (cp_kwargs.TryPop(MagicNames.s_rtruediv, out var o_rtruediv))
+                this[MagicNames.i___rtruediv__] = o_rtruediv;
             if (cp_kwargs.TryPop(MagicNames.s_mod, out var o_mod))
                 this[MagicNames.i___mod__] = o_mod;
+            if (cp_kwargs.TryPop(MagicNames.s_rmod, out var o_rmod))
+                this[MagicNames.i___rmod__] = o_rmod;
             if (cp_kwargs.TryPop(MagicNames.s_pow, out var o_pow))
                 this[MagicNames.i___pow__] = o_pow;
+            if (cp_kwargs.TryPop(MagicNames.s_rpow, out var o_rpow))
+                this[MagicNames.i___rpow__] = o_rpow;
             if (cp_kwargs.TryPop(MagicNames.s_and, out var o_and))
                 this[MagicNames.i___and__] = o_and;
+            if (cp_kwargs.TryPop(MagicNames.s_rand, out var o_rand))
+                this[MagicNames.i___rand__] = o_rand;
             if (cp_kwargs.TryPop(MagicNames.s_or, out var o_or))
                 this[MagicNames.i___or__] = o_or;
+            if (cp_kwargs.TryPop(MagicNames.s_ror, out var o_ror))
+                this[MagicNames.i___ror__] = o_ror;
             if (cp_kwargs.TryPop(MagicNames.s_xor, out var o_xor))
                 this[MagicNames.i___xor__] = o_xor;
+            if (cp_kwargs.TryPop(MagicNames.s_rxor, out var o_rxor))
+                this[MagicNames.i___rxor__] = o_rxor;
             if (cp_kwargs.TryPop(MagicNames.s_lshift, out var o_lshift))
                 this[MagicNames.i___lshift__] = o_lshift;
+            if (cp_kwargs.TryPop(MagicNames.s_rlshift, out var o_rlshift))
+                this[MagicNames.i___rlshift__] = o_rlshift;
             if (cp_kwargs.TryPop(MagicNames.s_rshift, out var o_rshift))
                 this[MagicNames.i___rshift__] = o_rshift;
+            if (cp_kwargs.TryPop(MagicNames.s_rrshift, out var o_rrshift))
+                this[MagicNames.i___rrshift__] = o_rrshift;
             if (cp_kwargs.TryPop(MagicNames.s_hash, out var o_hash))
                 this[MagicNames.i___hash__] = o_hash;
             if (cp_kwargs.TryPop(MagicNames.s_call, out var o_call))

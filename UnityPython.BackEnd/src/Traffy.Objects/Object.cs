@@ -151,68 +151,74 @@ namespace Traffy.Objects
         
 
         [MagicMethod]
-        public static TrObject __add__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__add__));
+        public static TrObject __add__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __sub__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__sub__));
+        public static TrObject __radd__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __mul__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__mul__));
-
+        public static TrObject __sub__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __matmul__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__matmul__));
+        public static TrObject __rsub__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        
+        [MagicMethod]
+        public static TrObject __mul__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __floordiv__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__floordiv__));
-
+        public static TrObject __rmul__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        
+        [MagicMethod]
+        public static TrObject __matmul__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __truediv__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__truediv__));
-
+        public static TrObject __rmatmul__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __mod__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__mod__));
-
+        public static TrObject __floordiv__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __pow__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__pow__));
+        public static TrObject __rfloordiv__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __truediv__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __rtruediv__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+
+        [MagicMethod]
+        public static TrObject __mod__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __rmod__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __pow__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __rpow__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         // Bitwise logic operations
         [MagicMethod]
-        public static TrObject __and__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__and__));
+        public static TrObject __and__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __rand__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         [MagicMethod]
-        public static TrObject __or__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__or__));
-
-
+        public static TrObject __or__(TrObject self, TrObject a) => TrNotImplemented.Unique;
         [MagicMethod]
-        public static TrObject __xor__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__xor__));
-
-
-
+        public static TrObject __ror__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __xor__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __rxor__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         // bit shift
         [MagicMethod]
-        public static TrObject __lshift__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__lshift__));
+        public static TrObject __lshift__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __rlshift__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
 
         [MagicMethod]
-        public static TrObject __rshift__(TrObject self, TrObject a) =>
-            throw self.unsupported(nameof(__rshift__));
-
+        public static TrObject __rshift__(TrObject self, TrObject a) => TrNotImplemented.Unique;
+        [MagicMethod]
+        public static TrObject __rrshift__(TrObject self, TrObject a) => TrNotImplemented.Unique;
 
         // Object protocol
 
