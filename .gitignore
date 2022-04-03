@@ -10,6 +10,7 @@ out/
 BenchmarkDotNet.Artifacts/
 **/UnityEngine.dll
 **/UnityEngine.UI.dll
+**/UnityEngine.CoreModule.dll
 /cross-editor-highlighter/
 .antlr/
 /parser-data/

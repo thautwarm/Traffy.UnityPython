@@ -37,12 +37,12 @@ namespace Traffy
                 }
             }
             sb.Append(end.__str__());
-#if NUNITY
+#if UNITY_VERSION
+            UnityEngine.Debug.Log(sb.ToString());
+#else
             System.Console.Write(sb.ToString());
             if (flush)
                 System.Console.Out.Flush();
-#else
-            UnityEngine.Debug.Log(sb.ToString());
 #endif
             return MK.None();
         }

@@ -6,10 +6,10 @@ using uint_t = System.UInt64;
 namespace Traffy.Objects
 {
 
-#if NETSTANDARD2_1
-    using static System.MathF;
-#else
+#if UNITY_VERSION
     using static UnityEngine.Mathf;
+#else
+    using static System.MathF;
 #endif
     
     public static class NumberMethods

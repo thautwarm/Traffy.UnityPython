@@ -2,31 +2,29 @@
   <PropertyGroup>
     <LangVersion>8</LangVersion>
   </PropertyGroup>
-
+  <ItemGroup>
+    <Compile Include="RunTests.cs" />
+  </ItemGroup>
   <PropertyGroup>
      <OutputType>Exe</OutputType>
-     <TargetFramework>net6.0</TargetFramework>
+     <TargetFramework>net6</TargetFramework>
+     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>TESTS;DEV;NUNITY</DefineConstants>
+     <DefineConstants>TESTS</DefineConstants>
      <!-- <RuntimeIdentifier>win10-x64</RuntimeIdentifier> -->
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="UnityPython">
+      <HintPath>./bin/Release/netstandard2.0/UnityPython.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>./UnityEngine.dll</HintPath>
+        <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.32f1c1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>./UnityEngine.UI.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Eltons.ReflectionKit" Version="1.2.0" />
-    <!-- <PackageReference Include="BenchmarkDotNet" Version="0.13.1" /> -->
   </ItemGroup>
 
 </Project>

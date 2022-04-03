@@ -8,6 +8,9 @@ namespace Traffy
         public static void InitRuntime()
         {
             Traffy.Objects.TrRawObject._Create();
+            Traffy.Unity2D.TrUI._Create();
+            Traffy.Unity2D.TrUnityObject._Create();
+            Traffy.Modules.TrModule_abc._Create();
             Traffy.Modules.TrModule_enum._Create();
             Traffy.Modules.TrModule_json._Create();
             Traffy.Modules.TrModule_types._Create();
@@ -60,7 +63,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict._Create();
             Traffy.Objects.TrModule._Create();
             Traffy.Objects.TrNone._Create();
-            Traffy.Modules.TrModule_abc._Create();
+            Traffy.Unity2D.TrSprite._Create();
             Traffy.Objects.TrProperty._Create();
             Traffy.Objects.TrRef._Create();
             Traffy.Objects.TrSet._Create();
@@ -72,6 +75,9 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Create();
             Traffy.Objects.TrFunc._Create();
             Traffy.Objects.TrRawObject.CLASS.__base = new TrClass[] {  };
+            Traffy.Unity2D.TrUI.CLASS.__base = new TrClass[] {  };
+            Traffy.Unity2D.TrUnityObject.CLASS.__base = new TrClass[] {  };
+            Traffy.Modules.TrModule_abc.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_enum.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_json.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_types.CLASS.__base = new TrClass[] {  };
@@ -124,7 +130,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrModule.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrNone.CLASS.__base = new TrClass[] {  };
-            Traffy.Modules.TrModule_abc.CLASS.__base = new TrClass[] {  };
+            Traffy.Unity2D.TrSprite.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrProperty.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrRef.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrSet.CLASS.__base = new TrClass[] { Traffy.Interfaces.Collection.CLASS };
@@ -136,6 +142,9 @@ namespace Traffy
             Traffy.Objects.TrUnionType.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrFunc.CLASS.__base = new TrClass[] { Traffy.Interfaces.Callable.CLASS };
             Traffy.Objects.TrRawObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRawObject.CLASS);
+            Traffy.Unity2D.TrUI.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrUI.CLASS);
+            Traffy.Unity2D.TrUnityObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrUnityObject.CLASS);
+            Traffy.Modules.TrModule_abc.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_abc.CLASS);
             Traffy.Modules.TrModule_enum.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_enum.CLASS);
             Traffy.Modules.TrModule_json.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_json.CLASS);
             Traffy.Modules.TrModule_types.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_types.CLASS);
@@ -188,7 +197,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrTypedDict.CLASS);
             Traffy.Objects.TrModule.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrModule.CLASS);
             Traffy.Objects.TrNone.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNone.CLASS);
-            Traffy.Modules.TrModule_abc.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_abc.CLASS);
+            Traffy.Unity2D.TrSprite.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrSprite.CLASS);
             Traffy.Objects.TrProperty.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrProperty.CLASS);
             Traffy.Objects.TrRef.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRef.CLASS);
             Traffy.Objects.TrSet.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrSet.CLASS);
@@ -214,6 +223,10 @@ namespace Traffy
             Traffy.Interfaces.Sized._Init();
             Traffy.Interfaces.AbstractClass.generated_BindMethods();
             Traffy.Builtins.InitBuiltins();
+            Traffy.Unity2D.TrRawImage.generated_BindMethods();
+            Traffy.Unity2D.TrSprite.generated_BindMethods();
+            Traffy.Unity2D.TrUI.generated_BindMethods();
+            Traffy.Unity2D.TrUnityObject.generated_BindMethods();
             Traffy.Modules.TrModule_abc.generated_BindMethods();
             Traffy.Modules.TrModule_enum.generated_BindMethods();
             Traffy.Modules.TrModule_json.generated_BindMethods();
@@ -242,6 +255,9 @@ namespace Traffy
             Traffy.Objects.TrStr.generated_BindMethods();
             Traffy.Objects.TrTuple.generated_BindMethods();
             Traffy.Objects.TrFunc.generated_BindMethods();
+            Traffy.Unity2D.TrSprite._Init();
+            Traffy.Unity2D.TrUI._Init();
+            Traffy.Unity2D.TrUnityObject._Init();
             Traffy.Modules.TrModule_abc._Init();
             Traffy.Modules.TrModule_enum._Init();
             Traffy.Modules.TrModule_json._Init();
@@ -293,6 +309,9 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Init();
             Traffy.Objects.TrFunc._Init();
             Traffy.Objects.TrRawObject._SetupClasses();
+            Traffy.Unity2D.TrUI._SetupClasses();
+            Traffy.Unity2D.TrUnityObject._SetupClasses();
+            Traffy.Modules.TrModule_abc._SetupClasses();
             Traffy.Modules.TrModule_enum._SetupClasses();
             Traffy.Modules.TrModule_json._SetupClasses();
             Traffy.Modules.TrModule_types._SetupClasses();
@@ -345,7 +364,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict._SetupClasses();
             Traffy.Objects.TrModule._SetupClasses();
             Traffy.Objects.TrNone._SetupClasses();
-            Traffy.Modules.TrModule_abc._SetupClasses();
+            Traffy.Unity2D.TrSprite._SetupClasses();
             Traffy.Objects.TrProperty._SetupClasses();
             Traffy.Objects.TrRef._SetupClasses();
             Traffy.Objects.TrSet._SetupClasses();

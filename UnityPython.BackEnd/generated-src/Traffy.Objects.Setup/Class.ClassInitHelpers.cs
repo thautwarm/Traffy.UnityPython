@@ -61,6 +61,15 @@ namespace Traffy.Objects
         }
 
 
+        static void BuiltinClassInit_TrSprite(TrClass cls)
+        {
+        }
+        static void BuiltinClassInit_TrUI(TrClass cls)
+        {
+        }
+        static void BuiltinClassInit_TrUnityObject(TrClass cls)
+        {
+        }
         static void BuiltinClassInit_TrModule_abc(TrClass cls)
         {
         }
@@ -413,6 +422,21 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
+            if (typeof(T) == typeof(Traffy.Unity2D.TrSprite))
+            {
+                BuiltinClassInit_TrSprite(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Unity2D.TrUI))
+            {
+                BuiltinClassInit_TrUI(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Unity2D.TrUnityObject))
+            {
+                BuiltinClassInit_TrUnityObject(cls);
+                return;
+            }
             if (typeof(T) == typeof(Traffy.Modules.TrModule_abc))
             {
                 BuiltinClassInit_TrModule_abc(cls);

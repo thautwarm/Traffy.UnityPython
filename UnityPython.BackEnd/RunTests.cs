@@ -6,12 +6,10 @@ using System.Threading;
 using Traffy;
 using Traffy.Objects;
 using static Traffy.Objects.ExtMonoAsyn;
+#if UNITY_VERSION
 using UnityEngine;
-
-#if NUNITY
-#else
-
 #endif
+
 
 public abstract class X
 {

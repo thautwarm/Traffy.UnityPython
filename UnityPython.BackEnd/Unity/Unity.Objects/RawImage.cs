@@ -1,14 +1,34 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
+#if UNITY_VERSION
 using UnityEngine;
+using UnityEngine.UI;
+#endif
+
+
 namespace Traffy.Unity2D
 {
-    // public sealed partial class RawImage: TrObject
-    // {
-    //     RawImage rawImage;
-    //     public TraffyBehaviour backref = null;
-    // }
+    public sealed partial class TrRawImage: TrUnityComponent
+    {
+
+#if UNITY_VERSION
+        RawImage rawImage;
+        public override GameObject gameObject => rawImage.rectTransform.gameObject;
+#endif
+
+        public static TrClass CLASS;
+        public override TrClass Class => throw new System.NotImplementedException();
+
+        public override bool IsUserObject() => false;
+
+        // [PyBind]
+        // public TrObject alpha
+        // {
+        //     get => MK.Int(rawImage.color.a);
+        //     set => rawImage.color = new Color(rawImage.color.r, rawImage.color.g, rawImage.color.b, value.NumToFloat());   
+        // }
+    }
     // public TrObject get_alpha_image(GameObject o)
     //     {
     //         var image = o.GetComponent<RawImage>();

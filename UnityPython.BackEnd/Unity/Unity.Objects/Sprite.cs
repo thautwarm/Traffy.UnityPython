@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
+#if UNITY_VERSION
 using UnityEngine;
+#endif
+
 
 namespace Traffy.Unity2D
 {
@@ -13,7 +16,7 @@ namespace Traffy.Unity2D
         {
             CLASS = TrClass.FromPrototype<TrSprite>("sprite");
         }
-        
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
@@ -28,49 +31,51 @@ namespace Traffy.Unity2D
         }
         public static TrSprite GetComponent(TrUnityObject uo)
         {
+#if UNITY_VERSION
             var render = uo.Raw.GetComponent<SpriteRenderer>();
             if (render == null)
                 return new TrSprite { render = render };
+#endif            
             return null;
         }
         public static TrSprite AddComponent(TrUnityObject uo)
         {
+#if UNITY_VERSION
             var render = uo.Raw.gameObject.AddComponent<SpriteRenderer>();
             if (render == null)
                 return new TrSprite { render = render };
+#endif
             return null;
         }
+#if UNITY_VERSION
         SpriteRenderer render;
+        public override GameObject gameObject => render.gameObject;
+#endif
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override bool IsUserObject() => false;
-        public override GameObject gameObject => render.gameObject;
-        public override List<TrObject> __array__
-        {
-            get
-            {
-                var tb = render.GetComponent<TraffyBehaviour>();
-                if (tb == null)
-                    return null;
-                return tb.TraffyObjects;
-            }
-        }
-
+        
         [PyBind]
         public TrObject width
         {
             set
             {
+#if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var width_origin = render.sprite.texture.width;
                 scale.x = value.NumToFloat() / width_origin;
                 render.transform.localScale = scale;
+#endif
             }
             get
             {
+#if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var width_origin = render.sprite.texture.width;
                 return MK.Float(width_origin * scale.x);
+#else
+                return MK.Float(0.0);
+#endif
             }
         }
 
@@ -79,17 +84,23 @@ namespace Traffy.Unity2D
         {
             set
             {
+#if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var height_origin = render.sprite.texture.height;
                 scale.y = value.NumToFloat() / height_origin;
                 render.transform.localScale = scale;
+#endif
             }
 
             get
             {
+#if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var width_origin = render.sprite.texture.height;
                 return MK.Float(width_origin * scale.y);
+#else
+                return MK.Float(0.0);
+#endif
             }
         }
 
@@ -97,11 +108,16 @@ namespace Traffy.Unity2D
         {
             get
             {
+#if UNITY_VERSION
                 return MK.Float(render.material.color.a);
+#else
+                return MK.Float(0.0);
+#endif                
             }
 
             set
             {
+#if UNITY_VERSION
                 if (!(value is TrFloat floating))
                 {
                     throw new TypeError($"alpha must be float, not {value.Class.Name}");
@@ -111,6 +127,7 @@ namespace Traffy.Unity2D
                 var color = render.material.color;
                 color.a = alpha;
                 render.material.color = color;
+#endif                
             }
         }
 

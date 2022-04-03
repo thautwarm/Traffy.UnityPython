@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
+#if UNITY_VERSION
 using UnityEngine;
 using UnityEngine.UI;
+#endif
+
 
 namespace Traffy.Unity2D
 {
@@ -30,31 +33,41 @@ namespace Traffy.Unity2D
         }
         public static TrUI GetComponent(TrUnityObject uo)
         {
+#if UNITY_VERSION
             var rect = uo.Raw.GetComponent<RectTransform>();
             if (rect == null)
                 return new TrUI { rect = rect };
+#endif
             return null;
         }
         public static TrUI AddComponent(TrUnityObject uo)
         {
+#if UNITY_VERSION
             var rect = uo.Raw.gameObject.AddComponent<RectTransform>();
             if (rect == null)
                 return new TrUI { rect = rect };
+#endif            
             return null;
         }
+        
+#if UNITY_VERSION
         RectTransform rect;
+        public override GameObject gameObject => rect.gameObject;
+#endif
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override bool IsUserObject() => false;
-        public override GameObject gameObject => rect.gameObject;
+
         public override List<TrObject> __array__
         {
             get
             {
+#if UNITY_VERSION
                 var tb = rect.GetComponent<TraffyBehaviour>();
-                if (tb == null)
-                    return null;
-                return tb.TraffyObjects;
+                if (tb != null)
+                    return tb.TraffyObjects;
+#endif
+                return null;
             }
         }
 
@@ -63,12 +76,18 @@ namespace Traffy.Unity2D
         {
             set
             {
+#if UNITY_VERSION
                 rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value.NumToFloat());
+#endif
             }
 
             get
             {
+#if UNITY_VERSION
                 return MK.Float(rect.rect.width);
+#else
+                return MK.Float(0.0);
+#endif                
             }
         }
 
@@ -77,12 +96,18 @@ namespace Traffy.Unity2D
         {
             set
             {
+#if UNITY_VERSION
                 rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, value.NumToFloat());
+#endif
             }
 
             get
             {
+#if UNITY_VERSION
                 return MK.Float(rect.rect.height);
+#else
+                return MK.Float(0.0);
+#endif
             }
         }
     }
