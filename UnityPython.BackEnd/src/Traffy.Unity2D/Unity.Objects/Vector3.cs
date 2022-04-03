@@ -20,8 +20,8 @@ namespace Traffy.Unity2D
             CLASS = TrClass.FromPrototype<TrVector3>("Vector3");
             CLASS.IsSealed = true;
         }
-        
-        
+
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
         {
@@ -36,13 +36,13 @@ namespace Traffy.Unity2D
         [PyBind]
         public static TrObject __new__(float x, float y, float z)
         {
-            #if UNITY_VERSION
-                var data = new Vector3(x, y, z);
-                return new TrVector3(data);
-            #else
+#if UNITY_VERSION
+            var data = new Vector3(x, y, z);
+            return new TrVector3(data);
+#else
                 return new TrVector3();
-            #endif
-            
+#endif
+
         }
         public override List<TrObject> __array__ => null;
 #if UNITY_VERSION
@@ -58,7 +58,7 @@ namespace Traffy.Unity2D
         }
 #endif
 
-        
+
         public override TrObject __add__(TrObject other)
         {
 
@@ -84,12 +84,16 @@ namespace Traffy.Unity2D
                     return new TrVector3(data);
                 }
                 default:
-                    throw new TypeError($"Cannot add {other.Class.Name} to Vector3");
+                    return TrNotImplemented.Unique;
             }
 #else
             throw new NotImplementedException();
 #endif
+        }
 
+        public override TrObject __radd__(TrObject a)
+        {
+            return __add__(a);
         }
 
         public override TrObject __sub__(TrObject a)
@@ -117,13 +121,43 @@ namespace Traffy.Unity2D
                     return new TrVector3(data);
                 }
                 default:
-                    throw new TypeError($"Cannot subtract {a.Class.Name} from Vector3");
+                    return TrNotImplemented.Unique;
             }
 #else
         throw new NotImplementedException();
 #endif
         }
 
+        public override TrObject __rsub__(TrObject a)
+        {
+#if UNITY_VERSION
+            switch (a)
+            {
+                case TrVector3 otherVec3:
+                    return new TrVector3(otherVec3.vec3 - vec3);
+                case TrInt num:
+                {
+                    var data = vec3;
+                    data.x = num.value - data.x;
+                    data.y = num.value - data.y;
+                    data.z = num.value - data.z;
+                    return new TrVector3(data);
+                }
+                case TrFloat num:
+                {
+                    var data = vec3;
+                    data.x = num.value - data.x;
+                    data.y = num.value - data.y;
+                    data.z = num.value - data.z;
+                    return new TrVector3(data);
+                }
+                default:
+                    return TrNotImplemented.Unique;
+            }
+#else
+        throw new NotImplementedException();
+#endif
+        }
         public override TrObject __mul__(TrObject a)
         {
 
@@ -155,11 +189,16 @@ namespace Traffy.Unity2D
                     return new TrVector3(data);
                 }
                 default:
-                    throw new TypeError($"Cannot multiply {a.Class.Name} to Vector3");
+                    return TrNotImplemented.Unique;
             }
 #else
         throw new NotImplementedException();
 #endif
+        }
+
+        public override TrObject __rmul__(TrObject a)
+        {
+            return __mul__(a);
         }
 
         public override TrObject __matmul__(TrObject a)
@@ -172,12 +211,13 @@ namespace Traffy.Unity2D
                     return MK.Float(Vector3.Dot(vec3, otherVec3.vec3));
                 }
                 default:
-                    throw new TypeError($"Cannot do matrix multiplication for {a.Class.Name} to Vector3");
+                    return TrNotImplemented.Unique;
             }
 #else
         throw new NotImplementedException();
 #endif
         }
+
         public override TrObject __truediv__(TrObject a)
         {
 #if UNITY_VERSION
@@ -208,13 +248,198 @@ namespace Traffy.Unity2D
                     return new TrVector3(data);
                 }
                 default:
-                    throw new TypeError($"Cannot divide {a.Class.Name} to Vector3");
+                    return TrNotImplemented.Unique;
             }
 #else
         throw new NotImplementedException();
 #endif
         }
 
+        public override TrObject __rtruediv__(TrObject a)
+        {
+#if UNITY_VERSION
+            switch (a)
+            {
+                case TrVector3 otherVec3:
+                {
+                    var data = vec3;
+                    data.x = otherVec3.vec3.x / data.x;
+                    data.y = otherVec3.vec3.y / data.y;
+                    data.z = otherVec3.vec3.z / data.z;
+                    return new TrVector3(data);
+                }
+                case TrInt num:
+                {
+                    var data = vec3;
+                    data.x = num.value / data.x;
+                    data.y = num.value / data.y;
+                    data.z = num.value / data.z;
+                    return new TrVector3(data);
+                }
+                case TrFloat num:
+                {
+                    var data = vec3;
+                    data.x = num.value / data.x;
+                    data.y = num.value / data.y;
+                    data.z = num.value / data.z;
+                    return new TrVector3(data);
+                }
+                default:
+                    return TrNotImplemented.Unique;
+            }
+#else
+        throw new NotImplementedException();
+#endif
+        }
+
+
+        public override TrObject __mod__(TrObject a)
+        {
+#if UNITY_VERSION
+            switch (a)
+            {
+                case TrVector3 otherVec3:
+                {
+                    var data = vec3;
+                    data.x = NumberMethods.s_floatmod(data.x, otherVec3.vec3.x);
+                    data.y = NumberMethods.s_floatmod(data.y, otherVec3.vec3.y);
+                    data.z = NumberMethods.s_floatmod(data.z, otherVec3.vec3.z);
+                    return new TrVector3(data);
+                }
+                case TrInt num:
+                {
+                    var data = vec3;
+                    data.x = NumberMethods.s_floatmod(data.x, num.value);
+                    data.y = NumberMethods.s_floatmod(data.y, num.value);
+                    data.z = NumberMethods.s_floatmod(data.z, num.value);
+                    return new TrVector3(data);
+                }
+                case TrFloat num:
+                {
+                    var data = vec3;
+                    data.x = NumberMethods.s_floatmod(data.x, num.value);
+                    data.y = NumberMethods.s_floatmod(data.y, num.value);
+                    data.z = NumberMethods.s_floatmod(data.z, num.value);
+                    return new TrVector3(data);
+                }
+                default:
+                    return TrNotImplemented.Unique;
+            }
+#else
+        throw new NotImplementedException();
+#endif
+        }
+
+        public override TrObject __rmod__(TrObject a)
+        {
+#if UNITY_VERSION
+            switch (a)
+            {
+                case TrVector3 otherVec3:
+                {
+                    var data = vec3;
+                    data.x = NumberMethods.s_floatmod(otherVec3.vec3.x, data.x);
+                    data.y = NumberMethods.s_floatmod(otherVec3.vec3.y, data.y);
+                    data.z = NumberMethods.s_floatmod(otherVec3.vec3.z, data.z);
+                    return new TrVector3(data);
+                }
+                case TrInt num:
+                {
+                    var data = vec3;
+                    data.x = NumberMethods.s_floatmod(num.value, data.x);
+                    data.y = NumberMethods.s_floatmod(num.value, data.y);
+                    data.z = NumberMethods.s_floatmod(num.value, data.z);
+                    return new TrVector3(data);
+                }
+                case TrFloat num:
+                {
+                    var data = vec3;
+                    data.x = NumberMethods.s_floatmod(num.value, data.x);
+                    data.y = NumberMethods.s_floatmod(num.value, data.y);
+                    data.z = NumberMethods.s_floatmod(num.value, data.z);
+                    return new TrVector3(data);
+                }
+                default:
+                    return TrNotImplemented.Unique;
+            }
+#else
+        throw new NotImplementedException();
+#endif
+        }
+
+        public override TrObject __pow__(TrObject a)
+        {
+#if UNITY_VERSION
+            switch (a)
+            {
+                case TrVector3 otherVec3:
+                {
+                    var data = vec3;
+                    data.x = Mathf.Pow(data.x, otherVec3.vec3.x);
+                    data.y = Mathf.Pow(data.y, otherVec3.vec3.y);
+                    data.z = Mathf.Pow(data.z, otherVec3.vec3.z);
+                    return new TrVector3(data);
+                }
+                case TrInt num:
+                {
+                    var data = vec3;
+                    data.x = Mathf.Pow(data.x, num.value);
+                    data.y = Mathf.Pow(data.y, num.value);
+                    data.z = Mathf.Pow(data.z, num.value);
+                    return new TrVector3(data);
+                }
+                case TrFloat num:
+                {
+                    var data = vec3;
+                    data.x = Mathf.Pow(data.x, num.value);
+                    data.y = Mathf.Pow(data.y, num.value);
+                    data.z = Mathf.Pow(data.z, num.value);
+                    return new TrVector3(data);
+                }
+                default:
+                    return TrNotImplemented.Unique;
+            }
+#else
+        throw new NotImplementedException();
+#endif
+        }
+
+        public override TrObject __rpow__(TrObject a)
+        {
+#if UNITY_VERSION
+            switch (a)
+            {
+                case TrVector3 otherVec3:
+                {
+                    var data = vec3;
+                    data.x = Mathf.Pow(otherVec3.vec3.x, data.x);
+                    data.y = Mathf.Pow(otherVec3.vec3.y, data.y);
+                    data.z = Mathf.Pow(otherVec3.vec3.z, data.z);
+                    return new TrVector3(data);
+                }
+                case TrInt num:
+                {
+                    var data = vec3;
+                    data.x = Mathf.Pow(num.value, data.x);
+                    data.y = Mathf.Pow(num.value, data.y);
+                    data.z = Mathf.Pow(num.value, data.z);
+                    return new TrVector3(data);
+                }
+                case TrFloat num:
+                {
+                    var data = vec3;
+                    data.x = Mathf.Pow(num.value, data.x);
+                    data.y = Mathf.Pow(num.value, data.y);
+                    data.z = Mathf.Pow(num.value, data.z);
+                    return new TrVector3(data);
+                }
+                default:
+                    return TrNotImplemented.Unique;
+            }
+#else
+        throw new NotImplementedException();
+#endif
+        }
         public override TrObject __abs__()
         {
 #if UNITY_VERSION
@@ -227,6 +452,20 @@ namespace Traffy.Unity2D
             throw new NotImplementedException();
 #endif
         }
+
+        public override TrObject __neg__()
+        {
+#if UNITY_VERSION
+            var data = vec3;
+            data.x = -data.x;
+            data.y = -data.y;
+            data.z = -data.z;
+            return new TrVector3(data);
+#else
+            throw new NotImplementedException();
+#endif
+        }
+
 
         [PyBind]
         public TrObject x

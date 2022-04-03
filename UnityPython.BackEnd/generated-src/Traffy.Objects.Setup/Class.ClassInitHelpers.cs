@@ -98,10 +98,19 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrVector3(TrClass cls)
         {
             cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__add__(arg0));
+            cls[MagicNames.i___radd__] = TrSharpFunc.FromFunc(cls.Name + ".__radd__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__radd__(arg0));
             cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__sub__(arg0));
+            cls[MagicNames.i___rsub__] = TrSharpFunc.FromFunc(cls.Name + ".__rsub__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__rsub__(arg0));
             cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__mul__(arg0));
+            cls[MagicNames.i___rmul__] = TrSharpFunc.FromFunc(cls.Name + ".__rmul__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__rmul__(arg0));
             cls[MagicNames.i___matmul__] = TrSharpFunc.FromFunc(cls.Name + ".__matmul__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__matmul__(arg0));
             cls[MagicNames.i___truediv__] = TrSharpFunc.FromFunc(cls.Name + ".__truediv__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__truediv__(arg0));
+            cls[MagicNames.i___rtruediv__] = TrSharpFunc.FromFunc(cls.Name + ".__rtruediv__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__rtruediv__(arg0));
+            cls[MagicNames.i___mod__] = TrSharpFunc.FromFunc(cls.Name + ".__mod__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__mod__(arg0));
+            cls[MagicNames.i___rmod__] = TrSharpFunc.FromFunc(cls.Name + ".__rmod__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__rmod__(arg0));
+            cls[MagicNames.i___pow__] = TrSharpFunc.FromFunc(cls.Name + ".__pow__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__pow__(arg0));
+            cls[MagicNames.i___rpow__] = TrSharpFunc.FromFunc(cls.Name + ".__rpow__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__rpow__(arg0));
+            cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc(cls.Name + ".__neg__", (self) => ((Traffy.Unity2D.TrVector3)self).__neg__());
             cls[MagicNames.i___abs__] = TrSharpFunc.FromFunc(cls.Name + ".__abs__", (self) => ((Traffy.Unity2D.TrVector3)self).__abs__());
         }
         static void BuiltinClassInit_TrModule_abc(TrClass cls)

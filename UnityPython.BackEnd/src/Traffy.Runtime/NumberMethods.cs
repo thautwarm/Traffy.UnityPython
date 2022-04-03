@@ -14,12 +14,14 @@ namespace Traffy.Objects
 
     public static class NumberMethods
     {
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         internal static int_t s_intmod(int_t a, int_t b)
         {
             int_t r = a % b;
             return r < 0 ? r + b : r;
         }
 
+        [MethodImpl(MethodImplOptionsCompat.Best)]
         internal static float s_floatmod(float a, float b)
         {
             float r = a % b;
