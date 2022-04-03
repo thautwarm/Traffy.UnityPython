@@ -30,11 +30,21 @@ namespace Traffy.Unity2D
         }
         TraffyBehaviour traffy;
         public TraffyBehaviour Raw => traffy;
+
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override bool IsUserObject() => true;
 #if UNITY_VERSION
         public override GameObject gameObject => traffy.gameObject;
+        public static TrUnityObject FromRaw(GameObject o)
+        {
+            var me = o.GetComponent<TraffyBehaviour>();
+            if (me == null)
+            {
+                me = o.AddComponent<TraffyBehaviour>();
+            }
+            return new TrUnityObject(me);
+        }
 #endif
         public override List<TrObject> __array__ => traffy.TraffyObjects;
 
@@ -70,7 +80,7 @@ namespace Traffy.Unity2D
             {
 #if UNITY_VERSION
                 var pos = traffy.transform.localPosition;
-                pos.x = value.NumToFloat();
+                pos.x = value.ToFloat();
                 traffy.transform.localPosition = pos;
 #endif
             }
@@ -93,7 +103,7 @@ namespace Traffy.Unity2D
             {
 #if UNITY_VERSION
                 var pos = traffy.transform.localPosition;
-                pos.y = value.NumToFloat();
+                pos.y = value.ToFloat();
                 traffy.transform.localPosition = pos;
 #endif
             }
@@ -115,7 +125,7 @@ namespace Traffy.Unity2D
             {
 #if UNITY_VERSION
                 var pos = traffy.transform.localPosition;
-                pos.z = value.NumToFloat();
+                pos.z = value.ToFloat();
                 traffy.transform.localPosition = pos;
 #endif
             }

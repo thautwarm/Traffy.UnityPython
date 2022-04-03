@@ -26,7 +26,18 @@ namespace Traffy
     }
     public static partial class Initialization
     {
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
+        {
+            m_Prelude = new Dictionary<string, TrObject>();
+        }
         public const string IR_FILE_SUFFIX = ".py.json";
+
+        public static void ReInitRuntime()
+        {
+            TrClass.BeforeReInitRuntime();
+            // InitRuntime();
+        }
         public static class HashConfig
         {
             public const int BYTE_HASH_SEED = 17;
@@ -36,8 +47,7 @@ namespace Traffy
         }
         internal const int OBJECT_SHAPE_MAX_FIELD = 255;
 
-        static Dictionary<string, TrObject> m_Prelude = new Dictionary<string, TrObject>();
-
+        internal static Dictionary<string, TrObject> m_Prelude;
         public static void Prelude(string name, TrObject o)
         {
             m_Prelude[name] = o;

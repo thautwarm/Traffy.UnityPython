@@ -4,7 +4,7 @@ using Traffy.Objects;
 using Traffy.Annotations;
 namespace Traffy.Unity2D
 {
-    public sealed partial class TrSprite
+    public sealed partial class TrFont
     {
         internal static void generated_BindMethods()
         {
@@ -14,7 +14,7 @@ namespace Traffy.Unity2D
                 {
                     case 2:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrSprite>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         return Box.Apply(_0.GetComponent(_1));
                     }
@@ -29,7 +29,7 @@ namespace Traffy.Unity2D
                 {
                     case 2:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrSprite>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         return Box.Apply(_0.GetComponents(_1));
                     }
@@ -44,7 +44,7 @@ namespace Traffy.Unity2D
                 {
                     case 2:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrSprite>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         return Box.Apply(_0.AddComponent(_1));
                     }
@@ -59,7 +59,7 @@ namespace Traffy.Unity2D
                 {
                     case 2:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrSprite>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Unity2D.TrEventTriggerType>.Unique,__args[1]);
                         return Box.Apply(_0.on(_1));
                     }
@@ -68,27 +68,27 @@ namespace Traffy.Unity2D
                 }
             }
             CLASS["on"] = TrSharpFunc.FromFunc("on", __bind_on);
-            static  Traffy.Objects.TrObject __read_width(Traffy.Objects.TrObject _arg)
+            static  Traffy.Objects.TrObject __read_size(Traffy.Objects.TrObject _arg)
             {
-                return Box.Apply(((Traffy.Unity2D.TrSprite)_arg).width);
+                return Box.Apply(((Traffy.Unity2D.TrFont)_arg).size);
             }
-            static  void __write_width(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
+            static  void __write_size(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
             {
-                ((Traffy.Unity2D.TrSprite)_arg).width = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+                ((Traffy.Unity2D.TrFont)_arg).size = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
             }
-            CLASS["width"] = TrProperty.Create(CLASS.Name + ".width", __read_width, __write_width);
-            static  Traffy.Objects.TrObject __read_height(Traffy.Objects.TrObject _arg)
+            CLASS["size"] = TrProperty.Create(CLASS.Name + ".size", __read_size, __write_size);
+            static  Traffy.Objects.TrObject __read_contents(Traffy.Objects.TrObject _arg)
             {
-                return Box.Apply(((Traffy.Unity2D.TrSprite)_arg).height);
+                return Box.Apply(((Traffy.Unity2D.TrFont)_arg).contents);
             }
-            static  void __write_height(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
+            static  void __write_contents(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
             {
-                ((Traffy.Unity2D.TrSprite)_arg).height = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+                ((Traffy.Unity2D.TrFont)_arg).contents = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
             }
-            CLASS["height"] = TrProperty.Create(CLASS.Name + ".height", __read_height, __write_height);
+            CLASS["contents"] = TrProperty.Create(CLASS.Name + ".contents", __read_contents, __write_contents);
             static  Traffy.Objects.TrObject __read_baseobject(Traffy.Objects.TrObject _arg)
             {
-                return Box.Apply(((Traffy.Unity2D.TrSprite)_arg).baseobject);
+                return Box.Apply(((Traffy.Unity2D.TrFont)_arg).baseobject);
             }
             Action<TrObject, TrObject> __write_baseobject = null;
             CLASS["baseobject"] = TrProperty.Create(CLASS.Name + ".baseobject", __read_baseobject, __write_baseobject);

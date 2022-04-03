@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <Compile Include="src/**/*.cs;generated-src/**/*.cs;Unity/**/*.cs" />
+    <Compile Include="src/**/*.cs;generated-src/**/*.cs;Unity/**/*.cs;RunTests.cs" />
   </ItemGroup>
   <PropertyGroup>
      <LangVersion>8</LangVersion>
-     <OutputType>Library</OutputType>
+     <OutputType>Exe</OutputType>
      <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-     <TargetFramework>netstandard2.1</TargetFramework>
+     <TargetFramework>net6</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants></DefineConstants>
+     <DefineConstants>TESTS</DefineConstants>
   </PropertyGroup>
 
 </Project>

@@ -1,17 +1,17 @@
 using Traffy.Objects;
 
-namespace Traffy.Unity2D
+namespace Traffy
 {
-    public static class Conversion
+    public static partial class Cast
     {
-        public static int NumCastInt(this TrObject self)
+        public static int ToInt(this TrObject self)
         {
             if (self is TrInt integer)
                 return (int) integer.value;
             throw new TypeError($"Cannot cast {self.Class.Name} to int");
         }
 
-        public static float NumToFloat(this TrObject self)
+        public static float ToFloat(this TrObject self)
         {
             if (self is TrInt integer)
                 return integer.value;

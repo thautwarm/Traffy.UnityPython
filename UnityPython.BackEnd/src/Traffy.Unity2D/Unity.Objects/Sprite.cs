@@ -14,13 +14,13 @@ namespace Traffy.Unity2D
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrSprite>("sprite");
+            CLASS = TrClass.FromPrototype<TrSprite>("Sprite");
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("sprite.__new__", cannot_inst_component));
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("Sprite.__new__", cannot_inst_component));
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
@@ -63,7 +63,7 @@ namespace Traffy.Unity2D
 #if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var width_origin = render.sprite.texture.width;
-                scale.x = value.NumToFloat() / width_origin;
+                scale.x = value.ToFloat() / width_origin;
                 render.transform.localScale = scale;
 #endif
             }
@@ -87,7 +87,7 @@ namespace Traffy.Unity2D
 #if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var height_origin = render.sprite.texture.height;
-                scale.y = value.NumToFloat() / height_origin;
+                scale.y = value.ToFloat() / height_origin;
                 render.transform.localScale = scale;
 #endif
             }

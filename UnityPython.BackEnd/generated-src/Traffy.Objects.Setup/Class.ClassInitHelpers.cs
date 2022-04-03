@@ -61,7 +61,19 @@ namespace Traffy.Objects
         }
 
 
+        static void BuiltinClassInit_TrEventData(TrClass cls)
+        {
+        }
+        static void BuiltinClassInit_TrEventTriggerType(TrClass cls)
+        {
+        }
+        static void BuiltinClassInit_TrRawImage(TrClass cls)
+        {
+        }
         static void BuiltinClassInit_TrSprite(TrClass cls)
+        {
+        }
+        static void BuiltinClassInit_TrFont(TrClass cls)
         {
         }
         static void BuiltinClassInit_TrUI(TrClass cls)
@@ -69,6 +81,15 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit_TrUnityObject(TrClass cls)
         {
+        }
+        static void BuiltinClassInit_TrVector3(TrClass cls)
+        {
+            cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__add__(arg0));
+            cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__sub__(arg0));
+            cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__mul__(arg0));
+            cls[MagicNames.i___matmul__] = TrSharpFunc.FromFunc(cls.Name + ".__matmul__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__matmul__(arg0));
+            cls[MagicNames.i___truediv__] = TrSharpFunc.FromFunc(cls.Name + ".__truediv__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__truediv__(arg0));
+            cls[MagicNames.i___abs__] = TrSharpFunc.FromFunc(cls.Name + ".__abs__", (self) => ((Traffy.Unity2D.TrVector3)self).__abs__());
         }
         static void BuiltinClassInit_TrModule_abc(TrClass cls)
         {
@@ -211,7 +232,7 @@ namespace Traffy.Objects
         static void BuiltinClassInit_RuntimeError(TrClass cls)
         {
         }
-        static void BuiltinClassInit_NotImplementError(TrClass cls)
+        static void BuiltinClassInit_NotImplementedError(TrClass cls)
         {
         }
         static void BuiltinClassInit_NativeError(TrClass cls)
@@ -422,9 +443,29 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
+            if (typeof(T) == typeof(Traffy.Unity2D.TrEventData))
+            {
+                BuiltinClassInit_TrEventData(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Unity2D.TrEventTriggerType))
+            {
+                BuiltinClassInit_TrEventTriggerType(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Unity2D.TrRawImage))
+            {
+                BuiltinClassInit_TrRawImage(cls);
+                return;
+            }
             if (typeof(T) == typeof(Traffy.Unity2D.TrSprite))
             {
                 BuiltinClassInit_TrSprite(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Unity2D.TrFont))
+            {
+                BuiltinClassInit_TrFont(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Unity2D.TrUI))
@@ -435,6 +476,11 @@ namespace Traffy.Objects
             if (typeof(T) == typeof(Traffy.Unity2D.TrUnityObject))
             {
                 BuiltinClassInit_TrUnityObject(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Unity2D.TrVector3))
+            {
+                BuiltinClassInit_TrVector3(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Modules.TrModule_abc))
@@ -572,9 +618,9 @@ namespace Traffy.Objects
                 BuiltinClassInit_RuntimeError(cls);
                 return;
             }
-            if (typeof(T) == typeof(Traffy.Objects.NotImplementError))
+            if (typeof(T) == typeof(Traffy.Objects.NotImplementedError))
             {
-                BuiltinClassInit_NotImplementError(cls);
+                BuiltinClassInit_NotImplementedError(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Objects.NativeError))

@@ -7,10 +7,10 @@ using System.Runtime.CompilerServices;
 using IronPython.Runtime.Operations;
 using Traffy.Objects;
 
-#if NETSTANDARD2_1
-    using MathF = System.MathF;
-#else
+#if UNITY_VERSION
     using MathF = UnityEngine.Mathf;
+#else
+    using MathF = System.MathF;
 #endif
 
 namespace Traffy.Compatibility.IronPython
@@ -287,7 +287,7 @@ namespace Traffy.Compatibility.IronPython
 
         internal static Exception NotImplementedError(string v)
         {
-            return new NotImplementError(v);
+            return new NotImplementedError(v);
         }
 
         public static int FixSliceIndex(int v, int len)

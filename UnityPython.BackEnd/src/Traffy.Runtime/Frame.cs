@@ -193,7 +193,7 @@ namespace Traffy
                 throw new InvalidOperationException("cannot eval the code that has continuations");
             }
             var func = new TrFunc(empty_freevars, globals, empty_default_args, fptr);
-            ((TrObject)func).Call();
+            func.Call();
         }
     }
 
@@ -356,7 +356,7 @@ namespace Traffy
 
         internal Exception exc_notset()
         {
-            throw new NotImplementedException();
+            return new RuntimeError("raise default but no exception set");
         }
 
         internal void mark()

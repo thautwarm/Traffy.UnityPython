@@ -11,6 +11,6 @@ namespace Traffy.Unity2D
         : MonoBehaviour
 #endif
     {
-        public List<TrObject> TraffyObjects = new List<TrObject>();
+        public List<TrObject> TraffyObjects = new List<TrObject>(0);
     }
 }

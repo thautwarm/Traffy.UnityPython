@@ -220,7 +220,7 @@ namespace SimpleJSON
                             foreach (var kv in jobject)
                             {
                                 args[0] = parse_key(kv.Key);
-#if DEBUG
+#if DEBUG && TESTJSON
                                 Console.WriteLine("spec " + node.Tag + " ." + kv.Key + " -> " + t_value.Name);
 #endif
                                 args[1] = Deserialize(kv.Value, t_value, context);
@@ -233,7 +233,7 @@ namespace SimpleJSON
                         foreach (var (name_field, t_field, setter) in action.fields)
                         {
                                 var jattr = jobject[name_field];
-#if DEBUG
+#if DEBUG && TESTJSON
                                 Console.WriteLine("real " + node.Tag + " ." + name_field + " -> " + t_field.Name);
 #endif
 
@@ -331,7 +331,7 @@ namespace SimpleJSON
                 }
                 if (types.TryGetValue(typename, out var t_variant))
                 {
-#if DEBUG
+#if DEBUG && TESTJSON
                     Console.WriteLine(node.Tag + $" ({t.Name}) is {typename}");
 #endif
                     return Deserialize_concreteclass<Ctx>(node, t_variant, context);
@@ -352,7 +352,7 @@ namespace SimpleJSON
                     {
                         if (typeobject.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract && t.GetCustomAttribute<SerializableAttribute>() != null)
                         {
-#if DEBUG
+#if DEBUG && TESTJSON
                             Console.WriteLine($"{t.Name} implements {typeobject.Name}");
 #endif
                             concreteClasses[t.Name] = t;

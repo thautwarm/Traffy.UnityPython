@@ -20,11 +20,17 @@ namespace Traffy
         }
 
         static object ModuleLock = new object();
-        static Dictionary<string, TrObject> modules = new Dictionary<string, TrObject>();
-
+        static Dictionary<string, TrObject> modules;
+        static string PROJECT_DIR;
         public static Dictionary<string, TrObject> Modules => modules;
 
-        static string PROJECT_DIR = ".";
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
+        {
+            modules = new Dictionary<string, TrObject>();
+            PROJECT_DIR = ".";
+
+        }
         public static void SetProjectDir(string dir)
         {
             PROJECT_DIR = dir;

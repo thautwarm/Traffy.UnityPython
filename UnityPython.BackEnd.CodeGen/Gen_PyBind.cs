@@ -205,6 +205,16 @@ public class Gen_PyBind : HasNamespace
             defs.Add($"CLASS[{fieldName.Escape()}] = Traffy.Box.Apply".Doc() * new EType(entry)[field.Name].Doc().SurroundedBy(Parens) * ";".Doc());
         }
 
+        foreach (var field in entry.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+        {
+            var attr = field.GetCustomAttribute<PyBind>();
+            if (attr == null)
+                continue;
+            var fieldName = attr.Name ?? field.Name;
+            s_GenerateAny = true;
+            defs.Add($"CLASS[{fieldName.Escape()}] = Traffy.Box.Apply".Doc() * new EType(entry)[field.Name].Doc().SurroundedBy(Parens) * ";".Doc());
+        }
+
         List<Doc> outDef = new();
         if (CodeGen.UnsetDefaultHash.Contains(entry))
         {

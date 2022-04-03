@@ -17,13 +17,7 @@
 
   <ItemGroup>
     <Reference Include="UnityPython">
-      <HintPath>./bin/Release/netstandard2.0/UnityPython.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-   <ItemGroup>
-    <Reference Include="UnityEngine">
-        <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.32f1c1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
+      <HintPath>./bin/Debug/netstandard2.1/UnityPython.NoUnity.dll</HintPath>
     </Reference>
   </ItemGroup>
 

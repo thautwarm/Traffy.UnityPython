@@ -77,7 +77,7 @@ namespace Traffy.Unity2D
             set
             {
 #if UNITY_VERSION
-                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value.NumToFloat());
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value.ToFloat());
 #endif
             }
 
@@ -97,7 +97,7 @@ namespace Traffy.Unity2D
             set
             {
 #if UNITY_VERSION
-                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, value.NumToFloat());
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, value.ToFloat());
 #endif
             }
 

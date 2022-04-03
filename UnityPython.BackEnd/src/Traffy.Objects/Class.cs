@@ -32,6 +32,13 @@ namespace Traffy.Objects
         {
             return object.ReferenceEquals(this, other);
         }
+        static bool isRawInit = false;
+        static bool isMetaClassInitialized = false;
+        public static void BeforeReInitRuntime()
+        {
+            isRawInit = false;
+            isMetaClassInitialized = false;
+        }
         static IdComparer idComparer = new IdComparer();
         static TrClass MetaClass = null;
 
@@ -40,9 +47,6 @@ namespace Traffy.Objects
         public bool IsFixed = false;
         public bool IsSealed = false;
         public bool IsAbstract = false;
-
-        public PolyIC ic__isabstractclass__ = new PolyIC("__isabstractclass__".ToIntern());
-        public HashSet<string> notimplemented_abstractfields = new HashSet<string>();
         private object _token = new object();
         public object Token => _token;
 
@@ -245,7 +249,7 @@ namespace Traffy.Objects
             return cls;
         }
 
-        static bool isMetaClassInitialized = false;
+        
         internal static TrClass CreateMetaClass(string name)
         {
             if (isMetaClassInitialized)
@@ -279,8 +283,6 @@ namespace Traffy.Objects
             cls.IsSealed = true;
             return cls;
         }
-
-        static bool isRawInit = false;
 
         internal static TrClass RawObjectClassObject()
         {

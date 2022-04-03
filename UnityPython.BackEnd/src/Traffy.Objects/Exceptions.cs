@@ -778,19 +778,19 @@ namespace Traffy.Objects
 
     [PyBuiltin]
     [PyInherit(typeof(RuntimeError))]
-    public sealed partial class NotImplementError : TrExceptionBase
+    public sealed partial class NotImplementedError : TrExceptionBase
     {
         public override string ToString() => this.Base().__repr__();
         static int _IndexArgs = -1;
         public override int IndexArgs => _IndexArgs;
 
         public override List<TrObject> __array__ { get; } = new List<TrObject>(1);
-        public NotImplementError(string msg)
+        public NotImplementedError(string msg)
         {
 
             this.Base().args = new TrObject[] { MK.Str(msg) };
         }
-        public NotImplementError() : base()
+        public NotImplementedError() : base()
         {
 
             this.Base().args = new TrObject[0];
@@ -812,7 +812,7 @@ namespace Traffy.Objects
 
             CLASS.Name = "NotImplementError";
 
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NotImplementError.__new__", TrExceptionExt.datanew<NotImplementError>);
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("NotImplementError.__new__", TrExceptionExt.datanew<NotImplementedError>);
             _IndexArgs = CLASS.AddField("args");
             CLASS.AddProperty("__cause__", TrExceptionBase._obj_getcause);
 
