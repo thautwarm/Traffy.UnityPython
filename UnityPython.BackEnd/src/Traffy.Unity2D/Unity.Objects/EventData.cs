@@ -100,10 +100,28 @@ namespace Traffy.Unity2D
             {
 #if UNITY_VERSION
                 var pos = eventData.pointerCurrentRaycast.worldPosition;
-#endif
+                return TrVector3.Create(pos);
+#else
                 return MK.None();
+#endif
             }
         }
+
+        public TrObject screen_pos
+        {
+            get
+            {
+#if UNITY_VERSION
+                var pos = eventData.position;
+                return MK.NTuple(MK.Float(pos.x), MK.Float(pos.y));
+#else
+                return MK.None();
+#endif
+
+            }
+        }
+
+        
 
     }
 }

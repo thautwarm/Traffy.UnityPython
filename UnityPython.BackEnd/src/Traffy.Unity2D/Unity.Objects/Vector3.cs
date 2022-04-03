@@ -47,7 +47,12 @@ namespace Traffy.Unity2D
         public override List<TrObject> __array__ => null;
 #if UNITY_VERSION
         Vector3 vec3;
-        public TrVector3(Vector3 v)
+
+        public static TrVector3 Create(Vector3 data)
+        {
+            return new TrVector3(data);
+        }
+        private TrVector3(Vector3 v)
         {
             vec3 = v;
         }
