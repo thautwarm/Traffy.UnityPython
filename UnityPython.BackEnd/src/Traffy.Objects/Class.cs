@@ -72,6 +72,22 @@ namespace Traffy.Objects
 
         // use for enumerations
         public (TrStr Name, TrObject Value)[] EnumHelperField = null;
+        // use for components
+        #if !NOT_UNITY
+        public enum UnityComponentClassKind: System.Byte
+        {
+            NotUnity,
+            UserComponent,
+            BuiltinComponent
+        }
+
+        public delegate bool __GET_COMPONENT__(TrClass klass, Traffy.Unity2D.TrGameObject uo, out Traffy.Unity2D.TrUnityComponent component);
+        public delegate bool __GET_COMPONENTS__(TrClass klass, Traffy.Unity2D.TrGameObject uo, out IEnumerable<Traffy.Unity2D.TrUnityComponent> components);
+        public UnityComponentClassKind UnityKind = UnityComponentClassKind.NotUnity;
+        public __GET_COMPONENT__ __get_component__ = null;
+        public __GET_COMPONENTS__ __get_components__ = null;
+        public Func<TrClass, Traffy.Unity2D.TrGameObject, Traffy.Unity2D.TrUnityComponent> __add_component__ = null;
+        #endif
 
         public override List<TrObject> __array__ => null;
 

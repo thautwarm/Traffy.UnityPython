@@ -7,20 +7,19 @@ namespace Traffy.Unity2D
 {
     public class UnityRTS : MonoBehaviour
     {
-        public string ProjectDirectory = Application.persistentDataPath;
-        public Camera MainCamera = Camera.main;
-        public Canvas MainCanvas = Camera.main.GetComponent<Canvas>();
+        public string ProjectDirectory;
+        public Camera MainCamera;
+        public Canvas MainCanvas;
         public static UnityRTS Get;
-
-        void Awake()
+        void Start()
         {
-            if (!Get)
-            {
-                Get = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-                Destroy(gameObject);
+            Get = this;
+            if (MainCamera == null)
+                MainCamera = Camera.main;
+            if (MainCanvas == null)
+                MainCanvas = Object.FindObjectOfType<Canvas>();
+            if (ProjectDirectory == null || ProjectDirectory.Trim().Length == 0)
+                ProjectDirectory = Application.persistentDataPath;
         }
     }
 }

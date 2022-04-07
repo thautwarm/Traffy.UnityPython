@@ -75,12 +75,7 @@ namespace Traffy.Objects
 
 
         #if !NOT_UNITY
-        static void BuiltinClassInit_TrTraffyBehaviour(TrClass cls)
-        {
-        }
-        #endif
-        #if !NOT_UNITY
-        static void BuiltinClassInit_TrPolygonCollider2D(TrClass cls)
+        static void BuiltinClassInit_TrMonoBehaviour(TrClass cls)
         {
         }
         #endif
@@ -95,6 +90,11 @@ namespace Traffy.Objects
         }
         #endif
         #if !NOT_UNITY
+        static void BuiltinClassInit_TrPolygonCollider2D(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrRawImage(TrClass cls)
         {
         }
@@ -105,7 +105,7 @@ namespace Traffy.Objects
         }
         #endif
         #if !NOT_UNITY
-        static void BuiltinClassInit_TrFont(TrClass cls)
+        static void BuiltinClassInit_TrText(TrClass cls)
         {
         }
         #endif
@@ -115,8 +115,9 @@ namespace Traffy.Objects
         }
         #endif
         #if !NOT_UNITY
-        static void BuiltinClassInit_TrUnityObject(TrClass cls)
+        static void BuiltinClassInit_TrGameObject(TrClass cls)
         {
+            cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Unity2D.TrGameObject)self).__eq__(arg0));
         }
         #endif
         #if !NOT_UNITY
@@ -519,16 +520,9 @@ namespace Traffy.Objects
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
             #if !NOT_UNITY
-            if (typeof(T) == typeof(Traffy.Unity2D.TrTraffyBehaviour))
+            if (typeof(T) == typeof(Traffy.Unity2D.TrMonoBehaviour))
             {
-                BuiltinClassInit_TrTraffyBehaviour(cls);
-                return;
-            }
-            #endif
-            #if !NOT_UNITY
-            if (typeof(T) == typeof(Traffy.Unity2D.TrPolygonCollider2D))
-            {
-                BuiltinClassInit_TrPolygonCollider2D(cls);
+                BuiltinClassInit_TrMonoBehaviour(cls);
                 return;
             }
             #endif
@@ -547,6 +541,13 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrPolygonCollider2D))
+            {
+                BuiltinClassInit_TrPolygonCollider2D(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrRawImage))
             {
                 BuiltinClassInit_TrRawImage(cls);
@@ -561,9 +562,9 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
-            if (typeof(T) == typeof(Traffy.Unity2D.TrFont))
+            if (typeof(T) == typeof(Traffy.Unity2D.TrText))
             {
-                BuiltinClassInit_TrFont(cls);
+                BuiltinClassInit_TrText(cls);
                 return;
             }
             #endif
@@ -575,9 +576,9 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
-            if (typeof(T) == typeof(Traffy.Unity2D.TrUnityObject))
+            if (typeof(T) == typeof(Traffy.Unity2D.TrGameObject))
             {
-                BuiltinClassInit_TrUnityObject(cls);
+                BuiltinClassInit_TrGameObject(cls);
                 return;
             }
             #endif

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Traffy.Annotations;
 using Traffy.Objects;
 #if !NOT_UNITY
@@ -8,12 +9,50 @@ namespace Traffy.Unity2D
 {
     [PyBuiltin]
     [UnitySpecific]
+    [PyInherit(typeof(TrMonoBehaviour))]
     public sealed partial class TrSprite : TrUnityComponent
     {
+        internal static TrUnityComponent __add_component__(TrClass _, TrGameObject uo)
+        {
+            var native_comp = uo.gameObject.AddComponent<SpriteRenderer>();
+            if (native_comp == null)
+                throw new ValueError("TrSprite.AddComponent: RectTransform has been added!");
+            return New(uo, native_comp);
+        }
+
+        internal static bool __get_component__(TrClass _, TrGameObject uo, out TrUnityComponent component)
+        {
+            var native_comp = uo.gameObject.GetComponent<SpriteRenderer>();
+            if (native_comp != null)
+            {
+                component = New(uo, native_comp);
+                return true;
+            }
+            component = null;
+            return false;
+        }
+
+        internal static bool __get_components__(TrClass _, TrGameObject uo, out IEnumerable<TrUnityComponent> components)
+        {
+            var rects = uo.gameObject.GetComponents<SpriteRenderer>();
+            if (rects == null || rects.Length == 0)
+            {
+                components = null;
+                return false;
+            }
+            components = uo.gameObject.GetComponents<SpriteRenderer>().Select(x => New(uo, x));
+            return true;
+        }
+
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
             CLASS = TrClass.FromPrototype<TrSprite>("Sprite");
+            CLASS.UnityKind = TrClass.UnityComponentClassKind.BuiltinComponent;
+            CLASS.__add_component__ = __add_component__;
+            CLASS.__get_component__ = __get_component__;
+            CLASS.__get_components__ = __get_components__;
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -25,32 +64,29 @@ namespace Traffy.Unity2D
         }
 
         [PyBind]
-        public TrObject __new__(TrClass _, TrUnityObject uo)
+        public TrObject __new__(TrClass _, TrGameObject uo)
         {
-            return New(uo);
+            return __add_component__(CLASS, uo);
         }
 
-        public static TrSprite New(TrUnityObject uo)
+        public static TrSprite New(TrGameObject uo, SpriteRenderer render)
         {
-            var render = uo.gameObject.AddComponent<SpriteRenderer>();
             return new TrSprite(uo, render);
-
         }
+
         SpriteRenderer render;
         public static TrSprite FromExisting(SpriteRenderer render)
         {
-            var o = TrUnityObject.FromRaw(render.gameObject);
+            var o = TrGameObject.FromRaw(render.gameObject);
             return new TrSprite(o, render);
         }
-        public TrSprite(TrUnityObject uo, SpriteRenderer render) : base(uo)
+        public TrSprite(TrGameObject uo, SpriteRenderer render) : base(uo)
         {
             this.render = render;
         }
-        public override bool TryGetNativeUnityObject(out Object o)
-        {
-            o = render;
-            return true;
-        }
+
+        public override void RemoveComponent() => Object.Destroy(render);
+
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         

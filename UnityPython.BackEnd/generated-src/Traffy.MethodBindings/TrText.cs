@@ -5,7 +5,7 @@ using Traffy.Annotations;
 #if !NOT_UNITY
 namespace Traffy.Unity2D
 {
-    public sealed partial class TrFont
+    public sealed partial class TrText
     {
         internal static void generated_BindMethods()
         {
@@ -15,9 +15,9 @@ namespace Traffy.Unity2D
                 {
                     case 3:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrClass>.Unique,__args[1]);
-                        var _2 = Unbox.Apply(THint<Traffy.Unity2D.TrUnityObject>.Unique,__args[2]);
+                        var _2 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[2]);
                         return Box.Apply(_0.__new__(_1,_2));
                     }
                     default:
@@ -31,7 +31,7 @@ namespace Traffy.Unity2D
                 {
                     case 2:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Unity2D.TrEventTriggerType>.Unique,__args[1]);
                         return Box.Apply(_0.on(_1));
                     }
@@ -46,13 +46,26 @@ namespace Traffy.Unity2D
                 {
                     case 3:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[2]);
-                        return Box.Apply(_0._AddComponent(_1,_2));
+                        Traffy.Objects.TrObject _3;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("parameter"),out var __keyword__3)))
+                            _3 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__keyword__3);
+                        else
+                            _3 = null;
+                        return Box.Apply(_0._AddComponent(_1,_2,parameter : _3));
+                    }
+                    case 4:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                        var _2 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[2]);
+                        var _3 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[3]);
+                        return Box.Apply(_0._AddComponent(_1,_2,_3));
                     }
                     default:
-                        throw new ValueError("AddComponent() requires 3 positional argument(s), got " + __args.Count);
+                        throw new ValueError("AddComponent() requires 3 to 4 positional argument(s), got " + __args.Count);
                 }
             }
             CLASS["AddComponent"] = TrSharpFunc.FromFunc("AddComponent", __bind_AddComponent);
@@ -62,7 +75,7 @@ namespace Traffy.Unity2D
                 {
                     case 3:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<Traffy.Objects.TrRef>.Unique,__args[2]);
                         return Box.Apply(_0._TryGetComponent(_1,_2));
@@ -78,7 +91,7 @@ namespace Traffy.Unity2D
                 {
                     case 3:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<Traffy.Objects.TrRef>.Unique,__args[2]);
                         return Box.Apply(_0._TryGetComponents(_1,_2));
@@ -88,13 +101,28 @@ namespace Traffy.Unity2D
                 }
             }
             CLASS["TryGetComponents"] = TrSharpFunc.FromFunc("TryGetComponents", __bind_TryGetComponents);
+            static  Traffy.Objects.TrObject __bind_GetComponent(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
+                        return Box.Apply(_0._GetComponent(_1));
+                    }
+                    default:
+                        throw new ValueError("GetComponent() requires 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["GetComponent"] = TrSharpFunc.FromFunc("GetComponent", __bind_GetComponent);
             static  Traffy.Objects.TrObject __bind_RemoveComponent(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
                     case 1:
                     {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrFont>.Unique,__args[0]);
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrText>.Unique,__args[0]);
                         _0._RemoveComponent();
                         return Traffy.MK.None();
                     }
@@ -105,25 +133,25 @@ namespace Traffy.Unity2D
             CLASS["RemoveComponent"] = TrSharpFunc.FromFunc("RemoveComponent", __bind_RemoveComponent);
             static  Traffy.Objects.TrObject __read_size(Traffy.Objects.TrObject _arg)
             {
-                return Box.Apply(((Traffy.Unity2D.TrFont)_arg).size);
+                return Box.Apply(((Traffy.Unity2D.TrText)_arg).size);
             }
             static  void __write_size(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
             {
-                ((Traffy.Unity2D.TrFont)_arg).size = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+                ((Traffy.Unity2D.TrText)_arg).size = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
             }
             CLASS["size"] = TrProperty.Create(CLASS.Name + ".size", __read_size, __write_size);
             static  Traffy.Objects.TrObject __read_contents(Traffy.Objects.TrObject _arg)
             {
-                return Box.Apply(((Traffy.Unity2D.TrFont)_arg).contents);
+                return Box.Apply(((Traffy.Unity2D.TrText)_arg).contents);
             }
             static  void __write_contents(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
             {
-                ((Traffy.Unity2D.TrFont)_arg).contents = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+                ((Traffy.Unity2D.TrText)_arg).contents = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
             }
             CLASS["contents"] = TrProperty.Create(CLASS.Name + ".contents", __read_contents, __write_contents);
             static  Traffy.Objects.TrObject __read_base(Traffy.Objects.TrObject _arg)
             {
-                return Box.Apply(((Traffy.Unity2D.TrFont)_arg)._baseObject);
+                return Box.Apply(((Traffy.Unity2D.TrText)_arg)._baseObject);
             }
             Action<TrObject, TrObject> __write_base = null;
             CLASS["base"] = TrProperty.Create(CLASS.Name + ".base", __read_base, __write_base);

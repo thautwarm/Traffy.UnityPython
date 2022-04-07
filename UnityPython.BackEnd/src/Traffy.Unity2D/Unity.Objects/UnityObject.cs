@@ -11,12 +11,12 @@ namespace Traffy.Unity2D
 {
     [PyBuiltin]
     [UnitySpecific]
-    public sealed partial class TrUnityObject: TrObject
+    public sealed partial class TrGameObject: TrObject
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.CreateClass("unity");
+            CLASS = TrClass.FromPrototype<TrGameObject>("GameObject");
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -30,89 +30,46 @@ namespace Traffy.Unity2D
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
+
+        public override bool __eq__(TrObject other) => gameObject.Equals(other);
+        public GameObject gameObject;
         public MemLessIntMap<List<TrUnityComponent>> Components =
             new MemLessIntMap<List<TrUnityComponent>>();
 
-        public GameObject gameObject;
 
-        public TrUnityObject(GameObject gameObject)
+        public TrGameObject(GameObject gameObject)
         {
             this.gameObject = gameObject;
         }
-        public static TrUnityObject FromRaw(GameObject o)
+        public static TrGameObject FromRaw(GameObject o)
         {
-            return new TrUnityObject(o);
+            return new TrGameObject(o);
         }
 
-        public void PreInitComponents(params TrClass[] klasses)
+        public void RequireComponents(params TrClass[] klasses)
         {       
-            var components = Components.GetOrUpdateMany(
-                klasses.Select(x => x.ClassId).ToArray(), (_) => new List<TrUnityComponent>(1));
-        }
-
-        public bool TryGetComponents(TrClass klass, out List<TrUnityComponent> components)
-        {
-            return Components.TryGetValue(klass.ClassId, out components);
-        }
-
-        public bool TryGetComponent(TrClass klass, out TrUnityComponent value)
-        {
-            if (TryGetComponents(klass, out var components) && components.Count > 0)
+            var userComponentClasses =
+                    klasses
+                        .Where(x => x.UnityKind == TrClass.UnityComponentClassKind.UserComponent)
+                        .Select(x => x.ClassId).ToArray();
+            
+            if (userComponentClasses.Length == 0)
             {
-                value = components[0];
-                return true;
+                /* donothing */
             }
-            value = null;
-            return false;
-        }
-
-        public TrUnityComponent AddComponent(TrClass klass, TrObject gameState)
-        {
-            if (!klass.__getic__(klass.ic__new, out var cls_new))
+            else if (userComponentClasses.Length == 1)
             {
-                throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: class {klass.Name} does not have a __new__ from MonoBehaviour");
+                Components.GetOrUpdate(userComponentClasses[0], () => new List<TrUnityComponent>(1));
             }
-            var components = Components.GetOrUpdate(
-                klass.ClassId,
-                () => new List<TrUnityComponent>(1));
-            var obj = cls_new.Call(klass, this);
-            if (!(obj is TrUnityComponent component))
-                throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: __new__ returned {obj.Class.Name} but it is not a component in .NET side.");
-            if (klass.__getic__(klass.ic__init, out var cls_init))
+            else
             {
-                cls_init.Call(obj, gameState);
+                Components
+                    .GetOrUpdateMany(
+                        userComponentClasses,
+                        (_) => new List<TrUnityComponent>(1)
+                    );
             }
-            components.Add(component);
-            return component;
-        }
-
-        public List<TrUnityComponent> TryGetComponentsOrAdd(TrClass klass, TrObject gameState, ref bool isNew)
-        {
-            if (!klass.__getic__(klass.ic__new, out var cls_new))
-            {
-                throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: class {klass.Name} does not have a __new__ from MonoBehaviour");
-            }
-            var components = Components.GetOrUpdate(
-                klass.ClassId, () => new List<TrUnityComponent>(1));
-            if (components.Count == 0)
-            {
-                var obj = cls_new.Call(klass, this);
-                if (!(obj is TrUnityComponent component))
-                    throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: __new__ returned {obj.Class.Name} but it is not a component in .NET side.");
-                if (klass.__getic__(klass.ic__init, out var cls_init))
-                {
-                    cls_init.Call(obj, gameState);
-                }
-                isNew = true;
-                components.Add(component);
-            }
-            return components;
-        }
-
-        public TrUnityComponent TryGetComponentOrAdd(TrClass klass, TrObject gameState, ref bool isNew)
-        {
-            var components = TryGetComponentsOrAdd(klass, gameState, ref isNew);
-            return components[0];
+                
         }
 
         [PyBind]
@@ -180,42 +137,69 @@ namespace Traffy.Unity2D
             }
         }
 
-        [PyBind(Name = nameof(TryGetComponents))]
-        internal bool _TryGetComponents(TrObject componentType, TrRef refval)
+        [PyBind]
+        internal bool TryGetComponents(TrObject componentType, TrRef refval)
         {
-            if (componentType is TrClass cls)
+            if (componentType is TrClass cls && cls.__get_components__ != null)
             {
-                if (TryGetComponents(cls, out var components))
+                if(cls.__get_components__(cls, this, out var components))
                 {
                     refval.value = MK.Iter(components.GetEnumerator());
                     return true;
                 }
+                return false;
             }
-            return false;
+            throw new TypeError($"{componentType.Class.Name} is not a component type");
         }
 
-        [PyBind(Name = nameof(TryGetComponent))]
-        internal bool _TryGetComponent(TrObject componentType, TrRef refval)
+        [PyBind]
+        internal bool TryGetComponent(TrObject componentType, TrRef refval)
         {
-            if (componentType is TrClass cls)
+            if (componentType is TrClass cls && cls.__get_component__ != null)
             {
-                if (TryGetComponent(cls, out var component))
+                if (cls.__get_component__(cls, this, out var component))
                 {
                     refval.value = component;
                     return true;
                 }
+                return false;
             }
-            return false;
+            throw new TypeError($"{componentType.Class.Name} is not a component type");
         }
 
-        [PyBind(Name = nameof(AddComponent))]
-        internal TrObject _AddComponent(TrObject componentType, TrObject gameState)
+        [PyBind]
+        internal TrObject GetComponent(TrObject componentType)
         {
-            if (componentType is TrClass cls)
+            if (componentType is TrClass cls && cls.__get_component__ != null)
             {
-                return AddComponent(cls, gameState);
+                if (cls.__get_component__(cls, this, out var component))
+                {
+                    return component;
+                }
+                return MK.None();
+            }
+            throw new TypeError($"{componentType.Class.Name} is not a component type");
+        }
+
+        [PyBind]
+        internal TrUnityComponent AddComponent(TrObject componentType, TrObject gameState, TrObject parameter = null)
+        {
+            if (componentType is TrClass cls && cls.__add_component__ != null)
+            {
+                var component = cls.__add_component__(cls, this);
+                if (cls.__getic__(cls.ic__init, out var cls_init))
+                {
+                    cls_init.Call(component, gameState, parameter ?? MK.None());
+                }
+                return component;
             }
             throw new TypeError($"Cannot add component {componentType.Class.Name} to {this.Class.Name}: {componentType.__repr__()} is not a class");
+        }
+
+        [PyBind(Name = nameof(RequireComponents))]
+        internal void _RequireComponents(BList<TrObject> componentTypes, Dictionary<TrObject, TrObject> _)
+        {
+            RequireComponents(componentTypes.Select(x => x.AsClass).ToArray());
         }
 
         [PyBind]
@@ -227,7 +211,7 @@ namespace Traffy.Unity2D
             var trigger = gameObject.GetComponent<EventTrigger>();
             if (trigger == null)
             {
-                if (!this.TryGetComponent(TrUI.CLASS, out var component) && gameObject.GetComponent<Collider2D>() == null)
+                if (this.gameObject.GetComponent<RectTransform>() == null && gameObject.GetComponent<Collider2D>() == null)
                     throw new TypeError($"non-UI component needs a collider to accept pointer event!");
                 
                 trigger = gameObject.AddComponent<EventTrigger>();

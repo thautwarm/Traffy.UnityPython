@@ -61,7 +61,7 @@ namespace Traffy.Unity2D
                 raycaster.Raycast(eventData, results);
                 return MK.List(results.Select(x =>
                     {
-                        TrObject obj = TrUnityObject.FromRaw(x.gameObject);
+                        TrObject obj = TrGameObject.FromRaw(x.gameObject);
                         return obj;
                     }
                 ).ToList());
@@ -81,7 +81,7 @@ namespace Traffy.Unity2D
                 raycaster.Raycast(eventData, results);
                 return MK.List(results.Select(x =>
                     {
-                        TrObject obj = TrUnityObject.FromRaw(x.gameObject);
+                        TrObject obj = TrGameObject.FromRaw(x.gameObject);
                         return obj;
                     }
                 ).ToList());
@@ -95,15 +95,12 @@ namespace Traffy.Unity2D
 
         public TrObject delta =>
                 TrVector2.Create(eventData.delta);
-
-
         public TrObject is_dragging =>
                 MK.Bool(eventData.dragging);
         public TrObject is_scrolling =>
                 MK.Bool(eventData.IsScrolling());
         public TrObject scroll_delta_y =>
                 MK.Float(eventData.scrollDelta.y);
-
         public TrObject is_pointer_moving =>
                 MK.Bool(eventData.IsPointerMoving());
 

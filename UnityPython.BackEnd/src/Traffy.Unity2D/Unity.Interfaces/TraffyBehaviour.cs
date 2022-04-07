@@ -7,42 +7,72 @@ namespace Traffy.Unity2D
 {
     [PyBuiltin]
     [UnitySpecific]
-    public partial class TrTraffyBehaviour : TrObject
+    public partial class TrMonoBehaviour : TrObject
     {
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
-
-        [PyBind]
-        public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        
+        internal static bool user__get_component__(TrClass klass, TrGameObject uo, out TrUnityComponent component)
         {
-            if (args.Count != 2)
+            if (uo.Components.TryGetValue(klass.ClassId, out var components) && components.Count != 0)
             {
-                throw new TypeError($"TraffyBehaviour.__new__ takes exactly 2 arguments ({args.Count} given)");
+                component = components[0];
+                return true;
             }
-            var u1 = args[0] as TrClass;
-            if (RTS.issubclassof(u1, CLASS))
+            component = null;
+            return false;
+        }
+
+        internal static bool user__get_components__(TrClass klass, TrGameObject uo, out IEnumerable<TrUnityComponent> components_)
+        {
+            if (uo.Components.TryGetValue(klass.ClassId, out var components) && components.Count != 0)
             {
+                components_ = components;
+                return true;
+            }
+            components_ = null;
+            return false;
+        }
+
+        internal static TrUnityComponent user__add_component__(TrClass klass, TrGameObject uo)
+        {
+            if (klass.UnityKind != TrClass.UnityComponentClassKind.UserComponent || !klass.__getic__(klass.ic__new, out var cls_new))
+            {
+                throw new TypeError($"Cannot add component {klass.Name}: class {klass.Name} does not have a __new__ from MonoBehaviour");
+            }
+            var components = uo.Components.GetOrUpdate(
+                klass.ClassId,
+                () => new List<TrUnityComponent>(1));
+            var obj = cls_new.Call(klass, uo);
+            if (!(obj is TrUnityComponent component))
+                throw new TypeError($"Cannot add component {klass.Name}: __new__ returned {obj.Class.Name} but it is not a component in .NET side.");
+            components.Add(component);
+            return component;
+        }
+
+        
+        [PyBind]
+        public static TrObject __new__(TrClass cls, TrGameObject uo)
+        {
+            if (RTS.issubclassof(cls, CLASS))
                 throw new TypeError($"TraffyBehaviour.__new__: argument 1 must be a subclass of {CLASS.Name}");
-            }
-            var uo = args[1] as TrUnityObject;
-            if (uo == null)
-            {
-                throw new TypeError($"TraffyBehaviour.__new__: expected a TrUnityObject, got {args[1].Class.Name}");
-            }            
-            return TrUnityUserComponent.Create(uo, u1);
+            return TrUnityUserComponent.Create(uo, cls);
         }
 
         [PyBind]
-        public static void __init_subclass__(TrObject _, TrObject newclsobj)
+        public static void __init_subclass__(TrObject _, TrClass newcls)
         {
-            if (newclsobj is TrClass newcls)
+            if (RTS.issubclassof(newcls, CLASS) && newcls.UnityKind == TrClass.UnityComponentClassKind.NotUnity)
             {
-                newcls[MagicNames.i___new__] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("TraffyBehaviour.__init_subclass__", datanew));
+                newcls.UnityKind = TrClass.UnityComponentClassKind.UserComponent;
+                newcls.__add_component__ = user__add_component__;
+                newcls.__get_component__ = user__get_component__;
+                newcls.__get_components__ = user__get_components__;
             }
             else
             {
-                throw new TypeError("__init_subclass__ must be called with a class as first argument");
+                throw new TypeError($"TraffyBehaviour.__init_subclass__: argument 1 must be a subclass of {CLASS.Name}, got {newcls.Name}");
             }
         }
 
@@ -51,12 +81,6 @@ namespace Traffy.Unity2D
         {
             CLASS = TrClass.FromPrototype<TrTypedDict>("TraffyBehaviour");
             CLASS.IsSealed = false;
-        }
-
-        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
-        internal static void _Init()
-        {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("TraffyBehaviour.__new__", datanew);
         }
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
