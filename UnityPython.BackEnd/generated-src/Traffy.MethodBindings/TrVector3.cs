@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Traffy.Objects;
 using Traffy.Annotations;
+#if !NOT_UNITY
 namespace Traffy.Unity2D
 {
     public sealed partial class TrVector3
@@ -24,6 +25,20 @@ namespace Traffy.Unity2D
                 }
             }
             CLASS["__new__"] = TrStaticMethod.Bind(CLASS.Name + "." + "__new__", __bind___new__);
+            static  Traffy.Objects.TrObject __bind_tovec2(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrVector3>.Unique,__args[0]);
+                        return Box.Apply(_0.tovec2());
+                    }
+                    default:
+                        throw new ValueError("tovec2() requires 1 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["tovec2"] = TrSharpFunc.FromFunc("tovec2", __bind_tovec2);
             static  Traffy.Objects.TrObject __read_x(Traffy.Objects.TrObject _arg)
             {
                 return Box.Apply(((Traffy.Unity2D.TrVector3)_arg).x);
@@ -54,4 +69,5 @@ namespace Traffy.Unity2D
         }
     }
 }
+#endif
 

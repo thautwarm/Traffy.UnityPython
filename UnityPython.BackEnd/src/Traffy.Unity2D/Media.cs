@@ -1,17 +1,16 @@
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
-#endif
 namespace Traffy.Unity2D
 {
     public static class Media
     {
 
+        
         public enum ImageFormat
         {
             PNG,
             JPG
         }
-        #if UNITY_VERSION
         public static Texture2D Cast(this THint<Texture2D> _, byte[] bytes, TextureFormat format)
         {
             var tex = new Texture2D(2, 2, format, false);
@@ -27,7 +26,7 @@ namespace Traffy.Unity2D
         {
             return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
         }
-        #endif
     }
 
 }
+#endif

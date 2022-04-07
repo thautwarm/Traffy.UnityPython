@@ -2,15 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Traffy.Annotations;
 using Traffy.Objects;
-#if UNITY_VERSION
+
+#if !NOT_UNITY
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-#endif
 
 namespace Traffy.Unity2D
 {
     [PyBuiltin]
+    [UnitySpecific]
     public sealed class TrEventData : TrObject
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
@@ -41,23 +43,21 @@ namespace Traffy.Unity2D
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
 
-#if UNITY_VERSION
         public PointerEventData eventData;
         public static TrEventData FromRaw(PointerEventData data)
         {
             return new TrEventData { eventData = data };
         }
-#endif
+
         public TrObject ui_hits
         {
             get
             {
-#if UNITY_VERSION
                 var pos = eventData.pointerCurrentRaycast.worldPosition;
                 List<RaycastResult> results = new List<RaycastResult>();
                 var raycaster = UnityRTS.Get.MainCanvas.GetComponent<GraphicRaycaster>();
                 if (raycaster == null)
-                    throw new RuntimeError("No GraphicRaycaster found in the main camera set to UnityRTS");
+                    throw new RuntimeError("No GraphicRaycaster found in the main canvas set to UnityRTS");
                 raycaster.Raycast(eventData, results);
                 return MK.List(results.Select(x =>
                     {
@@ -65,9 +65,7 @@ namespace Traffy.Unity2D
                         return obj;
                     }
                 ).ToList());
-#else
-                return MK.List();
-#endif                
+
             }
         }
 
@@ -75,12 +73,11 @@ namespace Traffy.Unity2D
         {
             get
             {
-#if UNITY_VERSION
                 var pos = eventData.pointerCurrentRaycast.worldPosition;
                 List<RaycastResult> results = new List<RaycastResult>();
                 var raycaster = UnityRTS.Get.MainCamera.GetComponent<Physics2DRaycaster>();
                 if (raycaster == null)
-                    throw new RuntimeError("No GraphicRaycaster found in the main camera set to UnityRTS");
+                    throw new RuntimeError("No Physics2DRaycaster found in the main camera set to UnityRTS");
                 raycaster.Raycast(eventData, results);
                 return MK.List(results.Select(x =>
                     {
@@ -88,40 +85,29 @@ namespace Traffy.Unity2D
                         return obj;
                     }
                 ).ToList());
-#else
-                return MK.List();
-#endif                
-            }
-        }
-
-        public TrObject world_pos
-        {
-            get
-            {
-#if UNITY_VERSION
-                var pos = eventData.pointerCurrentRaycast.worldPosition;
-                return TrVector3.Create(pos);
-#else
-                return MK.None();
-#endif
-            }
-        }
-
-        public TrObject screen_pos
-        {
-            get
-            {
-#if UNITY_VERSION
-                var pos = eventData.position;
-                return MK.NTuple(MK.Float(pos.x), MK.Float(pos.y));
-#else
-                return MK.None();
-#endif
 
             }
         }
 
-        
+        public TrObject world_pos => TrVector3.Create(eventData.pointerCurrentRaycast.worldPosition);
+
+        public TrObject screen_pos => TrVector2.Create(eventData.position);
+
+        public TrObject delta =>
+                TrVector2.Create(eventData.delta);
+
+
+        public TrObject is_dragging =>
+                MK.Bool(eventData.dragging);
+        public TrObject is_scrolling =>
+                MK.Bool(eventData.IsScrolling());
+        public TrObject scroll_delta_y =>
+                MK.Float(eventData.scrollDelta.y);
+
+        public TrObject is_pointer_moving =>
+                MK.Bool(eventData.IsPointerMoving());
 
     }
 }
+
+#endif

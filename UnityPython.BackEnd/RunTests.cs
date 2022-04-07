@@ -6,7 +6,7 @@ using System.Threading;
 using Traffy;
 using Traffy.Objects;
 using static Traffy.Objects.ExtMonoAsyn;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
 #endif
 

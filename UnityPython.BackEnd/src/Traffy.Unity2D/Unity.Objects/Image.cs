@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
 #endif
 
 
 namespace Traffy.Unity2D
 {
-
+    
 }

@@ -108,9 +108,9 @@ public class Gen_OrderedInit : HasNamespace
 
         List<Doc> defs = new();
 
-        List<string> Fun_CrateRef = CodeGen.Func_CrateRef;
+        List<(bool, string)> Fun_CrateRef = CodeGen.Func_CrateRef;
         var Func_ClassBasedCrateRef = CodeGen.Func_ClassBasedCrateRef;
-        List<string> Fun_InitRef = CodeGen.Fun_InitRef;
+        List<(bool, string)> Fun_InitRef = CodeGen.Fun_InitRef;
         var Fun_SetupRef = CodeGen.Fun_SetupRef;
         List<Type> classesToPrepare = new();
 
@@ -145,9 +145,9 @@ public class Gen_OrderedInit : HasNamespace
                     case SetupMarkKind.CreateRef:
                         if (!classesToPrepare.Contains(t))
                         {
-                            if (Fun_CrateRef.Contains(methodName))
+                            if (Fun_CrateRef.Contains((t.IsUnitySpecific(), methodName)))
                                 throw new Exception("dup: " + methodName);
-                            Fun_CrateRef.Add(methodName);
+                            Fun_CrateRef.Add((t.IsUnitySpecific(), methodName));
                         }
                         else
                         {
@@ -164,9 +164,9 @@ public class Gen_OrderedInit : HasNamespace
                         CodeGen.Fun_SetupRef[t] = methodName;
                         break;
                     case SetupMarkKind.InitRef:
-                        if (Fun_InitRef.Contains(methodName))
+                        if (Fun_InitRef.Contains((t.IsUnitySpecific(), methodName)))
                             throw new Exception("dup: " + methodName);
-                        Fun_InitRef.Add(methodName);
+                        Fun_InitRef.Add((t.IsUnitySpecific(), methodName));
                         break;
                     default:
                         throw new Exception($"invalid kind {attr.Kind};");
@@ -176,41 +176,81 @@ public class Gen_OrderedInit : HasNamespace
         IEnumerable<Doc> gen_body()
         {
 
+            yield return $"Traffy.Objects.TrClass.BeforeReInitRuntime();".Doc();
             foreach (var t in classesToPrepare)
             {
                 if (Func_ClassBasedCrateRef.TryGetValue(t, out var m))
+                {
+                    if (t.IsUnitySpecific())
+                    {
+                        yield return "#if !NOT_UNITY".Doc();
+                    }
                     yield return $"{m}();".Doc();
+                    if (t.IsUnitySpecific())
+                    {
+                        yield return "#endif".Doc();
+                    }
+                }
             }
 
-            foreach (var m in Fun_CrateRef)
+            foreach (var (IsUnitySpecific, m) in Fun_CrateRef)
             {
                 if (!Func_ClassBasedCrateRef.ContainsValue(m))
+                {
+                    if (IsUnitySpecific)
+                    {
+                        yield return "#if !NOT_UNITY".Doc();
+                    }
                     yield return $"{m}();".Doc();
+                    if (IsUnitySpecific)
+                    {
+                        yield return "#endif".Doc();
+                    }
+                }
+                
             }
 
             // set bases
             foreach (var t in classesToPrepare)
             {
                 var bases = String.Join(",", GetBases(t).Select(x => $"{x.Namespace}.{x.Name}.CLASS"));
+                if (t.IsUnitySpecific())
+                    yield return "#if !NOT_UNITY".Doc();
                 yield return $"{t.Namespace}.{t.Name}.CLASS.__base = new TrClass[] {{ {bases} }};".Doc();
+                if (t.IsUnitySpecific())
+                    yield return "#endif".Doc();
             }
 
             
             // set mro
             foreach (var t in classesToPrepare)
             {
+                if (t.IsUnitySpecific())
+                    yield return "#if !NOT_UNITY".Doc();
                 yield return $"{t}.CLASS.__mro = TrClass.C3Linearized({t}.CLASS);".Doc();
+                if (t.IsUnitySpecific())
+                    yield return "#endif".Doc();
             }
 
-            foreach (var m in Fun_InitRef)
+            foreach (var (IsUnitySpecific, m) in Fun_InitRef)
             {
+                if (IsUnitySpecific)
+                    yield return "#if !NOT_UNITY".Doc();
                 yield return $"{m}();".Doc();
+                if (IsUnitySpecific)
+                    yield return "#endif".Doc();
             }
 
             foreach (var t in classesToPrepare)
             {
                 if (CodeGen.Fun_SetupRef.TryGetValue(t, out var m))
+                {
+                    if (t.IsUnitySpecific())
+                        yield return "#if !NOT_UNITY".Doc();
                     yield return $"{m}();".Doc();
+                    if (t.IsUnitySpecific())
+                        yield return "#endif".Doc();
+                }
             }
         }
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
-
 #if !NOT_UNITY
 using UnityEngine;
 
@@ -11,12 +10,12 @@ namespace Traffy.Unity2D
     [PyBuiltin]
     [UnitySpecific]
 
-    public sealed partial class TrVector3 : TrObject
+    public sealed partial class TrVector2 : TrObject
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            CLASS = TrClass.FromPrototype<TrVector3>("Vector3");
+            CLASS = TrClass.FromPrototype<TrVector2>("Vector2");
             CLASS.IsSealed = true;
         }
 
@@ -33,34 +32,33 @@ namespace Traffy.Unity2D
         public override TrClass Class => CLASS;
 
         [PyBind]
-        public static TrObject __new__(float x, float y, float z)
+        public static TrObject __new__(float x, float y)
         {
 
-            var data = new Vector3(x, y, z);
-            return new TrVector3(data);
+            var data = new Vector2(x, y);
+            return new TrVector2(data);
 
 
         }
         public override List<TrObject> __array__ => null;
 
-        Vector3 vec3;
+        Vector2 vec2;
 
-        public static TrVector3 Create(Vector3 data)
+        public static TrVector2 Create(Vector2 data)
         {
-            return new TrVector3(data);
+            return new TrVector2(data);
         }
-        private TrVector3(Vector3 v)
+        private TrVector2(Vector2 v)
         {
-            vec3 = v;
+            vec2 = v;
         }
 
 
         public override IEnumerator<TrObject> __iter__()
         {
 
-            yield return new TrFloat(vec3.x);
-            yield return new TrFloat(vec3.y);
-            yield return new TrFloat(vec3.z);
+            yield return new TrFloat(vec2.x);
+            yield return new TrFloat(vec2.y);
 
         }
 
@@ -70,23 +68,21 @@ namespace Traffy.Unity2D
 
             switch (other)
             {
-                case TrVector3 otherVec3:
-                    return new TrVector3(vec3 + otherVec3.vec3);
+                case TrVector2 otherVec2:
+                    return new TrVector2(vec2 + otherVec2.vec2);
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x += num.value;
                     data.y += num.value;
-                    data.z += num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x += num.value;
                     data.y += num.value;
-                    data.z += num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -105,23 +101,21 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
-                    return new TrVector3(vec3 - otherVec3.vec3);
+                case TrVector2 otherVec2:
+                    return new TrVector2(vec2 - otherVec2.vec2);
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x -= num.value;
                     data.y -= num.value;
-                    data.z -= num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x -= num.value;
                     data.y -= num.value;
-                    data.z -= num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -134,23 +128,21 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
-                    return new TrVector3(otherVec3.vec3 - vec3);
+                case TrVector2 otherVec2:
+                    return new TrVector2(otherVec2.vec2 - vec2);
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = num.value - data.x;
                     data.y = num.value - data.y;
-                    data.z = num.value - data.z;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = num.value - data.x;
                     data.y = num.value - data.y;
-                    data.z = num.value - data.z;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -163,34 +155,30 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    var data = vec3;
-                    data.x *= otherVec3.vec3.x;
-                    data.y *= otherVec3.vec3.y;
-                    data.z *= otherVec3.vec3.z;
-                    return new TrVector3(data);
+                    var data = vec2;
+                    data.x *= otherVec2.vec2.x;
+                    data.y *= otherVec2.vec2.y;
+                    return new TrVector2(data);
                 }
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x *= num.value;
                     data.y *= num.value;
-                    data.z *= num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x *= num.value;
                     data.y *= num.value;
-                    data.z *= num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
             }
-
         }
 
         public override TrObject __rmul__(TrObject a)
@@ -203,9 +191,9 @@ namespace Traffy.Unity2D
             
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    return MK.Float(Vector3.Dot(vec3, otherVec3.vec3));
+                    return MK.Float(Vector2.Dot(vec2, otherVec2.vec2));
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -218,29 +206,26 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    var data = vec3;
-                    data.x /= otherVec3.vec3.x;
-                    data.y /= otherVec3.vec3.y;
-                    data.z /= otherVec3.vec3.z;
-                    return new TrVector3(data);
+                    var data = vec2;
+                    data.x /= otherVec2.vec2.x;
+                    data.y /= otherVec2.vec2.y;
+                    return new TrVector2(data);
                 }
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x /= num.value;
                     data.y /= num.value;
-                    data.z /= num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x /= num.value;
                     data.y /= num.value;
-                    data.z /= num.value;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -253,29 +238,26 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    var data = vec3;
-                    data.x = otherVec3.vec3.x / data.x;
-                    data.y = otherVec3.vec3.y / data.y;
-                    data.z = otherVec3.vec3.z / data.z;
-                    return new TrVector3(data);
+                    var data = vec2;
+                    data.x = otherVec2.vec2.x / data.x;
+                    data.y = otherVec2.vec2.y / data.y;
+                    return new TrVector2(data);
                 }
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = num.value / data.x;
                     data.y = num.value / data.y;
-                    data.z = num.value / data.z;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = num.value / data.x;
                     data.y = num.value / data.y;
-                    data.z = num.value / data.z;
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -289,29 +271,26 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    var data = vec3;
-                    data.x = NumberMethods.s_floatmod(data.x, otherVec3.vec3.x);
-                    data.y = NumberMethods.s_floatmod(data.y, otherVec3.vec3.y);
-                    data.z = NumberMethods.s_floatmod(data.z, otherVec3.vec3.z);
-                    return new TrVector3(data);
+                    var data = vec2;
+                    data.x = NumberMethods.s_floatmod(data.x, otherVec2.vec2.x);
+                    data.y = NumberMethods.s_floatmod(data.y, otherVec2.vec2.y);
+                    return new TrVector2(data);
                 }
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = NumberMethods.s_floatmod(data.x, num.value);
                     data.y = NumberMethods.s_floatmod(data.y, num.value);
-                    data.z = NumberMethods.s_floatmod(data.z, num.value);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = NumberMethods.s_floatmod(data.x, num.value);
                     data.y = NumberMethods.s_floatmod(data.y, num.value);
-                    data.z = NumberMethods.s_floatmod(data.z, num.value);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -324,29 +303,26 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    var data = vec3;
-                    data.x = NumberMethods.s_floatmod(otherVec3.vec3.x, data.x);
-                    data.y = NumberMethods.s_floatmod(otherVec3.vec3.y, data.y);
-                    data.z = NumberMethods.s_floatmod(otherVec3.vec3.z, data.z);
-                    return new TrVector3(data);
+                    var data = vec2;
+                    data.x = NumberMethods.s_floatmod(otherVec2.vec2.x, data.x);
+                    data.y = NumberMethods.s_floatmod(otherVec2.vec2.y, data.y);
+                    return new TrVector2(data);
                 }
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = NumberMethods.s_floatmod(num.value, data.x);
                     data.y = NumberMethods.s_floatmod(num.value, data.y);
-                    data.z = NumberMethods.s_floatmod(num.value, data.z);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = NumberMethods.s_floatmod(num.value, data.x);
                     data.y = NumberMethods.s_floatmod(num.value, data.y);
-                    data.z = NumberMethods.s_floatmod(num.value, data.z);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -359,29 +335,26 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    var data = vec3;
-                    data.x = Mathf.Pow(data.x, otherVec3.vec3.x);
-                    data.y = Mathf.Pow(data.y, otherVec3.vec3.y);
-                    data.z = Mathf.Pow(data.z, otherVec3.vec3.z);
-                    return new TrVector3(data);
+                    var data = vec2;
+                    data.x = Mathf.Pow(data.x, otherVec2.vec2.x);
+                    data.y = Mathf.Pow(data.y, otherVec2.vec2.y);
+                    return new TrVector2(data);
                 }
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = Mathf.Pow(data.x, num.value);
                     data.y = Mathf.Pow(data.y, num.value);
-                    data.z = Mathf.Pow(data.z, num.value);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = Mathf.Pow(data.x, num.value);
                     data.y = Mathf.Pow(data.y, num.value);
-                    data.z = Mathf.Pow(data.z, num.value);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -394,29 +367,26 @@ namespace Traffy.Unity2D
 
             switch (a)
             {
-                case TrVector3 otherVec3:
+                case TrVector2 otherVec2:
                 {
-                    var data = vec3;
-                    data.x = Mathf.Pow(otherVec3.vec3.x, data.x);
-                    data.y = Mathf.Pow(otherVec3.vec3.y, data.y);
-                    data.z = Mathf.Pow(otherVec3.vec3.z, data.z);
-                    return new TrVector3(data);
+                    var data = vec2;
+                    data.x = Mathf.Pow(otherVec2.vec2.x, data.x);
+                    data.y = Mathf.Pow(otherVec2.vec2.y, data.y);
+                    return new TrVector2(data);
                 }
                 case TrInt num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = Mathf.Pow(num.value, data.x);
                     data.y = Mathf.Pow(num.value, data.y);
-                    data.z = Mathf.Pow(num.value, data.z);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 case TrFloat num:
                 {
-                    var data = vec3;
+                    var data = vec2;
                     data.x = Mathf.Pow(num.value, data.x);
                     data.y = Mathf.Pow(num.value, data.y);
-                    data.z = Mathf.Pow(num.value, data.z);
-                    return new TrVector3(data);
+                    return new TrVector2(data);
                 }
                 default:
                     return TrNotImplemented.Unique;
@@ -426,22 +396,20 @@ namespace Traffy.Unity2D
         public override TrObject __abs__()
         {
 
-            var data = vec3;
+            var data = vec2;
             data.x = Mathf.Abs(data.x);
             data.y = Mathf.Abs(data.y);
-            data.z = Mathf.Abs(data.z);
-            return new TrVector3(data);
+            return new TrVector2(data);
 
         }
 
         public override TrObject __neg__()
         {
 
-            var data = vec3;
+            var data = vec2;
             data.x = -data.x;
             data.y = -data.y;
-            data.z = -data.z;
-            return new TrVector3(data);
+            return new TrVector2(data);
 
         }
 
@@ -452,14 +420,14 @@ namespace Traffy.Unity2D
             get
             {
 
-                return MK.Float(vec3.x);
+                return MK.Float(vec2.x);
 
             }
 
             set
             {
 
-                vec3.x = value.ToFloat();
+                vec2.x = value.ToFloat();
 
             }
         }
@@ -470,7 +438,7 @@ namespace Traffy.Unity2D
             get
             {
 
-                return MK.Float(vec3.y);
+                return MK.Float(vec2.y);
 
 
             }
@@ -478,34 +446,17 @@ namespace Traffy.Unity2D
             set
             {
 
-                vec3.y = value.ToFloat();
+                vec2.y = value.ToFloat();
 
             }
 
         }
+
         [PyBind]
-        public TrObject z
-        {
-            get
-            {
-
-                return MK.Float(vec3.z);
-
-            }
-            set
-            {
-
-                vec3.z = value.ToFloat();
-
-            }
-        }
-
-        
-        [PyBind]
-        public TrObject tovec2()
+        public TrObject tovec3()
         {
 
-            return TrVector2.Create(vec3);
+            return TrVector3.Create(vec2);
 
         }
     }

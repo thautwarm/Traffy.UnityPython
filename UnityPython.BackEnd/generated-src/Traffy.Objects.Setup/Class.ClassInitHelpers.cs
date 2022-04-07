@@ -74,27 +74,73 @@ namespace Traffy.Objects
         }
 
 
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrTraffyBehaviour(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrPolygonCollider2D(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrEventData(TrClass cls)
         {
         }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrEventTriggerType(TrClass cls)
         {
         }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrRawImage(TrClass cls)
         {
         }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrSprite(TrClass cls)
         {
         }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrFont(TrClass cls)
         {
         }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrUI(TrClass cls)
         {
         }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrUnityObject(TrClass cls)
         {
         }
+        #endif
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrVector2(TrClass cls)
+        {
+            cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__add__(arg0));
+            cls[MagicNames.i___radd__] = TrSharpFunc.FromFunc(cls.Name + ".__radd__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__radd__(arg0));
+            cls[MagicNames.i___sub__] = TrSharpFunc.FromFunc(cls.Name + ".__sub__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__sub__(arg0));
+            cls[MagicNames.i___rsub__] = TrSharpFunc.FromFunc(cls.Name + ".__rsub__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__rsub__(arg0));
+            cls[MagicNames.i___mul__] = TrSharpFunc.FromFunc(cls.Name + ".__mul__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__mul__(arg0));
+            cls[MagicNames.i___rmul__] = TrSharpFunc.FromFunc(cls.Name + ".__rmul__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__rmul__(arg0));
+            cls[MagicNames.i___matmul__] = TrSharpFunc.FromFunc(cls.Name + ".__matmul__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__matmul__(arg0));
+            cls[MagicNames.i___truediv__] = TrSharpFunc.FromFunc(cls.Name + ".__truediv__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__truediv__(arg0));
+            cls[MagicNames.i___rtruediv__] = TrSharpFunc.FromFunc(cls.Name + ".__rtruediv__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__rtruediv__(arg0));
+            cls[MagicNames.i___mod__] = TrSharpFunc.FromFunc(cls.Name + ".__mod__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__mod__(arg0));
+            cls[MagicNames.i___rmod__] = TrSharpFunc.FromFunc(cls.Name + ".__rmod__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__rmod__(arg0));
+            cls[MagicNames.i___pow__] = TrSharpFunc.FromFunc(cls.Name + ".__pow__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__pow__(arg0));
+            cls[MagicNames.i___rpow__] = TrSharpFunc.FromFunc(cls.Name + ".__rpow__", (self,arg0) => ((Traffy.Unity2D.TrVector2)self).__rpow__(arg0));
+            cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Unity2D.TrVector2)self).__iter__());
+            cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc(cls.Name + ".__neg__", (self) => ((Traffy.Unity2D.TrVector2)self).__neg__());
+            cls[MagicNames.i___abs__] = TrSharpFunc.FromFunc(cls.Name + ".__abs__", (self) => ((Traffy.Unity2D.TrVector2)self).__abs__());
+        }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrVector3(TrClass cls)
         {
             cls[MagicNames.i___add__] = TrSharpFunc.FromFunc(cls.Name + ".__add__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__add__(arg0));
@@ -110,9 +156,11 @@ namespace Traffy.Objects
             cls[MagicNames.i___rmod__] = TrSharpFunc.FromFunc(cls.Name + ".__rmod__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__rmod__(arg0));
             cls[MagicNames.i___pow__] = TrSharpFunc.FromFunc(cls.Name + ".__pow__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__pow__(arg0));
             cls[MagicNames.i___rpow__] = TrSharpFunc.FromFunc(cls.Name + ".__rpow__", (self,arg0) => ((Traffy.Unity2D.TrVector3)self).__rpow__(arg0));
+            cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Unity2D.TrVector3)self).__iter__());
             cls[MagicNames.i___neg__] = TrSharpFunc.FromFunc(cls.Name + ".__neg__", (self) => ((Traffy.Unity2D.TrVector3)self).__neg__());
             cls[MagicNames.i___abs__] = TrSharpFunc.FromFunc(cls.Name + ".__abs__", (self) => ((Traffy.Unity2D.TrVector3)self).__abs__());
         }
+        #endif
         static void BuiltinClassInit_TrModule_abc(TrClass cls)
         {
         }
@@ -470,46 +518,83 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrTraffyBehaviour))
+            {
+                BuiltinClassInit_TrTraffyBehaviour(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrPolygonCollider2D))
+            {
+                BuiltinClassInit_TrPolygonCollider2D(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrEventData))
             {
                 BuiltinClassInit_TrEventData(cls);
                 return;
             }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrEventTriggerType))
             {
                 BuiltinClassInit_TrEventTriggerType(cls);
                 return;
             }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrRawImage))
             {
                 BuiltinClassInit_TrRawImage(cls);
                 return;
             }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrSprite))
             {
                 BuiltinClassInit_TrSprite(cls);
                 return;
             }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrFont))
             {
                 BuiltinClassInit_TrFont(cls);
                 return;
             }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrUI))
             {
                 BuiltinClassInit_TrUI(cls);
                 return;
             }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrUnityObject))
             {
                 BuiltinClassInit_TrUnityObject(cls);
                 return;
             }
+            #endif
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrVector2))
+            {
+                BuiltinClassInit_TrVector2(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrVector3))
             {
                 BuiltinClassInit_TrVector3(cls);
                 return;
             }
+            #endif
             if (typeof(T) == typeof(Traffy.Modules.TrModule_abc))
             {
                 BuiltinClassInit_TrModule_abc(cls);

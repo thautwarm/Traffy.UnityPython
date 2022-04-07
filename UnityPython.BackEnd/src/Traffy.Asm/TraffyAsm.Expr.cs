@@ -469,7 +469,7 @@ namespace Traffy.Asm
             frame.traceback.Push(position);
 
             var rt_func = func.exec(frame);
-            var rt_args = new BList<TrObject> { };
+            var rt_args = new BList<TrObject>();
             for (int i = 0; i < args.Length; i++)
             {
                 var elt = args[i].value.exec(frame);

@@ -1,12 +1,10 @@
 // When using UnityPython in Unity with the builtin 'Unity' module
 // you are responsible to present an root-level gameobejct attaching a 'UnityRTS' script
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
-#endif
+
 namespace Traffy.Unity2D
 {
-
-#if UNITY_VERSION
     public class UnityRTS : MonoBehaviour
     {
         public string ProjectDirectory = Application.persistentDataPath;
@@ -25,6 +23,5 @@ namespace Traffy.Unity2D
                 Destroy(gameObject);
         }
     }
-#endif
-
 }
+#endif

@@ -13,7 +13,7 @@ namespace Traffy.Objects
     public sealed partial class TrFunc : TrObject
     {
         public Variable[] freevars;
-        
+
         [PyBind]
         public TrObject __globals__ => MK.Dict(globals);
         public Dictionary<TrObject, TrObject> globals;
@@ -88,6 +88,25 @@ namespace Traffy.Objects
                 {
                     localvars[i] = new Variable(null);
                 }
+
+#if FAST_ITER_BLIST
+            var (ptr_now, ptr_end) = args.GetIteratorBounds();
+            for (int i = 0; i < fptr.posargcount; i++, ptr_now++)
+            {
+                if (ptr_now >= ptr_end)
+                {
+                    if((object)localvars[i].Value == null)
+                    {
+                        var arg_string = fptr.metadata.localnames.GetRange(i, fptr.posargcount - i).Select(x => $"\"{x}\"").By(x => String.Join(", ", x));
+                        throw new TypeError($"{this.AsObject.__repr__()} missing {fptr.posargcount - i} positional argument(s): {arg_string}");
+                    }
+                }
+                else
+                {
+                    localvars[i].Value = args[ptr_now];
+                }
+            }
+#else
             var args_itr = args.GetEnumerator();
             for (int i = 0; i < fptr.posargcount; i++)
             {
@@ -102,19 +121,26 @@ namespace Traffy.Objects
                 }
                 localvars[i].Value = args_itr.Current;
             }
-
+#endif
             if (fptr.hasvararg)
             {
                 var vararg = RTS.barelist_create();
+#if FAST_ITER_BLIST
+                while (ptr_now < ptr_end)
+                    RTS.barelist_add(vararg, args[ptr_now++]);
+#else
                 while (args_itr.MoveNext())
-                {
                     RTS.barelist_add(vararg, args_itr.Current);
-                }
+#endif
                 localvars[fptr.posargcount].Value = RTS.object_from_barearray(vararg.ToArray());
             }
             else
             {
+#if FAST_ITER_BLIST
+                if (ptr_now < ptr_end)
+#else                
                 if (args_itr.MoveNext())
+#endif
                 {
                     throw new TypeError($"{this.AsObject.__repr__()} takes {fptr.posargcount} positional argument(s) but {args.Count} were given");
                 }
@@ -131,7 +157,7 @@ namespace Traffy.Objects
 
             if (kwargs != null)
             {
-                var missing = new List<string>();
+                List<string> missing = null;
                 var dictargs = kwargs.Copy();
                 for (int i = i_kwstart; i < i_kwend; i++)
                 {
@@ -142,7 +168,11 @@ namespace Traffy.Objects
                     else
                     {
                         if (localvars[i].Value == null)
+                        {
+                            missing = missing ?? new List<string>();
                             missing.Add(fptr.kwindices[i].__repr__());
+                        }
+                            
                     }
                 }
                 if (fptr.haskwarg)
@@ -154,18 +184,21 @@ namespace Traffy.Objects
                     if (dictargs.Count != 0)
                         throw new TypeError($"{this.AsObject.__repr__()}  got unexpected keyword argument(s): {dictargs.Keys.Select(x => x.__repr__()).By(x => String.Join(", ", x))} ");
                 }
-                if (missing.Count != 0)
+                if (missing != null)
                     throw new TypeError($"{this.AsObject.__repr__()}  missing {missing.Count} keyword-only argument(s): {missing.By(x => String.Join(", ", x))} ");
             }
             else
             {
                 if (i_kwstart < i_kwend)
                 {
-                    var missing = new List<string>();
+                    List<string> missing = null;
                     for (int i = i_kwstart; i < i_kwend; i++)
                         if (localvars[i].Value == null)
+                        {
+                            missing = missing ?? new List<string>();
                             missing.Add(fptr.kwindices[i].__repr__());
-                    if (missing.Count != 0)
+                        }
+                    if (missing != null)
                     {
                         var msg = missing.By(x => String.Join(", ", x));
                         throw new TypeError($"{this.AsObject.__repr__()}  missing {i_kwend - i_kwstart} keyword-only argument(s): {msg} ");

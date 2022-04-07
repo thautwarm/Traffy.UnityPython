@@ -14,6 +14,46 @@ public enum ListSizeKind : int
     Size255 = 0b1111111,
 }
 
+public struct BListPtr
+{
+    private int _index;
+    private BListPtr(int index)
+    {
+        _index = index;
+    }
+    public static explicit operator int(BListPtr ptr) => ptr._index;
+    public static explicit operator BListPtr(int index) => new BListPtr(index);
+
+    // addition with int
+    public static BListPtr operator +(BListPtr ptr, int i) => new BListPtr(ptr._index + i);
+    public static BListPtr operator +(int i, BListPtr ptr) => new BListPtr(ptr._index + i);
+    public static BListPtr operator -(BListPtr ptr, int i) => new BListPtr(ptr._index - i);
+
+    public static bool operator ==(BListPtr a, BListPtr b) => a._index == b._index;
+    public static bool operator !=(BListPtr a, BListPtr b) => a._index != b._index;
+    public static bool operator <(BListPtr a, BListPtr b) => a._index < b._index;
+    public static bool operator >(BListPtr a, BListPtr b) => a._index > b._index;
+    public static bool operator <=(BListPtr a, BListPtr b) => a._index <= b._index;
+    public static bool operator >=(BListPtr a, BListPtr b) => a._index >= b._index;
+
+    public static BListPtr operator ++(BListPtr a) => new BListPtr(a._index + 1);
+    public static BListPtr operator --(BListPtr a) => new BListPtr(a._index - 1);
+
+    public override bool Equals(object obj)
+    {
+        return obj is BListPtr ptr && _index == ptr._index;
+    }
+
+    public override int GetHashCode()
+    {
+        return _index.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return $"BListPtr({_index})";
+    }
+}
 public sealed class BList<T> : IList<T>
 {
 
@@ -31,6 +71,16 @@ public sealed class BList<T> : IList<T>
         set => _array[_head + index] = value;
     }
 
+    public T this[BListPtr ptr]
+    {
+        get => _array[(int) ptr];
+        set => _array[(int) ptr] = value;
+    }
+
+    public (BListPtr, BListPtr) GetIteratorBounds()
+    {
+        return ((BListPtr) _head, (BListPtr) _tail);
+    }
 
     public BList(ListSizeKind sizeKind)
     {

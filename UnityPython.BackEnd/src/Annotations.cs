@@ -8,6 +8,7 @@ namespace Traffy.Annotations
         public bool NonInstance = false;
     }
 
+    public class UnitySpecific : Attribute{ }
     public class PyBind : Attribute
     {
         public class Keyword : Attribute

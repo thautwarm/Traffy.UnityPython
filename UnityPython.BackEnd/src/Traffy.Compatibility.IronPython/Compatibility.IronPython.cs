@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using IronPython.Runtime.Operations;
 using Traffy.Objects;
 
-#if UNITY_VERSION
+#if !NOT_UNITY
     using MathF = UnityEngine.Mathf;
 #else
     using MathF = System.MathF;

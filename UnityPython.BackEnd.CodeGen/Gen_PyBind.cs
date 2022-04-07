@@ -246,7 +246,9 @@ public class Gen_PyBind : HasNamespace
         {
             yield return use.Doc();
         }
-        CodeGen.Fun_InitRef.Add($"{entry.Namespace}.{entry.Name}.generated_BindMethods");
+        CodeGen.Fun_InitRef.Add((entry.IsUnitySpecific(), $"{entry.Namespace}.{entry.Name}.generated_BindMethods"));
+        if (entry.IsUnitySpecific())
+            yield return "#if !NOT_UNITY".Doc();
         yield return VSep(
             VSep(
                 $"namespace {entry.Namespace}".Doc(),
@@ -264,7 +266,8 @@ public class Gen_PyBind : HasNamespace
                     "}".Doc()
                 ).Indent(4),
                 "}".Doc()));
-        
+        if (entry.IsUnitySpecific())
+            yield return "#endif".Doc();
         yield return NewLine;
     }
 }

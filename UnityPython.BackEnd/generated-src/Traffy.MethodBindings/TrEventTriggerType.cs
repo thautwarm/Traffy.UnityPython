@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Traffy.Objects;
 using Traffy.Annotations;
+#if !NOT_UNITY
 namespace Traffy.Unity2D
 {
     public sealed partial class TrEventTriggerType
@@ -28,4 +29,5 @@ namespace Traffy.Unity2D
         }
     }
 }
+#endif
 

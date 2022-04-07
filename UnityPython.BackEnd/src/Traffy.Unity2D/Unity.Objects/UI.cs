@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
 using UnityEngine.UI;
-#endif
 
 
 namespace Traffy.Unity2D
 {
     [PyBuiltin]
+    [UnitySpecific]
     public sealed partial class TrUI : TrUnityComponent
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
@@ -17,11 +17,10 @@ namespace Traffy.Unity2D
         {
             CLASS = TrClass.FromPrototype<TrUI>("ui");
         }
-        
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
         internal static void _Init()
         {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("ui.__new__", cannot_inst_component));
             CLASS.IsSealed = true;
         }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
@@ -31,44 +30,40 @@ namespace Traffy.Unity2D
             CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
         }
-        public static TrUI GetComponent(TrUnityObject uo)
+
+        internal static TrUI New(TrUnityObject uo)
         {
-#if UNITY_VERSION
-            var rect = uo.Raw.GetComponent<RectTransform>();
-            if (rect == null)
-                return new TrUI { rect = rect };
-#endif
-            return null;
+            var rect = uo.gameObject.AddComponent<RectTransform>();
+            return new TrUI(uo, rect);
         }
-        public static TrUI AddComponent(TrUnityObject uo)
+
+        [PyBind]
+        public TrObject __new__(TrClass _, TrUnityObject uo)
         {
-#if UNITY_VERSION
-            var rect = uo.Raw.gameObject.AddComponent<RectTransform>();
-            if (rect == null)
-                return new TrUI { rect = rect };
-#endif            
-            return null;
+            return New(uo);
         }
-        
-#if UNITY_VERSION
+
         RectTransform rect;
-        public override GameObject gameObject => rect.gameObject;
-#endif
+
+        public static TrUI FromExisting(RectTransform rect)
+        {
+            var o = TrUnityObject.FromRaw(rect.gameObject);
+            return new TrUI(o, rect);
+        }
+
+        private TrUI(TrUnityObject uo, RectTransform rect): base(uo)
+        {
+            this.rect = rect;
+        }
+        private TrUI(TrUnityObject uo): base(uo)
+        { }
+
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
-        public override bool IsUserObject() => false;
-
-        public override List<TrObject> __array__
+        public override bool TryGetNativeUnityObject(out Object o)
         {
-            get
-            {
-#if UNITY_VERSION
-                var tb = rect.GetComponent<TraffyBehaviour>();
-                if (tb != null)
-                    return tb.TraffyObjects;
-#endif
-                return null;
-            }
+            o = rect;
+            return true;
         }
 
         [PyBind]
@@ -76,18 +71,12 @@ namespace Traffy.Unity2D
         {
             set
             {
-#if UNITY_VERSION
                 rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value.ToFloat());
-#endif
             }
 
             get
             {
-#if UNITY_VERSION
                 return MK.Float(rect.rect.width);
-#else
-                return MK.Float(0.0);
-#endif                
             }
         }
 
@@ -96,19 +85,14 @@ namespace Traffy.Unity2D
         {
             set
             {
-#if UNITY_VERSION
                 rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, value.ToFloat());
-#endif
             }
 
             get
             {
-#if UNITY_VERSION
                 return MK.Float(rect.rect.height);
-#else
-                return MK.Float(0.0);
-#endif
             }
         }
     }
 }
+#endif

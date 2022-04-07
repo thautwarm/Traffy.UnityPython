@@ -1,14 +1,17 @@
 using System.Collections.Generic;
+using System.Linq;
 using Traffy.Annotations;
 using Traffy.Objects;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
-#endif
+using UnityEngine.EventSystems;
+
 
 namespace Traffy.Unity2D
 {
     [PyBuiltin]
-    public sealed partial class TrUnityObject : TrUnityComponent
+    [UnitySpecific]
+    public sealed partial class TrUnityObject: TrObject
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
@@ -16,11 +19,6 @@ namespace Traffy.Unity2D
             CLASS = TrClass.CreateClass("unity");
         }
 
-        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
-        internal static void _Init()
-        {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc(".__new__", cannot_inst_component));
-        }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
         {
@@ -28,29 +26,93 @@ namespace Traffy.Unity2D
             CLASS.IsFixed = false;
             Initialization.Prelude(CLASS);
         }
-        TraffyBehaviour traffy;
-        public TraffyBehaviour Raw => traffy;
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
-        public override bool IsUserObject() => true;
-#if UNITY_VERSION
-        public override GameObject gameObject => traffy.gameObject;
+        public override List<TrObject> __array__ => null;
+        public MemLessIntMap<List<TrUnityComponent>> Components =
+            new MemLessIntMap<List<TrUnityComponent>>();
+
+        public GameObject gameObject;
+
+        public TrUnityObject(GameObject gameObject)
+        {
+            this.gameObject = gameObject;
+        }
         public static TrUnityObject FromRaw(GameObject o)
         {
-            var me = o.GetComponent<TraffyBehaviour>();
-            if (me == null)
-            {
-                me = o.AddComponent<TraffyBehaviour>();
-            }
-            return new TrUnityObject(me);
+            return new TrUnityObject(o);
         }
-#endif
-        public override List<TrObject> __array__ => traffy.TraffyObjects;
 
-        public TrUnityObject(TraffyBehaviour traffy)
+        public void PreInitComponents(params TrClass[] klasses)
+        {       
+            var components = Components.GetOrUpdateMany(
+                klasses.Select(x => x.ClassId).ToArray(), (_) => new List<TrUnityComponent>(1));
+        }
+
+        public bool TryGetComponents(TrClass klass, out List<TrUnityComponent> components)
         {
-            this.traffy = traffy;
+            return Components.TryGetValue(klass.ClassId, out components);
+        }
+
+        public bool TryGetComponent(TrClass klass, out TrUnityComponent value)
+        {
+            if (TryGetComponents(klass, out var components) && components.Count > 0)
+            {
+                value = components[0];
+                return true;
+            }
+            value = null;
+            return false;
+        }
+
+        public TrUnityComponent AddComponent(TrClass klass, TrObject gameState)
+        {
+            if (!klass.__getic__(klass.ic__new, out var cls_new))
+            {
+                throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: class {klass.Name} does not have a __new__ from MonoBehaviour");
+            }
+            var components = Components.GetOrUpdate(
+                klass.ClassId,
+                () => new List<TrUnityComponent>(1));
+            var obj = cls_new.Call(klass, this);
+            if (!(obj is TrUnityComponent component))
+                throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: __new__ returned {obj.Class.Name} but it is not a component in .NET side.");
+            if (klass.__getic__(klass.ic__init, out var cls_init))
+            {
+                cls_init.Call(obj, gameState);
+            }
+            components.Add(component);
+            return component;
+        }
+
+        public List<TrUnityComponent> TryGetComponentsOrAdd(TrClass klass, TrObject gameState, ref bool isNew)
+        {
+            if (!klass.__getic__(klass.ic__new, out var cls_new))
+            {
+                throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: class {klass.Name} does not have a __new__ from MonoBehaviour");
+            }
+            var components = Components.GetOrUpdate(
+                klass.ClassId, () => new List<TrUnityComponent>(1));
+            if (components.Count == 0)
+            {
+                var obj = cls_new.Call(klass, this);
+                if (!(obj is TrUnityComponent component))
+                    throw new TypeError($"Cannot add component {klass.Name} to {this.Class.Name}: __new__ returned {obj.Class.Name} but it is not a component in .NET side.");
+                if (klass.__getic__(klass.ic__init, out var cls_init))
+                {
+                    cls_init.Call(obj, gameState);
+                }
+                isNew = true;
+                components.Add(component);
+            }
+            return components;
+        }
+
+        public TrUnityComponent TryGetComponentOrAdd(TrClass klass, TrObject gameState, ref bool isNew)
+        {
+            var components = TryGetComponentsOrAdd(klass, gameState, ref isNew);
+            return components[0];
         }
 
         [PyBind]
@@ -58,18 +120,12 @@ namespace Traffy.Unity2D
         {
             set
             {
-#if UNITY_VERSION
-                traffy.name = value.AsStr();
-#endif
+                gameObject.name = value.AsStr();
             }
 
             get
             {
-#if UNITY_VERSION
-                return MK.Str(traffy.name ?? "");
-#else
-                return MK.Str("");
-#endif
+                return MK.Str(gameObject.name ?? "");
             }
         }
 
@@ -78,20 +134,14 @@ namespace Traffy.Unity2D
         {
             set
             {
-#if UNITY_VERSION
-                var pos = traffy.transform.localPosition;
+                var pos = gameObject.transform.localPosition;
                 pos.x = value.ToFloat();
-                traffy.transform.localPosition = pos;
-#endif
+                gameObject.transform.localPosition = pos;
             }
 
             get
             {
-#if UNITY_VERSION
-                return MK.Float(traffy.transform.localPosition.x);
-#else
-                return MK.Float(0.0);
-#endif
+                return MK.Float(gameObject.transform.localPosition.x);
 
             }
         }
@@ -101,20 +151,15 @@ namespace Traffy.Unity2D
         {
             set
             {
-#if UNITY_VERSION
-                var pos = traffy.transform.localPosition;
+                var pos = gameObject.transform.localPosition;
                 pos.y = value.ToFloat();
-                traffy.transform.localPosition = pos;
-#endif
+                gameObject.transform.localPosition = pos;
             }
 
             get
             {
-#if UNITY_VERSION
-                return MK.Float(traffy.transform.localPosition.y);
-#else
-                return MK.Float(0.0);
-#endif
+                return MK.Float(gameObject.transform.localPosition.y);
+
             }
         }
 
@@ -123,22 +168,80 @@ namespace Traffy.Unity2D
         {
             set
             {
-#if UNITY_VERSION
-                var pos = traffy.transform.localPosition;
+                var pos = gameObject.transform.localPosition;
                 pos.z = value.ToFloat();
-                traffy.transform.localPosition = pos;
-#endif
+                gameObject.transform.localPosition = pos;
             }
 
             get
             {
-#if UNITY_VERSION
-                return MK.Float(traffy.transform.localPosition.z);
-#else
-                return MK.Float(0.0);
-#endif
+                return MK.Float(gameObject.transform.localPosition.z);
+
             }
+        }
+
+        [PyBind(Name = nameof(TryGetComponents))]
+        internal bool _TryGetComponents(TrObject componentType, TrRef refval)
+        {
+            if (componentType is TrClass cls)
+            {
+                if (TryGetComponents(cls, out var components))
+                {
+                    refval.value = MK.Iter(components.GetEnumerator());
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        [PyBind(Name = nameof(TryGetComponent))]
+        internal bool _TryGetComponent(TrObject componentType, TrRef refval)
+        {
+            if (componentType is TrClass cls)
+            {
+                if (TryGetComponent(cls, out var component))
+                {
+                    refval.value = component;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        [PyBind(Name = nameof(AddComponent))]
+        internal TrObject _AddComponent(TrObject componentType, TrObject gameState)
+        {
+            if (componentType is TrClass cls)
+            {
+                return AddComponent(cls, gameState);
+            }
+            throw new TypeError($"Cannot add component {componentType.Class.Name} to {this.Class.Name}: {componentType.__repr__()} is not a class");
+        }
+
+        [PyBind]
+        internal TrObject on(TrEventTriggerType o_ev)
+        {
+            var ev = o_ev.eventID;
+            var entry = new EventTrigger.Entry();
+            entry.eventID = ev;
+            var trigger = gameObject.GetComponent<EventTrigger>();
+            if (trigger == null)
+            {
+                if (!this.TryGetComponent(TrUI.CLASS, out var component) && gameObject.GetComponent<Collider2D>() == null)
+                    throw new TypeError($"non-UI component needs a collider to accept pointer event!");
+                
+                trigger = gameObject.AddComponent<EventTrigger>();
+            }
+            trigger.triggers.Add(entry);
+            TrObject register(TrObject callback)
+            {
+                entry.callback.AddListener(x => callback.Call(TrEventData.FromRaw((PointerEventData)x)));
+                return callback;
+            }
+            return TrSharpFunc.FromFunc($"<{ev} register>", register);
         }
     }
 
 }
+
+#endif

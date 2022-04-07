@@ -9,7 +9,7 @@
      <TargetFramework>net6</TargetFramework>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>TESTS</DefineConstants>
+     <DefineConstants>TESTS;FAST_ITER_BLIST;NOT_UNITY</DefineConstants>
   </PropertyGroup>
 
 </Project>

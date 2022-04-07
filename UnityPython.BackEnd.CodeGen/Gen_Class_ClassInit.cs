@@ -100,7 +100,8 @@ public class Gen_Class_ClassInit : HasNamespace
             var default_equitable = true;
             var default_eq = true;
             var default_ne = true;
-
+            if (builtinPyClass.IsUnitySpecific())
+                yield return $"#if !NOT_UNITY".Doc();
             yield return $"static void BuiltinClassInit_{builtinPyClass.Name}(TrClass cls)".Doc();
             yield return "{".Doc();
             var owned = GetInterfaceMethodSource(builtinPyClass);
@@ -143,17 +144,23 @@ public class Gen_Class_ClassInit : HasNamespace
                 CodeGen.AutoEq.Add(builtinPyClass);
             }
             yield return "}".Doc();
+            if (builtinPyClass.IsUnitySpecific())
+                yield return "#endif".Doc();
         }
 
         IEnumerable<Doc> builtin_class_init_generator()
         {
             foreach (var t in builtinPyClasses)
             {
+                if (t.IsUnitySpecific())
+                    yield return "#if !NOT_UNITY".Doc();
                 yield return $"if (typeof(T) == typeof({t.FullName}))".Doc();
                 yield return "{".Doc();
                 yield return $"BuiltinClassInit_{t.Name}(cls);".Doc() >> 4;
                 yield return $"return;".Doc() >> 4;
                 yield return "}".Doc();
+                if (t.IsUnitySpecific())
+                    yield return "#endif".Doc();
             }
             yield return $"throw new System.Exception(\"Unsupported type: \" + typeof(T).FullName);".Doc();
         }

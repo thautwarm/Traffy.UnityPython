@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
 using UnityEngine.UI;
-#endif
+
 namespace Traffy.Unity2D
 {
     [PyBuiltin]
+    [UnitySpecific]
     public sealed partial class TrFont : TrUnityComponent
     {
 
@@ -16,12 +17,7 @@ namespace Traffy.Unity2D
         {
             CLASS = TrClass.FromPrototype<TrFont>("Font");
         }
-        
-        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
-        internal static void _Init()
-        {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("Font.__new__", cannot_inst_component));
-        }
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
         {
@@ -32,31 +28,43 @@ namespace Traffy.Unity2D
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
-        public override bool IsUserObject() => false;
 
-#if UNITY_VERSION
-        public override GameObject gameObject => textTMP.transform.gameObject;
-        TMPro.TextMeshProUGUI textTMP;
-        public static TrFont FromRaw(TMPro.TextMeshProUGUI textTMP)
+        [PyBind]
+        public TrObject __new__(TrClass _, TrUnityObject uo)
         {
-            return new TrFont { textTMP = textTMP };
+            return New(uo);
         }
-#endif
+        internal static TrFont New(TrUnityObject uo)
+        {
+
+            var text = uo.gameObject.AddComponent<TMPro.TextMeshProUGUI>();
+            return new TrFont(uo, text);
+        }
+
+        public override bool TryGetNativeUnityObject(out Object o)
+        {
+            o = textTMP;
+            return true;
+        }
+        TMPro.TextMeshProUGUI textTMP;
+        public TrFont(TrUnityObject o, TMPro.TextMeshProUGUI textTMP): base(o)
+        {
+            this.textTMP = textTMP;
+        }
+        public static TrFont FromExisting(TMPro.TextMeshProUGUI textMeshProUGUI)
+        {
+            var o = TrUnityObject.FromRaw(textMeshProUGUI.gameObject);
+            return new TrFont(o, textMeshProUGUI);
+        }
 
         [PyBind]
         public TrObject size
         {
             get =>
-#if UNITY_VERSION
                 MK.Float(textTMP.fontSize);
-#else
-                MK.Float(0.0);
-#endif
             set
             {
-#if UNITY_VERSION
-                textTMP.fontSize = (int)value.ToFloat();
-#endif
+                textTMP.fontSize = value.ToFloat();
             }
         }
 
@@ -64,18 +72,14 @@ namespace Traffy.Unity2D
         public TrObject contents
         {
             get =>
-#if UNITY_VERSION
                 MK.Str(textTMP.text);
-#else
-                MK.Str("");
-#endif
             set
             {
-#if UNITY_VERSION
                 textTMP.text = value.AsStr();
-#endif
             }
         }
         
     }
 }
+
+#endif

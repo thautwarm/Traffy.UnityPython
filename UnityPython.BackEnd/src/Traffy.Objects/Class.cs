@@ -32,24 +32,35 @@ namespace Traffy.Objects
         {
             return object.ReferenceEquals(this, other);
         }
-        static bool isRawInit = false;
-        static bool isMetaClassInitialized = false;
+
+        static IdComparer idComparer = new IdComparer();
+        #region static fields that can be reinitialized
+        static bool isRawInit;
+        static bool isMetaClassInitialized;
+        static int classCnt = 0;
+        static TrClass MetaClass;
+        static object GlobalLock;
+        #endregion
         public static void BeforeReInitRuntime()
         {
             isRawInit = false;
             isMetaClassInitialized = false;
+            MetaClass = null;
+            classCnt = 0;
+            GlobalLock = new object();
         }
-        static IdComparer idComparer = new IdComparer();
-        static TrClass MetaClass = null;
 
         public static TrClass CLASS { get => MetaClass; set => MetaClass = value; }
-
         public bool IsFixed = false;
         public bool IsSealed = false;
         public bool IsAbstract = false;
+        public int ClassId;
         private object _token = new object();
         public object Token => _token;
 
+        // when shape update, update all subclasses' 'Token's;
+        // include itself
+        public HashSet<TrClass> __subclasses = new HashSet<TrClass>(idComparer);
         public object UpdatePrototype()
         {
             foreach (var subclass in __subclasses)
@@ -58,10 +69,6 @@ namespace Traffy.Objects
             }
             return _token;
         }
-
-        // when shape update, update all subclasses' 'Token's;
-        // include itself
-        public HashSet<TrClass> __subclasses = new HashSet<TrClass>(idComparer);
 
         // use for enumerations
         public (TrStr Name, TrObject Value)[] EnumHelperField = null;
@@ -113,8 +120,7 @@ namespace Traffy.Objects
             {
                 return args[1].Class;
             }
-            var cls_new = cls[cls.ic__new];
-            if (cls_new == null)
+            if (!cls.__getic__(cls.ic__new, out var cls_new))
                 throw new TypeError($"Fatal: {cls.Name}.__new__() is not defined.");
             var o = cls_new.__call__(args, kwargs);
 
@@ -242,15 +248,19 @@ namespace Traffy.Objects
             {
                 Name = name,
                 __mro = new TrClass[0],
-                __base = parents,
+                __base = parents
             };
+            lock (GlobalLock)
+            {   
+                cls.ClassId = classCnt++;
+            }
             if (parents.Length == 0)
                 cls.__mro = new TrClass[] { cls };
             cls.InitInlineCacheForMagicMethods();
             return cls;
         }
 
-        
+
         internal static TrClass CreateMetaClass(string name)
         {
             if (isMetaClassInitialized)
@@ -262,6 +272,10 @@ namespace Traffy.Objects
                 __mro = new TrClass[1],
                 __base = new TrClass[0],
             };
+            lock (GlobalLock)
+            {   
+                cls.ClassId = classCnt++;
+            }
             cls.__mro[0] = cls;
             cls.InitInlineCacheForMagicMethods();
             return cls;
@@ -278,6 +292,10 @@ namespace Traffy.Objects
                 __mro = new TrClass[1],
                 __base = new TrClass[0],
             };
+            lock (GlobalLock)
+            {   
+                cls.ClassId = classCnt++;
+            }
             cls.__mro[0] = cls;
             cls.InitInlineCacheForMagicMethods();
             BuiltinClassInit<T>(cls);
@@ -297,6 +315,10 @@ namespace Traffy.Objects
                 __mro = new TrClass[0],
                 __base = new TrClass[0],
             };
+            lock (GlobalLock)
+            {   
+                cls.ClassId = classCnt++;
+            }
             cls.InitInlineCacheForMagicMethods();
             RawClassInit(cls);
             cls.IsSealed = true;
@@ -422,7 +444,7 @@ namespace Traffy.Objects
             HashSet<TrClass> abs_classes = new HashSet<TrClass>(RTS.Py_COMPARER);
             foreach (var cls in __mro)
             {
-                if (cls == this)
+                if (object.ReferenceEquals(cls, this))
                     continue;
                 if (cls.IsAbstract)
                 {

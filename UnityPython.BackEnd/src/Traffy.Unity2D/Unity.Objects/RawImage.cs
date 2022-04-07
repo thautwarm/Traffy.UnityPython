@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
 using UnityEngine.UI;
-#endif
+
 
 namespace Traffy.Unity2D
 {
     [PyBuiltin]
+    [UnitySpecific]
     public sealed partial class TrRawImage : TrUnityComponent
     {
 
@@ -18,11 +19,6 @@ namespace Traffy.Unity2D
             CLASS = TrClass.FromPrototype<TrRawImage>("RawImage");
         }
 
-        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
-        internal static void _Init()
-        {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("RawImage.__new__", cannot_inst_component));
-        }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
         {
@@ -31,32 +27,49 @@ namespace Traffy.Unity2D
             Initialization.Prelude(CLASS);
         }
 
-#if UNITY_VERSION
-        RawImage rawImage;
-        public override GameObject gameObject => rawImage.transform.gameObject;
-#endif
+        public static TrRawImage New(TrUnityObject uo)
+        {
+            var render = uo.gameObject.AddComponent<RawImage>();
+            return new TrRawImage(uo, render);
+        }
+        [PyBind]
+        public TrObject __new__(TrClass _, TrUnityObject uo)
+        {
+            return New(uo);
+        }
 
+
+        RawImage rawImage;
+        public static TrRawImage FromExisting(RawImage rawImage)
+        {
+            var o = TrUnityObject.FromRaw(rawImage.gameObject);
+            return new TrRawImage(o, rawImage);
+        }
+        public TrRawImage(TrUnityObject uo, RawImage rawImage): base(uo)
+        {
+            this.rawImage = rawImage;
+        }
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
-        public override bool IsUserObject() => false;
+
+        public override bool TryGetNativeUnityObject(out Object o)
+        {
+            o = rawImage;
+            return true;
+        }
 
         [PyBind]
         public TrObject alpha
         {
-            get =>
-#if UNITY_VERSION
-                MK.Float(rawImage.color.a);
-#else
-                MK.Float(0.0);
-#endif
+            get => MK.Float(rawImage.color.a);
             set
             {
-#if UNITY_VERSION
                 var color = rawImage.color;
                 color.a = value.ToFloat();
                 rawImage.color = color;
-#endif
             }
         }
     }
 }
+
+#endif

@@ -59,7 +59,7 @@ public class Gen_InterfaceClasses : HasNamespace
             yield return use.Doc();
         }
 
-        CodeGen.Fun_InitRef.Add($"{typeof(AbstractClass).Namespace}.{typeof(AbstractClass).Name}.generated_BindMethods");
+        CodeGen.Fun_InitRef.Add((false, $"{typeof(AbstractClass).Namespace}.{typeof(AbstractClass).Name}.generated_BindMethods"));
 
         yield return VSep(
             VSep(
@@ -87,17 +87,20 @@ public class Gen_InterfaceClasses : HasNamespace
     IEnumerable<Doc> GenerateClass(Type t, List<Doc> binding_defs)
     {
 
-
+        var IsUnitySpecific = t.IsUnitySpecific();
+        if (IsUnitySpecific)
+            yield return "#if !NOT_UNITY".Doc();
         yield return $"public static partial class {t.Name}".Doc();
         yield return "{".Doc();
 
         CodeGen.Func_ClassBasedCrateRef[t] = $"{t.Namespace}.{t.Name}._Create";
+        
         yield return "internal static void _Create()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
         yield return $"    CLASS = TrClass.CreateClass({t.Name.Escape()});".Doc().Indent(4);
         yield return "}".Doc().Indent(4);
 
-        CodeGen.Fun_InitRef.Add($"{t.Namespace}.{t.Name}._Init");
+        CodeGen.Fun_InitRef.Add((IsUnitySpecific, $"{t.Namespace}.{t.Name}._Init"));
         yield return "internal static void _Init()".Doc().Indent(4);
         yield return "{".Doc().Indent(4);
         yield return $"    CLASS[CLASS.ic__new] = TrABC.CLASS[TrABC.CLASS.ic__new];".Doc().Indent(4);
@@ -174,5 +177,7 @@ public class Gen_InterfaceClasses : HasNamespace
             binding_defs.Add($"{t.Namespace}.{t.Name}.CLASS[{methName.Escape()}] = TrSharpFunc.FromFunc({(t.Name + "." + methName).Escape()}, {t.Namespace}.{t.Name}.{localBindName});".Doc());
         }
         yield return "}".Doc();
+        if (IsUnitySpecific)
+            yield return "#endif".Doc();
     }
 }

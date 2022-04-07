@@ -90,9 +90,9 @@ public interface HasNamespace
 
 public class CodeGen : Attribute
 {
-    public static readonly List<string> Func_CrateRef = new();
+    public static readonly List<(bool IsUnitySpecific, string Meth)> Func_CrateRef = new();
     public static readonly Dictionary<Type, string> Func_ClassBasedCrateRef = new();
-    public static readonly List<string> Fun_InitRef = new();
+    public static readonly List<(bool IsUnitySpecific, string Meth)> Fun_InitRef = new();
     public static readonly Dictionary<Type, string> Fun_SetupRef = new();
 
     public static readonly HashSet<Type> UnsetDefaultHash = new();

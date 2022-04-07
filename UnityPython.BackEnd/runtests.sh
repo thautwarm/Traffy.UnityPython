@@ -7,4 +7,4 @@ fi
 
 rm -rf out
 unitypython.exe $dir --includesrc --recursive --outdir out
-dotnet run --project UnityPython.NoUnity.csproj -c Debug out
+dotnet run --project UnityPython.NoUnity.csproj -c Release out

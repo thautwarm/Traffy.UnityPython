@@ -1,6 +1,6 @@
 using System;
 using Traffy.Objects;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
 #endif
 
@@ -32,7 +32,7 @@ namespace Traffy.Unity2D
                 throw new ValueError($"{msgKind} should be within {low}-{high}, got {i}");
             }
         }
-#if UNITY_VERSION
+#if !NOT_UNITY
         public static Exception invalid_access(GameObject o, string attr)
         {
             return new TypeError($"cannot access {attr} from {o.name}");

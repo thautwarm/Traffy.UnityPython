@@ -9,7 +9,6 @@
      <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
      <Optimize>true</Optimize>
-     <DefineConstants>UNITY_VERSION</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

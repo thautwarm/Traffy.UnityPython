@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
 using Traffy.Objects;
-#if UNITY_VERSION
+#if !NOT_UNITY
 using UnityEngine;
-#endif
-
 
 namespace Traffy.Unity2D
 {
     [PyBuiltin]
+    [UnitySpecific]
     public sealed partial class TrSprite : TrUnityComponent
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
@@ -17,11 +16,6 @@ namespace Traffy.Unity2D
             CLASS = TrClass.FromPrototype<TrSprite>("Sprite");
         }
 
-        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
-        internal static void _Init()
-        {
-            CLASS[CLASS.ic__new] = TrStaticMethod.Bind(TrSharpFunc.FromFunc("Sprite.__new__", cannot_inst_component));
-        }
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
         {
@@ -29,53 +23,54 @@ namespace Traffy.Unity2D
             CLASS.IsFixed = true;
             Initialization.Prelude(CLASS);
         }
-        public static TrSprite GetComponent(TrUnityObject uo)
+
+        [PyBind]
+        public TrObject __new__(TrClass _, TrUnityObject uo)
         {
-#if UNITY_VERSION
-            var render = uo.Raw.GetComponent<SpriteRenderer>();
-            if (render == null)
-                return new TrSprite { render = render };
-#endif            
-            return null;
+            return New(uo);
         }
-        public static TrSprite AddComponent(TrUnityObject uo)
+
+        public static TrSprite New(TrUnityObject uo)
         {
-#if UNITY_VERSION
-            var render = uo.Raw.gameObject.AddComponent<SpriteRenderer>();
-            if (render == null)
-                return new TrSprite { render = render };
-#endif
-            return null;
+            var render = uo.gameObject.AddComponent<SpriteRenderer>();
+            return new TrSprite(uo, render);
+
         }
-#if UNITY_VERSION
         SpriteRenderer render;
-        public override GameObject gameObject => render.gameObject;
-#endif
+        public static TrSprite FromExisting(SpriteRenderer render)
+        {
+            var o = TrUnityObject.FromRaw(render.gameObject);
+            return new TrSprite(o, render);
+        }
+        public TrSprite(TrUnityObject uo, SpriteRenderer render) : base(uo)
+        {
+            this.render = render;
+        }
+        public override bool TryGetNativeUnityObject(out Object o)
+        {
+            o = render;
+            return true;
+        }
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
-        public override bool IsUserObject() => false;
         
+
         [PyBind]
         public TrObject width
         {
             set
             {
-#if UNITY_VERSION
+
                 var scale = render.transform.localScale;
                 var width_origin = render.sprite.texture.width;
                 scale.x = value.ToFloat() / width_origin;
                 render.transform.localScale = scale;
-#endif
             }
             get
             {
-#if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var width_origin = render.sprite.texture.width;
                 return MK.Float(width_origin * scale.x);
-#else
-                return MK.Float(0.0);
-#endif
             }
         }
 
@@ -84,23 +79,17 @@ namespace Traffy.Unity2D
         {
             set
             {
-#if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var height_origin = render.sprite.texture.height;
                 scale.y = value.ToFloat() / height_origin;
                 render.transform.localScale = scale;
-#endif
             }
 
             get
             {
-#if UNITY_VERSION
                 var scale = render.transform.localScale;
                 var width_origin = render.sprite.texture.height;
                 return MK.Float(width_origin * scale.y);
-#else
-                return MK.Float(0.0);
-#endif
             }
         }
 
@@ -108,16 +97,11 @@ namespace Traffy.Unity2D
         {
             get
             {
-#if UNITY_VERSION
                 return MK.Float(render.material.color.a);
-#else
-                return MK.Float(0.0);
-#endif                
             }
 
             set
             {
-#if UNITY_VERSION
                 if (!(value is TrFloat floating))
                 {
                     throw new TypeError($"alpha must be float, not {value.Class.Name}");
@@ -127,9 +111,10 @@ namespace Traffy.Unity2D
                 var color = render.material.color;
                 color.a = alpha;
                 render.material.color = color;
-#endif                
             }
         }
 
     }
 }
+
+#endif

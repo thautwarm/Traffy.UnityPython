@@ -6,7 +6,7 @@ using uint_t = System.UInt64;
 namespace Traffy.Objects
 {
 
-#if UNITY_VERSION
+#if !NOT_UNITY
     using static UnityEngine.Mathf;
 #else
     using static System.MathF;

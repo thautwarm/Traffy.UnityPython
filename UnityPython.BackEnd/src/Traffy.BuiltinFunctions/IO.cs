@@ -37,7 +37,7 @@ namespace Traffy
                 }
             }
             sb.Append(end.__str__());
-#if UNITY_VERSION
+#if !NOT_UNITY
             UnityEngine.Debug.Log(sb.ToString());
 #else
             System.Console.Write(sb.ToString());

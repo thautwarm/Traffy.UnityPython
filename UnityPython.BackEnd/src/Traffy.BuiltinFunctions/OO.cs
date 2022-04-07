@@ -61,11 +61,7 @@ namespace Traffy
             {
                 throw new TypeError("hasattr() arg 2 must be a string");
             }
-            if (obj is TrObject o)
-            {
-                return o.__getic_refl__(s, out var _);
-            }
-            throw new TypeError("hasattr() arg 1 must be an object");
+            return obj.__getic_refl__(s, out _);
         }
 
         [PyBuiltin]

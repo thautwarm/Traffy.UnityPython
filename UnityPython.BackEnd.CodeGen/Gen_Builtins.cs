@@ -86,7 +86,7 @@ public class Gen_Builtins : HasNamespace
             yield return use.Doc();
         }
         
-        CodeGen.Fun_InitRef.Add($"{entry.Namespace}.{entry.Name}.InitBuiltins");
+        CodeGen.Fun_InitRef.Add((entry.IsUnitySpecific(), $"{entry.Namespace}.{entry.Name}.InitBuiltins"));
         yield return VSep(
             VSep(
                 $"namespace {entry.Namespace}".Doc(),
