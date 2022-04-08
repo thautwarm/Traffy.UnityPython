@@ -14,7 +14,6 @@ namespace Traffy
             {
                 var sourceCode = System.IO.File.ReadAllText(file);
                 var spec = ModuleSpec.Parse(sourceCode);
-                Console.WriteLine(spec.modulename);
                 DynamicLoadSpec(spec);
             }
         }

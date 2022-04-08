@@ -8,9 +8,7 @@ using UnityEngine.EventSystems;
 
 namespace Traffy.Unity2D
 {
-
     [UnitySpecific]
-    [PyInherit(typeof(TrMonoBehaviour))]
     public abstract class TrUnityComponent : TrUserObjectBase
     {
         // internal static TrObject cannot_inst_component(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -19,18 +17,11 @@ namespace Traffy.Unity2D
         // }
 
         public override List<TrObject> __array__ => null;
-        // public static TrClass CLASS;
 
         protected TrUnityComponent(TrGameObject baseObject)
         {
             this.baseObject = baseObject;
         }
-
-        public override bool __eq__(TrObject other) => other.Native.Equals(Native);
-
-        public override bool __ne__(TrObject other) => !other.Native.Equals(Native);
-
-        public override int __hash__() => Native.GetHashCode();
 
         public TrGameObject baseObject;
 
@@ -43,6 +34,27 @@ namespace Traffy.Unity2D
             {
                 return baseObject;
             }
+        }
+
+        [PyBind]
+        internal TrObject x
+        {
+            get => baseObject.x;
+            set => baseObject.x = value;
+        }
+
+        [PyBind]
+        internal TrObject y
+        {
+            get => baseObject.y;
+            set => baseObject.y = value;
+        }
+
+        [PyBind]
+        internal TrObject z
+        {
+            get => baseObject.z;
+            set => baseObject.z = value;
         }
 
         [PyBind]
@@ -64,8 +76,8 @@ namespace Traffy.Unity2D
         internal TrObject _GetComponent(TrObject componentType) =>
             baseObject.GetComponent(componentType);
 
-        [PyBind(Name = nameof(RemoveComponent))]
-        internal void _RemoveComponent() => RemoveComponent();
+        [PyBind]
+        internal void Destroy() => RemoveComponent();
     }
 }
 

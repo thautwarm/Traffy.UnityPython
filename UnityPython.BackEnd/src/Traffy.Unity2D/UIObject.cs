@@ -9,33 +9,6 @@ using UnityEngine;
 
 namespace Traffy.Unity2D
 {
-
-    //     public static void add_event_handler(GameObject o, EventTriggerType ev, Action<PointerEventData> callback)
-    //     {
-    //         var trigger = o.GetComponent<EventTrigger>();
-    //         if (trigger == null)
-    //         {
-    //             if (!o.IsUIObject())
-    //                 o.AddComponent<Collider2D>();
-    //             trigger = o.AddComponent<EventTrigger>();
-    //         }
-    //         var entry = new EventTrigger.Entry();
-    //         entry.eventID = ev;
-    //         entry.callback.AddListener(x => callback((PointerEventData)x));
-    //         trigger.triggers.Add(entry);
-    //     }
-
-    //     public static DObj on_event(GameObject o)
-    //     {
-    //         DObj call(DObj ev_, DObj callback)
-    //         {
-    //             var ev = (EventTriggerType)((DInt)ev_).value;
-    //             add_event_handler(o, ev, data => callback.__call__((VNEventData)data));
-    //             return DNone.unique;
-    //         }
-    //         return MK.Func2("on_event", call);
-    //     }
-
     //     public static void set_image_for_sprite(GameObject o, DObj child)
     //     {
     //         var render = o.GetComponent<SpriteRenderer>();

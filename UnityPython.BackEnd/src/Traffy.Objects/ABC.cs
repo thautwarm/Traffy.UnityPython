@@ -34,7 +34,7 @@ namespace Traffy.Objects
             CLASS.SetupClass();
             CLASS.IsFixed = true;
         }
-        public static TrObject new_abstract_class_instance(TrObject cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        public static TrObject new_abstract_class_instance(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {
             throw new TypeError($"cannot initialized abstract class {cls.__repr__()}");
         }

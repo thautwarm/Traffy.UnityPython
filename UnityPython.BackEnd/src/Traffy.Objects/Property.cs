@@ -7,21 +7,22 @@ namespace Traffy.Objects
     [PyBuiltin]
     public partial class TrProperty : TrObject
     {
-        TrObject _getter;
-        TrObject _setter = null;
+        public string name;
+        Func<TrObject, TrObject> _getter;
+        Action<TrObject, TrObject> _setter = null;
         public override List<TrObject> __array__ => null;
-
+        public override string __repr__() => $"<property {name}>";
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
         TrObject bind_setter(TrObject o)
         {
-            _setter = o;
+            _setter = (self, x) => o.Call(self, x);
             return this;
         }
 
         TrObject bind_getter(TrObject o)
         {
-            _getter = o;
+            _getter = self => o.Call(self);
             return this;
         }
 
@@ -69,7 +70,7 @@ namespace Traffy.Objects
                     throw new AttributeError("write-only property");
                 throw new AttributeError("cannot read property");
             }
-            return _getter.Call(o);
+            return _getter(o);
         }
 
         internal void Set(TrObject trObject, TrObject value)
@@ -80,24 +81,17 @@ namespace Traffy.Objects
                     throw new AttributeError($"readonly property");
                 throw new AttributeError($"cannot set property");
             }
-            _setter.Call(trObject, value);
-        }
-
-        public static TrProperty Create(TrObject s_getter, TrObject s_setter)
-        {
-            var prop = new TrProperty();
-            prop._getter = s_getter;
-            prop._setter = s_setter;
-            return prop;
+            _setter(trObject, value);
         }
 
         public static TrProperty Create(string name, Func<TrObject, TrObject> s_getter, Action<TrObject, TrObject> s_setter)
         {
             var prop = new TrProperty();
+            prop.name = name;
             if (s_getter != null)
-                prop._getter = TrSharpFunc.FromFunc("get " + name, s_getter);
+                prop._getter = s_getter;
             if (s_setter != null)
-                prop._setter = TrSharpFunc.FromFunc("set" + name, s_setter);
+                prop._setter = s_setter;
             return prop;
         }
         public static TrObject datanew(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
@@ -111,7 +105,9 @@ namespace Traffy.Objects
             {
 
                 var prop = new TrProperty();
-                prop._getter = args[1];
+                var getter = args[1];
+                prop.name = getter.__repr__();
+                prop._getter = (self) => getter.Call(self);
                 return prop;
                 // var pyfunc = args[1];
                 // Func<TrObject, TrObject> getter = self => pyfunc.Call(self);

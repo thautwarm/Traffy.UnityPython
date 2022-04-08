@@ -75,17 +75,29 @@ namespace Traffy.Objects
 
 
         #if !NOT_UNITY
+        static void BuiltinClassInit_TrEventTriggerType(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrMonoBehaviour(TrClass cls)
         {
         }
         #endif
         #if !NOT_UNITY
-        static void BuiltinClassInit_TrEventData(TrClass cls)
+        static void BuiltinClassInit_TrColor(TrClass cls)
+        {
+            cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Unity2D.TrColor)self).__hash__());
+            cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Unity2D.TrColor)self).__eq__(arg0));
+        }
+        #endif
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrCanvas(TrClass cls)
         {
         }
         #endif
         #if !NOT_UNITY
-        static void BuiltinClassInit_TrEventTriggerType(TrClass cls)
+        static void BuiltinClassInit_TrCanvasGroup(TrClass cls)
         {
         }
         #endif
@@ -100,7 +112,17 @@ namespace Traffy.Objects
         }
         #endif
         #if !NOT_UNITY
+        static void BuiltinClassInit_TrScrollRect(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrSprite(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrSpriteImage(TrClass cls)
         {
         }
         #endif
@@ -115,9 +137,19 @@ namespace Traffy.Objects
         }
         #endif
         #if !NOT_UNITY
+        static void BuiltinClassInit_TrEventData(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrGameObject(TrClass cls)
         {
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Unity2D.TrGameObject)self).__eq__(arg0));
+        }
+        #endif
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrImageResource(TrClass cls)
+        {
         }
         #endif
         #if !NOT_UNITY
@@ -433,6 +465,7 @@ namespace Traffy.Objects
         }
         static void BuiltinClassInit_TrProperty(TrClass cls)
         {
+            cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrProperty)self).__repr__());
         }
         static void BuiltinClassInit_TrRef(TrClass cls)
         {
@@ -520,6 +553,13 @@ namespace Traffy.Objects
         static void BuiltinClassInit<T>(TrClass cls) where T : TrObject
         {
             #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrEventTriggerType))
+            {
+                BuiltinClassInit_TrEventTriggerType(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrMonoBehaviour))
             {
                 BuiltinClassInit_TrMonoBehaviour(cls);
@@ -527,16 +567,23 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
-            if (typeof(T) == typeof(Traffy.Unity2D.TrEventData))
+            if (typeof(T) == typeof(Traffy.Unity2D.TrColor))
             {
-                BuiltinClassInit_TrEventData(cls);
+                BuiltinClassInit_TrColor(cls);
                 return;
             }
             #endif
             #if !NOT_UNITY
-            if (typeof(T) == typeof(Traffy.Unity2D.TrEventTriggerType))
+            if (typeof(T) == typeof(Traffy.Unity2D.TrCanvas))
             {
-                BuiltinClassInit_TrEventTriggerType(cls);
+                BuiltinClassInit_TrCanvas(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrCanvasGroup))
+            {
+                BuiltinClassInit_TrCanvasGroup(cls);
                 return;
             }
             #endif
@@ -555,9 +602,23 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrScrollRect))
+            {
+                BuiltinClassInit_TrScrollRect(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrSprite))
             {
                 BuiltinClassInit_TrSprite(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrSpriteImage))
+            {
+                BuiltinClassInit_TrSpriteImage(cls);
                 return;
             }
             #endif
@@ -576,9 +637,23 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrEventData))
+            {
+                BuiltinClassInit_TrEventData(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrGameObject))
             {
                 BuiltinClassInit_TrGameObject(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrImageResource))
+            {
+                BuiltinClassInit_TrImageResource(cls);
                 return;
             }
             #endif

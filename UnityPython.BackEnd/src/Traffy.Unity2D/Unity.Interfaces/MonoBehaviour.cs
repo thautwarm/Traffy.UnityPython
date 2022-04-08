@@ -7,9 +7,14 @@ namespace Traffy.Unity2D
 {
     [PyBuiltin]
     [UnitySpecific]
-    public partial class TrMonoBehaviour : TrObject
+    public sealed partial class TrMonoBehaviour : TrUnityComponent
     {
         public static TrClass CLASS;
+        private TrMonoBehaviour(TrGameObject baseObject) : base(baseObject)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
         
@@ -88,6 +93,11 @@ namespace Traffy.Unity2D
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
+        }
+
+        public override void RemoveComponent()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

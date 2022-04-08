@@ -280,7 +280,7 @@ namespace CSAST
         }
         public override Doc Doc()
         {
-            return value.ToString().Doc();
+            return value.ToString().Doc() * "f".Doc();
         }
     }
 

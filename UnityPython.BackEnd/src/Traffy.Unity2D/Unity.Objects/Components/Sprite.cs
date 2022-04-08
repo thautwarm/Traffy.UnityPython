@@ -12,26 +12,31 @@ namespace Traffy.Unity2D
     [PyInherit(typeof(TrMonoBehaviour))]
     public sealed partial class TrSprite : TrUnityComponent
     {
+        internal SpriteRenderer native;
+        public static TrClass CLASS;
+        public override TrClass Class => CLASS;
+        public TrSprite(TrGameObject uo, SpriteRenderer component) : base(uo)
+        {
+            this.native = component;
+        }
         internal static TrUnityComponent __add_component__(TrClass _, TrGameObject uo)
         {
             var native_comp = uo.gameObject.AddComponent<SpriteRenderer>();
             if (native_comp == null)
-                throw new ValueError("TrSprite.AddComponent: RectTransform has been added!");
-            return New(uo, native_comp);
+                throw new ValueError("Sprite.AddComponent: SpriteRenderer has been added!");
+            return FromRaw(uo, native_comp);
         }
-
         internal static bool __get_component__(TrClass _, TrGameObject uo, out TrUnityComponent component)
         {
             var native_comp = uo.gameObject.GetComponent<SpriteRenderer>();
             if (native_comp != null)
             {
-                component = New(uo, native_comp);
+                component = FromRaw(uo, native_comp);
                 return true;
             }
             component = null;
             return false;
         }
-
         internal static bool __get_components__(TrClass _, TrGameObject uo, out IEnumerable<TrUnityComponent> components)
         {
             var rects = uo.gameObject.GetComponents<SpriteRenderer>();
@@ -40,11 +45,9 @@ namespace Traffy.Unity2D
                 components = null;
                 return false;
             }
-            components = uo.gameObject.GetComponents<SpriteRenderer>().Select(x => New(uo, x));
+            components = uo.gameObject.GetComponents<SpriteRenderer>().Select(x => FromRaw(uo, x));
             return true;
         }
-
-
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
@@ -54,58 +57,49 @@ namespace Traffy.Unity2D
             CLASS.__get_component__ = __get_component__;
             CLASS.__get_components__ = __get_components__;
         }
-
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
             CLASS.IsFixed = true;
-            Initialization.Prelude(CLASS);
         }
-
-        [PyBind]
-        public TrObject __new__(TrClass _, TrGameObject uo)
+        public static TrSprite FromRaw(TrGameObject uo, SpriteRenderer component)
         {
+            var allocations = UnityRTS.Get.allocations;
+            if (allocations.TryGetValue(component, out var allocation))
+            {
+                return allocation as TrSprite;
+            }
+            var result = new TrSprite(uo, component);
+            allocations[component] = result;
+            return result;
+        }
+        public override void RemoveComponent()
+        {
+            UnityRTS.Get.allocations.Remove(native);
+            Object.Destroy(native);
+        }
+        [PyBind]
+        public static TrObject __new__(TrClass cls, TrGameObject uo)
+        {
+            if (!object.ReferenceEquals(cls, CLASS))
+                throw new TypeError($"{CLASS.Name}.__new__(): the first argument is class {cls.Name} but expects class {CLASS.Name}");
             return __add_component__(CLASS, uo);
         }
-
-        public static TrSprite New(TrGameObject uo, SpriteRenderer render)
-        {
-            return new TrSprite(uo, render);
-        }
-
-        SpriteRenderer render;
-        public static TrSprite FromExisting(SpriteRenderer render)
-        {
-            var o = TrGameObject.FromRaw(render.gameObject);
-            return new TrSprite(o, render);
-        }
-        public TrSprite(TrGameObject uo, SpriteRenderer render) : base(uo)
-        {
-            this.render = render;
-        }
-
-        public override void RemoveComponent() => Object.Destroy(render);
-
-        public static TrClass CLASS;
-        public override TrClass Class => CLASS;
-        
-
         [PyBind]
         public TrObject width
         {
             set
             {
-
-                var scale = render.transform.localScale;
-                var width_origin = render.sprite.texture.width;
+                var scale = native.transform.localScale;
+                var width_origin = native.sprite.texture.width;
                 scale.x = value.ToFloat() / width_origin;
-                render.transform.localScale = scale;
+                native.transform.localScale = scale;
             }
             get
             {
-                var scale = render.transform.localScale;
-                var width_origin = render.sprite.texture.width;
+                var scale = native.transform.localScale;
+                var width_origin = native.sprite.texture.width;
                 return MK.Float(width_origin * scale.x);
             }
         }
@@ -115,16 +109,16 @@ namespace Traffy.Unity2D
         {
             set
             {
-                var scale = render.transform.localScale;
-                var height_origin = render.sprite.texture.height;
+                var scale = native.transform.localScale;
+                var height_origin = native.sprite.texture.height;
                 scale.y = value.ToFloat() / height_origin;
-                render.transform.localScale = scale;
+                native.transform.localScale = scale;
             }
 
             get
             {
-                var scale = render.transform.localScale;
-                var width_origin = render.sprite.texture.height;
+                var scale = native.transform.localScale;
+                var width_origin = native.sprite.texture.height;
                 return MK.Float(width_origin * scale.y);
             }
         }
@@ -133,7 +127,7 @@ namespace Traffy.Unity2D
         {
             get
             {
-                return MK.Float(render.material.color.a);
+                return MK.Float(native.material.color.a);
             }
 
             set
@@ -143,13 +137,34 @@ namespace Traffy.Unity2D
                     throw new TypeError($"alpha must be float, not {value.Class.Name}");
                 }
                 var alpha = floating.value;
-                RuntimeValidation.invalidate_int_range("color alpha", alpha, high: 255);
-                var color = render.material.color;
+                RuntimeValidation.invalidate_int_range("color alpha", alpha, high: 1.0f);
+                var color = native.material.color;
                 color.a = alpha;
-                render.material.color = color;
+                native.material.color = color;
             }
         }
 
+        public TrObject image
+        {
+            get
+            {
+                if (native.sprite == null)
+                    return MK.None();
+                return TrImageResource.FromRaw(native.sprite.texture);
+            }
+
+            set
+            {
+                if (value is TrImageResource image_resource)
+                {
+                    native.sprite = image_resource.sprite;
+                }
+                else
+                {
+                    throw new TypeError($"image must be {TrImageResource.CLASS.Name}, not {value.Class.Name}");
+                }
+            }
+        }
     }
 }
 

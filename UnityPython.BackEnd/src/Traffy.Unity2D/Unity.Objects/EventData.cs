@@ -13,7 +13,7 @@ namespace Traffy.Unity2D
 {
     [PyBuiltin]
     [UnitySpecific]
-    public sealed class TrEventData : TrObject
+    public sealed partial class TrEventData : TrObject
     {
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
@@ -49,58 +49,70 @@ namespace Traffy.Unity2D
             return new TrEventData { eventData = data };
         }
 
-        public TrObject ui_hits
-        {
-            get
-            {
-                var pos = eventData.pointerCurrentRaycast.worldPosition;
-                List<RaycastResult> results = new List<RaycastResult>();
-                var raycaster = UnityRTS.Get.MainCanvas.GetComponent<GraphicRaycaster>();
-                if (raycaster == null)
-                    throw new RuntimeError("No GraphicRaycaster found in the main canvas set to UnityRTS");
-                raycaster.Raycast(eventData, results);
-                return MK.List(results.Select(x =>
-                    {
-                        TrObject obj = TrGameObject.FromRaw(x.gameObject);
-                        return obj;
-                    }
-                ).ToList());
+        // public TrObject ui_hits
+        // {
+        //     get
+        //     {
+        //         List<RaycastResult> results = new List<RaycastResult>();
+        //         var raycaster = UnityRTS.Get.MainCanvas.GetComponent<GraphicRaycaster>();
+        //         if (raycaster == null)
+        //             throw new RuntimeError("No GraphicRaycaster found in the main canvas set to UnityRTS");
+        //         raycaster.Raycast(eventData, results);
+        //         return MK.List(results.Select(x =>
+        //             {
+        //                 TrObject obj = TrGameObject.FromRaw(x.gameObject);
+        //                 return obj;
+        //             }
+        //         ).ToList());
+        //     }
+        // }
 
-            }
-        }
+        // public TrObject physical2d_hits
+        // {
+        //     get
+        //     {
+        //         List<RaycastResult> results = new List<RaycastResult>();
+        //         var raycaster = UnityRTS.Get.MainCamera.GetComponent<Physics2DRaycaster>();
+        //         if (raycaster == null)
+        //             throw new RuntimeError("No Physics2DRaycaster found in the main camera set to UnityRTS");
+        //         raycaster.Raycast(eventData, results);
+        //         return MK.List(results.Select(x =>
+        //             {
+        //                 TrObject obj = TrGameObject.FromRaw(x.gameObject);
+        //                 return obj;
+        //             }
+        //         ).ToList());
 
-        public TrObject physical_hits
-        {
-            get
-            {
-                var pos = eventData.pointerCurrentRaycast.worldPosition;
-                List<RaycastResult> results = new List<RaycastResult>();
-                var raycaster = UnityRTS.Get.MainCamera.GetComponent<Physics2DRaycaster>();
-                if (raycaster == null)
-                    throw new RuntimeError("No Physics2DRaycaster found in the main camera set to UnityRTS");
-                raycaster.Raycast(eventData, results);
-                return MK.List(results.Select(x =>
-                    {
-                        TrObject obj = TrGameObject.FromRaw(x.gameObject);
-                        return obj;
-                    }
-                ).ToList());
+        //     }
+        // }
 
-            }
-        }
-
-        public TrObject world_pos => TrVector3.Create(eventData.pointerCurrentRaycast.worldPosition);
-
+        // public TrObject world_pos => TrVector3.Create(eventData.pointerCurrentRaycast.worldPosition);
         public TrObject screen_pos => TrVector2.Create(eventData.position);
-
         public TrObject delta =>
                 TrVector2.Create(eventData.delta);
+
+        [PyBind]
+        public TrObject clickCount => MK.Int(eventData.clickCount);
+
+        [PyBind]
+        public TrObject clickTime => MK.Float(eventData.clickTime);
+
+        [PyBind]
+        public TrObject hovered => MK.Iter(eventData.hovered.Select(TrGameObject.FromRaw).GetEnumerator());
+
+        [PyBind]
         public TrObject is_dragging =>
                 MK.Bool(eventData.dragging);
+        
+        [PyBind]
         public TrObject is_scrolling =>
                 MK.Bool(eventData.IsScrolling());
+        
+        [PyBind]
         public TrObject scroll_delta_y =>
                 MK.Float(eventData.scrollDelta.y);
+        
+        [PyBind]
         public TrObject is_pointer_moving =>
                 MK.Bool(eventData.IsPointerMoving());
 

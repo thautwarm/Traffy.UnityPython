@@ -29,7 +29,7 @@ namespace Traffy.Objects
             return exc.traceback.cause;
         }
 
-        public readonly static TrProperty _obj_getcause = TrProperty.Create(TrSharpFunc.FromFunc("GetCause", GetCause), null);
+        public readonly static TrProperty _obj_getcause = TrProperty.Create("GetCause", GetCause, null);
 
         public TrExceptionBase UnsafeCause
         {

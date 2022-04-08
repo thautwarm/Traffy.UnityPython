@@ -14,13 +14,12 @@ namespace Traffy.Unity2D
     [PyInherit(typeof(TrMonoBehaviour))]
     public sealed partial class TrUI : TrUnityComponent
     {
-
         internal static TrUnityComponent __add_component__(TrClass _, TrGameObject uo)
         {
             var native_comp = uo.gameObject.AddComponent<RectTransform>();
             if (native_comp == null)
-                throw new ValueError("TrUI.AddComponent: RectTransform has been added!");
-            return New(uo, native_comp);
+                throw new ValueError("UI.AddComponent: RectTransform has been added!");
+            return FromRaw(uo, native_comp);
         }
 
         internal static bool __get_component__(TrClass _, TrGameObject uo, out TrUnityComponent component)
@@ -28,7 +27,7 @@ namespace Traffy.Unity2D
             var native_comp = uo.gameObject.GetComponent<RectTransform>();
             if (native_comp != null)
             {
-                component = New(uo, native_comp);
+                component = FromRaw(uo, native_comp);
                 return true;
             }
             component = null;
@@ -43,7 +42,7 @@ namespace Traffy.Unity2D
                 components = null;
                 return false;
             }
-            components = uo.gameObject.GetComponents<RectTransform>().Select(x => New(uo, x));
+            components = uo.gameObject.GetComponents<RectTransform>().Select(x => FromRaw(uo, x));
             return true;
         }
 
@@ -70,28 +69,35 @@ namespace Traffy.Unity2D
             Initialization.Prelude(CLASS);
         }
 
-        internal static TrUI New(TrGameObject uo, RectTransform rect)
+        internal static TrUI FromRaw(TrGameObject uo, RectTransform rect)
         {
-            return new TrUI(uo, rect);
+            var allocations = UnityRTS.Get.allocations;
+            if (allocations.TryGetValue(rect, out var allocation))
+            {
+                return allocation as TrUI;
+            }
+            var o = new TrUI(uo, rect);
+            allocations[rect] = o;
+            return o;
         }
 
         [PyBind]
-        public TrObject __new__(TrClass _, TrGameObject uo)
+        public static TrObject __new__(TrClass _, TrGameObject uo)
         {
             return __add_component__(CLASS, uo);
         }
 
         public override void RemoveComponent()
         {
-            Object.Destroy(rect);
+            UnityRTS.Get.allocations.Remove(native);
+            Object.Destroy(native);
         }
 
-        RectTransform rect;
-        public override object Native => rect;
+        public readonly RectTransform native;
 
         private TrUI(TrGameObject uo, RectTransform rect): base(uo)
         {
-            this.rect = rect;
+            this.native = rect;
         }
 
         public static TrClass CLASS;
@@ -102,10 +108,10 @@ namespace Traffy.Unity2D
         {
             set
             {
-                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value.ToFloat());
+                native.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value.ToFloat());
             }
 
-            get => MK.Float(rect.rect.width);
+            get => MK.Float(native.rect.width);
         }
 
         [PyBind]
@@ -113,10 +119,22 @@ namespace Traffy.Unity2D
         {
             set
             {
-                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, value.ToFloat());
+                native.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, value.ToFloat());
             }
 
-            get => MK.Float(rect.rect.height);
+            get => MK.Float(native.rect.height);
+        }
+
+        [PyBind]
+        public bool enabled
+        {
+            set
+            {
+                native.gameObject.SetActive(value);
+            }
+
+            get => native.gameObject.activeSelf;
+
         }
     }
 }

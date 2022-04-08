@@ -87,23 +87,22 @@ namespace Traffy.Unity2D
                 }
             }
             CLASS["AddComponent"] = TrSharpFunc.FromFunc("AddComponent", __bind_AddComponent);
-            static  Traffy.Objects.TrObject __bind_RequireComponents(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            CLASS["RequireComponents"] = TrSharpFunc.FromFunc(CLASS.Name + "." + "RequireComponents", (self, args, kwargs) => ((TrGameObject) self)._RequireComponents(args, kwargs));
+            static  Traffy.Objects.TrObject __bind_Destroy(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
-                    case 3:
+                    case 1:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<BList<Traffy.Objects.TrObject>>.Unique,__args[1]);
-                        var _2 = Unbox.Apply(THint<System.Collections.Generic.Dictionary<Traffy.Objects.TrObject,Traffy.Objects.TrObject>>.Unique,__args[2]);
-                        _0._RequireComponents(_1,_2);
+                        _0.Destroy();
                         return Traffy.MK.None();
                     }
                     default:
-                        throw new ValueError("RequireComponents() requires 3 positional argument(s), got " + __args.Count);
+                        throw new ValueError("Destroy() requires 1 positional argument(s), got " + __args.Count);
                 }
             }
-            CLASS["RequireComponents"] = TrSharpFunc.FromFunc("RequireComponents", __bind_RequireComponents);
+            CLASS["Destroy"] = TrSharpFunc.FromFunc("Destroy", __bind_Destroy);
             static  Traffy.Objects.TrObject __bind_on(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
@@ -155,6 +154,15 @@ namespace Traffy.Unity2D
                 ((Traffy.Unity2D.TrGameObject)_arg).z = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
             }
             CLASS["z"] = TrProperty.Create(CLASS.Name + ".z", __read_z, __write_z);
+            static  Traffy.Objects.TrObject __read_parent(Traffy.Objects.TrObject _arg)
+            {
+                return Box.Apply(((Traffy.Unity2D.TrGameObject)_arg).parent);
+            }
+            static  void __write_parent(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
+            {
+                ((Traffy.Unity2D.TrGameObject)_arg).parent = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+            }
+            CLASS["parent"] = TrProperty.Create(CLASS.Name + ".parent", __read_parent, __write_parent);
         }
     }
 }

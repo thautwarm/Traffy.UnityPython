@@ -37,13 +37,17 @@ namespace Traffy.Unity2D
             new MemLessIntMap<List<TrUnityComponent>>();
 
 
-        public TrGameObject(GameObject gameObject)
+        private TrGameObject(GameObject gameObject)
         {
             this.gameObject = gameObject;
         }
         public static TrGameObject FromRaw(GameObject o)
         {
-            return new TrGameObject(o);
+            var allocations = UnityRTS.Get.allocations;
+            if (allocations.TryGetValue(o, out var uo))
+                return uo as TrGameObject;
+            allocations[o] = uo = new TrGameObject(o);
+            return uo as TrGameObject;
         }
 
         public void RequireComponents(params TrClass[] klasses)
@@ -80,10 +84,7 @@ namespace Traffy.Unity2D
                 gameObject.name = value.AsStr();
             }
 
-            get
-            {
-                return MK.Str(gameObject.name ?? "");
-            }
+            get => MK.Str(gameObject.name ?? "");
         }
 
         [PyBind]
@@ -92,15 +93,11 @@ namespace Traffy.Unity2D
             set
             {
                 var pos = gameObject.transform.localPosition;
-                pos.x = value.ToFloat();
+                pos.x = value.ToFloat() / UnityRTS.PixelPerUnit;
                 gameObject.transform.localPosition = pos;
             }
 
-            get
-            {
-                return MK.Float(gameObject.transform.localPosition.x);
-
-            }
+            get => MK.Float(gameObject.transform.localPosition.x * UnityRTS.PixelPerUnit);
         }
 
         [PyBind]
@@ -109,15 +106,11 @@ namespace Traffy.Unity2D
             set
             {
                 var pos = gameObject.transform.localPosition;
-                pos.y = value.ToFloat();
+                pos.y = value.ToFloat() / UnityRTS.PixelPerUnit;
                 gameObject.transform.localPosition = pos;
             }
 
-            get
-            {
-                return MK.Float(gameObject.transform.localPosition.y);
-
-            }
+            get => MK.Float(gameObject.transform.localPosition.y * UnityRTS.PixelPerUnit);
         }
 
         [PyBind]
@@ -126,15 +119,11 @@ namespace Traffy.Unity2D
             set
             {
                 var pos = gameObject.transform.localPosition;
-                pos.z = value.ToFloat();
+                pos.z = value.ToFloat() / UnityRTS.PixelPerUnit;
                 gameObject.transform.localPosition = pos;
             }
 
-            get
-            {
-                return MK.Float(gameObject.transform.localPosition.z);
-
-            }
+            get => MK.Float(gameObject.transform.localPosition.z * UnityRTS.PixelPerUnit);
         }
 
         [PyBind]
@@ -197,9 +186,17 @@ namespace Traffy.Unity2D
         }
 
         [PyBind(Name = nameof(RequireComponents))]
-        internal void _RequireComponents(BList<TrObject> componentTypes, Dictionary<TrObject, TrObject> _)
+        internal TrObject _RequireComponents(BList<TrObject> componentTypes, Dictionary<TrObject, TrObject> _)
         {
             RequireComponents(componentTypes.Select(x => x.AsClass).ToArray());
+            return MK.None();
+        }
+
+        [PyBind]
+        internal void Destroy()
+        {
+            UnityRTS.Get.allocations.Remove(gameObject);
+            Object.Destroy(gameObject);
         }
 
         [PyBind]
@@ -223,6 +220,35 @@ namespace Traffy.Unity2D
                 return callback;
             }
             return TrSharpFunc.FromFunc($"<{ev} register>", register);
+        }
+
+        [PyBind]
+        internal TrObject parent
+        {
+            set
+            {
+                if (value is TrGameObject go)
+                {
+                    gameObject.transform.SetParent(go.gameObject.transform, false);
+                }
+                else if (value.IsNone())
+                {
+                    gameObject.transform.SetParent(null);
+                }
+                else
+                {
+                    throw new TypeError($"parent must be a GameObject or None");
+                }
+
+            }
+
+            get
+            {
+                var parent = gameObject.transform.parent;
+                if (parent == null)
+                    return MK.None();
+                return TrGameObject.FromRaw(parent.gameObject);
+            }
         }
     }
 

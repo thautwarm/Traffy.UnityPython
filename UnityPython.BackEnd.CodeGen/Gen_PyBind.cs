@@ -43,6 +43,8 @@ public class Gen_PyBind : HasNamespace
         {
             yield break;
         }
+        if (entry.GetCustomAttribute<PyBuiltin>() == null)
+            yield break;
         (this as HasNamespace).AddNamepace("System");
         (this as HasNamespace).AddNamepace("System.Collections.Generic");
         (this as HasNamespace).AddNamepace("Traffy.Objects");
@@ -172,7 +174,7 @@ public class Gen_PyBind : HasNamespace
             }
             else
             {
-                var cm = new CSMethod(prop_Reader, retType,
+                var cm = new CSMethod(prop_Reader, typeof(TrObject),
                     new[] { ("_arg", (CSType)typeof(TrObject)) },
                     new SReturn(arg[meth.Name].By(x => Helper.Box.Call(x))).SingletonArray()
                 );
