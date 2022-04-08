@@ -38,11 +38,11 @@ namespace Traffy.Unity2D
         [PyBind(Name = nameof(__new__))]
         public static TrObject __new_sprite_resource__(BList<TrObject> __args, Dictionary<TrObject, TrObject> __kwargs)
         {
-            throw new TypeError($"{CLASS.Name} has no constructor, use {CLASS.Name}.{nameof(Load)} instead.");
+            throw new TypeError($"{CLASS.Name} has no constructor, use {CLASS.Name}.{nameof(load)} instead.");
         }
 
         [PyBind]
-        public static TrImageResource Load(string path)
+        public static TrImageResource load(string path)
         {
             var bytes = Traffy.IO.ReadFileBytes(path);
             var tex = Media.Cast(THint<Texture2D>.Unique, bytes, TextureFormat.RGBA32);
@@ -60,7 +60,7 @@ namespace Traffy.Unity2D
         }
 
         [PyBind]
-        public void Destroy()
+        public void destory()
         {
             if (s_sprite != null)
             {
