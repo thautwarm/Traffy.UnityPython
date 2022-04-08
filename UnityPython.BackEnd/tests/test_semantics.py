@@ -9,28 +9,36 @@ with testsuite("list packing"):
     assert z == [2], "list packing from tuple"
 
     data_for_generator_test = [3, 6, 6, 1, 1, 2, 0, 0, 1, 1, 2, 3]
-    assert [3, *[*[6, 6], 1, *[1, 2]], *[*[0, 0], 1, *[1, 2]], 3]\
-        == data_for_generator_test, "list unpack"
+    assert [
+        3,
+        *[*[6, 6], 1, *[1, 2]],
+        *[*[0, 0], 1, *[1, 2]],
+        3,
+    ] == data_for_generator_test, "list unpack"
 
 with testsuite("dict packing"):
     q = {1: 5, 3: 7}
     qs = {1: 2, **q}
     assert qs == {1: 5, 3: 7}, "dict packing"
     from typing import Mapping, Iterator, Any
+
     class S(Mapping[int, int]):
         def __finditem__(self, k: int, vref: ref[Any]):
             if k == 2:
                 vref.value = 8
                 return True
             return False
+
         def __len__(self) -> int:
             return 1
-        
+
         def __iter__(self):
             yield 2
+
     assert {1: 2, **S()} == {1: 2, 2: 8}
 
 with testsuite("first-class functions"):
+
     def fcf_0(u):
         return lambda x: x + u
 
@@ -38,73 +46,90 @@ with testsuite("first-class functions"):
 
     def fcf_1(f, x):
         return f(x)
-    
+
     assert fcf_1(lambda x: x // 6, 122) == 122 // 6, "first-class lambda"
 
 with testsuite("function parameters"):
+
     def scope_func_params():
         with testsuite("default parameters"):
+
             def f1(x, y, z=1):
                 return x + y + z
 
             assert f1(1, 2) == 4 == f1(1, 2, 1), "default parameter"
         with testsuite("variable parameters"):
+
             def f2(*args):
                 return sum(args)
 
             assert f2(1, 2, 3) == 6, "variable parameter"
-    
+
         with testsuite("keyword parameters"):
+
             def f3(**kwargs):
                 return (sorted(kwargs.keys()), sum(kwargs.values()))
 
-            assert f3(x=1, y=2, z=3) == (['x', 'y', 'z'], 6), "keyword parameter"
-    
+            assert f3(x=1, y=2, z=3) == (["x", "y", "z"], 6), "keyword parameter"
+
         with testsuite("variable and keyword parameters"):
+
             def f4(*args, **kwargs):
                 return (args, kwargs)
 
-            assert f4(1, 2, 3, x=1, y=2, z=3) == ((1, 2, 3), {'x': 1, 'y': 2, 'z': 3}), "variable and keyword parameter"
-        
+            assert f4(1, 2, 3, x=1, y=2, z=3) == (
+                (1, 2, 3),
+                {"x": 1, "y": 2, "z": 3},
+            ), "variable and keyword parameter"
+
         with testsuite("variable and keyword parameters with default values"):
-            def f5(x, y, z='z', **kwargs):
+
+            def f5(x, y, z="z", **kwargs):
                 return (x, y, z, kwargs)
 
-            assert f5(1, 2, a=4, b=5) == (1, 2, 'z', {'a': 4, 'b': 5}), "variable and keyword parameter with default values"
-        
+            assert f5(1, 2, a=4, b=5) == (
+                1,
+                2,
+                "z",
+                {"a": 4, "b": 5},
+            ), "variable and keyword parameter with default values"
+
         with testsuite("not enough default arguments"):
-            def f6(x, y, z=1, a = 2, d = 3):
+
+            def f6(x, y, z=1, a=2, d=3):
                 return 0
+
             try:
-                f6(1) # type: ignore
+                f6(1)  # type: ignore
                 assert False, "not enough default, arguments"
             except TypeError:
                 pass
-        
-        with testsuite("keyword only"):
-            def f(x, y, *, z):
-                return x * y ** z
 
-            try:    
-                f(1, 2, 3) # type: ignore
+        with testsuite("keyword only"):
+
+            def f(x, y, *, z):
+                return x * y**z
+
+            try:
+                f(1, 2, 3)  # type: ignore
                 assert False, "keyword only 1"
             except TypeError:
                 pass
 
-            assert f(2, 3, z=4) == 2 * 3 ** 4 == 162, "keyword only 2"
+            assert f(2, 3, z=4) == 2 * 3**4 == 162, "keyword only 2"
 
     scope_func_params()
 
 with testsuite("async + generators"):
+
     def f0(x):
         yield x
         yield x
 
     assert list(f0(0)) == [0, 0], "generator1"
 
-
     def f02(x):
-        yield from f0(x+x)
+        yield from f0(x + x)
         yield 1
         yield from [1, 2]
 
@@ -138,38 +163,43 @@ with testsuite("classdef"):
         assert Cxw(125).f() == 125, "classdef"
 
         with testsuite("class freevars"):
+
             def f(x):
                 class CC:
                     def k(self):
                         return x
+
                 assert CC().k() == x, "class freevars"
+
             f(1)
             f("q123")
-        
+
         with testsuite("classmethods"):
-                class C0:
-                    @classmethod
-                    def f(cls):
-                        return cls
 
-                assert C0.f() == C0, "classmethods no arg"
+            class C0:
+                @classmethod
+                def f(cls):
+                    return cls
 
-                class C1:
-                    @classmethod
-                    def f(cls, *args):
-                        return (cls, *args)
+            assert C0.f() == C0, "classmethods no arg"
 
-                assert C1.f(1, 2, 3) == (C1, 1, 2, 3), "classmethods narg"
+            class C1:
+                @classmethod
+                def f(cls, *args):
+                    return (cls, *args)
+
+            assert C1.f(1, 2, 3) == (C1, 1, 2, 3), "classmethods narg"
+
     test_class()
 
 
 with testsuite("raise"):
-    
+
     ok = False
     try:
         raise 1
     except TypeError as e:
-        ok =  "exception value must be an instance of BaseException, not" in e.args[0]
+        ok = "exception value must be an instance of BaseException, not" in e.args[0]
     assert ok
 
     ok = False
@@ -179,16 +209,15 @@ with testsuite("raise"):
         ok = True
     assert ok
 
-    
+
 with testsuite("roperators"):
+
     class Inc:
         def __radd__(self, a):
             if isinstance(a, int):
                 return a + 1
             return NotImplemented
 
-    
     a = Inc()
     x = 1 + a
     assert x == 2
-

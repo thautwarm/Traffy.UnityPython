@@ -15,11 +15,9 @@ namespace Traffy.Unity2D
         public Camera MainCamera;
         public Canvas MainCanvas;
         public Dictionary<UnityEngine.Object, TrObject> allocations;
-        public System.Func<Texture2D, Texture2D> API_RemoveBackground;
         public static UnityRTS Get;
-        void Start()
+        public void ReInit()
         {
-            
             Get = this;
             if (MainCamera == null)
                 MainCamera = Camera.main;
@@ -28,11 +26,15 @@ namespace Traffy.Unity2D
             if (ProjectDirectory == null || ProjectDirectory.Trim().Length == 0)
                 ProjectDirectory = Application.persistentDataPath;
             ModuleSystem.SetProjectDir(ProjectDirectory);
-            allocations = new Dictionary<UnityEngine.Object, TrObject>();
             if (!MainCamera.TryGetComponent<Physics2DRaycaster>(out _))
             {
                 MainCamera.gameObject.AddComponent<Physics2DRaycaster>();
             }
+        }
+        void Start()
+        {
+            ReInit();
+            allocations = new Dictionary<UnityEngine.Object, TrObject>();
         }
     }
 }

@@ -2,14 +2,18 @@
 x = 1
 x, *z, y = [1, 2, 3]
 
+
 def g(u):
     return lambda x: x + u
+
 
 def u(x):
     i = 0
     while i < x:
         i = i + 1
         yield i
+
+
 print(g(1)(2))
 
 gen = u(5)
@@ -20,14 +24,18 @@ print(next(gen))
 print(next(gen))
 print.__call__(next(gen))
 
+
 def k(*args, x=(1, 2)):
     print(args)
     return x
 
+
 print(k(1, 2, 3, 5, 6))
 
-def uq(a, b, *, y = 1):
+
+def uq(a, b, *, y=1):
     return a + b + y
+
 
 print(uq(1, 2))
 print(uq(1, 2, y=3))
@@ -36,16 +44,22 @@ print(dict([(1, 2)]))
 z = 1
 z += 1
 print(z)
+
+
 def test1():
     x = 0
     while x < 10000000:
         x += 1
         yield x
+
+
 def test2():
     x = 0
     while x < 10000000:
         x += 1
     return x
+
+
 # a = time()
 # xs = test2()
 # print("value", xs)
@@ -64,11 +78,15 @@ print(1)
 
 def f():
     print("s2", (yield 5))
+
+
 print(9)
 c = f()
 
+
 def k():
     yield from c
+
 
 z = c.send(None, x := ref())
 
@@ -87,6 +105,7 @@ z = c.send(None, x := ref())
 # co = f()
 # print(co.send(None))
 # co.send(3)
+
 
 def __init__(self, x: int, y: int):
     self.x = x
@@ -112,7 +131,7 @@ def __init__(self, x: int, y: int):
     self.v8 = x + y
     self.v9 = x + y
     # 21 - 35
-    
+
     self.w9 = 10
     self.w1 = x + y
     self.w2 = x + y
@@ -129,7 +148,6 @@ def __repr__(self):
     return "S" + "(" + str(self.x) + ", " + str(self.y) + ")"
 
 
-
 objs = []
 
 S = type("S", (object,), {"__init__": __init__, "__repr__": __repr__, "U": 3})
@@ -143,11 +161,14 @@ def bench(o1, o2, o3, o4):
         k = os[i % 4].U
     return k
 
+
 class M:
     U = 5
 
+
 class N:
     U = 30
+
 
 class LL:
     U = 30
@@ -169,12 +190,10 @@ print("value", k)
 print("time1", time() - a)
 
 
-
 # a = time()
 # xs = test2()
 # print("value", xs)
 # print("time1", time() - a)
-
 
 
 # print(a)
@@ -192,8 +211,10 @@ print([1, 2, 3].__repr__())
 print(list.__new__)
 print(map.__new__)
 
+
 def acc(i):
     return i + 1
+
 
 # print(list(map(acc, [1, 2, 3])))
 
@@ -202,8 +223,10 @@ print(acc(100))
 for i in map(acc, [1, 2, 3]):
     print(i)
 
+
 def add(i, c):
     return i + c
+
 
 for _sum in map(add, [1, 2, 3], [4, 5, 6]):
     print(_sum)
@@ -213,6 +236,7 @@ print(list(map(acc, [2, 3, 5])))
 
 def lt2(i):
     return i > 2
+
 
 for i in filter(lt2, [1, 2, 3]):
     print(i)

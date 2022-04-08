@@ -27,7 +27,7 @@ namespace Traffy.Unity2D
 
         public abstract void RemoveComponent();
 
-        [PyBind(Name = "base")]
+        [PyBind(Name = "gameObject")]
         internal TrObject _baseObject
         {
             get
@@ -60,24 +60,11 @@ namespace Traffy.Unity2D
         [PyBind]
         internal TrObject on(TrEventTriggerType o_ev) => baseObject.on(o_ev);
 
-        [PyBind(Name = nameof(TrGameObject.AddComponent))]
-        internal TrObject _AddComponent(TrObject componentType, TrObject gameState, TrObject parameter = null) =>
-            baseObject.AddComponent(componentType, gameState, parameter);
-
-        [PyBind(Name = nameof(TrGameObject.TryGetComponent))]
-        internal bool _TryGetComponent(TrObject componentType, TrRef refval) =>
-            baseObject.TryGetComponent(componentType, refval);
-
-        [PyBind(Name = nameof(TrGameObject.TryGetComponents))]
-        internal bool _TryGetComponents(TrObject componentType, TrRef refval) =>
-            baseObject.TryGetComponents(componentType, refval);
-
-        [PyBind(Name = nameof(TrGameObject.GetComponent))]
-        internal TrObject _GetComponent(TrObject componentType) =>
-            baseObject.GetComponent(componentType);
+        [PyBind(Name = nameof(TrGameObject.requireComponents))]
+        internal TrObject _RequireComponents(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs) => baseObject._RequireComponents(args, kwargs);
 
         [PyBind]
-        internal void Destroy() => RemoveComponent();
+        internal void destory() => RemoveComponent();
     }
 }
 

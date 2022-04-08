@@ -161,9 +161,9 @@ namespace Traffy.Unity2D
                     case TMPro.TextOverflowModes.Ellipsis:
                         return MK.Str("...");
                     case TMPro.TextOverflowModes.Page:
-                        return MK.Str("page");
+                        return MK.Str("Page");
                     case TMPro.TextOverflowModes.ScrollRect:
-                        return MK.Str("scroll");
+                        return MK.Str("Scroll");
                     default:
                         throw new ValueError($"{TrText.CLASS.Name}.{nameof(overflow)}: overflow mode {native.overflowMode} is not supported.");
                 }
@@ -178,10 +178,10 @@ namespace Traffy.Unity2D
                         case "...":
                             native.overflowMode = TMPro.TextOverflowModes.Ellipsis;
                             return;
-                        case "page":
+                        case "Page":
                             native.overflowMode = TMPro.TextOverflowModes.Page;
                             return;
-                        case "scroll":
+                        case "Scroll":
                             native.overflowMode = TMPro.TextOverflowModes.ScrollRect;
                             return;
                         default:
@@ -206,7 +206,7 @@ namespace Traffy.Unity2D
         }
 
         [PyBind]
-        public TrObject currentPage
+        public TrObject displayingPage
         {
             get => MK.Int(native.pageToDisplay);
             set => native.pageToDisplay = System.Math.Max(1, value.AsInt());
@@ -232,11 +232,10 @@ namespace Traffy.Unity2D
         }
 
         [PyBind]
-        public void ForceMeshUpdate([PyBind.Keyword] bool ignoreActiveState = false, [PyBind.Keyword] bool forceTextReparsing = false)
+        public void forceMeshUpdate([PyBind.Keyword] bool ignoreActiveState = false, [PyBind.Keyword] bool forceTextReparsing = false)
         {
             native.ForceMeshUpdate(ignoreActiveState: ignoreActiveState, forceTextReparsing: forceTextReparsing);
         }
-
 
         [PyBind]
         public IEnumerator<TrObject> playText([PyBind.Keyword] string text, [PyBind.Keyword] float speed = 5f)

@@ -9,7 +9,7 @@ with testsuite("None"):
 
         def f():
             return None
-        
+
         assert x2 is f()
         assert x2 == f()
 

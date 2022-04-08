@@ -30,6 +30,11 @@ namespace Traffy.Unity2D
 
         public override List<TrObject> __array__ => null;
 
+        public override string __repr__()
+        {
+            return $"<ImageResource InstanceId={native.GetInstanceID()}>";
+        }
+
         [PyBind(Name = nameof(__new__))]
         public static TrObject __new_sprite_resource__(BList<TrObject> __args, Dictionary<TrObject, TrObject> __kwargs)
         {
@@ -58,7 +63,10 @@ namespace Traffy.Unity2D
         public void Destroy()
         {
             if (s_sprite != null)
+            {
                 Object.Destroy(s_sprite);
+                s_sprite = null;
+            }
             Object.Destroy(native);
         }
 

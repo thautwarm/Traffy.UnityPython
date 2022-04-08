@@ -1,11 +1,12 @@
 from .utils import testsuite
 import types
+
 print(types.__dict__)
 from types import MethodType
 
 with testsuite("method"):
     lam = lambda x: "das"
-    f = MethodType(lam, None) 
+    f = MethodType(lam, None)
     assert f() == "das"
 
     with testsuite("hashable"):

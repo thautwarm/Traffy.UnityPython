@@ -902,6 +902,15 @@ namespace Traffy
         static TrTuple zero_length_tuple = new TrTuple { elts = _zeroelts };
         public static TrTuple Tuple() => zero_length_tuple;
 
+        static IEnumerator<TrObject> _mkEmptyIter()
+        {
+            yield break;
+        }
+        public static IEnumerator<TrObject> EmptyObjectEnumerator = _mkEmptyIter();
+        public static TrObject Iter()
+        {
+            return new TrIter(EmptyObjectEnumerator);
+        }
         public static TrObject Iter(IEnumerator<TrObject> v)
         {
             if (v is TrGenerator coro)

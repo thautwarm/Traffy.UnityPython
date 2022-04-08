@@ -1,10 +1,13 @@
 x = "-2" <= "-5"
 print(type(x), x)
 
+
 class S:
     x = 1
+
     def __init__(self, x):
         pass
+
 
 # print(list(map(lambda x: x // 0, [1, 2, 3])))
 print(S(1))
@@ -16,21 +19,27 @@ print(x)
 x.append(5)
 print(x)
 
-print(int.from_bytes(b'\x00\x01\x00\x01\x00\x00\x00\x01', 'little'))
+print(int.from_bytes(b"\x00\x01\x00\x01\x00\x00\x00\x01", "little"))
+
 
 class X:
     u = 5
+
     def __init__(self, x):
         self.x = x
         self.y = x + 1
+
     def __enter__(self):
         print("__enter__", self.x)
         return self.x
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         print("__exit__", self.x)
 
+
 with X(2):
     pass
+
 
 def f():
     try:
@@ -39,6 +48,7 @@ def f():
         print("final 1")
         print("final 2")
     print("after final")
+
 
 with X(2) as a, X(3) as b:
     print(a == 2, b == 3)
@@ -67,13 +77,16 @@ print((f"{a} {'c'!r}").__repr__())
 #     for i in range(1000000):
 #         z = x
 
+
 def testfunc(f):
     a = time()
     print("res", f())
     print(time() - a)
 
+
 # testfunc(test1)
 # testfunc(test2)
+
 
 def _test1():
     x = 0
@@ -81,10 +94,12 @@ def _test1():
         x += 1
         yield x
 
+
 def test1():
     x = list(_test1())
     print(x[50])
     return len(x)
+
 
 def test2():
     x = 0
@@ -92,11 +107,12 @@ def test2():
         x += 1
     return x
 
+
 class XX:
-    xx =5
+    xx = 5
+
     def __init__(self, x):
         self.x = x
-
 
 
 # testfunc(test1)
@@ -106,17 +122,21 @@ class XX:
 # testfunc(test2)
 
 import TestModules as mm
+
 print(mm.add1(5))
+
 
 def a0():
     yield 1
     yield 2
     return 8
 
+
 async def a1():
     await a0()
     print("x", (yield 3))
     return 1
+
 
 def a2():
     x = yield from a1()
@@ -133,18 +153,22 @@ print(list(i for i in range(15) if i % 2 == 0 if i > 4))
 
 print({a: b for a in range(7) if a > 3 for b in [a + 1]})
 
+
 def f(x: int):
     yield 1 + x
     yield 2 + x
     return 3 + x
 
+
 async def make():
-    x = {await f(i * 10)  for i in range(10)}
+    x = {await f(i * 10) for i in range(10)}
     print("xx", x)
     return x
 
+
 def k():
     (yield from make())
+
 
 for e in k():
     print(e)
@@ -153,6 +177,7 @@ print(a)
 
 from TestModules.TestImportStar import *
 from TestModules.TestImportStar__all__ import *
+
 print(a)
 print(b)
 
@@ -181,14 +206,15 @@ def test3():
         s += o.x
     return s
 
+
 # testfunc(test3)
+
 
 class X:
     k = 5
     pass
 
+
 print(XX.xx)
 
 # assert X.k == 8, "asda"
-
-

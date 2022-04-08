@@ -11,98 +11,22 @@ namespace Traffy.Unity2D
         public override bool __ne__(TrObject o) => !__eq__(o);
         internal static void generated_BindMethods()
         {
-            static  Traffy.Objects.TrObject __bind_TryGetComponents(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-            {
-                switch(__args.Count)
-                {
-                    case 3:
-                    {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        var _2 = Unbox.Apply(THint<Traffy.Objects.TrRef>.Unique,__args[2]);
-                        return Box.Apply(_0.TryGetComponents(_1,_2));
-                    }
-                    default:
-                        throw new ValueError("TryGetComponents() requires 3 positional argument(s), got " + __args.Count);
-                }
-            }
-            CLASS["TryGetComponents"] = TrSharpFunc.FromFunc("TryGetComponents", __bind_TryGetComponents);
-            static  Traffy.Objects.TrObject __bind_TryGetComponent(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-            {
-                switch(__args.Count)
-                {
-                    case 3:
-                    {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        var _2 = Unbox.Apply(THint<Traffy.Objects.TrRef>.Unique,__args[2]);
-                        return Box.Apply(_0.TryGetComponent(_1,_2));
-                    }
-                    default:
-                        throw new ValueError("TryGetComponent() requires 3 positional argument(s), got " + __args.Count);
-                }
-            }
-            CLASS["TryGetComponent"] = TrSharpFunc.FromFunc("TryGetComponent", __bind_TryGetComponent);
-            static  Traffy.Objects.TrObject __bind_GetComponent(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-            {
-                switch(__args.Count)
-                {
-                    case 2:
-                    {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        return Box.Apply(_0.GetComponent(_1));
-                    }
-                    default:
-                        throw new ValueError("GetComponent() requires 2 positional argument(s), got " + __args.Count);
-                }
-            }
-            CLASS["GetComponent"] = TrSharpFunc.FromFunc("GetComponent", __bind_GetComponent);
-            static  Traffy.Objects.TrObject __bind_AddComponent(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-            {
-                switch(__args.Count)
-                {
-                    case 3:
-                    {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        var _2 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[2]);
-                        Traffy.Objects.TrObject _3;
-                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("parameter"),out var __keyword__3)))
-                            _3 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__keyword__3);
-                        else
-                            _3 = null;
-                        return Box.Apply(_0.AddComponent(_1,_2,parameter : _3));
-                    }
-                    case 4:
-                    {
-                        var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[1]);
-                        var _2 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[2]);
-                        var _3 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[3]);
-                        return Box.Apply(_0.AddComponent(_1,_2,_3));
-                    }
-                    default:
-                        throw new ValueError("AddComponent() requires 3 to 4 positional argument(s), got " + __args.Count);
-                }
-            }
-            CLASS["AddComponent"] = TrSharpFunc.FromFunc("AddComponent", __bind_AddComponent);
-            CLASS["RequireComponents"] = TrSharpFunc.FromFunc(CLASS.Name + "." + "RequireComponents", (self, args, kwargs) => ((TrGameObject) self)._RequireComponents(args, kwargs));
-            static  Traffy.Objects.TrObject __bind_Destroy(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            CLASS["requireComponents"] = TrSharpFunc.FromFunc(CLASS.Name + "." + "requireComponents", (self, args, kwargs) => ((TrGameObject) self)._RequireComponents(args, kwargs));
+            static  Traffy.Objects.TrObject __bind_destory(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
                     case 1:
                     {
                         var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[0]);
-                        _0.Destroy();
+                        _0.destory();
                         return Traffy.MK.None();
                     }
                     default:
-                        throw new ValueError("Destroy() requires 1 positional argument(s), got " + __args.Count);
+                        throw new ValueError("destory() requires 1 positional argument(s), got " + __args.Count);
                 }
             }
-            CLASS["Destroy"] = TrSharpFunc.FromFunc("Destroy", __bind_Destroy);
+            CLASS["destory"] = TrSharpFunc.FromFunc("destory", __bind_destory);
             static  Traffy.Objects.TrObject __bind_on(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)

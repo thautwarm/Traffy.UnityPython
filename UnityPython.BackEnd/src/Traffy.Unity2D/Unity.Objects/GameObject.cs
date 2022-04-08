@@ -31,6 +31,15 @@ namespace Traffy.Unity2D
         public override TrClass Class => CLASS;
         public override List<TrObject> __array__ => null;
 
+        public override TrObject __getitem__(TrObject item)
+        {
+            if (item is TrClass cls && cls.UnityKind != TrClass.UnityComponentClassKind.NotUnity)
+            {
+                return new TrComponentGroup(this, cls);
+            }
+            throw new TypeError($"{item.__repr__()} is not a component class");
+        }
+
         public override bool __eq__(TrObject other) => gameObject.Equals(other);
         public GameObject gameObject;
         public MemLessIntMap<List<TrUnityComponent>> Components =
@@ -50,7 +59,7 @@ namespace Traffy.Unity2D
             return uo as TrGameObject;
         }
 
-        public void RequireComponents(params TrClass[] klasses)
+        public void requireComponents(params TrClass[] klasses)
         {       
             var userComponentClasses =
                     klasses
@@ -73,7 +82,6 @@ namespace Traffy.Unity2D
                         (_) => new List<TrUnityComponent>(1)
                     );
             }
-                
         }
 
         [PyBind]
@@ -119,81 +127,23 @@ namespace Traffy.Unity2D
             set
             {
                 var pos = gameObject.transform.localPosition;
-                pos.z = value.ToFloat() / UnityRTS.PixelPerUnit;
+                pos.z = value.ToFloat();
                 gameObject.transform.localPosition = pos;
             }
 
-            get => MK.Float(gameObject.transform.localPosition.z * UnityRTS.PixelPerUnit);
+            get => MK.Float(gameObject.transform.localPosition.z);
         }
+        
 
-        [PyBind]
-        internal bool TryGetComponents(TrObject componentType, TrRef refval)
-        {
-            if (componentType is TrClass cls && cls.__get_components__ != null)
-            {
-                if(cls.__get_components__(cls, this, out var components))
-                {
-                    refval.value = MK.Iter(components.GetEnumerator());
-                    return true;
-                }
-                return false;
-            }
-            throw new TypeError($"{componentType.Class.Name} is not a component type");
-        }
-
-        [PyBind]
-        internal bool TryGetComponent(TrObject componentType, TrRef refval)
-        {
-            if (componentType is TrClass cls && cls.__get_component__ != null)
-            {
-                if (cls.__get_component__(cls, this, out var component))
-                {
-                    refval.value = component;
-                    return true;
-                }
-                return false;
-            }
-            throw new TypeError($"{componentType.Class.Name} is not a component type");
-        }
-
-        [PyBind]
-        internal TrObject GetComponent(TrObject componentType)
-        {
-            if (componentType is TrClass cls && cls.__get_component__ != null)
-            {
-                if (cls.__get_component__(cls, this, out var component))
-                {
-                    return component;
-                }
-                return MK.None();
-            }
-            throw new TypeError($"{componentType.Class.Name} is not a component type");
-        }
-
-        [PyBind]
-        internal TrUnityComponent AddComponent(TrObject componentType, TrObject gameState, TrObject parameter = null)
-        {
-            if (componentType is TrClass cls && cls.__add_component__ != null)
-            {
-                var component = cls.__add_component__(cls, this);
-                if (cls.__getic__(cls.ic__init, out var cls_init))
-                {
-                    cls_init.Call(component, gameState, parameter ?? MK.None());
-                }
-                return component;
-            }
-            throw new TypeError($"Cannot add component {componentType.Class.Name} to {this.Class.Name}: {componentType.__repr__()} is not a class");
-        }
-
-        [PyBind(Name = nameof(RequireComponents))]
+        [PyBind(Name = nameof(requireComponents))]
         internal TrObject _RequireComponents(BList<TrObject> componentTypes, Dictionary<TrObject, TrObject> _)
         {
-            RequireComponents(componentTypes.Select(x => x.AsClass).ToArray());
+            requireComponents(componentTypes.Select(x => x.AsClass).ToArray());
             return MK.None();
         }
 
         [PyBind]
-        internal void Destroy()
+        internal void destory()
         {
             UnityRTS.Get.allocations.Remove(gameObject);
             Object.Destroy(gameObject);

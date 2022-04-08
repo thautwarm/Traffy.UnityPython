@@ -85,10 +85,21 @@ namespace Traffy.Objects
         }
         #endif
         #if !NOT_UNITY
+        static void BuiltinClassInit_TrModule_unity2d(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
         static void BuiltinClassInit_TrColor(TrClass cls)
         {
             cls[MagicNames.i___hash__] = TrSharpFunc.FromFunc(cls.Name + ".__hash__", (self) => ((Traffy.Unity2D.TrColor)self).__hash__());
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Unity2D.TrColor)self).__eq__(arg0));
+        }
+        #endif
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrComponentGroup(TrClass cls)
+        {
+            cls[MagicNames.i___iter__] = TrSharpFunc.FromFunc(cls.Name + ".__iter__", (self) => ((Traffy.Unity2D.TrComponentGroup)self).__iter__());
         }
         #endif
         #if !NOT_UNITY
@@ -144,12 +155,14 @@ namespace Traffy.Objects
         #if !NOT_UNITY
         static void BuiltinClassInit_TrGameObject(TrClass cls)
         {
+            cls[MagicNames.i___getitem__] = TrSharpFunc.FromFunc(cls.Name + ".__getitem__", (self,arg0) => ((Traffy.Unity2D.TrGameObject)self).__getitem__(arg0));
             cls[MagicNames.i___eq__] = TrSharpFunc.FromFunc(cls.Name + ".__eq__", (self,arg0) => ((Traffy.Unity2D.TrGameObject)self).__eq__(arg0));
         }
         #endif
         #if !NOT_UNITY
         static void BuiltinClassInit_TrImageResource(TrClass cls)
         {
+            cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Unity2D.TrImageResource)self).__repr__());
         }
         #endif
         #if !NOT_UNITY
@@ -567,9 +580,23 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrModule_unity2d))
+            {
+                BuiltinClassInit_TrModule_unity2d(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrColor))
             {
                 BuiltinClassInit_TrColor(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrComponentGroup))
+            {
+                BuiltinClassInit_TrComponentGroup(cls);
                 return;
             }
             #endif

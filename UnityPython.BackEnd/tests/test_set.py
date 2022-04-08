@@ -25,7 +25,7 @@ with testsuite("set"):
         s.add(3)
         s.add(4)
         s.add(5)
-        
+
         assert len(s) == 5, "add"
         assert s == {1, 2, 3, 4, 5}, "set equal"
         assert s != {56, 7}
@@ -73,7 +73,7 @@ with testsuite("set"):
         s.add(5)
         s.clear()
         assert len(s) == 0, "clear"
-        
+
         with testsuite("+, -"):
             ss = {1, 2, 3, 4, 5}
             s = ss.copy()
@@ -91,7 +91,7 @@ with testsuite("set"):
                 assert x in s
             for x in extra:
                 assert x in s
-            
+
             s -= extra
             assert s == ss
     with testsuite("isdisjoint"):
@@ -108,4 +108,3 @@ with testsuite("set"):
         assert not s.isdisjoint({1, 2, 3, 4, 5, 6, 7, 8})
         assert not s.isdisjoint({1, 2, 3, 4, 5, 6, 7, 8, 9})
         assert not s.isdisjoint({1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
-

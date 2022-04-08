@@ -21,8 +21,8 @@ namespace Traffy.Unity2D
         {
             CLASS = TrClass.FromPrototype<TrColor>("Color");
         }
-        
-        
+
+
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
         internal static void _SetupClasses()
         {

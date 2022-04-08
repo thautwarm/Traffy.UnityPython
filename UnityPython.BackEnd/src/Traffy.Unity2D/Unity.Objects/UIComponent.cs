@@ -13,6 +13,8 @@ namespace Traffy.Unity2D
     public abstract class TrUIComponent : TrUnityComponent
     {
         TrUI _ui;
+
+        [PyBind]
         public TrUI ui
         {
             get
@@ -28,7 +30,7 @@ namespace Traffy.Unity2D
             }
         }
 
-         [PyBind]
+        [PyBind]
         public TrObject width
         {
             set

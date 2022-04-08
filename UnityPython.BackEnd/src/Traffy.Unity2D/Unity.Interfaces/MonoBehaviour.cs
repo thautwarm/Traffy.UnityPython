@@ -42,27 +42,16 @@ namespace Traffy.Unity2D
 
         internal static TrUnityComponent user__add_component__(TrClass klass, TrGameObject uo)
         {
-            if (klass.UnityKind != TrClass.UnityComponentClassKind.UserComponent || !klass.__getic__(klass.ic__new, out var cls_new))
+            if (klass.UnityKind != TrClass.UnityComponentClassKind.UserComponent)
             {
                 throw new TypeError($"Cannot add component {klass.Name}: class {klass.Name} does not have a __new__ from MonoBehaviour");
             }
             var components = uo.Components.GetOrUpdate(
                 klass.ClassId,
                 () => new List<TrUnityComponent>(1));
-            var obj = cls_new.Call(klass, uo);
-            if (!(obj is TrUnityComponent component))
-                throw new TypeError($"Cannot add component {klass.Name}: __new__ returned {obj.Class.Name} but it is not a component in .NET side.");
+            var component = TrUnityUserComponent.Create(uo, klass);
             components.Add(component);
             return component;
-        }
-
-        
-        [PyBind]
-        public static TrObject __new__(TrClass cls, TrGameObject uo)
-        {
-            if (RTS.issubclassof(cls, CLASS))
-                throw new TypeError($"TraffyBehaviour.__new__: argument 1 must be a subclass of {CLASS.Name}");
-            return TrUnityUserComponent.Create(uo, cls);
         }
 
         [PyBind]
