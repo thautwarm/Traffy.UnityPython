@@ -41,18 +41,14 @@ namespace Traffy.Unity2D
 
         public override IEnumerator<TrObject> __iter__()
         {
-            if (componentType.__get_components__ != null)
+            if(componentType.__get_components__(componentType, obj, out var components))
             {
-                if(componentType.__get_components__(componentType, obj, out var components))
-                {
-                    return components.GetEnumerator();
-                }
-                else
-                {
-                    return MK.EmptyObjectEnumerator;
-                }
+                return components.GetEnumerator();
             }
-            throw new TypeError($"{componentType.Class.Name} is not a component type");
+            else
+            {
+                return MK.EmptyObjectEnumerator;
+            }
         }
 
         [PyBind]

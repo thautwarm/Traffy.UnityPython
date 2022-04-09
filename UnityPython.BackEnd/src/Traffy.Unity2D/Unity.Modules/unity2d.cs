@@ -57,7 +57,7 @@ namespace Traffy.Unity2D
         public static void setProjectDirectory(string path)
         {
             UnityRTS.Get.ProjectDirectory = path;
-            UnityRTS.Get.ReInit();
+            UnityRTS.Get.ReSetting();
         }
 
 

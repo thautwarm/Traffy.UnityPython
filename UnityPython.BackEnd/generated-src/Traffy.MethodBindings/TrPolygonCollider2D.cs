@@ -24,7 +24,7 @@ namespace Traffy.Unity2D
                 }
             }
             CLASS["__new__"] = TrStaticMethod.Bind(CLASS.Name + "." + "__new__", __bind___new__);
-            static  Traffy.Objects.TrObject __bind_ResetShape(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            static  Traffy.Objects.TrObject __bind_resetShape(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
                 {
@@ -37,7 +37,7 @@ namespace Traffy.Unity2D
                             _2 = Unbox.Apply(THint<float>.Unique,__keyword__2);
                         else
                             _2 = 0.05f;
-                        _0.ResetShape(_1,tolerance : _2);
+                        _0.resetShape(_1,tolerance : _2);
                         return Traffy.MK.None();
                     }
                     case 3:
@@ -45,14 +45,14 @@ namespace Traffy.Unity2D
                         var _0 = Unbox.Apply(THint<Traffy.Unity2D.TrPolygonCollider2D>.Unique,__args[0]);
                         var _1 = Unbox.Apply(THint<Traffy.Unity2D.TrSprite>.Unique,__args[1]);
                         var _2 = Unbox.Apply(THint<float>.Unique,__args[2]);
-                        _0.ResetShape(_1,_2);
+                        _0.resetShape(_1,_2);
                         return Traffy.MK.None();
                     }
                     default:
-                        throw new ValueError("ResetShape() requires 2 to 3 positional argument(s), got " + __args.Count);
+                        throw new ValueError("resetShape() requires 2 to 3 positional argument(s), got " + __args.Count);
                 }
             }
-            CLASS["ResetShape"] = TrSharpFunc.FromFunc("ResetShape", __bind_ResetShape);
+            CLASS["resetShape"] = TrSharpFunc.FromFunc("resetShape", __bind_resetShape);
             static  Traffy.Objects.TrObject __bind_on(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)

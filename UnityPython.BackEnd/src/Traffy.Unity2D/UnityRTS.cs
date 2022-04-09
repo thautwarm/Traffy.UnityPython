@@ -13,16 +13,13 @@ namespace Traffy.Unity2D
         public const float PixelPerUnit = 100;
         public string ProjectDirectory;
         public Camera MainCamera;
-        public Canvas MainCanvas;
         public Dictionary<UnityEngine.Object, TrObject> allocations;
         public static UnityRTS Get;
-        public void ReInit()
+        public void ReSetting()
         {
             Get = this;
             if (MainCamera == null)
                 MainCamera = Camera.main;
-            if (MainCanvas == null)
-                MainCanvas = Object.FindObjectOfType<Canvas>();
             if (ProjectDirectory == null || ProjectDirectory.Trim().Length == 0)
                 ProjectDirectory = Application.persistentDataPath;
             ModuleSystem.SetProjectDir(ProjectDirectory);
@@ -33,7 +30,7 @@ namespace Traffy.Unity2D
         }
         void Start()
         {
-            ReInit();
+            ReSetting();
             allocations = new Dictionary<UnityEngine.Object, TrObject>();
         }
     }

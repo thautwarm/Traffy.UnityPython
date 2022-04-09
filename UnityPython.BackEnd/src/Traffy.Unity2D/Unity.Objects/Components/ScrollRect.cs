@@ -89,16 +89,16 @@ namespace Traffy.Unity2D
             return __add_component__(CLASS, uo);
         }
         [PyBind]
-        public TrObject elasticity
+        public float elasticity
         {
-            get => MK.Float(native.elasticity);
-            set => native.elasticity = value.ToFloat();
+            get => native.elasticity;
+            set => native.elasticity = value;
         }
         [PyBind]
-        public TrObject decelerationRate
+        public float decelerationRate
         {
-            get => MK.Float(native.decelerationRate);
-            set => native.decelerationRate = value.ToFloat();
+            get => native.decelerationRate;
+            set => native.decelerationRate = value;
         }
 
         [PyBind]
@@ -162,10 +162,10 @@ namespace Traffy.Unity2D
         }
 
         [PyBind]
-        public TrObject inertia
+        public bool inertia
         {
-            get => MK.Bool(native.inertia);
-            set => native.inertia = value.AsBool();
+            get => native.inertia;
+            set => native.inertia = value;
         }
         [PyBind]
         public TrObject content

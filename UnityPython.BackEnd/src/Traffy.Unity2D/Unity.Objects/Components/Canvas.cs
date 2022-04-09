@@ -72,6 +72,8 @@ namespace Traffy.Unity2D
                 return allocation as TrCanvas;
             }
             var result = new TrCanvas(uo, component);
+            result.native.renderMode = RenderMode.ScreenSpaceCamera;
+            result.native.worldCamera = UnityRTS.Get.MainCamera;
             allocations[component] = result;
             return result;
         }
@@ -94,8 +96,6 @@ namespace Traffy.Unity2D
             get
             {
                 var root = native.rootCanvas;
-                if (root == null)
-                    return MK.None();
                 return TrCanvas.FromRaw(baseObject, root);
             }
         }

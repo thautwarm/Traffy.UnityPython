@@ -89,7 +89,7 @@ namespace Traffy.Unity2D
         }
 
         [PyBind]
-        public void ResetShape(TrSprite obj_sprite, float tolerance = 0.05f)
+        public void resetShape(TrSprite obj_sprite, float tolerance = 0.05f)
         {
             List<Vector2> points = new List<Vector2>();
             List<Vector2> simplifiedPoints = new List<Vector2>();

@@ -92,25 +92,24 @@ namespace Traffy.Unity2D
                 TrVector2.Create(eventData.delta);
 
         [PyBind]
-        public TrObject clickCount => MK.Int(eventData.clickCount);
+        public int clickCount => eventData.clickCount;
 
         [PyBind]
-        public TrObject clickTime => MK.Float(eventData.clickTime);
+        public float clickTime => eventData.clickTime;
 
         [PyBind]
         public TrObject hovered => MK.Iter(eventData.hovered.Select(TrGameObject.FromRaw).GetEnumerator());
 
         [PyBind]
-        public TrObject is_dragging =>
-                MK.Bool(eventData.dragging);
+        public bool is_dragging =>
+                eventData.dragging;
         
         [PyBind]
-        public TrObject is_scrolling =>
-                MK.Bool(eventData.IsScrolling());
+        public bool is_scrolling =>
+                eventData.IsScrolling();
         
         [PyBind]
-        public TrObject scroll_delta_y =>
-                MK.Float(eventData.scrollDelta.y);
+        public float scroll_delta_y => eventData.scrollDelta.y;
         
         [PyBind]
         public TrObject is_pointer_moving =>

@@ -77,7 +77,7 @@ namespace Traffy.Unity2D
             }
             static  void __write_elasticity(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
             {
-                ((Traffy.Unity2D.TrScrollRect)_arg).elasticity = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+                ((Traffy.Unity2D.TrScrollRect)_arg).elasticity = Unbox.Apply(THint<float>.Unique,_value);
             }
             CLASS["elasticity"] = TrProperty.Create(CLASS.Name + ".elasticity", __read_elasticity, __write_elasticity);
             static  Traffy.Objects.TrObject __read_decelerationRate(Traffy.Objects.TrObject _arg)
@@ -86,7 +86,7 @@ namespace Traffy.Unity2D
             }
             static  void __write_decelerationRate(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
             {
-                ((Traffy.Unity2D.TrScrollRect)_arg).decelerationRate = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+                ((Traffy.Unity2D.TrScrollRect)_arg).decelerationRate = Unbox.Apply(THint<float>.Unique,_value);
             }
             CLASS["decelerationRate"] = TrProperty.Create(CLASS.Name + ".decelerationRate", __read_decelerationRate, __write_decelerationRate);
             static  Traffy.Objects.TrObject __read_verticalScrollbarSpacing(Traffy.Objects.TrObject _arg)
@@ -122,7 +122,7 @@ namespace Traffy.Unity2D
             }
             static  void __write_inertia(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
             {
-                ((Traffy.Unity2D.TrScrollRect)_arg).inertia = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+                ((Traffy.Unity2D.TrScrollRect)_arg).inertia = Unbox.Apply(THint<bool>.Unique,_value);
             }
             CLASS["inertia"] = TrProperty.Create(CLASS.Name + ".inertia", __read_inertia, __write_inertia);
             static  Traffy.Objects.TrObject __read_content(Traffy.Objects.TrObject _arg)
