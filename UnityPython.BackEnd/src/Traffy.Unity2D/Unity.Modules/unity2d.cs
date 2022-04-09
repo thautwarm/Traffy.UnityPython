@@ -55,14 +55,13 @@ namespace Traffy.Unity2D
         [PyBind]
         public static TrClass Canvas => TrCanvas.CLASS;
         [PyBind]
-        public static TrClass RectTransform => TrUI.CLASS;
-        
+        public static TrClass RectTransform => TrUI.CLASS;        
 
         [PyBind]
         public static TrObject getPersistentDataPath() => MK.Str(UnityEngine.Application.persistentDataPath);
 
         [PyBind]
-        public static TrObject getProjectDir() => MK.Str(UnityRTS.Get.ProjectDirectory);
+        public static TrObject getProjectDir() => MK.Str(ModuleSystem.GetProjectDir());
 
         [PyBind]
         public static void setProjectDirectory(string path)
@@ -88,7 +87,7 @@ namespace Traffy.Unity2D
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
 
             ModuleSystem.Modules["unity2d"] = CLASS;
         }

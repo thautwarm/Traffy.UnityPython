@@ -80,11 +80,6 @@ namespace Traffy.Objects
         }
         #endif
         #if !NOT_UNITY
-        static void BuiltinClassInit_TrMonoBehaviour(TrClass cls)
-        {
-        }
-        #endif
-        #if !NOT_UNITY
         static void BuiltinClassInit_TrModule_unity2d(TrClass cls)
         {
         }
@@ -109,6 +104,11 @@ namespace Traffy.Objects
         #endif
         #if !NOT_UNITY
         static void BuiltinClassInit_TrCanvasGroup(TrClass cls)
+        {
+        }
+        #endif
+        #if !NOT_UNITY
+        static void BuiltinClassInit_TrMonoBehaviour(TrClass cls)
         {
         }
         #endif
@@ -573,13 +573,6 @@ namespace Traffy.Objects
             }
             #endif
             #if !NOT_UNITY
-            if (typeof(T) == typeof(Traffy.Unity2D.TrMonoBehaviour))
-            {
-                BuiltinClassInit_TrMonoBehaviour(cls);
-                return;
-            }
-            #endif
-            #if !NOT_UNITY
             if (typeof(T) == typeof(Traffy.Unity2D.TrModule_unity2d))
             {
                 BuiltinClassInit_TrModule_unity2d(cls);
@@ -611,6 +604,13 @@ namespace Traffy.Objects
             if (typeof(T) == typeof(Traffy.Unity2D.TrCanvasGroup))
             {
                 BuiltinClassInit_TrCanvasGroup(cls);
+                return;
+            }
+            #endif
+            #if !NOT_UNITY
+            if (typeof(T) == typeof(Traffy.Unity2D.TrMonoBehaviour))
+            {
+                BuiltinClassInit_TrMonoBehaviour(cls);
                 return;
             }
             #endif

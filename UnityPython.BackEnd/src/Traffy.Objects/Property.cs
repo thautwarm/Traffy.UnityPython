@@ -42,7 +42,7 @@ namespace Traffy.Objects
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
             Initialization.Prelude(CLASS);
         }
 

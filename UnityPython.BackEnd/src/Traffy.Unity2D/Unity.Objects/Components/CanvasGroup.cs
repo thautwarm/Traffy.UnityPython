@@ -62,7 +62,7 @@ namespace Traffy.Unity2D
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrCanvasGroup FromRaw(TrGameObject uo, CanvasGroup component)
         {
@@ -79,13 +79,6 @@ namespace Traffy.Unity2D
         {
             UnityRTS.Get.allocations.Remove(native);
             Object.Destroy(native);
-        }
-        [PyBind]
-        public static TrObject __new__(TrClass cls, TrGameObject uo)
-        {
-            if (!object.ReferenceEquals(cls, CLASS))
-                throw new TypeError($"{CLASS.Name}.__new__(): the first argument is class {cls.Name} but expects class {CLASS.Name}");
-            return __add_component__(CLASS, uo);
         }
         [PyBind]
         public bool blocksRaycasts

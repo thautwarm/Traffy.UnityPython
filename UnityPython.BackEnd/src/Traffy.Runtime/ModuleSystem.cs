@@ -26,8 +26,7 @@ namespace Traffy
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {
-            modules = new Dictionary<string, TrObject>();
-            PROJECT_DIR = ".";
+            modules = new Dictionary<string, TrObject>();            
 
         }
         public static void SetProjectDir(string dir)
@@ -36,6 +35,8 @@ namespace Traffy
         }
         public static string GetProjectDir()
         {
+            if (PROJECT_DIR == null)
+                return ".";
             return PROJECT_DIR;
         }
 

@@ -11,6 +11,31 @@ namespace Traffy.Unity2D
         public override bool __ne__(TrObject o) => !__eq__(o);
         internal static void generated_BindMethods()
         {
+            static  Traffy.Objects.TrObject __bind___new__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrClass>.Unique,__args[0]);
+                        string _1;
+                        if (((__kwargs != null) && __kwargs.TryGetValue(MK.Str("name"),out var __keyword__1)))
+                            _1 = Unbox.Apply(THint<string>.Unique,__keyword__1);
+                        else
+                            _1 = "";
+                        return Box.Apply(Traffy.Unity2D.TrGameObject.__new__(_0,name : _1));
+                    }
+                    case 2:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrClass>.Unique,__args[0]);
+                        var _1 = Unbox.Apply(THint<string>.Unique,__args[1]);
+                        return Box.Apply(Traffy.Unity2D.TrGameObject.__new__(_0,_1));
+                    }
+                    default:
+                        throw new ValueError("__new__() requires 1 to 2 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["__new__"] = TrStaticMethod.Bind(CLASS.Name + "." + "__new__", __bind___new__);
             CLASS["requireComponents"] = TrSharpFunc.FromFunc(CLASS.Name + "." + "requireComponents", (self, args, kwargs) => ((TrGameObject) self)._RequireComponents(args, kwargs));
             static  Traffy.Objects.TrObject __bind_destory(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {

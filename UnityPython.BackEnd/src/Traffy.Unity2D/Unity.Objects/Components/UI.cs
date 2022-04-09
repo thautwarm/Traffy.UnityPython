@@ -65,7 +65,7 @@ namespace Traffy.Unity2D
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
             Initialization.Prelude(CLASS);
         }
 
@@ -79,12 +79,6 @@ namespace Traffy.Unity2D
             var o = new TrUI(uo, rect);
             allocations[rect] = o;
             return o;
-        }
-
-        [PyBind]
-        public static TrObject __new__(TrClass _, TrGameObject uo)
-        {
-            return __add_component__(CLASS, uo);
         }
 
         public override void RemoveComponent()

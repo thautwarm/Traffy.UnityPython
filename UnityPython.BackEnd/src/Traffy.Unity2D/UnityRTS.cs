@@ -15,6 +15,7 @@ namespace Traffy.Unity2D
         public string ProjectDirectory;
         public string MainModule = "main";
         public Camera MainCamera;
+        private bool IsInitialized = false;
         
         [HideInInspector]
         public Dictionary<UnityEngine.Object, TrObject> allocations;
@@ -55,10 +56,14 @@ namespace Traffy.Unity2D
             }
             ModuleSystem.ImportModule(MainModule);
         }
-        void Start()
+        public void Init()
         {
-            ReSetting();
-            ReloadPython();
+            if (!IsInitialized)
+            {
+                ReSetting();
+                ReloadPython();
+                IsInitialized = true;
+            }
         }
     }
 }

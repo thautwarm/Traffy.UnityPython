@@ -11,11 +11,6 @@ namespace Traffy.Unity2D
     [UnitySpecific]
     public abstract class TrUnityComponent : TrUserObjectBase
     {
-        // internal static TrObject cannot_inst_component(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
-        // {
-        //     throw new TypeError($"Cannot instantiate a component {cls.Name} with __new__");
-        // }
-
         public override List<TrObject> __array__ => null;
 
         protected TrUnityComponent(TrGameObject baseObject)

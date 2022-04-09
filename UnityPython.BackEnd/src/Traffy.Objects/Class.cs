@@ -68,7 +68,8 @@ namespace Traffy.Objects
         }
 
         public static TrClass CLASS { get => MetaClass; set => MetaClass = value; }
-        public bool IsFixed = false;
+        public bool IsClassFixed = false;
+        public bool IsInstanceFixed = false;
         public bool IsSealed = false;
         public bool IsAbstract = false;
         public int ClassId;
@@ -140,7 +141,8 @@ namespace Traffy.Objects
         internal static void _SetupClasses()
         {
             MetaClass.SetupClass();
-            MetaClass.IsFixed = true;
+            MetaClass.IsClassFixed = true;
+            MetaClass.IsInstanceFixed = true;
             Initialization.Prelude(MetaClass);
         }
 

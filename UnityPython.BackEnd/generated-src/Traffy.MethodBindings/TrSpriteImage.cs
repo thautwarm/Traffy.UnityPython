@@ -9,21 +9,6 @@ namespace Traffy.Unity2D
     {
         internal static void generated_BindMethods()
         {
-            static  Traffy.Objects.TrObject __bind___new__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
-            {
-                switch(__args.Count)
-                {
-                    case 2:
-                    {
-                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrClass>.Unique,__args[0]);
-                        var _1 = Unbox.Apply(THint<Traffy.Unity2D.TrGameObject>.Unique,__args[1]);
-                        return Box.Apply(Traffy.Unity2D.TrSpriteImage.__new__(_0,_1));
-                    }
-                    default:
-                        throw new ValueError("__new__() requires 2 positional argument(s), got " + __args.Count);
-                }
-            }
-            CLASS["__new__"] = TrStaticMethod.Bind(CLASS.Name + "." + "__new__", __bind___new__);
             static  Traffy.Objects.TrObject __bind_on(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)
@@ -64,6 +49,15 @@ namespace Traffy.Unity2D
                 ((Traffy.Unity2D.TrSpriteImage)_arg).alpha = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
             }
             CLASS["alpha"] = TrProperty.Create(CLASS.Name + ".alpha", __read_alpha, __write_alpha);
+            static  Traffy.Objects.TrObject __read_image(Traffy.Objects.TrObject _arg)
+            {
+                return Box.Apply(((Traffy.Unity2D.TrSpriteImage)_arg).image);
+            }
+            static  void __write_image(Traffy.Objects.TrObject _arg,Traffy.Objects.TrObject _value)
+            {
+                ((Traffy.Unity2D.TrSpriteImage)_arg).image = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,_value);
+            }
+            CLASS["image"] = TrProperty.Create(CLASS.Name + ".image", __read_image, __write_image);
             static  Traffy.Objects.TrObject __read_ui(Traffy.Objects.TrObject _arg)
             {
                 return Box.Apply(((Traffy.Unity2D.TrSpriteImage)_arg).ui);

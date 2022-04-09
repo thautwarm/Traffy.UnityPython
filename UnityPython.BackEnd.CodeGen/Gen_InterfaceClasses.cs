@@ -114,7 +114,7 @@ public class Gen_InterfaceClasses : HasNamespace
         // var base_args = String.Join(",", bases.Select(x => x.Namespace + "." + x.Name + ".CLASS").Prepend(typeof(TrABC) + ".CLASS"));
         // yield return $"    CLASS.__base = new TrClass[] {{ {base_args} }};".Doc().Indent(4);
         yield return $"    CLASS.SetupClass();".Doc().Indent(4);
-        yield return $"    CLASS.IsFixed = true;".Doc().Indent(4);
+        yield return $"    CLASS.IsClassFixed = true;".Doc().Indent(4);
         yield return "}".Doc().Indent(4);
 
         yield return $"public static TrClass CLASS;".Doc().Indent(4);

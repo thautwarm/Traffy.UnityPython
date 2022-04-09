@@ -657,6 +657,7 @@ namespace Traffy
                 .ToArray();
             var cls = TrClass.CreateClass(name, bases);
             cls.Name = name;
+            cls.IsClassFixed = false;
             TrObject new_inst(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
             {
                 return MK.UserObject(cls);

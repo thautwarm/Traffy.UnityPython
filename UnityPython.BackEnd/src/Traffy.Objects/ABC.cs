@@ -32,7 +32,7 @@ namespace Traffy.Objects
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrObject new_abstract_class_instance(TrClass cls, BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
         {

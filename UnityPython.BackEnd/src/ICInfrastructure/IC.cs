@@ -113,7 +113,7 @@ namespace Traffy.InlineCache
             receiver = new InlineCacheReceiver();
         update:
 
-            if (cls.IsFixed)
+            if (cls.IsInstanceFixed)
                 throw new TypeError($"{cls.Name} object is frozen, can't set attribute {Name}");
             receiver.cls = cls;
             receiver.Token = cls.Token;

@@ -1,23 +1,15 @@
 using System.Collections.Generic;
 using Traffy.Annotations;
-using Traffy.Interfaces;
 using Traffy.Objects;
 #if !NOT_UNITY
+using UnityEngine;
+
 namespace Traffy.Unity2D
 {
     [PyBuiltin]
     [UnitySpecific]
-    public sealed partial class TrMonoBehaviour : TrUnityComponent
+    public sealed partial class TrMonoBehaviour: TrUnityComponent
     {
-        public static TrClass CLASS;
-        private TrMonoBehaviour(TrGameObject baseObject) : base(baseObject)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override TrClass Class => CLASS;
-        public override List<TrObject> __array__ => null;
-        
         internal static bool user__get_component__(TrClass klass, TrGameObject uo, out TrUnityComponent component)
         {
             if (uo.Components.TryGetValue(klass.ClassId, out var components) && components.Count != 0)
@@ -49,9 +41,52 @@ namespace Traffy.Unity2D
             var components = uo.Components.GetOrUpdate(
                 klass.ClassId,
                 () => new List<TrUnityComponent>(1));
-            var component = TrUnityUserComponent.Create(uo, klass);
+            var component = TrMonoBehaviour.Create(uo, klass);
             components.Add(component);
             return component;
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
+        {
+            CLASS = TrClass.FromPrototype<TrMonoBehaviour>("MonoBehaviour");
+            CLASS.IsSealed = false;
+            CLASS.IsInstanceFixed = false;
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
+            CLASS[CLASS.ic__new] = TrStaticMethod.Bind("MonoBehaviour.__new__", TrClass.new_notallow);
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            CLASS.IsClassFixed = true;
+        }
+        private TrMonoBehaviour(TrGameObject uo, TrClass cls): base(uo)
+        {
+            INST_CLASS = cls;
+        }
+        public static TrClass CLASS;
+        public TrClass INST_CLASS;
+        public override TrClass Class => INST_CLASS;
+        public override object Native => this;
+        public override List<TrObject> __array__ { get; } = new List<TrObject>();
+
+        public static TrMonoBehaviour Create(TrGameObject uo, TrClass cls)
+        {
+            return new TrMonoBehaviour(uo, cls);
+        }
+
+        public override void RemoveComponent()
+        {
+            if (baseObject.Components.TryGetValue(INST_CLASS.ClassId, out var components) && components.Count != 0)
+            {
+                components.Remove(this);
+            }
         }
 
         [PyBind]
@@ -69,27 +104,8 @@ namespace Traffy.Unity2D
             }
             else
             {
-                throw new TypeError($"TraffyBehaviour.__init_subclass__: argument 1 must be a subclass of {CLASS.Name}, got {newcls.Name}");
+                throw new TypeError($"MonoBehaviour.__init_subclass__: argument 1 must be a subclass of {CLASS.Name}, got {newcls.Name}");
             }
-        }
-
-        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
-        internal static void _Create()
-        {
-            CLASS = TrClass.FromPrototype<TrTypedDict>("TraffyBehaviour");
-            CLASS.IsSealed = false;
-        }
-
-        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
-        internal static void _SetupClasses()
-        {
-            CLASS.SetupClass();
-            CLASS.IsFixed = true;
-        }
-
-        public override void RemoveComponent()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

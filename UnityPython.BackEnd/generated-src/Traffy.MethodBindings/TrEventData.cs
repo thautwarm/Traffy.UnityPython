@@ -9,6 +9,18 @@ namespace Traffy.Unity2D
     {
         internal static void generated_BindMethods()
         {
+            static  Traffy.Objects.TrObject __read_screen_pos(Traffy.Objects.TrObject _arg)
+            {
+                return Box.Apply(((Traffy.Unity2D.TrEventData)_arg).screen_pos);
+            }
+            Action<TrObject, TrObject> __write_screen_pos = null;
+            CLASS["screen_pos"] = TrProperty.Create(CLASS.Name + ".screen_pos", __read_screen_pos, __write_screen_pos);
+            static  Traffy.Objects.TrObject __read_delta(Traffy.Objects.TrObject _arg)
+            {
+                return Box.Apply(((Traffy.Unity2D.TrEventData)_arg).delta);
+            }
+            Action<TrObject, TrObject> __write_delta = null;
+            CLASS["delta"] = TrProperty.Create(CLASS.Name + ".delta", __read_delta, __write_delta);
             static  Traffy.Objects.TrObject __read_clickCount(Traffy.Objects.TrObject _arg)
             {
                 return Box.Apply(((Traffy.Unity2D.TrEventData)_arg).clickCount);

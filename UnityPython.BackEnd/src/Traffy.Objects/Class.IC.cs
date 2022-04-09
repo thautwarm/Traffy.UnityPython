@@ -126,7 +126,7 @@ namespace Traffy.Objects
                     throw new TypeError($"fatal: find a non-field shape in instance field areas of class {Name}.");
                 return shape.Get.FieldIndex;
             }
-            if (IsFixed)
+            if (IsInstanceFixed)
                 throw new TypeError($"{Name} class has no attribute {name} (immutable)");
             if (__instance_fields__.Count >= Initialization.OBJECT_SHAPE_MAX_FIELD)
             {

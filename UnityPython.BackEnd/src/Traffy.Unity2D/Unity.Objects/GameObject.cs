@@ -23,7 +23,7 @@ namespace Traffy.Unity2D
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = false;
+            CLASS.IsClassFixed = false;
             Initialization.Prelude(CLASS);
         }
 
@@ -82,6 +82,15 @@ namespace Traffy.Unity2D
                         (_) => new List<TrUnityComponent>(1)
                     );
             }
+        }
+
+        [PyBind]
+        public static TrGameObject __new__(TrClass cls, string name = "")
+        {
+            if (!object.ReferenceEquals(cls, CLASS))
+                throw new TypeError($"GameObject.__new__(): the first argument must be class GameObject, not {cls.Name}");
+            var go = new GameObject(name);
+            return FromRaw(go);
         }
 
         [PyBind]

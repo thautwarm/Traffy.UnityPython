@@ -69,7 +69,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___await__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -92,7 +92,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
     }
@@ -111,7 +111,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
     }
@@ -130,7 +130,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___lt__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -195,7 +195,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___contains__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -218,7 +218,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___enter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -245,7 +245,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___hash__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -268,7 +268,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___iter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -291,7 +291,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___trynext__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -506,7 +506,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___iter__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -654,7 +654,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___reversed__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -677,7 +677,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___getitem__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
@@ -813,7 +813,7 @@ namespace Traffy.Interfaces
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
         }
         public static TrClass CLASS;
         public static  Traffy.Objects.TrObject __bind___len__(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)

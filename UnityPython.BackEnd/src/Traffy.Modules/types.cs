@@ -58,7 +58,7 @@ namespace Traffy.Modules
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
 
             ModuleSystem.Modules["types"] = CLASS;
         }

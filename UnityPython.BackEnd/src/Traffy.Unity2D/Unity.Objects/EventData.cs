@@ -36,7 +36,7 @@ namespace Traffy.Unity2D
         internal static void _SetupClasses()
         {
             CLASS.SetupClass();
-            CLASS.IsFixed = true;
+            CLASS.IsClassFixed = true;
             Initialization.Prelude(CLASS);
         }
         public static TrClass CLASS;
@@ -87,7 +87,9 @@ namespace Traffy.Unity2D
         // }
 
         // public TrObject world_pos => TrVector3.Create(eventData.pointerCurrentRaycast.worldPosition);
+        [PyBind]
         public TrObject screen_pos => TrVector2.Create(eventData.position);
+        [PyBind]
         public TrObject delta =>
                 TrVector2.Create(eventData.delta);
 
