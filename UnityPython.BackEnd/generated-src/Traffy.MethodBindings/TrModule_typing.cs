@@ -136,6 +136,7 @@ namespace Traffy.Modules
             }
             CLASS["NewType"] = TrStaticMethod.Bind(CLASS.Name + "." + "NewType", __bind_NewType);
             CLASS["TypeVar"] = TrStaticMethod.Bind(CLASS.Name + "." + "TypeVar", TypeVar);
+            CLASS["ParamSpec"] = TrStaticMethod.Bind(CLASS.Name + "." + "ParamSpec", ParamSpec);
             static  Traffy.Objects.TrObject __bind_final(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)

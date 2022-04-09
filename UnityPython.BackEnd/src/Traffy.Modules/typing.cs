@@ -68,6 +68,16 @@ namespace Traffy.Modules
         }
 
         [PyBind]
+        public static TrObject ParamSpec(BList<TrObject> args, Dictionary<TrObject, TrObject> kwargs)
+        {
+            if (args.Count < 1)
+            {
+                throw new TypeError("ParamSpec() requires at least 1 positional argument(s), got " + args.Count);
+            }
+            return args[0];
+        }
+
+        [PyBind]
         public static TrObject Any => TrRawObject.CLASS;
         [PyBind]
         public static TrObject Never => TrRawObject.CLASS;
