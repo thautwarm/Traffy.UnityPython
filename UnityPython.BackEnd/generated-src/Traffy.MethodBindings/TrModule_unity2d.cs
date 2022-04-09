@@ -46,23 +46,25 @@ namespace Traffy.Unity2D
                 }
             }
             CLASS["setProjectDirectory"] = TrStaticMethod.Bind(CLASS.Name + "." + "setProjectDirectory", __bind_setProjectDirectory);
-            CLASS["MonoBehaviour"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.MonoBehaviour);
-            CLASS["EventTrigger"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.EventTrigger);
-            CLASS["EventData"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.EventData);
+            CLASS["Color"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Color);
             CLASS["Vector2"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Vector2);
             CLASS["Vector3"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Vector3);
-            CLASS["Canvas"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Canvas);
-            CLASS["CanvasGroup"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.CanvasGroup);
-            CLASS["PolygonCollider2D"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.PolygonCollider2D);
-            CLASS["RawImage"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.RawImage);
+            CLASS["ImageResource"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.ImageResource);
+            CLASS["EventTriggerType"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.EventTriggerType);
+            CLASS["EventData"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.EventData);
+            CLASS["MonoBehaviour"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.MonoBehaviour);
+            CLASS["GameObject"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.GameObject);
+            CLASS["ComponentGroup"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.ComponentGroup);
+            CLASS["UI"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.UI);
             CLASS["SpriteImage"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.SpriteImage);
+            CLASS["Text"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Text);
+            CLASS["RawImage"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.RawImage);
             CLASS["Sprite"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Sprite);
             CLASS["ScrollRect"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.ScrollRect);
-            CLASS["Text"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Text);
-            CLASS["UI"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.UI);
+            CLASS["PolygonCollider2D"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.PolygonCollider2D);
+            CLASS["CanvasGroup"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.CanvasGroup);
+            CLASS["Canvas"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Canvas);
             CLASS["RectTransform"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.RectTransform);
-            CLASS["ImageResource"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.ImageResource);
-            CLASS["Color"] = Traffy.Box.Apply(Traffy.Unity2D.TrModule_unity2d.Color);
         }
     }
 }

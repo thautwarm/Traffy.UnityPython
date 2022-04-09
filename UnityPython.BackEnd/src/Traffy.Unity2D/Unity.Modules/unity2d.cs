@@ -15,40 +15,48 @@ namespace Traffy.Unity2D
 
         public static TrClass CLASS;
 
+        
+        
         [PyBind]
-        public static TrClass MonoBehaviour => TrMonoBehaviour.CLASS;
-        [PyBind]
-        public static TrClass EventTrigger => TrEventTriggerType.CLASS;
-        [PyBind]
-        public static TrClass EventData => TrEventData.CLASS;
-        [PyBind]
+        public static TrClass Color => TrColor.CLASS;
+                [PyBind]
         public static TrClass Vector2 => TrVector2.CLASS;
         [PyBind]
         public static TrClass Vector3 => TrVector3.CLASS;
         [PyBind]
-        public static TrClass Canvas => TrCanvas.CLASS;
+        public static TrClass ImageResource => TrImageResource.CLASS;
         [PyBind]
-        public static TrClass CanvasGroup => TrCanvasGroup.CLASS;
+        public static TrClass EventTriggerType => TrEventTriggerType.CLASS;
+        
         [PyBind]
-        public static TrClass PolygonCollider2D => TrPolygonCollider2D.CLASS;
+        public static TrClass EventData => TrEventData.CLASS;
         [PyBind]
-        public static TrClass RawImage => TrRawImage.CLASS;
+        public static TrClass MonoBehaviour => TrMonoBehaviour.CLASS;
+        [PyBind]
+        public static TrClass GameObject => TrGameObject.CLASS;
+        [PyBind]
+        public static TrClass ComponentGroup => TrComponentGroup.CLASS;
+        [PyBind]
+        public static TrClass UI => TrUI.CLASS;
         [PyBind]
         public static TrClass SpriteImage => TrSpriteImage.CLASS;
+        [PyBind]
+        public static TrClass Text => TrText.CLASS;
+        [PyBind]
+        public static TrClass RawImage => TrRawImage.CLASS;
         [PyBind]
         public static TrClass Sprite => TrSprite.CLASS;
         [PyBind]
         public static TrClass ScrollRect => TrScrollRect.CLASS;
         [PyBind]
-        public static TrClass Text => TrText.CLASS;
+        public static TrClass PolygonCollider2D => TrPolygonCollider2D.CLASS;
         [PyBind]
-        public static TrClass UI => TrUI.CLASS;
+        public static TrClass CanvasGroup => TrCanvasGroup.CLASS;
+        [PyBind]
+        public static TrClass Canvas => TrCanvas.CLASS;
         [PyBind]
         public static TrClass RectTransform => TrUI.CLASS;
-        [PyBind]
-        public static TrClass ImageResource => TrImageResource.CLASS;
-        [PyBind]
-        public static TrClass Color => TrColor.CLASS;
+        
 
         [PyBind]
         public static TrObject getPersistentDataPath() => MK.Str(UnityEngine.Application.persistentDataPath);
