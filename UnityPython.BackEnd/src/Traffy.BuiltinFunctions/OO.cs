@@ -172,7 +172,7 @@ namespace Traffy
         [PyBuiltin]
         static TrObject dir(TrObject obj)
         {
-            return MK.List(obj.GetDictItems().Select(x => (TrObject) x.Item1).ToList());
+            return MK.List(obj.GetDictItems().Select(x => (TrObject) x.Item1).ToHashSet().ToList());
         }
 
     }

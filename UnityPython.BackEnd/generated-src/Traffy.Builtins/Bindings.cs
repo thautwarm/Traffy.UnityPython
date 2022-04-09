@@ -346,6 +346,20 @@ namespace Traffy
                 }
             }
             Initialization.Prelude(TrSharpFunc.FromFunc("next", __bind_next));
+            static  Traffy.Objects.TrObject __bind_dir(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 1:
+                    {
+                        var _0 = Unbox.Apply(THint<Traffy.Objects.TrObject>.Unique,__args[0]);
+                        return Box.Apply(Traffy.Builtins.dir(_0));
+                    }
+                    default:
+                        throw new ValueError("dir() requires 1 positional argument(s), got " + __args.Count);
+                }
+            }
+            Initialization.Prelude(TrSharpFunc.FromFunc("dir", __bind_dir));
         }
 
     

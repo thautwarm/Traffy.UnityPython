@@ -28,6 +28,23 @@ namespace Traffy.Objects
     public sealed partial class TrClass : TrObject, IEquatable<TrClass>
     {
 
+        public override IEnumerable<(TrStr Name, TrObject Ob)> GetDictItems(HashSet<string> visited)
+        {
+            foreach(var cls in __mro)
+            foreach (var kv in cls.__prototype__)
+            {
+                var shape = kv.Value;
+                if (InlineCache.PolyIC.ReadClass(cls, shape, out var value))
+                {
+                    if (!visited.Contains(kv.Key))
+                    {
+                        visited.Add(kv.Key);
+                        yield return (MK.Str(kv.Key), value);
+                    }
+                }
+            }
+        }
+
         bool IEquatable<TrClass>.Equals(Traffy.Objects.TrClass other)
         {
             return object.ReferenceEquals(this, other);

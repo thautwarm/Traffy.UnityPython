@@ -20,6 +20,17 @@ namespace Traffy.Unity2D
                 }
             }
             CLASS["getPersistentDataPath"] = TrStaticMethod.Bind(CLASS.Name + "." + "getPersistentDataPath", __bind_getPersistentDataPath);
+            static  Traffy.Objects.TrObject __bind_getProjectDir(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
+            {
+                switch(__args.Count)
+                {
+                    case 0:
+                        return Box.Apply(Traffy.Unity2D.TrModule_unity2d.getProjectDir());
+                    default:
+                        throw new ValueError("getProjectDir() requires 0 positional argument(s), got " + __args.Count);
+                }
+            }
+            CLASS["getProjectDir"] = TrStaticMethod.Bind(CLASS.Name + "." + "getProjectDir", __bind_getProjectDir);
             static  Traffy.Objects.TrObject __bind_setProjectDirectory(BList<TrObject> __args,Dictionary<TrObject,TrObject> __kwargs)
             {
                 switch(__args.Count)

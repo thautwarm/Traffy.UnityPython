@@ -54,6 +54,9 @@ namespace Traffy.Unity2D
         public static TrObject getPersistentDataPath() => MK.Str(UnityEngine.Application.persistentDataPath);
 
         [PyBind]
+        public static TrObject getProjectDir() => MK.Str(UnityRTS.Get.ProjectDirectory);
+
+        [PyBind]
         public static void setProjectDirectory(string path)
         {
             UnityRTS.Get.ProjectDirectory = path;

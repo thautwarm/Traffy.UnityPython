@@ -9,13 +9,17 @@ namespace Traffy.Objects
     [PyBuiltin]
     public partial class TrModule : TrObject
     {
-        public override IEnumerable<(TrStr, TrObject)> GetDictItems()
+        public override IEnumerable<(TrStr Name, TrObject Ob)> GetDictItems(HashSet<string> visited)
         {
             foreach (var kv in Namespace)
             {
                 if (kv.Key is TrStr s)
                 {
-                    yield return (s, kv.Value);
+                    if (!visited.Contains(s.value))
+                    {
+                        visited.Add(s.value);
+                        yield return (s, kv.Value);
+                    }
                 }
             }
         }

@@ -2,6 +2,7 @@
 // you are responsible to present an root-level gameobejct attaching a 'UnityRTS' script
 #if !NOT_UNITY
 using System.Collections.Generic;
+using System.Linq;
 using Traffy.Objects;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -31,11 +32,17 @@ namespace Traffy.Unity2D
                 MainCamera.gameObject.AddComponent<Physics2DRaycaster>();
             }
         }
-        void Start()
+        public void ReloadPython()
         {
-            ReSetting();
+            if (allocations != null)
+                foreach(var kv in allocations)
+                {
+                    UnityEngine.Object.Destroy(kv.Key);
+                }
             allocations = new Dictionary<UnityEngine.Object, TrObject>();
+#if !CODE_GEN
             Initialization.InitRuntime();
+#endif
             var CompiledDirectory = System.IO.Path.Combine(ProjectDirectory, "Compiled");
             if (!System.IO.Directory.Exists(CompiledDirectory))
             {
@@ -47,6 +54,11 @@ namespace Traffy.Unity2D
                 throw new System.ArgumentException($"Python entry point module ({MainModule}) not found");
             }
             ModuleSystem.ImportModule(MainModule);
+        }
+        void Start()
+        {
+            ReSetting();
+            ReloadPython();
         }
     }
 }

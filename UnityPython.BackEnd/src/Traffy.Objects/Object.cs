@@ -48,7 +48,13 @@ namespace Traffy.Objects
         public const string name_ClassAnnotation = "__class_annotations__";
         public static TrObject[] EmptyObjectArray = new TrObject[0];
 
-        public virtual IEnumerable<(TrStr, TrObject)> GetDictItems()
+        public IEnumerable<(TrStr Name, TrObject Ob)> GetDictItems()
+        {
+            HashSet<string> visited = new HashSet<string>();
+            return GetDictItems(visited);
+        }
+
+        public virtual IEnumerable<(TrStr Name, TrObject Ob)> GetDictItems(HashSet<string> visited)
         {
             var array = __array__;
             if ((object)array != null)
@@ -58,19 +64,18 @@ namespace Traffy.Objects
                     var i = fshape.Get.FieldIndex;
                     if (i < array.Count)
                     {
-                        yield return (MK.IStr(fshape.Get.Name), array[i]);
+                        if (!visited.Contains(fshape.Get.Name.Value))
+                        {
+                            visited.Add(fshape.Get.Name.Value);
+                            yield return (MK.IStr(fshape.Get.Name), array[i]);
+                        }
+                            
                     }
                 }
             }
             var cls = Class;
-            foreach (var kv in cls.__prototype__)
-            {
-                var shape = kv.Value;
-                if (InlineCache.PolyIC.ReadClass(cls, shape, out var value))
-                {
-                    yield return (MK.Str(kv.Key), value);
-                }
-            }
+            foreach(var each in cls.GetDictItems(visited))
+                yield return each;
         }
 
         bool IEquatable<TrObject>.Equals(TrObject other)

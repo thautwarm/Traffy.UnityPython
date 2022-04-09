@@ -57,12 +57,15 @@ namespace Traffy.Unity2D
         [PyBind]
         public static void __init_subclass__(TrObject _, TrClass newcls)
         {
-            if (RTS.issubclassof(newcls, CLASS) && newcls.UnityKind == TrClass.UnityComponentClassKind.NotUnity)
+            if (RTS.issubclassof(newcls, CLASS))
             {
-                newcls.UnityKind = TrClass.UnityComponentClassKind.UserComponent;
-                newcls.__add_component__ = user__add_component__;
-                newcls.__get_component__ = user__get_component__;
-                newcls.__get_components__ = user__get_components__;
+                if (newcls.UnityKind == TrClass.UnityComponentClassKind.NotUnity)
+                {
+                    newcls.UnityKind = TrClass.UnityComponentClassKind.UserComponent;
+                    newcls.__add_component__ = user__add_component__;
+                    newcls.__get_component__ = user__get_component__;
+                    newcls.__get_components__ = user__get_components__;
+                }
             }
             else
             {

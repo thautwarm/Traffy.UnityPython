@@ -32,12 +32,6 @@ namespace Traffy
             m_Prelude = new Dictionary<string, TrObject>();
         }
         public const string IR_FILE_SUFFIX = ".py.json";
-
-        public static void ReInitRuntime()
-        {
-            TrClass.BeforeReInitRuntime();
-            // InitRuntime();
-        }
         public static class HashConfig
         {
             public const int BYTE_HASH_SEED = 17;
