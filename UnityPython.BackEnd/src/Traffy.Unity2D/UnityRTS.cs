@@ -12,7 +12,10 @@ namespace Traffy.Unity2D
     {
         public const float PixelPerUnit = 100;
         public string ProjectDirectory;
+        public string MainModule = "main";
         public Camera MainCamera;
+        
+        [HideInInspector]
         public Dictionary<UnityEngine.Object, TrObject> allocations;
         public static UnityRTS Get;
         public void ReSetting()
@@ -32,6 +35,18 @@ namespace Traffy.Unity2D
         {
             ReSetting();
             allocations = new Dictionary<UnityEngine.Object, TrObject>();
+            Initialization.InitRuntime();
+            var CompiledDirectory = System.IO.Path.Combine(ProjectDirectory, "Compiled");
+            if (!System.IO.Directory.Exists(CompiledDirectory))
+            {
+                throw new System.ArgumentException($"Python compiled directory ({CompiledDirectory}) not found");
+            }
+            ModuleSystem.LoadDirectory(CompiledDirectory);
+            if (!ModuleSystem.Modules.ContainsKey(MainModule))
+            {
+                throw new System.ArgumentException($"Python entry point module ({MainModule}) not found");
+            }
+            ModuleSystem.ImportModule(MainModule);
         }
     }
 }

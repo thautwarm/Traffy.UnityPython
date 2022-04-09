@@ -1,6 +1,7 @@
 // builtin functions in traffy.unitypython
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Traffy.Annotations;
 using Traffy.Objects;
 
@@ -167,6 +168,11 @@ namespace Traffy
                 throw new StopIteration();
             }
             return __default;
+        }
+        [PyBuiltin]
+        static TrObject dir(TrObject obj)
+        {
+            return MK.List(obj.GetDictItems().Select(x => (TrObject) x.Item1).ToList());
         }
 
     }
