@@ -21,7 +21,7 @@ def pipeline(filename: Path, rootdir: Path = Path("."), outdir: Path = Path('out
     
     if filename.is_dir():
         for each in filename.iterdir():
-            if each.suffix == '.py':
+            if each.suffix == '.py' and each.is_file():
                 pipeline(each, rootdir, outdir, includesrc, recursive)
             elif recursive and each.is_dir():
                 pipeline(each, rootdir, outdir, includesrc, recursive)

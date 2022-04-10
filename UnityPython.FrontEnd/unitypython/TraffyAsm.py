@@ -1,5 +1,4 @@
 from __future__ import annotations
-from ast import comprehension
 from enum import IntEnum
 from .IntEncode import encode as encode_int, decode as decode_int
 from dataclasses import InitVar, dataclass
@@ -27,7 +26,7 @@ class OpU(IntEnum):
     POS = 3  # positive
 
 
-def hasCont(*args: list[TraffyLHS] | TraffyLHS | TraffyIR) -> bool:
+def hasCont(*args: list[TraffyIR | TraffyLHS] | TraffyLHS | TraffyIR) -> bool:
     if not args:
         return False
     for each in args:
