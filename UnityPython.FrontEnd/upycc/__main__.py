@@ -1,3 +1,3 @@
-from .CLI import main
+from .CLI import cli_compile
 
-main()
+cli_compile()
