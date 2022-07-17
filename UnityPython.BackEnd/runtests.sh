@@ -6,5 +6,5 @@ else
 fi
 
 rm -rf out
-unitypython.exe $dir --includesrc --recursive --outdir out
-dotnet run --project UnityPython.NoUnity.csproj -c Release out
+upycc $dir --includesrc --recursive --outdir out
+dotnet run --project RunUnityPython.Test.csproj --framework net6 -c Release out

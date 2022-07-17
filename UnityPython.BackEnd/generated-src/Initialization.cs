@@ -9,59 +9,6 @@ namespace Traffy
         {
             Traffy.Objects.TrClass.BeforeReInitRuntime();
             Traffy.Objects.TrRawObject._Create();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrModule_unity2d._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrColor._Create();
-            #endif
-            Traffy.Interfaces.Iterable._Create();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrMonoBehaviour._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvasGroup._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvas._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrPolygonCollider2D._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrRawImage._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrScrollRect._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSprite._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSpriteImage._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrText._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrUI._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventData._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrGameObject._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrImageResource._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector2._Create();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector3._Create();
-            #endif
-            Traffy.Modules.TrModule_abc._Create();
             Traffy.Modules.TrModule_enum._Create();
             Traffy.Modules.TrModule_json._Create();
             Traffy.Modules.TrModule_types._Create();
@@ -71,12 +18,10 @@ namespace Traffy
             Traffy.Interfaces.Callable._Create();
             Traffy.Interfaces.Container._Create();
             Traffy.Interfaces.Comparable._Create();
-            Traffy.Interfaces.Sized._Create();
+            Traffy.Interfaces.Iterable._Create();
             Traffy.Interfaces.ContextManager._Create();
             Traffy.Interfaces.Hashable._Create();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrComponentGroup._Create();
-            #endif
+            Traffy.Interfaces.Sized._Create();
             Traffy.Interfaces.Iterator._Create();
             Traffy.Interfaces.Collection._Create();
             Traffy.Interfaces.Reversible._Create();
@@ -117,9 +62,7 @@ namespace Traffy
             Traffy.Objects.TrModule._Create();
             Traffy.Objects.TrNone._Create();
             Traffy.Objects.TrNotImplemented._Create();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventTriggerType._Create();
-            #endif
+            Traffy.Modules.TrModule_abc._Create();
             Traffy.Objects.TrProperty._Create();
             Traffy.Objects.TrRef._Create();
             Traffy.Objects.TrSet._Create();
@@ -133,59 +76,6 @@ namespace Traffy
             Traffy.Initialization._Create();
             Traffy.ModuleSystem._Create();
             Traffy.Objects.TrRawObject.CLASS.__base = new TrClass[] {  };
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrModule_unity2d.CLASS.__base = new TrClass[] {  };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrColor.CLASS.__base = new TrClass[] {  };
-            #endif
-            Traffy.Interfaces.Iterable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrMonoBehaviour.CLASS.__base = new TrClass[] {  };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvasGroup.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvas.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrPolygonCollider2D.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrRawImage.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrScrollRect.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSprite.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSpriteImage.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrText.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrUI.CLASS.__base = new TrClass[] { Traffy.Unity2D.TrMonoBehaviour.CLASS };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventData.CLASS.__base = new TrClass[] {  };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrGameObject.CLASS.__base = new TrClass[] {  };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrImageResource.CLASS.__base = new TrClass[] {  };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector2.CLASS.__base = new TrClass[] {  };
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector3.CLASS.__base = new TrClass[] {  };
-            #endif
-            Traffy.Modules.TrModule_abc.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_enum.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_json.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_types.CLASS.__base = new TrClass[] {  };
@@ -195,12 +85,10 @@ namespace Traffy
             Traffy.Interfaces.Callable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Container.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Comparable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
-            Traffy.Interfaces.Sized.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
+            Traffy.Interfaces.Iterable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.ContextManager.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Hashable.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrComponentGroup.CLASS.__base = new TrClass[] { Traffy.Interfaces.Iterable.CLASS };
-            #endif
+            Traffy.Interfaces.Sized.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS };
             Traffy.Interfaces.Iterator.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Iterable.CLASS };
             Traffy.Interfaces.Collection.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Sized.CLASS,Traffy.Interfaces.Iterable.CLASS,Traffy.Interfaces.Container.CLASS };
             Traffy.Interfaces.Reversible.CLASS.__base = new TrClass[] { Traffy.Objects.TrABC.CLASS,Traffy.Interfaces.Iterable.CLASS };
@@ -241,9 +129,7 @@ namespace Traffy
             Traffy.Objects.TrModule.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrNone.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrNotImplemented.CLASS.__base = new TrClass[] {  };
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventTriggerType.CLASS.__base = new TrClass[] {  };
-            #endif
+            Traffy.Modules.TrModule_abc.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrProperty.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrRef.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrSet.CLASS.__base = new TrClass[] { Traffy.Interfaces.Collection.CLASS };
@@ -255,59 +141,6 @@ namespace Traffy
             Traffy.Objects.TrUnionType.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrFunc.CLASS.__base = new TrClass[] { Traffy.Interfaces.Callable.CLASS };
             Traffy.Objects.TrRawObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRawObject.CLASS);
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrModule_unity2d.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrModule_unity2d.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrColor.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrColor.CLASS);
-            #endif
-            Traffy.Interfaces.Iterable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Iterable.CLASS);
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrMonoBehaviour.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrMonoBehaviour.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvasGroup.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrCanvasGroup.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvas.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrCanvas.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrPolygonCollider2D.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrPolygonCollider2D.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrRawImage.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrRawImage.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrScrollRect.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrScrollRect.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSprite.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrSprite.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSpriteImage.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrSpriteImage.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrText.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrText.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrUI.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrUI.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventData.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrEventData.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrGameObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrGameObject.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrImageResource.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrImageResource.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector2.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrVector2.CLASS);
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector3.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrVector3.CLASS);
-            #endif
-            Traffy.Modules.TrModule_abc.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_abc.CLASS);
             Traffy.Modules.TrModule_enum.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_enum.CLASS);
             Traffy.Modules.TrModule_json.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_json.CLASS);
             Traffy.Modules.TrModule_types.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_types.CLASS);
@@ -317,12 +150,10 @@ namespace Traffy
             Traffy.Interfaces.Callable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Callable.CLASS);
             Traffy.Interfaces.Container.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Container.CLASS);
             Traffy.Interfaces.Comparable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Comparable.CLASS);
-            Traffy.Interfaces.Sized.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Sized.CLASS);
+            Traffy.Interfaces.Iterable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Iterable.CLASS);
             Traffy.Interfaces.ContextManager.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.ContextManager.CLASS);
             Traffy.Interfaces.Hashable.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Hashable.CLASS);
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrComponentGroup.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrComponentGroup.CLASS);
-            #endif
+            Traffy.Interfaces.Sized.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Sized.CLASS);
             Traffy.Interfaces.Iterator.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Iterator.CLASS);
             Traffy.Interfaces.Collection.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Collection.CLASS);
             Traffy.Interfaces.Reversible.CLASS.__mro = TrClass.C3Linearized(Traffy.Interfaces.Reversible.CLASS);
@@ -363,9 +194,7 @@ namespace Traffy
             Traffy.Objects.TrModule.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrModule.CLASS);
             Traffy.Objects.TrNone.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNone.CLASS);
             Traffy.Objects.TrNotImplemented.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNotImplemented.CLASS);
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventTriggerType.CLASS.__mro = TrClass.C3Linearized(Traffy.Unity2D.TrEventTriggerType.CLASS);
-            #endif
+            Traffy.Modules.TrModule_abc.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_abc.CLASS);
             Traffy.Objects.TrProperty.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrProperty.CLASS);
             Traffy.Objects.TrRef.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRef.CLASS);
             Traffy.Objects.TrSet.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrSet.CLASS);
@@ -391,63 +220,6 @@ namespace Traffy
             Traffy.Interfaces.Sized._Init();
             Traffy.Interfaces.AbstractClass.generated_BindMethods();
             Traffy.Builtins.InitBuiltins();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventTriggerType.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrModule_unity2d.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrColor.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrComponentGroup.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvas.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvasGroup.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrMonoBehaviour.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrPolygonCollider2D.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrRawImage.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrScrollRect.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSprite.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSpriteImage.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrText.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrUI.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventData.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrGameObject.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrImageResource.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector2.generated_BindMethods();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector3.generated_BindMethods();
-            #endif
             Traffy.Modules.TrModule_abc.generated_BindMethods();
             Traffy.Modules.TrModule_enum.generated_BindMethods();
             Traffy.Modules.TrModule_json.generated_BindMethods();
@@ -477,21 +249,6 @@ namespace Traffy
             Traffy.Objects.TrStr.generated_BindMethods();
             Traffy.Objects.TrTuple.generated_BindMethods();
             Traffy.Objects.TrFunc.generated_BindMethods();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventTriggerType._Init();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrModule_unity2d._Init();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrMonoBehaviour._Init();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrUI._Init();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventData._Init();
-            #endif
             Traffy.Modules.TrModule_abc._Init();
             Traffy.Modules.TrModule_enum._Init();
             Traffy.Modules.TrModule_json._Init();
@@ -543,59 +300,6 @@ namespace Traffy
             Traffy.Objects.TrUnionType._Init();
             Traffy.Objects.TrFunc._Init();
             Traffy.Objects.TrRawObject._SetupClasses();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrModule_unity2d._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrColor._SetupClasses();
-            #endif
-            Traffy.Interfaces.Iterable._SetupClasses();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrMonoBehaviour._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvasGroup._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrCanvas._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrPolygonCollider2D._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrRawImage._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrScrollRect._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSprite._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrSpriteImage._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrText._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrUI._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventData._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrGameObject._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrImageResource._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector2._SetupClasses();
-            #endif
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrVector3._SetupClasses();
-            #endif
-            Traffy.Modules.TrModule_abc._SetupClasses();
             Traffy.Modules.TrModule_enum._SetupClasses();
             Traffy.Modules.TrModule_json._SetupClasses();
             Traffy.Modules.TrModule_types._SetupClasses();
@@ -605,12 +309,10 @@ namespace Traffy
             Traffy.Interfaces.Callable._SetupClasses();
             Traffy.Interfaces.Container._SetupClasses();
             Traffy.Interfaces.Comparable._SetupClasses();
-            Traffy.Interfaces.Sized._SetupClasses();
+            Traffy.Interfaces.Iterable._SetupClasses();
             Traffy.Interfaces.ContextManager._SetupClasses();
             Traffy.Interfaces.Hashable._SetupClasses();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrComponentGroup._SetupClasses();
-            #endif
+            Traffy.Interfaces.Sized._SetupClasses();
             Traffy.Interfaces.Iterator._SetupClasses();
             Traffy.Interfaces.Collection._SetupClasses();
             Traffy.Interfaces.Reversible._SetupClasses();
@@ -651,9 +353,7 @@ namespace Traffy
             Traffy.Objects.TrModule._SetupClasses();
             Traffy.Objects.TrNone._SetupClasses();
             Traffy.Objects.TrNotImplemented._SetupClasses();
-            #if !NOT_UNITY
-            Traffy.Unity2D.TrEventTriggerType._SetupClasses();
-            #endif
+            Traffy.Modules.TrModule_abc._SetupClasses();
             Traffy.Objects.TrProperty._SetupClasses();
             Traffy.Objects.TrRef._SetupClasses();
             Traffy.Objects.TrSet._SetupClasses();

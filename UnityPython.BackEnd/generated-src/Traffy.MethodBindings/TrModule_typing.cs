@@ -161,6 +161,7 @@ namespace Traffy.Modules
             CLASS["Self"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Self);
             CLASS["Final"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Final);
             CLASS["Literal"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Literal);
+            CLASS["Concatenate"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Concatenate);
             CLASS["AnyStr"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.AnyStr);
             CLASS["Annotated"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Annotated);
             CLASS["Generic"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Generic);
@@ -182,6 +183,7 @@ namespace Traffy.Modules
             CLASS["ContextManager"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.ContextManager);
             CLASS["Coroutine"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Coroutine);
             CLASS["AsyncGenerator"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.AsyncGenerator);
+            CLASS["Generator"] = Traffy.Box.Apply(Traffy.Modules.TrModule_typing.Generator);
         }
     }
 }

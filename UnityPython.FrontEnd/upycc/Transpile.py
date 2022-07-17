@@ -2,7 +2,7 @@ from __future__ import annotations
 from ast import *
 from dataclasses import replace
 import warnings
-from unitypython.Collections import OrderedSet, OrderedDict
+from upycc.Collections import OrderedSet, OrderedDict
 from . import TraffyAsm as ir
 from .JSON import dump_json
 from typing import Any

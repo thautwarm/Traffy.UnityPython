@@ -9,7 +9,7 @@ namespace Traffy
     {
         public static void LoadDirectory(string directory)
         {
-            var files = System.IO.Directory.GetFiles(directory, "*" + Initialization.IR_FILE_SUFFIX);
+            var files = System.IO.Directory.GetFiles(directory, "*" + Initialization.IR_FILE_SUFFIX, System.IO.SearchOption.AllDirectories);
             foreach (var file in files)
             {
                 var sourceCode = System.IO.File.ReadAllText(file);

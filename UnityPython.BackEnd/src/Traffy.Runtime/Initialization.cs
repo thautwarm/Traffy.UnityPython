@@ -26,6 +26,11 @@ namespace Traffy
     }
     public static partial class Initialization
     {
+#if CODE_GEN
+        public static void InitRuntime()
+        {
+        }
+#endif
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
         internal static void _Create()
         {

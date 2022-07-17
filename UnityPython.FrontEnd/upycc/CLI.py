@@ -1,9 +1,10 @@
 from wisepy2 import wise
-from unitypython.Transpile import compile_module
-from unitypython.TraffyAsm import fast_asdict
-from unitypython.JSON import dump_json
+from upycc.Transpile import compile_module
+from upycc.TraffyAsm import fast_asdict
+from upycc.JSON import dump_json
 from pathlib import Path
-
+import os
+import subprocess
 
 def valid_parts(parts: tuple[str, ...]):
     for part in parts:
@@ -49,5 +50,27 @@ def pipeline(filename: Path, rootdir: Path = Path("."), outdir: Path = Path('out
     with outdir.joinpath(modulename + ".py.json").open('w', encoding="utf-8") as file:
         file.write(dump_json(dict_data))
 
-def main():
+def run_upy(main: str, *include: str, projectdir: str="."):
+    directory = os.path.abspath(os.getcwd())
+    arg = dump_json(dict(
+        EntryPoint=main,
+        IncludePythonModuleDirectories=[directory, *include],
+        ProjectDir=os.path.abspath(projectdir),
+    ))
+    subprocess.call(['RunUnityPython', arg])
+
+
+def compile_and_run(filename: Path, rootdir: Path = Path("."), outdir: Path = Path('out'), includesrc: bool = False, recursive: bool = False, nocompile: bool = False, norun: bool = False):
+    if not nocompile:
+        pipeline(filename, rootdir, outdir, includesrc, recursive)
+    if not norun:
+        run_upy("main", *[str(outdir.absolute())], projectdir=str(rootdir.absolute()))
+
+def cli_compile():
     wise(pipeline)()  # type: ignore
+
+def cli_run():
+    wise(run_upy)()  # type: ignore
+
+def cli_compile_and_run():
+    wise(compile_and_run)()  # type: ignore

@@ -87,6 +87,10 @@ namespace Traffy.Modules
         public static TrObject Final => TrRawObject.CLASS;
         [PyBind]
         public static TrObject Literal => TrRawObject.CLASS;
+
+        [PyBind]
+        public static TrObject Concatenate => TrRawObject.CLASS;
+
         [PyBind]
         public static TrObject final(TrObject cls) => cls;
         static TrObject _cache_AnyStr = null;
@@ -145,9 +149,9 @@ namespace Traffy.Modules
         public static TrClass Coroutine => TrGenerator.CLASS;
         [PyBind]
         public static TrClass AsyncGenerator => TrGenerator.CLASS;
-
-
-
+        
+        [PyBind]
+        public static TrClass Generator => TrGenerator.CLASS;
 
 
         [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]

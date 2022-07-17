@@ -7,7 +7,7 @@ Key points:
 3. Dynamic and fast code loading in Unity. Edit code and see how UI changes immediately (Unity Editor is painful to me)!
 4. An extensible coroutine implementation. `async` and `await` are not as restricted as that in CPython and can be used as fast/fine-grained controlled event loops in game development.
 
-UnityPython is based on CPython 3.10, but not fully compatible to CPython. For instance, `StopIteration` is not used for loop constructs (exceptions are heavy and not used for control flow); `type` is the only metaclass, etc.
+UnityPython is based on CPython 3.10, but not fully compatible with CPython. For instance, `StopIteration` is not used for loop constructs (exceptions are heavy and not used for control flow); `type` is the only metaclass, etc.
 
 ```python
 import UnityEngine
@@ -55,7 +55,7 @@ Besides, we badly need more tests! Help us and refer [test_semantics](https://gi
     }
     ```
 
-2. build an DLL for `UnityPython.BackEnd`
+2. build a DLL for `UnityPython.BackEnd`
 
    `dotnet public -c Release`
 
@@ -69,7 +69,7 @@ Then `append` is bound.
 
 **NOTE**: functions annotated by `[PyBind]` must take a return value!!!
 
-### How to add a method to datatypes? (verbose way)
+### How to add a method to a datatype? (verbose way)
 
 For example, if we want to implement `append` for `list`,
 - we firstly get to [UnityPython.BackEnd/src/Traffy.Objects/List.cs](https://github.com/thautwarm/Traffy.UnityPython/blob/main/UnityPython.BackEnd/src/Traffy.Objects/List.cs)
