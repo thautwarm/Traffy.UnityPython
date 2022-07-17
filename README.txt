@@ -35,8 +35,10 @@ IDE Support
 
 UnityPython has excellent IDE support based on VSCode Pylance:
 
-    https://github.com/thautwarm/vscode-unitypython/tree/main/src
+    https://github.com/thautwarm/vscode-unitypython
 
+Install 'VSCode-UnityPython' in VSCode, and use a Python environment with 'upycc' package installed is sufficient.
+The UnityPython code will be compiled on-the-fly when you edit, and your game can set up a file watcher to hot reload everything.
 
 Development
 --------------------
