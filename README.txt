@@ -30,6 +30,14 @@ Usage (Unity Library)
 
 Under construction.
 
+IDE Support
+-----------------
+
+UnityPython has excellent IDE support based on VSCode Pylance:
+
+    https://github.com/thautwarm/vscode-unitypython/tree/main/src
+
+
 Development
 --------------------
 
