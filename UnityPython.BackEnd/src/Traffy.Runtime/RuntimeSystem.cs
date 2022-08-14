@@ -149,7 +149,7 @@ namespace Traffy
             return MK.Int(long.Parse(s));
         }
         public static TrObject parse_float(string value) =>
-            MK.Float(float.Parse(value));
+            MK.Float(double.Parse(value));
 
         public static Exception exc_unpack_toomuch(int length)
         {
@@ -466,7 +466,7 @@ namespace Traffy
         public static TrObject object_from_int(int v) => MK.Int(v);
         public static TrObject object_from_int(Int64 v) => MK.Int(v);
 
-        public static TrObject object_from_float(float v) => MK.Float(v);
+        public static TrObject object_from_float(double v) => MK.Float(v);
         public static TrObject object_none => TrNone.Unique;
 
         public static TrObject object_from_string(string result) => MK.Str(result);
@@ -813,7 +813,7 @@ namespace Traffy
 
         public static TrFloat Float(double v)
         {
-            return new TrFloat ((float)v);
+            return new TrFloat (v);
         }
         public static TrInt Int(long p)
         {

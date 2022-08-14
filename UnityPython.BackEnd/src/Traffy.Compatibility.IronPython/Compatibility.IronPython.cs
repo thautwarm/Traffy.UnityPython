@@ -6,12 +6,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using IronPython.Runtime.Operations;
 using Traffy.Objects;
-
-#if !NOT_UNITY
-    using MathF = UnityEngine.Mathf;
-#else
-    using MathF = System.MathF;
-#endif
+using static System.Math;
 
 namespace Traffy.Compatibility.IronPython
 {
@@ -60,9 +55,9 @@ namespace Traffy.Compatibility.IronPython
 
     public static class MathUtils
     {
-        public static float Hypot(float v, float w)
+        public static double Hypot(double v, double w)
         {
-            return MathF.Sqrt(v * v + w * w);
+            return Math.Sqrt(v * v + w * w);
         }
     }
     public static class IronPythonCompatExtras
@@ -130,8 +125,8 @@ namespace Traffy.Compatibility.IronPython
     }
     public static class PythonOps
     {
-        public static float CheckMath(float v) {
-            if (float.IsInfinity(v)) {
+        public static double CheckMath(double v) {
+            if (double.IsInfinity(v)) {
                 throw PythonOps.OverflowError("math range error");
             } else if (double.IsNaN(v)) {
                 throw PythonOps.ValueError("math domain error");
@@ -140,18 +135,18 @@ namespace Traffy.Compatibility.IronPython
             }
         }
 
-        public static float CheckMath(float input, float output) {
-            if (float.IsInfinity(input) && float.IsInfinity(output) ||
-                float.IsNaN(input) && float.IsNaN(output)) {
+        public static double CheckMath(double input, double output) {
+            if (double.IsInfinity(input) && double.IsInfinity(output) ||
+                double.IsNaN(input) && double.IsNaN(output)) {
                 return output;
             } else {
                 return CheckMath(output);
             }
         }
 
-        public static float CheckMath(float in0, float in1, float output) {
-            if ((float.IsInfinity(in0) || float.IsInfinity(in1)) && float.IsInfinity(output) ||
-                (float.IsNaN(in0) || float.IsNaN(in1)) && float.IsNaN(output)) {
+        public static double CheckMath(double in0, double in1, double output) {
+            if ((double.IsInfinity(in0) || double.IsInfinity(in1)) && double.IsInfinity(output) ||
+                (double.IsNaN(in0) || double.IsNaN(in1)) && double.IsNaN(output)) {
                 return output;
             } else {
                 return CheckMath(output);

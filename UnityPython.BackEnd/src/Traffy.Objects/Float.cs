@@ -9,7 +9,7 @@ namespace Traffy.Objects
     [PyInherit(typeof(Traffy.Interfaces.Comparable))]
     public sealed partial class TrFloat : TrObject
     {
-        public float value;
+        public double value;
 
         public static TrClass CLASS;
         public override TrClass Class => CLASS;
@@ -18,7 +18,7 @@ namespace Traffy.Objects
         public override List<TrObject> __array__ => null;
 
         public TrFloat(){ }
-        public TrFloat(float floatValue)
+        public TrFloat(double floatValue)
         {
             value = floatValue;
         }

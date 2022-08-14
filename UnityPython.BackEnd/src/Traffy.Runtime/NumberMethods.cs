@@ -6,12 +6,7 @@ using uint_t = System.UInt64;
 namespace Traffy.Objects
 {
 
-#if !NOT_UNITY
-    using static UnityEngine.Mathf;
-#else
-    using static System.MathF;
-#endif
-
+    using static System.Math;
     public static class NumberMethods
     {
         [MethodImpl(MethodImplOptionsCompat.Best)]
@@ -22,9 +17,9 @@ namespace Traffy.Objects
         }
 
         [MethodImpl(MethodImplOptionsCompat.Best)]
-        internal static float s_floatmod(float a, float b)
+        internal static double s_floatmod(double a, double b)
         {
-            float r = a % b;
+            double r = a % b;
             return r < 0 ? r + b : r;
         }
 
@@ -118,7 +113,7 @@ namespace Traffy.Objects
             switch (other)
             {
                 case TrFloat v: return MK.Float(self.value / v.value);
-                case TrInt v: return MK.Float(((float)self.value) / v.value);
+                case TrInt v: return MK.Float(((double)self.value) / v.value);
                 default: return TrNotImplemented.Unique;
             }
         }
@@ -138,7 +133,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return MK.Float(s_floatmod(((float)self.value), v.value));
+                case TrFloat v: return MK.Float(s_floatmod(((double)self.value), v.value));
                 case TrInt v: return MK.Int(s_intmod(self.value, v.value));
                 default: return TrNotImplemented.Unique;
             }
@@ -172,9 +167,9 @@ namespace Traffy.Objects
             return result;
         }
 
-        static float f_intpow(float b, int_t pow)
+        static double f_intpow(double b, int_t pow)
         {
-            float result = 1;
+            double result = 1;
             while (pow > 0)
             {
                 if ((pow & 1) != 0)
@@ -277,7 +272,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float)self.value < v.value;
+                case TrFloat v: return (double)self.value < v.value;
                 case TrInt v: return self.value < v.value;
                 default:
                     throw unsupported_ops(self, "<", other);
@@ -299,7 +294,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float)self.value <= v.value;
+                case TrFloat v: return (double)self.value <= v.value;
                 case TrInt v: return self.value <= v.value;
                 default:
                     throw unsupported_ops(self, "<=", other);
@@ -321,7 +316,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float)self.value > v.value;
+                case TrFloat v: return (double)self.value > v.value;
                 case TrInt v: return self.value > v.value;
                 default:
                     throw unsupported_ops(self, ">", other);
@@ -343,7 +338,7 @@ namespace Traffy.Objects
         {
             switch (other)
             {
-                case TrFloat v: return (float)self.value >= v.value;
+                case TrFloat v: return (double)self.value >= v.value;
                 case TrInt v: return self.value >= v.value;
                 default:
                     throw unsupported_ops(self, ">=", other);

@@ -158,9 +158,19 @@ namespace Traffy
             var i_o = o as TrFloat;
             if (i_o != null)
             {
-                return i_o.value;
+                return (float) i_o.value;
             }
             throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to float");
+        }
+
+        public static double Apply(THint<double> _, TrObject o)
+        {
+            var i_o = o as TrFloat;
+            if (i_o != null)
+            {
+                return i_o.value;
+            }
+            throw new TypeError($"Unbox.Apply: cannot unbox {o.Class.Name} to double float");
         }
 
         public static bool Apply(THint<bool> _, TrObject o)

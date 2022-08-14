@@ -87,7 +87,7 @@ namespace Traffy.Objects
             {
                 throw new TypeError($"'{this.Class.Name}' object cannot be interpreted as an float");
             }
-            return i.value;
+            return (float) i.value;
         }
 
         public long AsLong()

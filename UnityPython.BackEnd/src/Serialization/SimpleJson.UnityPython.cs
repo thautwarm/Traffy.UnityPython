@@ -114,7 +114,7 @@ namespace SimpleJSON
                 }
                 case JSONNodeType.Float:
                 {
-                    return MK.Float(node.AsFloat);
+                    return MK.Float(node.AsDouble);
                 }
                 case JSONNodeType.NullValue:
                 {
