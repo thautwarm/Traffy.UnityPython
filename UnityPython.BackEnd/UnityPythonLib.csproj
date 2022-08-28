@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <Compile Include="src/**/*.cs;generated-src/**/*.cs;Unity/**/*.cs" />
+  </ItemGroup>
+  <PropertyGroup>
+     <LangVersion>8</LangVersion>
+     <OutputType>Library</OutputType>
+     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+     <TargetFrameworks>net6;netstandard2.1;netstandard2.0</TargetFrameworks>
+     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+     <Optimize>true</Optimize>
+     <DefineConstants>NOT_UNITY;FAST_ITER_BLIST</DefineConstants>
+  </PropertyGroup>
+
+</Project>
