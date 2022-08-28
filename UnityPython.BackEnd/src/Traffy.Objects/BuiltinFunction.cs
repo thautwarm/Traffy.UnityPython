@@ -10,7 +10,7 @@ namespace Traffy.Objects
     public sealed partial class TrSharpFunc : TrObject
     {
         public string name;
-        [NotNull] public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
+        public Func<BList<TrObject>, Dictionary<TrObject, TrObject>, TrObject> func;
         public override string __repr__() => $"<builtin_function {name}>";
         public override bool __bool__() => true;
         public static TrClass CLASS;

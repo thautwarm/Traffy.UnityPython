@@ -1,0 +1,1 @@
+print(__builtin_capsule__)

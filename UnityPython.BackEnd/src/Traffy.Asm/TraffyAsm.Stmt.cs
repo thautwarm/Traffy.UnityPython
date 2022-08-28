@@ -179,7 +179,7 @@ namespace Traffy.Asm
         public int position;
         public TraffyAsm test;
         public TraffyAsm body;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
+        public TraffyAsm orelse;
 
         public TrObject exec(Frame frame)
         {
@@ -256,7 +256,7 @@ namespace Traffy.Asm
         public TraffyLHS target;
         public TraffyAsm itr;
         public TraffyAsm body;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
+        public TraffyAsm orelse;
 
 
         public TrObject exec(Frame frame)
@@ -347,7 +347,7 @@ namespace Traffy.Asm
 
         public IfClause[] clauses;
 
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
+        public TraffyAsm orelse;
 
         public TrObject exec(Frame frame)
         {
@@ -432,8 +432,8 @@ namespace Traffy.Asm
     [Serializable]
     public sealed class Handler
     {
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm exc_type;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyLHS exc_bind;
+        public TraffyAsm exc_type;
+        public TraffyLHS exc_bind;
 
         public TraffyAsm body;
     }
@@ -445,8 +445,8 @@ namespace Traffy.Asm
         public int position;
         public TraffyAsm body;
         public Handler[] handlers;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm orelse;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm final;
+        public TraffyAsm orelse;
+        public TraffyAsm final;
 
         public TrObject exec(Frame frame)
         {
@@ -563,7 +563,7 @@ namespace Traffy.Asm
         public bool hasCont { get; set; }
         public int position;
 
-        [AllowNull] public TraffyAsm exc;
+        public TraffyAsm exc;
 
         public TrObject exec(Frame frame)
         {
@@ -828,7 +828,7 @@ namespace Traffy.Asm
         public bool hasCont => false;
         public int position;
         public int level;
-        [AllowNull] public string module;
+        public string module;
 
         public MonoAsync<TrObject> cont(Frame frame)
         {
@@ -855,7 +855,7 @@ namespace Traffy.Asm
         public int level;
         // if null, 'names' is a list of module names;
         // otherwise, 'names' is a list of imported names from 'module'
-        [AllowNull] public string module;
+        public string module;
         public string[] names;
 
         public TrObject exec(Frame frame)
@@ -967,7 +967,7 @@ namespace Traffy.Asm
         public bool hasCont { get; set;}
         public int position;
         public TraffyAsm test;
-        [AllowNull] public TraffyAsm msg;
+        public TraffyAsm msg;
 
         public TrObject exec(Frame frame)
         {

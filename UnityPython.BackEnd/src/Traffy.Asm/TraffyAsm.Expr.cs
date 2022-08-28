@@ -677,7 +677,7 @@ namespace Traffy.Asm
     [Serializable]
     public struct DictEntry
     {
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm key;
+        public TraffyAsm key;
         public TraffyAsm value;
     }
 
@@ -1019,7 +1019,7 @@ namespace Traffy.Asm
         public int position;
 
         public TraffyAsm context;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyLHS bind;
+        public TraffyLHS bind;
 
         public TrObject exec(Frame frame)
         {

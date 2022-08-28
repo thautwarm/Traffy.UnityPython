@@ -16,7 +16,7 @@ with testsuite("dict"):
     assert yyy == z  # type: ignore
 
     try:
-        hash({})
+        print("dict hash", hash({}))
         raise RuntimeError
     except TypeError:
         pass

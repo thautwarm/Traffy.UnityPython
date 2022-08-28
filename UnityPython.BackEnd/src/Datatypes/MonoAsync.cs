@@ -114,7 +114,7 @@ namespace Traffy.Objects
     [AsyncMethodBuilder(typeof(MonoAsyncBuilder<>))]
     public sealed partial class MonoAsync<TElement> : Awaitable<TElement>, INotifyCompletion, IEnumerator<TElement>, IEnumerable<TElement>
     {
-        [AllowNull] internal Awaitable<TElement> m_Nested;
+        internal Awaitable<TElement> m_Nested;
         internal bool m_IsCompleted = false;
         internal IAsyncStateMachine StateMachine;
         // internal Handler<TElement> m_handler;

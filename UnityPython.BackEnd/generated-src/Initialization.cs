@@ -63,6 +63,7 @@ namespace Traffy
             Traffy.Objects.TrNone._Create();
             Traffy.Objects.TrNotImplemented._Create();
             Traffy.Modules.TrModule_abc._Create();
+            Traffy.Objects.TrCapsuleObject._Create();
             Traffy.Objects.TrProperty._Create();
             Traffy.Objects.TrRef._Create();
             Traffy.Objects.TrSet._Create();
@@ -130,6 +131,7 @@ namespace Traffy
             Traffy.Objects.TrNone.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrNotImplemented.CLASS.__base = new TrClass[] {  };
             Traffy.Modules.TrModule_abc.CLASS.__base = new TrClass[] {  };
+            Traffy.Objects.TrCapsuleObject.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrProperty.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrRef.CLASS.__base = new TrClass[] {  };
             Traffy.Objects.TrSet.CLASS.__base = new TrClass[] { Traffy.Interfaces.Collection.CLASS };
@@ -195,6 +197,7 @@ namespace Traffy
             Traffy.Objects.TrNone.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNone.CLASS);
             Traffy.Objects.TrNotImplemented.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrNotImplemented.CLASS);
             Traffy.Modules.TrModule_abc.CLASS.__mro = TrClass.C3Linearized(Traffy.Modules.TrModule_abc.CLASS);
+            Traffy.Objects.TrCapsuleObject.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrCapsuleObject.CLASS);
             Traffy.Objects.TrProperty.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrProperty.CLASS);
             Traffy.Objects.TrRef.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrRef.CLASS);
             Traffy.Objects.TrSet.CLASS.__mro = TrClass.C3Linearized(Traffy.Objects.TrSet.CLASS);
@@ -289,6 +292,7 @@ namespace Traffy
             Traffy.Objects.TrTypedDict._Init();
             Traffy.Objects.TrNone._Init();
             Traffy.Objects.TrRawObject._Init();
+            Traffy.Objects.TrCapsuleObject._Init();
             Traffy.Objects.TrProperty._Init();
             Traffy.Objects.TrRef._Init();
             Traffy.Objects.TrSet._Init();
@@ -354,6 +358,7 @@ namespace Traffy
             Traffy.Objects.TrNone._SetupClasses();
             Traffy.Objects.TrNotImplemented._SetupClasses();
             Traffy.Modules.TrModule_abc._SetupClasses();
+            Traffy.Objects.TrCapsuleObject._SetupClasses();
             Traffy.Objects.TrProperty._SetupClasses();
             Traffy.Objects.TrRef._SetupClasses();
             Traffy.Objects.TrSet._SetupClasses();

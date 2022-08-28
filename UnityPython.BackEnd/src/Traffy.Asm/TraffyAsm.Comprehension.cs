@@ -10,8 +10,8 @@ namespace Traffy.Asm
         public bool hasCont;
         public TraffyLHS target;
         public TraffyAsm itr;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public TraffyAsm[] ifs;
-        [System.Diagnostics.CodeAnalysis.AllowNull] public Comprehension next;
+        public TraffyAsm[] ifs;
+        public Comprehension next;
 
         public void exec(Frame frame, Action step)
         {

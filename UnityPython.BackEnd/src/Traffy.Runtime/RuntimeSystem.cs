@@ -691,7 +691,7 @@ namespace Traffy
             return MK.Str(rt_value.__repr__());
         }
 
-        public static List<(TrStr, TrObject)> import_from_module([AllowNull] string module, int level, Dictionary<TrObject, TrObject> globals, [AllowNull] string[] __all__)
+        public static List<(TrStr, TrObject)> import_from_module(string module, int level, Dictionary<TrObject, TrObject> globals, string[] __all__)
         {
 
             var imported = new List<(TrStr, TrObject)>();

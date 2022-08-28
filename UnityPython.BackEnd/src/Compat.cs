@@ -1,5 +1,5 @@
-#if NETSTANDARD2_0
 using System;
+#if NETSTANDARD2_0 || UNITY_2020_3
 
 public static class _GlobalCompat
 {
@@ -21,22 +21,6 @@ namespace System.Runtime.CompilerServices
         public AsyncMethodBuilderAttribute(Type builderType) =>
             BuilderType = builderType;
         public Type BuilderType { get; }
-    }
-}
-
-namespace System.Diagnostics.CodeAnalysis
-{
-    public class AllowNullAttribute : Attribute
-    {
-
-    }
-    public class DisallowNullAttribute : Attribute
-    {
-
-    }
-    public class NotNullAttribute : Attribute
-    {
-
     }
 }
 #endif

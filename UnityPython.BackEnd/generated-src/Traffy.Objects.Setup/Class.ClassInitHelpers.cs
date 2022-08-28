@@ -343,6 +343,10 @@ namespace Traffy.Objects
         static void BuiltinClassInit_TrRawObject(TrClass cls)
         {
         }
+        static void BuiltinClassInit_TrCapsuleObject(TrClass cls)
+        {
+            cls[MagicNames.i___str__] = TrSharpFunc.FromFunc(cls.Name + ".__str__", (self) => ((Traffy.Objects.TrCapsuleObject)self).__str__());
+        }
         static void BuiltinClassInit_TrProperty(TrClass cls)
         {
             cls[MagicNames.i___repr__] = TrSharpFunc.FromFunc(cls.Name + ".__repr__", (self) => ((Traffy.Objects.TrProperty)self).__repr__());
@@ -640,6 +644,11 @@ namespace Traffy.Objects
             if (typeof(T) == typeof(Traffy.Objects.TrRawObject))
             {
                 BuiltinClassInit_TrRawObject(cls);
+                return;
+            }
+            if (typeof(T) == typeof(Traffy.Objects.TrCapsuleObject))
+            {
+                BuiltinClassInit_TrCapsuleObject(cls);
                 return;
             }
             if (typeof(T) == typeof(Traffy.Objects.TrProperty))

@@ -4,6 +4,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Traffy.Annotations;
 
+namespace System.Diagnostics.CodeAnalysis
+{
+#if NET_STANDARD_2_0
+    internal class DisallowNull: System.Attribute
+    {
+    }
+#endif
+}
+
 namespace Traffy.Objects
 {
 
@@ -460,5 +469,45 @@ namespace Traffy.Objects
         {
             CLASS = cls;
         }
+    }
+
+    [PyBuiltin]
+    public class TrCapsuleObject: TrUserObjectBase
+    {
+        public object capsule;
+        public static TrClass CLASS;
+        public override TrClass Class => CLASS;
+        public override List<TrObject> __array__ => null;
+        public override object Native => capsule;
+
+        public override string __str__()
+        {
+            return $"<Capsule {capsule.ToString()}>";
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.CreateRef)]
+        internal static void _Create()
+        {
+            CLASS = TrClass.CreateClass("Capsule", Array.Empty<TrClass>());
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.InitRef)]
+        internal static void _Init()
+        {
+            CLASS.IsSealed = true;
+        }
+
+        [Traffy.Annotations.SetupMark(Traffy.Annotations.SetupMarkKind.SetupRef)]
+        internal static void _SetupClasses()
+        {
+            CLASS.SetupClass();
+            CLASS.IsClassFixed = true;
+        }
+
+        public TrCapsuleObject(object o)
+        {
+            capsule = o;
+        }
+        
     }
 }

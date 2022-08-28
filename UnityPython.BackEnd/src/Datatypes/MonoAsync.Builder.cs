@@ -9,7 +9,7 @@ namespace Traffy.Objects
 
    public struct MonoAsyncBuilder<TReturn>
     {
-        [NotNull] MonoAsync<TReturn> m_async;
+        MonoAsync<TReturn> m_async;
 
         public MonoAsync<TReturn> Task => m_async;
 

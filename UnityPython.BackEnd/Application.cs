@@ -22,6 +22,7 @@ public class App
         // return 0;
         Initialization.InitRuntime();
         Initialization.Prelude(TrSharpFunc.FromFunc("time", time));
+        Initialization.Prelude("__builtin_capsule__", new TrCapsuleObject(typeof(void)));
 
         ModuleSystem.LoadDirectory(argv.Length == 0 ? "out" : argv[0]);
         var test_modules = ModuleSystem.Modules.Keys.Where(x => x.Split(".").Last().StartsWith("test_")).ToList();
@@ -49,7 +50,6 @@ public class App
     {
         if (args.Length != 1)
             throw new ArgumentException("UnityPython program: Expected one argument");
-        
 
         var arg = args[0].Trim();
         if (arg == "-h" || arg == "--help")
@@ -61,6 +61,7 @@ public class App
         ModuleSystem.SetProjectDir(opts.ProjectDir);
 
         Initialization.InitRuntime();
+        Initialization.Prelude("__builtin_capsule__", new TrCapsuleObject(typeof(void)));
         foreach(var includeDir in opts.IncludePythonModuleDirectories)
         {
             ModuleSystem.LoadDirectory(includeDir);
